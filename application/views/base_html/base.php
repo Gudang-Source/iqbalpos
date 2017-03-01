@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta name="description" content="">
       <meta name="author" content="">
-      <title>POS - point of sale Zarpos</title>
+      <title>POS - point of sale</title>
       <!-- jQuery -->
       <script type="text/javascript" src="<?=base_url()?>assets/js/jquery-2.2.2.min.js"></script>
       <script type="text/javascript" src="<?=base_url()?>assets/js/loading.js"></script>
@@ -90,7 +90,7 @@
                         <span class="hidden-xs"> &nbsp;&nbsp;admin Doe </span>
                      </a>
                   </li>
-                  <li class="dropdown language">
+<!--                   <li class="dropdown language">
                      <a href="#" class="dropdown-toggle flat-box" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                         <img src="http://localhost/zarpos/assets/img/flags/en.png" class="flag" alt="language">
                         <span class="caret"></span></a>
@@ -104,7 +104,7 @@
                         <li class="flat-box"><a href="http://localhost/zarpos/dashboard/change/turkish"><img src="http://localhost/zarpos/assets/img/flags/tr.png" class="flag" alt="language"> Turkish</a></li>
                         <li class="flat-box"><a href="http://localhost/zarpos/dashboard/change/greek"><img src="http://localhost/zarpos/assets/img/flags/gr.png" class="flag" alt="language"> Greek</a></li>
                      </ul>
-                  </li>
+                  </li> -->
                   <li class="flat-box"><a href="http://localhost/zarpos/logout" title="Logout"><i class="fa fa-sign-out fa-lg"></i></a></li>
                </ul>
             </div>
@@ -116,7 +116,7 @@
 
 
       <!-- Page Content -->
-      <?php $this->load->view($view); ?>
+      <?=modules::run($view)?>
    <script type="text/javascript">
    function OpenRegister(status, storeid){
       if(status == 0) {
@@ -136,18 +136,19 @@
            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
            <h4 class="modal-title" id="myModalLabel">Cash in Hand</h4>
          </div>
-         <form action="<?=base_url()?>pos/openregister" method="post" accept-charset="utf-8" enctype="multipart/form-data">         <div class="modal-body">
-               <div class="form-group">
-                <label for="CashinHand">Cash in Hand</label>
-                <input type="number" step="any" name="cash" Required class="form-control" id="CashinHand" placeholder="Cash in Hand">
-                <input type="hidden" name="store" class="form-control" id="store">
-              </div>
-         </div>
-         <div class="modal-footer">
-           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-           <button type="submit" class="btn btn-add">Submit</button>
-         </div>
-      </form>       </div>
+          <form action="<?=base_url()?>pos/openregister" method="post" accept-charset="utf-8" enctype="multipart/form-data">         <div class="modal-body">
+             <div class="form-group">
+              <label for="CashinHand">Cash in Hand</label>
+              <input type="number" step="any" name="cash" Required class="form-control" id="CashinHand" placeholder="Cash in Hand">
+              <input type="hidden" name="store" class="form-control" id="store">
+            </div>
+           </div>
+           <div class="modal-footer">
+             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+             <button type="submit" class="btn btn-add">Submit</button>
+           </div>
+          </form>       
+      </div>
     </div>
    </div>
    <!-- /.Modal -->
