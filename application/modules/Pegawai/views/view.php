@@ -87,7 +87,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
-          <button type="submit" class="btn btn-add">Simpan</button>
+          <button type="submit" class="btn btn-add" id="aSimpan">Simpan</button>
         </div>
       </form>
     </div>
@@ -142,7 +142,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
-          <button type="submit" class="btn btn-add">Simpan</button>
+          <button type="submit" class="btn btn-add" id="eSimpan">Simpan</button>
         </div>
       </form>
     </div>
@@ -200,6 +200,10 @@
         type: 'post',
         url: '<?=base_url('Pegawai/Master/add')?>/',
         data: $('#formAddPegawai').serialize(),
+        beforeSend: function() { 
+          $("#aSimpan").html('<option> Loading ...</option>');
+          document.getElementById('aSimpan').setAttribute('disabled', 'disabled');
+        },
         success: function (i) {
           var jsonObjectParse     = JSON.parse(i);
           var jsonObjectStringify = JSON.stringify(jsonObjectParse);
@@ -216,14 +220,18 @@
             no_telp.innerHTML     = jsonObjectFinal.no_telp;
             email.innerHTML       = jsonObjectFinal.email;
             date_add.innerHTML    = jsonObjectFinal.date_add;            
+            $("#aSimpan").html('Simpan');
+            document.getElementById('aSimpan').removeAttribute('disabled');
           }else if(jsonObjectFinal.status == 2){
-
+            $("#aSimpan").html('Simpan');
+            document.getElementById('aSimpan').removeAttribute('disabled');
           }else if(jsonObjectFinal.status == 1){
-
+            $("#aSimpan").html('Simpan');
+            document.getElementById('aSimpan').removeAttribute('disabled');
           }
         }
       });
-      $("#AddPegawai").modal('hide');
+      // $("#AddPegawai").modal('hide');
     });
     $("#formEditPegawai").on('submit', function(e){
       var table   = document.getElementById('Table');
@@ -235,6 +243,10 @@
         type: 'post',
         url: '<?=base_url('Pegawai/Master/edit')?>/'+eid,
         data: $('#formEditPegawai').serialize(),
+        beforeSend: function() { 
+          $("#eSimpan").html('<option> Loading ...</option>');
+          document.getElementById('eSimpan').setAttribute('disabled', 'disabled');          
+        },
         success: function (i) {
           var jsonObjectParse     = JSON.parse(i);
           var jsonObjectStringify = JSON.stringify(jsonObjectParse);
@@ -245,10 +257,14 @@
             row.cells[2].innerHTML = jsonObjectFinal.no_telp;
             row.cells[3].innerHTML = jsonObjectFinal.email;
             row.cells[4].innerHTML = jsonObjectFinal.date_add;
+            $("#eSimpan").html('Simpan');
+            document.getElementById('eSimpan').removeAttribute('disabled');
           }else if(jsonObjectFinal.status == 2){
-
+            $("#eSimpan").html('Simpan');
+            document.getElementById('eSimpan').removeAttribute('disabled');
           }else if(jsonObjectFinal.status == 1){
-
+            $("#eSimpan").html('Simpan');
+            document.getElementById('eSimpan').removeAttribute('disabled');
           }
         }
       });
