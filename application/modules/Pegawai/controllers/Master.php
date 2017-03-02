@@ -6,22 +6,12 @@ class Master extends MX_Controller {
         $this->load->model('Pegawaimodel');
     }
     function index(){
-    	$data['pegawai'] = $this->Pegawaimodel->get('m_pegawai');
+    	$dataSelect['deleted'] = 1;
+    	$data['pegawai'] = $this->Pegawaimodel->select($dataSelect, 'm_pegawai');
     	$this->load->view('Pegawai/view', $data);
-    	// echo "MASTER INDEX";
     }
     function add(){
 		$params = $this->input->post();
-		// nama
-		// alamat
-		// no_telp
-		// email
-		// password sha512
-		// kodepos
-		// id_provinsi
-		// id_kota
-		// id_pegawai_level
-		// added_by
 		$dataInsert['nama'] 			= $params['nama'];
 		$dataInsert['alamat'] 			= $params['alamat'];
 		$dataInsert['no_telp'] 			= $params['no_telp'];
@@ -31,7 +21,7 @@ class Master extends MX_Controller {
 		$dataInsert['id_provinsi'] 		= $params['id_provinsi'];
 		$dataInsert['id_kota'] 			= $params['id_kota'];
 		$dataInsert['id_pegawai_level'] = $params['id_pegawai_level'];
-		// $dataInsert['added_by'] 		= $params['added_by'];
+		$dataInsert['deleted'] 			= 1;
 		$checkData = $this->Pegawaimodel->select($dataInsert, 'm_pegawai');
 		if($checkData->num_rows() < 1){
 			$insert = $this->Pegawaimodel->insert($dataInsert, 'm_pegawai');
@@ -52,25 +42,7 @@ class Master extends MX_Controller {
     		echo json_encode(array( 'status'=>1 ));
 		}
     }
-    function testJson(){
-		return json_encode(array( 	'status'	=>	3,
-						'nama' 		=>	"asd",
-						'alamat'	=>	"asd",
-						'no_telp'	=>	"asd",
-						'email'		=>	"asd"
-					));    	
-    }
-    function get($id = null){
-		// nama
-		// alamat
-		// no_telp
-		// email
-		// password sha512
-		// kodepos
-		// id_provinsi
-		// id_kota
-		// id_pegawai_level
-		// added_by    	
+    function get($id = null){   	
     	if($id != null){
     		$dataSelect['id'] = $id;
     		$selectData = $this->Pegawaimodel->select($dataSelect, 'm_pegawai');
@@ -97,27 +69,15 @@ class Master extends MX_Controller {
     }
     function edit($id = null){
 		$params = $this->input->post();
-		// nama
-		// alamat
-		// no_telp
-		// email
-		// password sha512
-		// kodepos
-		// id_provinsi
-		// id_kota
-		// id_pegawai_level
-		// added_by
 		$dataCondition['id']			= $id;
 		$dataUpdate['nama'] 			= $params['nama'];
 		$dataUpdate['alamat'] 			= $params['alamat'];
 		$dataUpdate['no_telp'] 			= $params['no_telp'];
 		$dataUpdate['email'] 			= $params['email'];
-		// $dataUpdate['password'] 		= hash('sha512',$params['password']);
 		$dataUpdate['kode_pos'] 		= $params['kodepos'];
 		$dataUpdate['id_provinsi'] 		= $params['id_provinsi'];
 		$dataUpdate['id_kota'] 			= $params['id_kota'];
 		$dataUpdate['id_pegawai_level'] = $params['id_pegawai_level'];
-		// $dataUpdate['added_by'] 		= $params['added_by'];
 		$checkData = $this->Pegawaimodel->select($dataCondition, 'm_pegawai');
 		if($checkData->num_rows() > 0){
 			$update = $this->Pegawaimodel->update($dataCondition, $dataUpdate, 'm_pegawai');
@@ -140,9 +100,10 @@ class Master extends MX_Controller {
     }
     function delete($id = null){
     	if($id != null){
-    		$dataDelete['id'] = $id;
-    		$delete = $this->Pegawaimodel->delete($dataDelete, 'm_pegawai');
-    		if($delete){
+    		$dataCondition['id'] = $id;
+    		$dataUpdate['deleted'] = 0;
+    		$update = $this->Pegawaimodel->update($dataCondition, $dataUpdate, 'm_pegawai');
+    		if($update){
     			echo "2";
     		}else{
     			echo "1";
