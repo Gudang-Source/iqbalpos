@@ -231,7 +231,7 @@
           }
         }
       });
-      // $("#AddPegawai").modal('hide');
+      $("#AddPegawai").modal('hide');
     });
     $("#formEditPegawai").on('submit', function(e){
       var table   = document.getElementById('Table');
