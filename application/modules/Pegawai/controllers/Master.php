@@ -98,7 +98,8 @@ class Master extends MX_Controller {
     		echo json_encode(array( 'status'=>1 ));
 		}
     }
-    function delete($id = null){
+    function delete(){
+        $id = $this->input->post('id');
     	if($id != null){
     		$dataCondition['id'] = $id;
     		$dataUpdate['deleted'] = 0;
