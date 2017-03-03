@@ -112,4 +112,11 @@ class Master extends MX_Controller {
     		echo "0";
     	}
     }
+    function buttonDelete($id=null){
+    	if($id!=null){
+    		echo "<button class='btn btn-danger' onclick='delRow(".$id.")'>YA</button>";
+    	}else{
+    		echo "NOT FOUND";
+    	}
+    }
 }

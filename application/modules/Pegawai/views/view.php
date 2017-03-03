@@ -1,7 +1,7 @@
 <!-- Page Content -->
 <div class="container">
    <div class="row" style="margin-top:100px;">
-      <table id="Table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+      <table id="TablePegawai" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
               <tr>
                   <th>Nama Pegawai</th>
@@ -22,8 +22,8 @@
                  <td class="hidden-xs"><?=$spegawai['email'];?></td>
                  <td class="hidden-xs"><?=$spegawai['date_add'];?></td>
                  <td><div class="btn-group">
-                       <a class="btn btn-default" href="javascript:void(0)" data-toggle="popover" data-placement="left"  data-html="true" title='Hapus Data?' data-content='<button class="btn btn-danger" onclick="delRow(<?=$spegawai['id']?>)" href="#" id="aConfirm">Ya</button>'><i class="fa fa-times"></i></a>
-                       <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ubah Data" onclick="showDialogUpdate('<?=$spegawai['id']?>', this)"><i class="fa fa-pencil"></i></a>
+                      <a class="btn btn-default" href="javascript:void(0)" data-toggle="popover" data-placement="left"  data-html="true" title='Hapus Data?' data-content='<button class="btn btn-danger" onclick="delRow(<?=$spegawai['id']?>)" href="#" id="aConfirm">Ya</button>'><i class="fa fa-times"></i></a>
+                      <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ubah Data" onclick="showDialogUpdate('<?=$spegawai['id']?>', this)"><i class="fa fa-pencil"></i></a>
                      </div>
                   </td>
               </tr>
@@ -150,59 +150,61 @@
 </div>
 <!-- /.Modal Edit-->
 <script type="text/javascript">
-    function showDialogUpdate(id, r){
+  $(document).ready(function(){
+    var t = $('#TablePegawai').DataTable();
+    showDialogUpdate = function(id, r){
         var iRow = r.parentNode.parentNode.parentNode.rowIndex;
         $.ajax({
           type: 'post',
-          url: '<?=base_url('Pegawai/Master/get')?>/'+id,
+          url: '<?php echo base_url('Pegawai/Master/get'); ?>/'+id,
           data: $('form').serialize(),
           success: function (i) {
             var jsonObjectParse = JSON.parse(i);
             var jsonObjectStringify = JSON.stringify(jsonObjectParse);
             var jsonObjectFinal = JSON.parse(jsonObjectStringify);
-            document.getElementById("row").value=iRow;
-            document.getElementById("eid").value=jsonObjectFinal.id; 
-            document.getElementById("enama").value=jsonObjectFinal.nama; 
-            document.getElementById("ealamat").value=jsonObjectFinal.alamat; 
-            document.getElementById("eno_telp").value=jsonObjectFinal.no_telp; 
-            document.getElementById("eemail").value=jsonObjectFinal.email; 
-            document.getElementById("ekodepos").value=jsonObjectFinal.kode_pos; 
-            document.getElementById("eid_provinsi").value=jsonObjectFinal.id_provinsi;
-            document.getElementById("eid_kota").value=jsonObjectFinal.id_kota;
-            document.getElementById("eid_pegawai_level").value=jsonObjectFinal.id_pegawai_level;
+            $("#row").val(iRow);
+            $("#eid").val(jsonObjectFinal.id);
+            $("#enama").val(jsonObjectFinal.nama);
+            $("#ealamat").val(jsonObjectFinal.alamat);
+            $("#eno_telp").val(jsonObjectFinal.no_telp);
+            $("#eemail").val(jsonObjectFinal.email);
+            $("#ekodepos").val(jsonObjectFinal.kode_pos);
+            $("#eid_provinsi").val(jsonObjectFinal.id_provinsi);
+            $("#eid_kota").val(jsonObjectFinal.id_kota);
+            $("#eid_pegawai_level").val(jsonObjectFinal.id_pegawai_level);
             $("#EditPegawai").modal('show');
           }    
-        });        
+        });
     }
-</script>
-<script type="text/javascript">
-  $(document).ready(function(){
     delRow = function(id){
         $.ajax({
           type: 'post',
-          url: '<?=base_url('Pegawai/Master/delete')?>/'+id,
+          url: '<?php echo base_url('Pegawai/Master/delete'); ?>/'+id,
           data: $('form').serialize(),
           beforeSend: function() { 
             $("#aConfirm").html('<option> Loading ...</option>');
-            document.getElementById('aConfirm').setAttribute('disabled', 'disabled');
+            $('#aConfirm').attr('disabled', 'disabled');
           },
           success: function (i) {
             if(i==2){
+              t
+                  .row( $(this).parents('tr') )
+                  .remove()
+                  .draw();
               $('#tRow'+id).remove();
               $("#aConfirm").html('Ya');
-              document.getElementById('aConfirm').removeAttribute('disabled');
+              $('#aConfirm').removeAttr('disabled');
             }else if(i==1){
               $("#aConfirm").html('Ya');
-              document.getElementById('aConfirm').removeAttribute('disabled');
+              $('#aConfirm').removeAttr('disabled');
             }else if(1==0){
               $("#aConfirm").html('Ya');
-              document.getElementById('aConfirm').removeAttribute('disabled');
+              $('#aConfirm').removeAttr('disabled');
             }
           }    
         });
     }
     $("#formAddPegawai").on('submit', function(e){
-      var table = document.getElementById('Table');
       e.preventDefault();
       $.ajax({
         type: 'post',
@@ -210,35 +212,35 @@
         data: $('#formAddPegawai').serialize(),
         beforeSend: function() { 
           $("#aSimpan").html('<option> Loading ...</option>');
-          document.getElementById('aSimpan').setAttribute('disabled', 'disabled');
+          $('#aSimpan').attr('disabled', 'disabled');
         },
         success: function (i) {
           var jsonObjectParse     = JSON.parse(i);
           var jsonObjectStringify = JSON.stringify(jsonObjectParse);
           var jsonObjectFinal     = JSON.parse(jsonObjectStringify);
           if(jsonObjectFinal.status == 3){
-            var row         = table.insertRow(1);
-            var nama        = row.insertCell(0);
-            var alamat      = row.insertCell(1);
-            var no_telp     = row.insertCell(2);
-            var email       = row.insertCell(3);
-            var date_add    = row.insertCell(4);
-            nama.innerHTML        = jsonObjectFinal.nama;
-            alamat.innerHTML      = jsonObjectFinal.alamat;
-            no_telp.innerHTML     = jsonObjectFinal.no_telp;
-            email.innerHTML       = jsonObjectFinal.email;
-            date_add.innerHTML    = jsonObjectFinal.date_add;            
+            var htmlPop = "<div class='btn-group'><a class='btn btn-default' href='javascript:void(0)' data-toggle='popover' data-placement='left' data-html='true' title='Hapus Data?' data-content='<button class=btn btn-danger onclick=delRow("+jsonObjectFinal.id+") href=javascript:void(0) id=aConfirm>Ya</button>'><i class='fa fa-times'></i></a><a class='btn btn-default' data-toggle='tooltip' data-placement='top' title='Ubah Data' onclick='showDialogUpdate("+jsonObjectFinal.id+", this)'><i class='fa fa-pencil'></i></a></div>";
+            t.row.add( [
+                jsonObjectFinal.nama,
+                jsonObjectFinal.alamat,
+                jsonObjectFinal.no_telp,
+                jsonObjectFinal.email,
+                jsonObjectFinal.date_add,
+                htmlPop
+            ] ).draw();
             $("#aSimpan").html('Simpan');
-            document.getElementById('aSimpan').removeAttribute('disabled');
+            $('#aSimpan').removeAttr('disabled');
           }else if(jsonObjectFinal.status == 2){
             $("#aSimpan").html('Simpan');
-            document.getElementById('aSimpan').removeAttribute('disabled');
+            $('#aSimpan').removeAttr('disabled');
           }else if(jsonObjectFinal.status == 1){
             $("#aSimpan").html('Simpan');
-            document.getElementById('aSimpan').removeAttribute('disabled');
+            $('#aSimpan').removeAttr('disabled');
           }
         }
       });
+      $('[data-toggle="tooltip"]').tooltip();
+      $('[data-toggle="popover"]').popover();
       $("#AddPegawai").modal('hide');
     });
     $("#formEditPegawai").on('submit', function(e){
@@ -277,6 +279,6 @@
         }
       });
       $("#EditPegawai").modal('hide');
-    });
+    });   
   });
 </script>
