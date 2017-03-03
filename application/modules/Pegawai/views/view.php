@@ -15,15 +15,15 @@
 
           <tbody>
              <?php foreach ($pegawai->result_array() as $spegawai):?>
-              <tr id="tRow<?=$spegawai['id']?>">
-                 <td><?=$spegawai['nama'];?></td>
-                 <td><?=$spegawai['alamat'];?></td>
-                 <td><?=$spegawai['no_telp'];?></td>
-                 <td class="hidden-xs"><?=$spegawai['email'];?></td>
-                 <td class="hidden-xs"><?=$spegawai['date_add'];?></td>
+              <tr id="tRow<?php echo $spegawai['id']; ?>">
+                 <td><?php echo $spegawai['nama']; ?></td>
+                 <td><?php echo $spegawai['alamat']; ?></td>
+                 <td><?php echo $spegawai['no_telp']; ?></td>
+                 <td class="hidden-xs"><?php echo $spegawai['email']; ?></td>
+                 <td class="hidden-xs"><?php echo $spegawai['date_add']; ?></td>
                  <td><div class="btn-group">
-                      <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Hapus Data" href="javascript:void(0)" onclick="showDialogDelete('<?=$spegawai['id']?>')"><i class="fa fa-times"></i></a>
-                      <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ubah Data" onclick="showDialogUpdate('<?=$spegawai['id']?>', this)"><i class="fa fa-pencil"></i></a>
+                      <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Hapus Data" href="javascript:void(0)" onclick="showDialogDelete('<?php echo $spegawai['id']; ?>')"><i class="fa fa-times"></i></a>
+                      <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ubah Data" onclick="showDialogUpdate('<?php echo $spegawai['id']; ?>', this)"><i class="fa fa-pencil"></i></a>
                      </div>
                   </td>
               </tr>
@@ -270,7 +270,7 @@
       e.preventDefault();
       $.ajax({
         type: 'post',
-        url: '<?=base_url('Pegawai/Master/add')?>/',
+        url: '<?php echo base_url('Pegawai/Master/add'); ?>/',
         data: $('#formAddPegawai').serialize(),
         beforeSend: function() { 
           $("#aSimpan").html('<option> Loading ...</option>');
@@ -314,7 +314,7 @@
       e.preventDefault();
       $.ajax({
         type: 'post',
-        url: '<?=base_url('Pegawai/Master/edit')?>/'+eid,
+        url: '<?php echo base_url('Pegawai/Master/edit'); ?>/'+eid,
         data: $('#formEditPegawai').serialize(),
         beforeSend: function() { 
           $("#eSimpan").html('<option> Loading ...</option>');
