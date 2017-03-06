@@ -35,43 +35,63 @@
       </div>
       <form action="" method="POST" id="myform">      
         <div class="modal-body">
-              <div class="form-group">
-               <label for="nama">Nama Pegawai</label>
-               <input type="text" name="nama" maxlength="50" Required class="form-control" id="nama" placeholder="Nama Pegawai">
-			    <input type="hidden" name="id" maxlength="50" Required class="form-control" id="id" placeholder="Nama Pegawai">
+           <div class="row">
+             <div class="col-sm-12">
+                <div class="form-group">
+                 <label for="nama">Nama Pegawai</label>
+                 <input type="text" name="nama" maxlength="50" Required class="form-control" id="nama" placeholder="Nama Pegawai">
+                 <input type="hidden" name="id" maxlength="50" Required class="form-control" id="id" placeholder="Nama Pegawai">
+               </div>
              </div>
-             <div class="form-group">
-               <label for="alamat">Alamat Pegawai</label>
-               <input type="text" name="alamat" maxlength="30" class="form-control" id="alamat" placeholder="Alamat Pegawai">
+             <div class="col-sm-12">
+               <div class="form-group">
+                 <label for="alamat">Alamat Pegawai</label>
+                 <input type="text" name="alamat" maxlength="30" class="form-control" id="alamat" placeholder="Alamat Pegawai">
+               </div>
              </div>
-             <div class="form-group">
-               <label for="no_telp">No Telp Pegawai</label>
-               <input type="text" maxlength="50" name="no_telp" class="form-control" id="no_telp" placeholder="No Telp Pegawai">
+             <div class="col-sm-6">
+               <div class="form-group">
+                 <label for="no_telp">No Telp Pegawai</label>
+                 <input type="text" maxlength="50" name="no_telp" class="form-control" id="no_telp" placeholder="No Telp Pegawai">
+               </div>
              </div>
-             <div class="form-group">
-               <label for="email">Email Pegawai</label>
-               <input type="email" maxlength="50" name="email" class="form-control" id="email" placeholder="Email Pegawai">
+             <div class="col-sm-6">
+               <div class="form-group">
+                 <label for="email">Email Pegawai</label>
+                 <input type="email" maxlength="50" name="email" class="form-control" id="email" placeholder="Email Pegawai">
+               </div>
              </div>
-             <div class="form-group">
-               <label for="password">Password</label>
-               <input type="password" maxlength="50" name="password" class="form-control" id="password" placeholder="Password">
+             <div class="col-sm-6">
+               <div class="form-group">
+                 <label for="id_provinsi">Provinsi</label>
+                 <input type="text" maxlength="50" name="id_provinsi" class="form-control" id="id_provinsi" placeholder="Provinsi">
+               </div>
              </div>
-             <div class="form-group">
-               <label for="kodepos">Kode Pos</label>
-               <input type="text" maxlength="10" name="kodepos" class="form-control" id="kodepos" placeholder="Kode Pos">
+             <div class="col-sm-6">
+               <div class="form-group">
+                 <label for="id_kota">Kota</label>
+                 <input type="text" maxlength="50" name="id_kota" class="form-control" id="id_kota" placeholder="Kota">
+               </div>
              </div>
-             <div class="form-group">
-               <label for="id_provinsi">Provinsi</label>
-               <input type="text" maxlength="50" name="id_provinsi" class="form-control" id="id_provinsi" placeholder="Provinsi">
+             <div class="col-sm-6">
+               <div class="form-group">
+                 <label for="kodepos">Kode Pos</label>
+                 <input type="text" maxlength="10" name="kodepos" class="form-control" id="kodepos" placeholder="Kode Pos">
+               </div>
              </div>
-             <div class="form-group">
-               <label for="id_kota">Kota</label>
-               <input type="text" maxlength="50" name="id_kota" class="form-control" id="id_kota" placeholder="Kota">
+             <div class="col-sm-6">
+               <div class="form-group">
+                 <label for="id_pegawai_level">Level</label>
+                 <input type="text" maxlength="50" name="id_pegawai_level" class="form-control" id="id_pegawai_level" placeholder="Level">
+               </div>
              </div>
-             <div class="form-group">
-               <label for="id_pegawai_level">Level</label>
-               <input type="text" maxlength="50" name="id_pegawai_level" class="form-control" id="id_pegawai_level" placeholder="Level">
+             <div class="col-sm-6">
+               <div class="form-group">
+                 <label for="password">Password</label>
+                 <input type="password" maxlength="50" name="password" class="form-control" id="password" placeholder="Password">
+               </div>
              </div>
+           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
@@ -119,19 +139,21 @@
   
   
   function showAdd(){
-	  $("#id").val("");
-	  $("#nama").val("");
-  	$("#alamat").val("");
-  	$("#no_telp").val("");
-  	$("#email").val("");
-  	$("#kodepos").val("");
-  	$("#id_provinsi").val("");
-  	$("#id_kota").val("");
-  	$("#id_pegawai_level").val("");
-	  $("#modalform").modal("show");	  
+    $("#myModalLabel").text("Tambah Pegawai");
+    $("#id").val("");
+    $("#nama").val("");
+    $("#alamat").val("");
+    $("#no_telp").val("");
+    $("#email").val("");
+    $("#kodepos").val("");
+    $("#id_provinsi").val("");
+    $("#id_kota").val("");
+    $("#id_pegawai_level").val("");
+    $("#modalform").modal("show");    
   }
   
   function showUpdate(i){
+    $("#myModalLabel").text("Ubah Pegawai");
     $("#id").val(jsonlist[i].id);
   	$("#nama").val(jsonlist[i].nama);
   	$("#alamat").val(jsonlist[i].alamat);
