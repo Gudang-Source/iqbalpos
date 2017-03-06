@@ -114,47 +114,38 @@
 		  $('.divpopover').attr("data-content","ok");
 		  $('.divpopover').popover();
 	  }
-	  awalLoad = false;
-		  
-	  
-	 
+	  awalLoad = false;	 
   }
   
   
   function showAdd(){
 	  $("#id").val("");
 	  $("#nama").val("");
-	$("#alamat").val("");
-	$("#no_telp").val("");
-	$("#email").val("");
-	$("#kodepos").val("");
-	$("#id_provinsi").val("");
-	$("#id_kota").val("");
-	$("#id_pegawai_level").val("");
-	  $("#modalform").modal("show");
-	  
+  	$("#alamat").val("");
+  	$("#no_telp").val("");
+  	$("#email").val("");
+  	$("#kodepos").val("");
+  	$("#id_provinsi").val("");
+  	$("#id_kota").val("");
+  	$("#id_pegawai_level").val("");
+	  $("#modalform").modal("show");	  
   }
   
   function showUpdate(i){
     $("#id").val(jsonlist[i].id);
-	$("#nama").val(jsonlist[i].nama);
-	$("#alamat").val(jsonlist[i].alamat);
-	$("#no_telp").val(jsonlist[i].no_telp);
-	$("#email").val(jsonlist[i].email);
-	$("#kodepos").val(jsonlist[i].kode_pos);
-	$("#id_provinsi").val(jsonlist[i].id_provinsi);
-	$("#id_kota").val(jsonlist[i].id_kota);
-	$("#id_pegawai_level").val(jsonlist[i].id_pegawai_level);
+  	$("#nama").val(jsonlist[i].nama);
+  	$("#alamat").val(jsonlist[i].alamat);
+  	$("#no_telp").val(jsonlist[i].no_telp);
+  	$("#email").val(jsonlist[i].email);
+  	$("#kodepos").val(jsonlist[i].kode_pos);
+  	$("#id_provinsi").val(jsonlist[i].id_provinsi);
+  	$("#id_kota").val(jsonlist[i].id_kota);
+  	$("#id_pegawai_level").val(jsonlist[i].id_pegawai_level);
 	  $("#modalform").modal("show");
-	  
   }
   
   $("#myform").on('submit', function(e){
-      e.preventDefault();
-	  
-	  //console.log();
-	  //return false;
-	  
+    e.preventDefault();
 	  var action = "<?=base_url('Pegawai/Master/add')?>/";
 	  if ($("#id").val() != ""){
 		  action = "<?=base_url('Pegawai/Master/edit')?>/";
@@ -164,28 +155,26 @@
 		 param = $('#myform').serialize()+"&id="+$('#id').val();
 	  }
 	  
-      $.ajax({
-        type: 'post',
-        url: action,
-        data: param,
-		dataType: 'json',
-        beforeSend: function() { 
-         // tambahkan loading
-        },
-        success: function (data) {
-			if (data.status == '3'){
-				console.log("ojueojueokl"+data.status);
-				jsonlist = data.list;
-				loadData(jsonlist);
-				$("#modalform").modal('hide');
-			}
-			 
-        }
-      });
-      
-	  
-     
+    $.ajax({
+      type: 'post',
+      url: action,
+      data: param,
+	    dataType: 'json',
+      beforeSend: function() { 
+        // tambahkan loading
+        $('#aSimpan').html('Sedang Menyimpan...');
+      },
+      success: function (data) {
+  			if (data.status == '3'){
+  				console.log("ojueojueokl"+data.status);
+  				jsonlist = data.list;
+  				loadData(jsonlist);
+          $('#aSimpan').html('Simpan');
+  				$("#modalform").modal('hide');
+  			}
+      }
     });
+  });
 	
 	function deleteData(element){
 		var el = $(element).attr("id");
@@ -197,16 +186,17 @@
           type: 'post',
           url: '<?php echo base_url('Pegawai/Master/delete'); ?>/',
           data: {"id":jsonlist[i].id},
-		  dataType: 'json',
+		      dataType: 'json',
           beforeSend: function() { 
             // kasi loading
+            $("#aConfirm"+i).html("Sedang Menghapus...");
           },
           success: function (data) {
-			if (data.status == '3'){
-				console.log("ojueojueokl"+data.status);
-				jsonlist = data.list;
-				loadData(jsonlist);
-			}
+      			if (data.status == '3'){
+      				console.log("ojueojueokl"+data.status);
+      				jsonlist = data.list;
+      				loadData(jsonlist);
+      			}
           }    
         });
 	}
