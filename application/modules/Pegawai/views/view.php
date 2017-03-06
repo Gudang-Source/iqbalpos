@@ -168,9 +168,9 @@
   
   $("#myform").on('submit', function(e){
     e.preventDefault();
-	  var action = "<?=base_url('Pegawai/Master/add')?>/";
+	  var action = "<?php echo base_url('Pegawai/Master/add')?>/";
 	  if ($("#id").val() != ""){
-		  action = "<?=base_url('Pegawai/Master/edit')?>/";
+		  action = "<?php echo base_url('Pegawai/Master/edit')?>/";
 	  }
 	  var param = $('#myform').serialize();
 	  if ($("#id").val() != ""){
