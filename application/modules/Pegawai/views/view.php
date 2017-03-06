@@ -1,7 +1,7 @@
 <!-- Page Content -->
 <div class="container">
    <div class="row" style="margin-top:100px;">
-      <table id="TablePegawai" class="table table-striped table-bordered" cellspacing="0" width="100%">
+      <table id="tablemain" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
               <tr>
                   <th>Nama Pegawai</th>
@@ -13,44 +13,32 @@
               </tr>
           </thead>
 
-          <tbody>
-             <?php foreach ($pegawai->result_array() as $spegawai):?>
-              <tr id="tRow<?php echo $spegawai['id']; ?>">
-                 <td><?php echo $spegawai['nama']; ?></td>
-                 <td><?php echo $spegawai['alamat']; ?></td>
-                 <td><?php echo $spegawai['no_telp']; ?></td>
-                 <td class="hidden-xs"><?php echo $spegawai['email']; ?></td>
-                 <td class="hidden-xs"><?php echo $spegawai['date_add']; ?></td>
-                 <td><div class="btn-group">
-                      <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Hapus Data" href="javascript:void(0)" onclick="showDialogDelete('<?php echo $spegawai['id']; ?>')"><i class="fa fa-times"></i></a>
-                      <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ubah Data" onclick="showDialogUpdate('<?php echo $spegawai['id']; ?>', this)"><i class="fa fa-pencil"></i></a>
-                     </div>
-                  </td>
-              </tr>
-           <?php endforeach;?>
+          <tbody id='bodytable'>
+            
           </tbody>
       </table>
    </div>
    <!-- Button trigger modal -->
-   <button type="button" class="btn btn-add btn-lg" data-toggle="modal" data-target="#AddPegawai">
+   <button type="button" class="btn btn-add btn-lg"  onclick="showAdd()">
      Tambah Pegawai
    </button>
 </div>
 <!-- /.container -->
 
 <!-- Modal Add -->
-<div class="modal fade" id="AddPegawai" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="modalform" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
  <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="myModalLabel">Tambah Pegawai</h4>
       </div>
-      <form action="" method="POST" id="formAddPegawai">      
+      <form action="" method="POST" id="myform">      
         <div class="modal-body">
               <div class="form-group">
                <label for="nama">Nama Pegawai</label>
                <input type="text" name="nama" maxlength="50" Required class="form-control" id="nama" placeholder="Nama Pegawai">
+			    <input type="hidden" name="id" maxlength="50" Required class="form-control" id="id" placeholder="Nama Pegawai">
              </div>
              <div class="form-group">
                <label for="alamat">Alamat Pegawai</label>
@@ -95,261 +83,142 @@
 </div>
 <!-- /.Modal Add-->
 
-<!-- Modal Edit -->
-<div class="modal fade" id="EditPegawai" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
- <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Ubah Data Pegawai</h4>
-      </div>
-      <form action="" method="POST" id="formEditPegawai">      
-        <div class="modal-body">
-              <div class="form-group">
-               <label for="nama">Nama Pegawai</label>
-               <input type="text" name="nama" maxlength="50" Required class="form-control" id="enama" placeholder="Nama Pegawai">
-               <input type="hidden" name="row" maxlength="50" Required class="form-control" id="row">
-               <input type="hidden" name="id" maxlength="50" Required class="form-control" id="eid">
-             </div>
-             <div class="form-group">
-               <label for="alamat">Alamat Pegawai</label>
-               <input type="text" name="alamat" maxlength="30" class="form-control" id="ealamat" placeholder="Alamat Pegawai">
-             </div>
-             <div class="form-group">
-               <label for="no_telp">No Telp Pegawai</label>
-               <input type="text" maxlength="50" name="no_telp" class="form-control" id="eno_telp" placeholder="No Telp Pegawai">
-             </div>
-             <div class="form-group">
-               <label for="email">Email Pegawai</label>
-               <input type="email" maxlength="50" name="email" class="form-control" id="eemail" placeholder="Email Pegawai">
-             </div>
-             <div class="form-group">
-               <label for="kodepos">Kode Pos</label>
-               <input type="text" maxlength="10" name="kodepos" class="form-control" id="ekodepos" placeholder="Kode Pos">
-             </div>
-             <div class="form-group">
-               <label for="id_provinsi">Provinsi</label>
-               <input type="text" maxlength="50" name="id_provinsi" class="form-control" id="eid_provinsi" placeholder="Provinsi">
-             </div>
-             <div class="form-group">
-               <label for="id_kota">Kota</label>
-               <input type="text" maxlength="50" name="id_kota" class="form-control" id="eid_kota" placeholder="Kota">
-             </div>
-             <div class="form-group">
-               <label for="id_pegawai_level">Level</label>
-               <input type="text" maxlength="50" name="id_pegawai_level" class="form-control" id="eid_pegawai_level" placeholder="Level">
-             </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
-          <button type="submit" class="btn btn-add" id="eSimpan">Simpan</button>
-        </div>
-      </form>
-    </div>
- </div>
-</div>
-<!-- /.Modal Edit-->
-<!-- Modal Delete -->
-<div class="modal fade" id="HapusPegawai" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
- <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Hapus Pegawai?</h4>
-      </div>
-      <form action="" method="POST" id="formHapusPegawai">      
-        <div class="modal-body">
-              <div class="form-group">
-               <label for="nama">Nama Pegawai</label>
-               <input type="text" name="nama" maxlength="50" Required class="form-control" id="hnama" placeholder="Nama Pegawai">
-               <input type="hidden" name="row" maxlength="50" Required class="form-control" id="hrow">
-               <input type="hidden" name="id" maxlength="50" Required class="form-control" id="hid">               
-             </div>
-             <div class="form-group">
-               <label for="alamat">Alamat Pegawai</label>
-               <input type="text" name="alamat" maxlength="30" class="form-control" id="halamat" placeholder="Alamat Pegawai">
-             </div>
-             <div class="form-group">
-               <label for="no_telp">No Telp Pegawai</label>
-               <input type="text" maxlength="50" name="no_telp" class="form-control" id="hno_telp" placeholder="No Telp Pegawai">
-             </div>
-             <div class="form-group">
-               <label for="email">Email Pegawai</label>
-               <input type="email" maxlength="50" name="email" class="form-control" id="hemail" placeholder="Email Pegawai">
-             </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
-          <button type="submit" class="btn btn-add" id="aHapus">Hapus</button>
-        </div>
-      </form>
-    </div>
- </div>
-</div>
-<!-- /.Modal Delete-->
+
 <script type="text/javascript">
-  $(document).ready(function(){
-    var t = $('#TablePegawai').DataTable();
-    showDialogDelete = function(id){
-        if ( $("#tRow"+id).hasClass('selectedRow') ) {
-            $("#tRow"+id).removeClass('selectedRow');
-        }else {
-            t.$('tr.selectedRow').removeClass('selectedRow');
-            $("#tRow"+id).addClass('selectedRow');
+  var jsonlist = <?php echo $list; ?>;
+  var awalLoad = true;
+  
+  loadData(jsonlist);
+  function loadData(json){
+	 
+	  var html = "";
+	  $("#bodytable").html("");
+	  
+	  for(var i=0;i<json.length;i++){
+		  html = html+'<tr >'+
+                 '<td>'+json[i].nama+'</td>'+
+                 '<td>'+json[i].alamat+'</td>'+
+                 '<td>'+json[i].no_telp+'</td>'+
+                 '<td class="hidden-xs">'+json[i].email+'</td>'+
+                 '<td class="hidden-xs">'+json[i].date_add+'</td>'+
+                 '<td><div class="btn-group" >'+
+                      '<a id="group'+i+'" class="divpopover btn btn-default" href="javascript:void(0)" data-toggle="popover" data-placement="left" onclick="confirmDelete(this)" data-html="true" title="Hapus Data?" ><i class="fa fa-times"></i></a>'+
+                      '<a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ubah Data" onclick="showUpdate('+i+')"><i class="fa fa-pencil"></i></a>'+
+                     '</div>'+
+                  '</td>'+
+              '</tr>';
+	  }
+	  
+	  $("#bodytable").html(html);
+	  if (!awalLoad){
+		  $('.divpopover').attr("data-content","ok");
+		  $('.divpopover').popover();
+	  }
+	  awalLoad = false;
+		  
+	  
+	 
+  }
+  
+  
+  function showAdd(){
+	  $("#id").val("");
+	  $("#nama").val("");
+	$("#alamat").val("");
+	$("#no_telp").val("");
+	$("#email").val("");
+	$("#kodepos").val("");
+	$("#id_provinsi").val("");
+	$("#id_kota").val("");
+	$("#id_pegawai_level").val("");
+	  $("#modalform").modal("show");
+	  
+  }
+  
+  function showUpdate(i){
+    $("#id").val(jsonlist[i].id);
+	$("#nama").val(jsonlist[i].nama);
+	$("#alamat").val(jsonlist[i].alamat);
+	$("#no_telp").val(jsonlist[i].no_telp);
+	$("#email").val(jsonlist[i].email);
+	$("#kodepos").val(jsonlist[i].kode_pos);
+	$("#id_provinsi").val(jsonlist[i].id_provinsi);
+	$("#id_kota").val(jsonlist[i].id_kota);
+	$("#id_pegawai_level").val(jsonlist[i].id_pegawai_level);
+	  $("#modalform").modal("show");
+	  
+  }
+  
+  $("#myform").on('submit', function(e){
+      e.preventDefault();
+	  
+	  //console.log();
+	  //return false;
+	  
+	  var action = "<?=base_url('Pegawai/Master/add')?>/";
+	  if ($("#id").val() != ""){
+		  action = "<?=base_url('Pegawai/Master/edit')?>/";
+	  }
+	  var param = $('#myform').serialize();
+	  if ($("#id").val() != ""){
+		 param = $('#myform').serialize()+"&id="+$('#id').val();
+	  }
+	  
+      $.ajax({
+        type: 'post',
+        url: action,
+        data: param,
+		dataType: 'json',
+        beforeSend: function() { 
+         // tambahkan loading
+        },
+        success: function (data) {
+			if (data.status == '3'){
+				console.log("ojueojueokl"+data.status);
+				jsonlist = data.list;
+				loadData(jsonlist);
+				$("#modalform").modal('hide');
+			}
+			 
         }
-        $.ajax({
+      });
+      
+	  
+     
+    });
+	
+	function deleteData(element){
+		var el = $(element).attr("id");
+		console.log(el);
+		var id  = el.replace("aConfirm","");
+		var i = parseInt(id);
+		//console.log(jsonlist[i]);
+		$.ajax({
           type: 'post',
-          url: '<?php echo base_url('Pegawai/Master/get'); ?>/'+id,
-          data: $('form').serialize(),
-          success: function (i) {
-            var jsonObjectParse = JSON.parse(i);
-            var jsonObjectStringify = JSON.stringify(jsonObjectParse);
-            var jsonObjectFinal = JSON.parse(jsonObjectStringify);
-            $("#hrow").val(jsonObjectFinal.id);
-            $("#hid").val(jsonObjectFinal.id);
-            $("#hnama").val(jsonObjectFinal.nama);
-            $("#halamat").val(jsonObjectFinal.alamat);
-            $("#hno_telp").val(jsonObjectFinal.no_telp);
-            $("#hemail").val(jsonObjectFinal.email);
-            $("#HapusPegawai").modal('show');
+          url: '<?php echo base_url('Pegawai/Master/delete'); ?>/',
+          data: {"id":jsonlist[i].id},
+		  dataType: 'json',
+          beforeSend: function() { 
+            // kasi loading
+          },
+          success: function (data) {
+			if (data.status == '3'){
+				console.log("ojueojueokl"+data.status);
+				jsonlist = data.list;
+				loadData(jsonlist);
+			}
           }    
         });
-    }
-    showDialogUpdate = function(id, r){
-        var iRow = r.parentNode.parentNode.parentNode.rowIndex;
-        $.ajax({
-          type: 'post',
-          url: '<?php echo base_url('Pegawai/Master/get'); ?>/'+id,
-          data: $('form').serialize(),
-          success: function (i) {
-            var jsonObjectParse = JSON.parse(i);
-            var jsonObjectStringify = JSON.stringify(jsonObjectParse);
-            var jsonObjectFinal = JSON.parse(jsonObjectStringify);
-            $("#row").val(iRow);
-            $("#eid").val(jsonObjectFinal.id);
-            $("#enama").val(jsonObjectFinal.nama);
-            $("#ealamat").val(jsonObjectFinal.alamat);
-            $("#eno_telp").val(jsonObjectFinal.no_telp);
-            $("#eemail").val(jsonObjectFinal.email);
-            $("#ekodepos").val(jsonObjectFinal.kode_pos);
-            $("#eid_provinsi").val(jsonObjectFinal.id_provinsi);
-            $("#eid_kota").val(jsonObjectFinal.id_kota);
-            $("#eid_pegawai_level").val(jsonObjectFinal.id_pegawai_level);
-            $("#EditPegawai").modal('show');
-          }    
-        });
-    }
-    $('#formHapusPegawai').on('submit', function(e){
-      e.preventDefault();
-      var hrow = "#tRow" + $('#hrow').val();
-      $.ajax({
-        type: 'post',
-        url: '<?php echo base_url('Pegawai/Master/delete'); ?>',
-        data: $('#formHapusPegawai').serialize(),
-        beforeSend: function() { 
-          $("#aHapus").html('<option> Deleting ...</option>');
-          $('#aHapus').attr('disabled', 'disabled');
-        },
-        success: function (i) {
-          if(i==2){
-            t.row(hrow).remove().draw();
-            $("#aHapus").html('Ya');
-            $('#aHapus').removeAttr('disabled');
-          }else if(i==1){
-            $("#aHapus").html('Ya');
-            $('#aHapus').removeAttr('disabled');
-          }else if(1==0){
-            $("#aHapus").html('Ya');
-            $('#aHapus').removeAttr('disabled');
-          }      
-        }    
-      });
-      $("#HapusPegawai").modal('hide');
-    });
-    $("#formAddPegawai").on('submit', function(e){
-      e.preventDefault();
-      $.ajax({
-        type: 'post',
-        url: '<?php echo base_url('Pegawai/Master/add'); ?>/',
-        data: $('#formAddPegawai').serialize(),
-        beforeSend: function() { 
-          $("#aSimpan").html('<option> Loading ...</option>');
-          $('#aSimpan').attr('disabled', 'disabled');
-        },
-        success: function (i) {
-          var jsonObjectParse     = JSON.parse(i);
-          var jsonObjectStringify = JSON.stringify(jsonObjectParse);
-          var jsonObjectFinal     = JSON.parse(jsonObjectStringify);
-          if(jsonObjectFinal.status == 3){
-            var htmlPop = '<div class="btn-group"><a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Hapus Data" href="javascript:void(0)" onclick="showDialogDelete(\''+jsonObjectFinal.id+'\')"><i class="fa fa-times"></i></a><a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ubah Data" onclick="showDialogUpdate(\''+jsonObjectFinal.id+'\', this)"><i class="fa fa-pencil"></i></a></div>';
-            var sData = [
-                jsonObjectFinal.nama,
-                jsonObjectFinal.alamat,
-                jsonObjectFinal.no_telp,
-                jsonObjectFinal.email,
-                jsonObjectFinal.date_add,
-                htmlPop
-            ]
-            var nRowIndex = t.row.add( sData ).draw().node();
-            $(nRowIndex).attr( 'id', 'tRow'+jsonObjectFinal.id );
+	}
+	
+	function confirmDelete(el){
+		var element = $(el).attr("id");
+		console.log(element);
+		var id  = element.replace("group","");
+		var i = parseInt(id);
+		$(el).attr("data-content","<button class=\'btn btn-danger myconfirm\'  href=\'#\' onclick=\'deleteData(this)\' id=\'aConfirm"+i+"\'>Ya</button>");
+		$(el).popover();
 
-            $("#aSimpan").html('Simpan');
-            $('#aSimpan').removeAttr('disabled');
-          }else if(jsonObjectFinal.status == 2){
-            $("#aSimpan").html('Simpan');
-            $('#aSimpan').removeAttr('disabled');
-          }else if(jsonObjectFinal.status == 1){
-            $("#aSimpan").html('Simpan');
-            $('#aSimpan').removeAttr('disabled');
-          }
-        }
-      });
-      $('[data-toggle="tooltip"]').tooltip();
-      $('[data-toggle="popover"]').popover();
-      $("#AddPegawai").modal('hide');
-    });
-    $("#formEditPegawai").on('submit', function(e){
-      var eid     = $('#eid').val();
-      var hrow    = "#tRow" + eid;
-      e.preventDefault();
-      $.ajax({
-        type: 'post',
-        url: '<?php echo base_url('Pegawai/Master/edit'); ?>/'+eid,
-        data: $('#formEditPegawai').serialize(),
-        beforeSend: function() { 
-          $("#eSimpan").html('<option> Loading ...</option>');
-          $('#eSimpan').attr('disabled', 'disabled');          
-        },
-        success: function (i) {
-          var jsonObjectParse     = JSON.parse(i);
-          var jsonObjectStringify = JSON.stringify(jsonObjectParse);
-          var jsonObjectFinal     = JSON.parse(jsonObjectStringify);
-          if(jsonObjectFinal.status == 3){
-
-            t.row(hrow).remove().draw();
-            var htmlPop = '<div class="btn-group"><a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Hapus Data" href="javascript:void(0)" onclick="showDialogDelete(\''+jsonObjectFinal.id+'\')"><i class="fa fa-times"></i></a><a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ubah Data" onclick="showDialogUpdate(\''+jsonObjectFinal.id+'\', this)"><i class="fa fa-pencil"></i></a></div>';
-            var sData = [
-                jsonObjectFinal.nama,
-                jsonObjectFinal.alamat,
-                jsonObjectFinal.no_telp,
-                jsonObjectFinal.email,
-                jsonObjectFinal.date_add,
-                htmlPop
-            ]
-            var nRowIndex = t.row.add( sData ).draw().node();
-            $(nRowIndex).attr( 'id', 'tRow'+jsonObjectFinal.id );
-            $("#eSimpan").html('Simpan');
-            $('#eSimpan').removeAttr('disabled');
-          }else if(jsonObjectFinal.status == 2){
-            $("#eSimpan").html('Simpan');
-            $('#eSimpan').removeAttr('disabled');
-          }else if(jsonObjectFinal.status == 1){
-            $("#eSimpan").html('Simpan');
-            $('#eSimpan').removeAttr('disabled');
-          }
-        }
-      });
-      $("#EditPegawai").modal('hide');
-    });   
-  });
+	}
+  
 </script>

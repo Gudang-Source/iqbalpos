@@ -7,9 +7,18 @@ class Master extends MX_Controller {
     }
     function index(){
     	$dataSelect['deleted'] = 1;
-    	$data['pegawai'] = $this->Pegawaimodel->select($dataSelect, 'm_pegawai');
+    	$data['list'] = json_encode($this->Pegawaimodel->select($dataSelect, 'm_pegawai')->result());
+		//echo $data;
     	$this->load->view('Pegawai/view', $data);
     }
+	
+	function test(){
+		header('Content-Type: application/json; charset=utf-8');
+		$dataSelect['deleted'] = 1;
+		$list = $this->Pegawaimodel->select($dataSelect, 'm_pegawai')->result();
+		echo json_encode(array('status' => '3','list' => $list));
+	}
+	
     function add(){
 		$params = $this->input->post();
 		$dataInsert['nama'] 			= $params['nama'];
@@ -26,23 +35,20 @@ class Master extends MX_Controller {
 		if($checkData->num_rows() < 1){
 			$insert = $this->Pegawaimodel->insert($dataInsert, 'm_pegawai');
 			if($insert){
-				$getId = $this->Pegawaimodel->select($dataInsert, 'm_pegawai');
-				echo json_encode(array( 	'status'	=>	3,
-								'id'		=> 	$getId->row()->id,
-								'nama' 		=>	$params['nama'],
-								'alamat'	=>	$params['alamat'],
-								'no_telp'	=>	$params['no_telp'],
-								'email'		=>	$params['email'],
-								'date_add'	=>	$getId->row()->date_add
-							));
+				$dataSelect['deleted'] = 1;
+				$list = $this->Pegawaimodel->select($dataSelect, 'm_pegawai')->result();
+				echo json_encode(array('status' => 3,'list' => $list));
 			}else{
-				echo json_encode(array( 'status'=>2 ));
+				echo json_encode(array('status' => 1));
 			}
+			
 		}else{			
     		echo json_encode(array( 'status'=>1 ));
 		}
     }
-    function get($id = null){
+   
+	
+	function get($id = null){   	
     	if($id != null){
     		$dataSelect['id'] = $id;
     		$selectData = $this->Pegawaimodel->select($dataSelect, 'm_pegawai');
@@ -67,6 +73,7 @@ class Master extends MX_Controller {
     		echo json_encode(array('status' => 0));
     	}
     }
+	
     function edit(){
 		$params = $this->input->post();
 		$dataCondition['id']			= $params['id'];
@@ -82,30 +89,26 @@ class Master extends MX_Controller {
 		if($checkData->num_rows() > 0){
 			$update = $this->Pegawaimodel->update($dataCondition, $dataUpdate, 'm_pegawai');
 			if($update){
-				$getId = $this->Pegawaimodel->select($dataUpdate, 'm_pegawai');
-				echo json_encode(array( 	'status'	=>	3,
-								'id'		=> 	$getId->row()->id,
-								'nama' 		=>	$params['nama'],
-								'alamat'	=>	$params['alamat'],
-								'no_telp'	=>	$params['no_telp'],
-								'email'		=>	$params['email'],
-								'date_add'	=>	$getId->row()->date_add
-							));
+				$dataSelect['deleted'] = 1;
+				$list = $this->Pegawaimodel->select($dataSelect, 'm_pegawai')->result();
+				echo json_encode(array('status' => '3','list' => $list));
 			}else{
-				echo json_encode(array( 'status'=>2 ));
+				echo json_encode(array( 'status'=>'2' ));
 			}
 		}else{			
-    		echo json_encode(array( 'status'=>1 ));
+    		echo json_encode(array( 'status'=>'1' ));
 		}
     }
     function delete(){
-        $id = $this->input->post('id');
+		$id = $this->input->post("id");
     	if($id != null){
     		$dataCondition['id'] = $id;
     		$dataUpdate['deleted'] = 0;
     		$update = $this->Pegawaimodel->update($dataCondition, $dataUpdate, 'm_pegawai');
     		if($update){
-    			echo "2";
+    			$dataSelect['deleted'] = 1;
+				$list = $this->Pegawaimodel->select($dataSelect, 'm_pegawai')->result();
+				echo json_encode(array('status' => '3','list' => $list));
     		}else{
     			echo "1";
     		}
