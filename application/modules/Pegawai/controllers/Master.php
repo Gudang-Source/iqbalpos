@@ -42,7 +42,7 @@ class Master extends MX_Controller {
     		echo json_encode(array( 'status'=>1 ));
 		}
     }
-    function get($id = null){   	
+    function get($id = null){
     	if($id != null){
     		$dataSelect['id'] = $id;
     		$selectData = $this->Pegawaimodel->select($dataSelect, 'm_pegawai');
@@ -67,9 +67,9 @@ class Master extends MX_Controller {
     		echo json_encode(array('status' => 0));
     	}
     }
-    function edit($id = null){
+    function edit(){
 		$params = $this->input->post();
-		$dataCondition['id']			= $id;
+		$dataCondition['id']			= $params['id'];
 		$dataUpdate['nama'] 			= $params['nama'];
 		$dataUpdate['alamat'] 			= $params['alamat'];
 		$dataUpdate['no_telp'] 			= $params['no_telp'];
