@@ -190,7 +190,7 @@
 	  }
 	  
 	  $("#bodytable").html(html);
-	  $("#tablemain").DataTable();
+	  // $("#tablemain").DataTable();
 	  if (!awalLoad){
 		  $('.divpopover').attr("data-content","ok");
 		  $('.divpopover').popover();
@@ -213,15 +213,15 @@
   }
   
   function showUpdate(i){
-    $("#myModalLabel").text("Ubah Pegawai");
-    $("#id").val(jsonlist[i].id);
-  	$("#nama").val(jsonlist[i].nama);
-  	$("#alamat").val(jsonlist[i].alamat);
-  	$("#no_telp").val(jsonlist[i].no_telp);
-  	$("#email").val(jsonlist[i].email);
-  	$("#kodepos").val(jsonlist[i].kode_pos);
     load_prov(jsonprov);
     sync_kota(jsonlist[i].id_provinsi);
+    $("#myModalLabel").text("Ubah Pegawai");
+    $("#id").val(jsonlist[i].id);
+    $("#nama").val(jsonlist[i].nama);
+    $("#alamat").val(jsonlist[i].alamat);
+    $("#no_telp").val(jsonlist[i].no_telp);
+    $("#email").val(jsonlist[i].email);
+    $("#kodepos").val(jsonlist[i].kode_pos);
   	$("#id_provinsi").val(jsonlist[i].id_provinsi);
   	$("#id_kota").val(jsonlist[i].id_kota);
   	$("#id_pegawai_level").val(jsonlist[i].id_pegawai_level);

@@ -42,12 +42,45 @@
       <link rel="stylesheet" type="text/css" href="<?=base_url()?>assets/css/bootstrap-datepicker.min.css">
       <!-- Custom CSS -->
       <link href="<?=base_url()?>assets/css/Style-Dark.css" rel="stylesheet">
-      <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-      <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-      <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-      <![endif]-->
+     
+       <!-- slim scroll script -->
+      <script type="text/javascript" src="<?=base_url()?>assets/js/jquery.slimscroll.min.js"></script>
+      <!-- waves material design effect -->
+      <script type="text/javascript" src="<?=base_url()?>assets/js/waves.min.js"></script>
+      <!-- Bootstrap Core JavaScript -->
+      <script type="text/javascript" src="<?=base_url()?>assets/js/bootstrap.min.js"></script>
+      <!-- keyboard widget dependencies -->
+      <script type="text/javascript" src="<?=base_url()?>assets/js/jquery.keyboard.js"></script>
+      <script type="text/javascript" src="<?=base_url()?>assets/js/jquery.keyboard.extension-all.js"></script>
+      <script type="text/javascript" src="<?=base_url()?>assets/js/jquery.keyboard.extension-extender.js"></script>
+      <script type="text/javascript" src="<?=base_url()?>assets/js/jquery.keyboard.extension-typing.js"></script>
+      <script type="text/javascript" src="<?=base_url()?>assets/js/jquery.mousewheel.js"></script>
+      <!-- select2 plugin script -->
+      <script type="text/javascript" src="<?=base_url()?>assets/js/select2.min.js"></script>
+      <!-- dalatable scripts -->
+      <script src="<?=base_url()?>assets/datatables/js/jquery.dataTables.min.js"></script>
+      <script src="<?=base_url()?>assets/datatables/js/dataTables.bootstrap.js"></script>
+      <!-- summernote js -->
+      <script src="<?=base_url()?>assets/js/summernote.js"></script>
+      <!-- chart.js script -->
+      <script src="<?=base_url()?>assets/js/Chart.js"></script>
+      <!-- moment JS -->
+      <script type="text/javascript" src="<?=base_url()?>assets/js/moment.min.js"></script>
+      <!-- Include Date Range Picker -->
+      <script type="text/javascript" src="<?=base_url()?>assets/js/daterangepicker.js"></script>
+      <!-- Sweet Alert swal -->
+      <script src="<?=base_url()?>assets/js/sweetalert.min.js"></script>
+      <!-- datepicker script -->
+      <script src="<?=base_url()?>assets/js/bootstrap-datepicker.min.js"></script>
+      <!-- creditCardValidator script -->
+      <script src="<?=base_url()?>assets/js/jquery.creditCardValidator.js"></script>
+      <!-- creditCardValidator script -->
+      <script src="<?=base_url()?>assets/js/credit-card-scanner.js"></script>
+      <script src="<?=base_url()?>assets/js/jquery.redirect.js"></script>
+      <!-- ajax form -->
+      <script src="<?=base_url()?>assets/js/jquery.form.min.js"></script>
+      <!-- custom script -->
+      <script src="<?=base_url()?>assets/js/app.js"></script>
    </head>
    <body>
       <!-- Navigation -->
@@ -156,43 +189,6 @@
 
 
 
-      <!-- slim scroll script -->
-      <script type="text/javascript" src="<?=base_url()?>assets/js/jquery.slimscroll.min.js"></script>
-      <!-- waves material design effect -->
-      <script type="text/javascript" src="<?=base_url()?>assets/js/waves.min.js"></script>
-      <!-- Bootstrap Core JavaScript -->
-      <script type="text/javascript" src="<?=base_url()?>assets/js/bootstrap.min.js"></script>
-      <!-- keyboard widget dependencies -->
-      <script type="text/javascript" src="<?=base_url()?>assets/js/jquery.keyboard.js"></script>
-      <script type="text/javascript" src="<?=base_url()?>assets/js/jquery.keyboard.extension-all.js"></script>
-      <script type="text/javascript" src="<?=base_url()?>assets/js/jquery.keyboard.extension-extender.js"></script>
-      <script type="text/javascript" src="<?=base_url()?>assets/js/jquery.keyboard.extension-typing.js"></script>
-      <script type="text/javascript" src="<?=base_url()?>assets/js/jquery.mousewheel.js"></script>
-      <!-- select2 plugin script -->
-      <script type="text/javascript" src="<?=base_url()?>assets/js/select2.min.js"></script>
-      <!-- dalatable scripts -->
-      <script src="<?=base_url()?>assets/datatables/js/jquery.dataTables.min.js"></script>
-      <script src="<?=base_url()?>assets/datatables/js/dataTables.bootstrap.js"></script>
-      <!-- summernote js -->
-      <script src="<?=base_url()?>assets/js/summernote.js"></script>
-      <!-- chart.js script -->
-      <script src="<?=base_url()?>assets/js/Chart.js"></script>
-      <!-- moment JS -->
-      <script type="text/javascript" src="<?=base_url()?>assets/js/moment.min.js"></script>
-      <!-- Include Date Range Picker -->
-      <script type="text/javascript" src="<?=base_url()?>assets/js/daterangepicker.js"></script>
-      <!-- Sweet Alert swal -->
-      <script src="<?=base_url()?>assets/js/sweetalert.min.js"></script>
-      <!-- datepicker script -->
-      <script src="<?=base_url()?>assets/js/bootstrap-datepicker.min.js"></script>
-      <!-- creditCardValidator script -->
-      <script src="<?=base_url()?>assets/js/jquery.creditCardValidator.js"></script>
-      <!-- creditCardValidator script -->
-      <script src="<?=base_url()?>assets/js/credit-card-scanner.js"></script>
-      <script src="<?=base_url()?>assets/js/jquery.redirect.js"></script>
-      <!-- ajax form -->
-      <script src="<?=base_url()?>assets/js/jquery.form.min.js"></script>
-      <!-- custom script -->
-      <script src="<?=base_url()?>assets/js/app.js"></script>
+     
    </body>
 </html>
