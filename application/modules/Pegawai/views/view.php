@@ -6,7 +6,7 @@
   </div>
 </div>
    <div class="row" style="margin-top:10px;">
-      <table id="tablemain" class="table table-striped table-bordered" cellspacing="0" width="100%">
+      <table id="Table" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
               <tr>
                   <th>Nama Pegawai</th>
@@ -113,7 +113,6 @@
 
 
 <script type="text/javascript">
- 
 
   var jsonlist = <?php echo $list; ?>;
   var jsonprov = <?php echo $list_prov; ?>;
@@ -196,9 +195,8 @@
     $("#no_telp").val("");
     $("#email").val("");
     $("#kodepos").val("");
-    $("#id_provinsi").val("");
-    $("#id_kota").val("");
     $("#id_pegawai_level").val("");
+    load_prov(jsonprov);
     $("#modalform").modal("show");    
   }
   
