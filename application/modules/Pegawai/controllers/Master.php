@@ -7,8 +7,10 @@ class Master extends MX_Controller {
     }
     function index(){
     	$dataSelect['deleted'] = 1;
+    	$data['list_prov'] = json_encode($this->Pegawaimodel->select($dataSelect, 'm_provinsi')->result());
     	$data['list'] = json_encode($this->Pegawaimodel->select($dataSelect, 'm_pegawai')->result());
 		//echo $data;
+		//print_r($data);
     	$this->load->view('Pegawai/view', $data);
     }
 	
@@ -123,4 +125,12 @@ class Master extends MX_Controller {
     		echo "NOT FOUND";
     	}
     }
+    
+   
+    function get_kota(){
+        $dataSelect['id_provinsi'] = $this->input->get("id_prov");
+    	$dataSelect['deleted'] = 1;
+    	echo json_encode($this->Pegawaimodel->select($dataSelect, 'm_kota')->result());
+    }
+    
 }

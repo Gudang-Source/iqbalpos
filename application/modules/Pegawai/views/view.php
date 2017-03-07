@@ -1,7 +1,12 @@
 <!-- Page Content -->
 <div class="container">
-   <div class="row" style="margin-top:100px;">
-      <table id="Table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+<div class="row" style='min-height:80px;'>
+  <div id='notif-top' style="margin-top:50px;display:none;" class="col-md-4 alert alert-success pull-right">
+    <strong>Sukses!</strong> Data berhasil disimpan
+  </div>
+</div>
+   <div class="row" style="margin-top:10px;">
+      <table id="tablemain" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
               <tr>
                   <th>Nama Pegawai</th>
@@ -64,13 +69,16 @@
              <div class="col-sm-6">
                <div class="form-group">
                  <label for="id_provinsi">Provinsi</label>
-                 <input type="text" maxlength="50" name="id_provinsi" class="form-control" id="id_provinsi" placeholder="Provinsi">
+                 <select  onchange='get_kota()' name="id_provinsi" class="form-control" id="id_provinsi" >
+                 </select>
                </div>
              </div>
              <div class="col-sm-6">
                <div class="form-group">
                  <label for="id_kota">Kota</label>
-                 <input type="text" maxlength="50" name="id_kota" class="form-control" id="id_kota" placeholder="Kota">
+                 <select name="id_kota" class="form-control" id="id_kota">
+                 </select>
+                
                </div>
              </div>
              <div class="col-sm-6">
@@ -105,10 +113,51 @@
 
 
 <script type="text/javascript">
+ 
+
   var jsonlist = <?php echo $list; ?>;
+  var jsonprov = <?php echo $list_prov; ?>;
+ 
   var awalLoad = true;
   
   loadData(jsonlist);
+  load_prov(jsonprov);
+  
+  function load_prov(json){
+  	var html = "<option value=''>Pilih Provinsi</option>";
+  	for (var i=0;i<json.length;i++){
+  	     html = html+ "<option value='"+json[i].id+"'>"+json[i].nama+"</option>";
+  	}
+  	$("#id_provinsi").html(html);
+  }
+  
+  function load_kota(json){
+  	var html = "<option value=''>Pilih Kota</option>";
+  	for (var i=0;i<json.length;i++){
+  	     html = html+ "<option value='"+json[i].id+"'>"+json[i].nama+"</option>";
+  	}
+  	$("#id_kota").html(html);
+  }
+  
+  function get_kota(){
+  	if ($("#id_provinsi").val() == "" || $("#id_provinsi").val()==null){
+  	   return false;
+  	}
+  	$("#id_kota").prop("disabled",true);
+  	
+  	$.ajax({
+  	   url :"<?php echo base_url('Pegawai/Master/get_kota')?>/",
+  	   type : "GET",
+  	   data :"id_prov="+$("#id_provinsi").val(),
+  	   dataType : "json",
+  	   success : function(data){
+  	      $("#id_kota").prop("disabled",false);
+  	      load_kota(data);
+  	      
+  	   }
+  	});
+  }
+  
   function loadData(json){
 	 
 	  var html = "";
@@ -130,6 +179,7 @@
 	  }
 	  
 	  $("#bodytable").html(html);
+	  $("#tablemain").DataTable();
 	  if (!awalLoad){
 		  $('.divpopover').attr("data-content","ok");
 		  $('.divpopover').popover();
@@ -193,6 +243,8 @@
   				loadData(jsonlist);
           $('#aSimpan').html('Simpan');
   				$("#modalform").modal('hide');
+  				$("#notif-top").fadeIn(500);
+  				$("#notif-top").fadeOut(2500);
   			}
       }
     });
@@ -215,7 +267,8 @@
           },
           success: function (data) {
       			if (data.status == '3'){
-      				console.log("ojueojueokl"+data.status);
+  				$("#notif-top").fadeIn(500);
+  				$("#notif-top").fadeOut(2500);
       				jsonlist = data.list;
       				loadData(jsonlist);
       			}
@@ -232,5 +285,7 @@
 		$(el).popover();
 
 	}
+  
+
   
 </script>
