@@ -1,7 +1,7 @@
 <!-- Page Content -->
 <div class="container">
    <div class="row" style="margin-top:100px;">
-      <table id="tablemain" class="table table-striped table-bordered" cellspacing="0" width="100%">
+      <table id="Table" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
               <tr>
                   <th>Nama Pegawai</th>
