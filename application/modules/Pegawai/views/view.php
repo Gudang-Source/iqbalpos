@@ -116,6 +116,7 @@
 
   var jsonlist = <?php echo $list; ?>;
   var jsonprov = <?php echo $list_prov; ?>;
+  var jsonKota = <?php echo $list_kota; ?>
  
   var awalLoad = true;
   
@@ -131,6 +132,7 @@
   }
   
   function load_kota(json){
+    console.log(json);
   	var html = "<option value=''>Pilih Kota</option>";
   	for (var i=0;i<json.length;i++){
   	     html = html+ "<option value='"+json[i].id+"'>"+json[i].nama+"</option>";
@@ -164,7 +166,7 @@
        dataType : "json",
        success : function(data){
           $("#id_kota").prop("disabled",false);
-          load_kota(data);          
+          load_kota(data);
        }
     });
   }
@@ -214,7 +216,8 @@
   
   function showUpdate(i){
     load_prov(jsonprov);
-    sync_kota(jsonlist[i].id_provinsi);
+    load_kota(jsonKota);
+
     $("#myModalLabel").text("Ubah Pegawai");
     $("#id").val(jsonlist[i].id);
     $("#nama").val(jsonlist[i].nama);

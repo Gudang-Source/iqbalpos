@@ -7,7 +7,8 @@ class Master extends MX_Controller {
     }
     function index(){
     	$dataSelect['deleted'] = 1;
-    	$data['list_prov'] = json_encode($this->Pegawaimodel->select($dataSelect, 'm_provinsi')->result());
+        $data['list_prov'] = json_encode($this->Pegawaimodel->select($dataSelect, 'm_provinsi')->result());
+    	$data['list_kota'] = json_encode($this->Pegawaimodel->select($dataSelect, 'm_kota')->result());
     	$data['list'] = json_encode($this->Pegawaimodel->select($dataSelect, 'm_pegawai')->result());
 		//echo $data;
 		//print_r($data);
