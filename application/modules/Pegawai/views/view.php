@@ -156,6 +156,18 @@
   	   }
   	});
   }
+  function sync_kota(provinsi){
+    $.ajax({
+       url :"<?php echo base_url('Pegawai/Master/get_kota')?>/",
+       type : "GET",
+       data :"id_prov="+provinsi,
+       dataType : "json",
+       success : function(data){
+          $("#id_kota").prop("disabled",false);
+          load_kota(data);          
+       }
+    });
+  }
   
   function loadData(json){
 	 
@@ -208,6 +220,8 @@
   	$("#no_telp").val(jsonlist[i].no_telp);
   	$("#email").val(jsonlist[i].email);
   	$("#kodepos").val(jsonlist[i].kode_pos);
+    load_prov(jsonprov);
+    sync_kota(jsonlist[i].id_provinsi);
   	$("#id_provinsi").val(jsonlist[i].id_provinsi);
   	$("#id_kota").val(jsonlist[i].id_kota);
   	$("#id_pegawai_level").val(jsonlist[i].id_pegawai_level);
