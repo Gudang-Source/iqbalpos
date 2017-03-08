@@ -9,10 +9,10 @@
       <table id="Table" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
               <tr>
-                  <th class="text-center">Nama Pegawai</th>
+                  <th class="text-center">Nama Customer</th>
                   <th class="text-center">Alamat</th>
-                  <th class="text-center">No. HP</th>
-                  <th class="text-center" class="hidden-xs">Email</th>
+                  <th class="text-center">No. Telp</th>
+                  <th class="text-center" class="hidden-xs">Customer Email</th>
                   <th class="text-center" class="hidden-xs">Tanggal Buat</th>
                   <th class="text-center">Aksi</th>
               </tr>
@@ -25,7 +25,7 @@
    </div>
    <!-- Button trigger modal -->
    <button type="button" class="btn btn-add btn-lg"  onclick="showAdd()">
-     Tambah Pegawai
+     Tambah Customer
    </button>
 </div>
 <!-- /.container -->
@@ -36,34 +36,34 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Tambah Pegawai</h4>
+        <h4 class="modal-title" id="myModalLabel">Tambah Customer</h4>
       </div>
       <form action="" method="POST" id="myform">      
         <div class="modal-body">
            <div class="row">
              <div class="col-sm-12">
                 <div class="form-group">
-                 <label for="nama">Nama Pegawai</label>
-                 <input type="text" name="nama" maxlength="50" Required class="form-control" id="nama" placeholder="Nama Pegawai">
-                 <input type="hidden" name="id" maxlength="50" Required class="form-control" id="id" placeholder="Nama Pegawai">
+                 <label for="nama">Nama Customer</label>
+                 <input type="text" name="nama" maxlength="50" Required class="form-control" id="nama" placeholder="Nama Customer">
+                 <input type="hidden" name="id" maxlength="50" Required class="form-control" id="id" placeholder="ID Customer">
                </div>
              </div>
              <div class="col-sm-12">
                <div class="form-group">
-                 <label for="alamat">Alamat Pegawai</label>
-                 <input type="text" name="alamat" maxlength="30" class="form-control" id="alamat" placeholder="Alamat Pegawai">
+                 <label for="alamat">Alamat Customer</label>
+                 <input type="text" name="alamat" maxlength="30" class="form-control" id="alamat" placeholder="Alamat Customer">
                </div>
              </div>
              <div class="col-sm-6">
                <div class="form-group">
-                 <label for="no_telp">No Telp Pegawai</label>
-                 <input type="text" maxlength="50" name="no_telp" class="form-control" id="no_telp" placeholder="No Telp Pegawai">
+                 <label for="no_telp">No Telp Customer</label>
+                 <input type="text" maxlength="50" name="no_telp" class="form-control" id="no_telp" placeholder="No Telp Customer">
                </div>
              </div>
              <div class="col-sm-6">
                <div class="form-group">
-                 <label for="email">Email Pegawai</label>
-                 <input type="email" maxlength="50" name="email" class="form-control" id="email" placeholder="Email Pegawai">
+                 <label for="email">Email Customer</label>
+                 <input type="email" maxlength="50" name="email" class="form-control" id="email" placeholder="Email Customer">
                </div>
              </div>
              <div class="col-sm-6">
@@ -89,14 +89,8 @@
              </div>
              <div class="col-sm-6">
                <div class="form-group">
-                 <label for="id_pegawai_level">Level</label>
-                 <input type="text" maxlength="50" name="id_pegawai_level" class="form-control" id="id_pegawai_level" placeholder="Level">
-               </div>
-             </div>
-             <div class="col-sm-6">
-               <div class="form-group">
-                 <label for="password">Password</label>
-                 <input type="password" maxlength="50" name="password" class="form-control" id="password" placeholder="Password">
+                 <label for="id_customer_level">Level</label>
+                 <input type="text" maxlength="50" name="id_customer_level" class="form-control" id="id_customer_level" placeholder="Level">
                </div>
              </div>
            </div>
@@ -147,7 +141,7 @@
   	$("#id_kota").prop("disabled",true);
   	
   	$.ajax({
-  	   url :"<?php echo base_url('Pegawai/Master/get_kota')?>/",
+  	   url :"<?php echo base_url('Customer/Master/get_kota')?>/",
   	   type : "GET",
   	   data :"id_prov="+$("#id_provinsi").val(),
   	   dataType : "json",
@@ -160,7 +154,7 @@
   }
   function sync_kota(provinsi){
     $.ajax({
-       url :"<?php echo base_url('Pegawai/Master/get_kota')?>/",
+       url :"<?php echo base_url('Customer/Master/get_kota')?>/",
        type : "GET",
        data :"id_prov="+provinsi,
        dataType : "json",
@@ -202,14 +196,14 @@
   
   
   function showAdd(){
-    $("#myModalLabel").text("Tambah Pegawai");
+    $("#myModalLabel").text("Tambah Customer");
     $("#id").val("");
     $("#nama").val("");
     $("#alamat").val("");
     $("#no_telp").val("");
     $("#email").val("");
     $("#kodepos").val("");
-    $("#id_pegawai_level").val("");
+    $("#id_customer_level").val("");
     load_prov(jsonprov);
     $("#modalform").modal("show");    
   }
@@ -218,7 +212,7 @@
     load_prov(jsonprov);
     load_kota(jsonKota);
 
-    $("#myModalLabel").text("Ubah Pegawai");
+    $("#myModalLabel").text("Ubah Customer");
     $("#id").val(jsonlist[i].id);
     $("#nama").val(jsonlist[i].nama);
     $("#alamat").val(jsonlist[i].alamat);
@@ -227,15 +221,15 @@
     $("#kodepos").val(jsonlist[i].kode_pos);
   	$("#id_provinsi").val(jsonlist[i].id_provinsi);
   	$("#id_kota").val(jsonlist[i].id_kota);
-  	$("#id_pegawai_level").val(jsonlist[i].id_pegawai_level);
+  	$("#id_customer_level").val(jsonlist[i].id_customer_level);
 	  $("#modalform").modal("show");
   }
   
   $("#myform").on('submit', function(e){
     e.preventDefault();
-	  var action = "<?php echo base_url('Pegawai/Master/add')?>/";
+	  var action = "<?php echo base_url('Customer/Master/add')?>/";
 	  if ($("#id").val() != ""){
-		  action = "<?php echo base_url('Pegawai/Master/edit')?>/";
+		  action = "<?php echo base_url('Customer/Master/edit')?>/";
 	  }
 	  var param = $('#myform').serialize();
 	  if ($("#id").val() != ""){
@@ -273,7 +267,7 @@
 		//console.log(jsonlist[i]);
 		$.ajax({
           type: 'post',
-          url: '<?php echo base_url('Pegawai/Master/delete'); ?>/',
+          url: '<?php echo base_url('Customer/Master/delete'); ?>/',
           data: {"id":jsonlist[i].id},
 		      dataType: 'json',
           beforeSend: function() { 
@@ -296,7 +290,7 @@
 		console.log(element);
 		var id  = element.replace("group","");
 		var i = parseInt(id);
-		$(el).attr("data-content","<button class=\'btn btn-danger myconfirm\'  href=\'#\' onclick=\'deleteData(this)\' id=\'aConfirm"+i+"\' style=\'width:85px\'><i class=\'fa fa-trash\'></i> Ya</button>");
+    $(el).attr("data-content","<button class=\'btn btn-danger myconfirm\'  href=\'#\' onclick=\'deleteData(this)\' id=\'aConfirm"+i+"\' style=\'width:85px\'><i class=\'fa fa-trash\'></i> Ya</button>");
 		$(el).popover();
 
 	}

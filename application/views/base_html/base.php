@@ -72,6 +72,8 @@
       <script src="<?=base_url()?>assets/js/sweetalert.min.js"></script>
       <!-- datepicker script -->
       <script src="<?=base_url()?>assets/js/bootstrap-datepicker.min.js"></script>
+      <!-- dateformat script -->
+      <script src="<?=base_url()?>assets/js/dateFormat.min.js"></script>
       <!-- creditCardValidator script -->
       <script src="<?=base_url()?>assets/js/jquery.creditCardValidator.js"></script>
       <!-- creditCardValidator script -->
