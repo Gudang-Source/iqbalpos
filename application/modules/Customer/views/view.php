@@ -51,32 +51,32 @@
              <div class="col-sm-12">
                <div class="form-group">
                  <label for="alamat">Alamat Customer</label>
-                 <input type="text" name="alamat" maxlength="30" class="form-control" id="alamat" placeholder="Alamat Customer">
+                 <input type="text" name="alamat" maxlength="30" class="form-control" id="alamat" placeholder="Alamat Customer" required="">
                </div>
              </div>
              <div class="col-sm-6">
                <div class="form-group">
                  <label for="no_telp">No Telp Customer</label>
-                 <input type="text" maxlength="50" name="no_telp" class="form-control" id="no_telp" placeholder="No Telp Customer">
+                 <input type="text" maxlength="50" name="no_telp" class="form-control" id="no_telp" placeholder="No Telp Customer" required="">
                </div>
              </div>
              <div class="col-sm-6">
                <div class="form-group">
                  <label for="email">Email Customer</label>
-                 <input type="email" maxlength="50" name="email" class="form-control" id="email" placeholder="Email Customer">
+                 <input type="email" maxlength="50" name="email" class="form-control" id="email" placeholder="Email Customer" required="">
                </div>
              </div>
              <div class="col-sm-6">
                <div class="form-group">
                  <label for="id_provinsi">Provinsi</label>
-                 <select  onchange='get_kota()' name="id_provinsi" class="form-control" id="id_provinsi" >
+                 <select  onchange='get_kota()' name="id_provinsi" class="form-control" id="id_provinsi" required="">
                  </select>
                </div>
              </div>
              <div class="col-sm-6">
                <div class="form-group">
                  <label for="id_kota">Kota</label>
-                 <select name="id_kota" class="form-control" id="id_kota">
+                 <select name="id_kota" class="form-control" id="id_kota" required="">
                  </select>
                 
                </div>
@@ -84,13 +84,14 @@
              <div class="col-sm-6">
                <div class="form-group">
                  <label for="kodepos">Kode Pos</label>
-                 <input type="text" maxlength="10" name="kodepos" class="form-control" id="kodepos" placeholder="Kode Pos">
+                 <input type="text" maxlength="10" name="kodepos" class="form-control" id="kodepos" placeholder="Kode Pos" required="">
                </div>
              </div>
              <div class="col-sm-6">
                <div class="form-group">
                  <label for="id_customer_level">Level</label>
-                 <input type="text" maxlength="50" name="id_customer_level" class="form-control" id="id_customer_level" placeholder="Level">
+                 <select name="id_customer_level" class="form-control" id="id_customer_level" required="">
+                 </select>
                </div>
              </div>
            </div>
@@ -108,14 +109,16 @@
 
 <script type="text/javascript">
 
-  var jsonlist = <?php echo $list; ?>;
-  var jsonprov = <?php echo $list_prov; ?>;
-  var jsonKota = <?php echo $list_kota; ?>
+  var jsonList = <?php echo $list; ?>;
+  var jsonProv = <?php echo $list_prov; ?>;
+  var jsonKota = <?php echo $list_kota; ?>;
+  var jsonLevel = <?php echo $list_level; ?>;
  
   var awalLoad = true;
   
-  loadData(jsonlist);
-  load_prov(jsonprov);
+  loadData(jsonList);
+  load_prov(jsonProv);
+  load_level(jsonLevel);
   
   function load_prov(json){
   	var html = "<option value=''>Pilih Provinsi</option>";
@@ -124,14 +127,21 @@
   	}
   	$("#id_provinsi").html(html);
   }
-  
   function load_kota(json){
     console.log(json);
-  	var html = "<option value=''>Pilih Kota</option>";
+    var html = "<option value=''>Pilih Kota</option>";
+    for (var i=0;i<json.length;i++){
+         html = html+ "<option value='"+json[i].id+"'>"+json[i].nama+"</option>";
+    }
+    $("#id_kota").html(html);
+  }
+  function load_level(json){
+    console.log(json);
+  	var html = "<option value=''>Pilih Customer Level</option>";
   	for (var i=0;i<json.length;i++){
   	     html = html+ "<option value='"+json[i].id+"'>"+json[i].nama+"</option>";
   	}
-  	$("#id_kota").html(html);
+  	$("#id_customer_level").html(html);
   }
   
   function get_kota(){
@@ -204,24 +214,26 @@
     $("#email").val("");
     $("#kodepos").val("");
     $("#id_customer_level").val("");
-    load_prov(jsonprov);
+    load_prov(jsonProv);
+    load_level(jsonLevel);
     $("#modalform").modal("show");    
   }
   
   function showUpdate(i){
-    load_prov(jsonprov);
+    load_prov(jsonProv);
     load_kota(jsonKota);
+    load_level(jsonLevel);
 
     $("#myModalLabel").text("Ubah Customer");
-    $("#id").val(jsonlist[i].id);
-    $("#nama").val(jsonlist[i].nama);
-    $("#alamat").val(jsonlist[i].alamat);
-    $("#no_telp").val(jsonlist[i].no_telp);
-    $("#email").val(jsonlist[i].email);
-    $("#kodepos").val(jsonlist[i].kode_pos);
-  	$("#id_provinsi").val(jsonlist[i].id_provinsi);
-  	$("#id_kota").val(jsonlist[i].id_kota);
-  	$("#id_customer_level").val(jsonlist[i].id_customer_level);
+    $("#id").val(jsonList[i].id);
+    $("#nama").val(jsonList[i].nama);
+    $("#alamat").val(jsonList[i].alamat);
+    $("#no_telp").val(jsonList[i].no_telp);
+    $("#email").val(jsonList[i].email);
+    $("#kodepos").val(jsonList[i].kode_pos);
+  	$("#id_provinsi").val(jsonList[i].id_provinsi);
+  	$("#id_kota").val(jsonList[i].id_kota);
+  	$("#id_customer_level").val(jsonList[i].id_customer_level);
 	  $("#modalform").modal("show");
   }
   
@@ -248,8 +260,8 @@
       success: function (data) {
   			if (data.status == '3'){
   				console.log("ojueojueokl"+data.status);
-  				jsonlist = data.list;
-  				loadData(jsonlist);
+  				jsonList = data.list;
+  				loadData(jsonList);
           $('#aSimpan').html('Simpan');
   				$("#modalform").modal('hide');
   				$("#notif-top").fadeIn(500);
@@ -264,11 +276,11 @@
 		console.log(el);
 		var id  = el.replace("aConfirm","");
 		var i = parseInt(id);
-		//console.log(jsonlist[i]);
+		//console.log(jsonList[i]);
 		$.ajax({
           type: 'post',
           url: '<?php echo base_url('Customer/Master/delete'); ?>/',
-          data: {"id":jsonlist[i].id},
+          data: {"id":jsonList[i].id},
 		      dataType: 'json',
           beforeSend: function() { 
             // kasi loading
@@ -278,8 +290,8 @@
       			if (data.status == '3'){
   				$("#notif-top").fadeIn(500);
   				$("#notif-top").fadeOut(2500);
-      				jsonlist = data.list;
-      				loadData(jsonlist);
+      				jsonList = data.list;
+      				loadData(jsonList);
       			}
           }    
         });
@@ -290,7 +302,7 @@
 		console.log(element);
 		var id  = element.replace("group","");
 		var i = parseInt(id);
-    $(el).attr("data-content","<button class=\'btn btn-danger myconfirm\'  href=\'#\' onclick=\'deleteData(this)\' id=\'aConfirm"+i+"\' style=\'width:85px\'><i class=\'fa fa-trash\'></i> Ya</button>");
+    $(el).attr("data-content","<button class=\'btn btn-danger myconfirm\'  href=\'#\' onclick=\'deleteData(this)\' id=\'aConfirm"+i+"\' style=\'min-width:85px\'><i class=\'fa fa-trash\'></i> Ya</button>");
 		$(el).popover();
 
 	}

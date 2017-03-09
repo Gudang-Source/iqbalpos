@@ -10,6 +10,7 @@ class Master extends MX_Controller {
     	$dataSelect['deleted'] = 1;
         $data['list_prov'] = json_encode($this->Customermodel->select($dataSelect, 'm_provinsi')->result());
         $data['list_kota'] = json_encode($this->Customermodel->select($dataSelect, 'm_kota')->result());
+        $data['list_level'] = json_encode($this->Customermodel->select($dataSelect, 'm_customer_level')->result());
     	$data['list'] = json_encode($this->Customermodel->select($dataSelect, 'm_customer')->result());
 		//echo $data;
 		//print_r($data);

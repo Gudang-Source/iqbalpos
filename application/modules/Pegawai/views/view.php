@@ -51,32 +51,32 @@
              <div class="col-sm-12">
                <div class="form-group">
                  <label for="alamat">Alamat Pegawai</label>
-                 <input type="text" name="alamat" maxlength="30" class="form-control" id="alamat" placeholder="Alamat Pegawai">
+                 <input type="text" name="alamat" maxlength="30" class="form-control" id="alamat" placeholder="Alamat Pegawai" required="">
                </div>
              </div>
              <div class="col-sm-6">
                <div class="form-group">
                  <label for="no_telp">No Telp Pegawai</label>
-                 <input type="text" maxlength="50" name="no_telp" class="form-control" id="no_telp" placeholder="No Telp Pegawai">
+                 <input type="text" maxlength="50" name="no_telp" class="form-control" id="no_telp" placeholder="No Telp Pegawai"  required="">
                </div>
              </div>
              <div class="col-sm-6">
                <div class="form-group">
                  <label for="email">Email Pegawai</label>
-                 <input type="email" maxlength="50" name="email" class="form-control" id="email" placeholder="Email Pegawai">
+                 <input type="email" maxlength="50" name="email" class="form-control" id="email" placeholder="Email Pegawai"  required="">
                </div>
              </div>
              <div class="col-sm-6">
                <div class="form-group">
                  <label for="id_provinsi">Provinsi</label>
-                 <select  onchange='get_kota()' name="id_provinsi" class="form-control" id="id_provinsi" >
+                 <select  onchange='get_kota()' name="id_provinsi" class="form-control" id="id_provinsi"  required="">
                  </select>
                </div>
              </div>
              <div class="col-sm-6">
                <div class="form-group">
                  <label for="id_kota">Kota</label>
-                 <select name="id_kota" class="form-control" id="id_kota">
+                 <select name="id_kota" class="form-control" id="id_kota"  required="">
                  </select>
                 
                </div>
@@ -84,19 +84,19 @@
              <div class="col-sm-6">
                <div class="form-group">
                  <label for="kodepos">Kode Pos</label>
-                 <input type="text" maxlength="10" name="kodepos" class="form-control" id="kodepos" placeholder="Kode Pos">
+                 <input type="text" maxlength="10" name="kodepos" class="form-control" id="kodepos" placeholder="Kode Pos"  required="">
                </div>
              </div>
              <div class="col-sm-6">
                <div class="form-group">
                  <label for="id_pegawai_level">Level</label>
-                 <input type="text" maxlength="50" name="id_pegawai_level" class="form-control" id="id_pegawai_level" placeholder="Level">
+                 <input type="text" maxlength="50" name="id_pegawai_level" class="form-control" id="id_pegawai_level" placeholder="Level" required="">
                </div>
              </div>
              <div class="col-sm-6">
                <div class="form-group">
                  <label for="password">Password</label>
-                 <input type="password" maxlength="50" name="password" class="form-control" id="password" placeholder="Password">
+                 <input type="password" maxlength="50" name="password" class="form-control" id="password" placeholder="Password" required="">
                </div>
              </div>
            </div>
@@ -296,11 +296,9 @@
 		console.log(element);
 		var id  = element.replace("group","");
 		var i = parseInt(id);
-		$(el).attr("data-content","<button class=\'btn btn-danger myconfirm\'  href=\'#\' onclick=\'deleteData(this)\' id=\'aConfirm"+i+"\' style=\'width:85px\'><i class=\'fa fa-trash\'></i> Ya</button>");
+		$(el).attr("data-content","<button class=\'btn btn-danger myconfirm\'  href=\'#\' onclick=\'deleteData(this)\' id=\'aConfirm"+i+"\' style=\'min-width:85px\'><i class=\'fa fa-trash\'></i> Ya</button>");
 		$(el).popover();
 
 	}
-  
-
   
 </script>
