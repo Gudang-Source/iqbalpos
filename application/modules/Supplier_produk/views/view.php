@@ -9,9 +9,9 @@
       <table id="Table" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
               <tr>
-                  <th class="text-center">Nama Pegawai</th>
+                  <th class="text-center">Nama Supplier Produk</th>
                   <th class="text-center">Alamat</th>
-                  <th class="text-center">No. HP</th>
+                  <th class="text-center">No. Telp</th>
                   <th class="text-center" class="hidden-xs">Email</th>
                   <th class="text-center" class="hidden-xs">Tanggal Buat</th>
                   <th class="text-center">Aksi</th>
@@ -25,7 +25,7 @@
    </div>
    <!-- Button trigger modal -->
    <button type="button" class="btn btn-add btn-lg"  onclick="showAdd()">
-     Tambah Pegawai
+     Tambah Supplier Produk
    </button>
 </div>
 <!-- /.container -->
@@ -36,68 +36,49 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Tambah Pegawai</h4>
+        <h4 class="modal-title" id="myModalLabel">Tambah Supplier Produk</h4>
       </div>
       <form action="" method="POST" id="myform">      
         <div class="modal-body">
            <div class="row">
              <div class="col-sm-12">
                 <div class="form-group">
-                 <label for="nama">Nama Pegawai</label>
-                 <input type="text" name="nama" maxlength="50" Required class="form-control" id="nama" placeholder="Nama Pegawai">
-                 <input type="hidden" name="id" maxlength="50" Required class="form-control" id="id" placeholder="Nama Pegawai">
+                 <label for="nama">Nama Supplier Produk</label>
+                 <input type="text" name="nama" maxlength="50" Required class="form-control" id="nama" placeholder="Nama Supplier Produk">
+                 <input type="hidden" name="id" maxlength="50" Required class="form-control" id="id" placeholder="ID Supplier Produk">
                </div>
              </div>
              <div class="col-sm-12">
                <div class="form-group">
-                 <label for="alamat">Alamat Pegawai</label>
-                 <input type="text" name="alamat" maxlength="30" class="form-control" id="alamat" placeholder="Alamat Pegawai" required="">
+                 <label for="alamat">Alamat Supplier Produk</label>
+                 <input type="text" name="alamat" maxlength="30" class="form-control" id="alamat" placeholder="Alamat Supplier Produk" required="">
                </div>
              </div>
              <div class="col-sm-6">
                <div class="form-group">
-                 <label for="no_telp">No Telp Pegawai</label>
-                 <input type="text" maxlength="50" name="no_telp" class="form-control" id="no_telp" placeholder="No Telp Pegawai"  required="">
+                 <label for="no_telp">No Telp Supplier Produk</label>
+                 <input type="text" maxlength="50" name="no_telp" class="form-control" id="no_telp" placeholder="No Telp Supplier Produk" required="">
                </div>
              </div>
              <div class="col-sm-6">
                <div class="form-group">
-                 <label for="email">Email Pegawai</label>
-                 <input type="email" maxlength="50" name="email" class="form-control" id="email" placeholder="Email Pegawai"  required="">
+                 <label for="email">Email Supplier Produk</label>
+                 <input type="email" maxlength="50" name="email" class="form-control" id="email" placeholder="Email Supplier Produk" required="">
                </div>
              </div>
              <div class="col-sm-6">
                <div class="form-group">
                  <label for="id_provinsi">Provinsi</label>
-                 <select  onchange='get_kota()' name="id_provinsi" class="form-control" id="id_provinsi"  required="">
+                 <select  onchange='get_kota()' name="id_provinsi" class="form-control" id="id_provinsi" required="">
                  </select>
                </div>
              </div>
              <div class="col-sm-6">
                <div class="form-group">
                  <label for="id_kota">Kota</label>
-                 <select name="id_kota" class="form-control" id="id_kota"  required="">
+                 <select name="id_kota" class="form-control" id="id_kota" required="">
                  </select>
                 
-               </div>
-             </div>
-             <div class="col-sm-6">
-               <div class="form-group">
-                 <label for="kodepos">Kode Pos</label>
-                 <input type="text" maxlength="10" name="kodepos" class="form-control" id="kodepos" placeholder="Kode Pos"  required="">
-               </div>
-             </div>
-             <div class="col-sm-6">
-               <div class="form-group">
-                 <label for="id_pegawai_level">Level</label>
-                 <select name="id_pegawai_level" class="form-control" id="id_pegawai_level" required="">
-                 </select>
-               </div>
-             </div>
-             <div class="col-sm-6">
-               <div class="form-group">
-                 <label for="password">Password</label>
-                 <input type="password" maxlength="50" name="password" class="form-control" id="password" placeholder="Password" required="">
                </div>
              </div>
            </div>
@@ -115,16 +96,14 @@
 
 <script type="text/javascript">
 
-  var jsonlist = <?php echo $list; ?>;
-  var jsonprov = <?php echo $list_prov; ?>;
+  var jsonList = <?php echo $list; ?>;
+  var jsonProv = <?php echo $list_prov; ?>;
   var jsonKota = <?php echo $list_kota; ?>;
-  var jsonLevel = <?php echo $list_level; ?>;
  
   var awalLoad = true;
   
-  loadData(jsonlist);
-  load_prov(jsonprov);
-  load_level(jsonlevel);
+  loadData(jsonList);
+  load_prov(jsonProv);
   
   function load_prov(json){
   	var html = "<option value='' selected disabled>Pilih Provinsi</option>";
@@ -141,14 +120,6 @@
     }
     $("#id_kota").html(html);
   }
-  function load_level(json){
-    console.log(json);
-  	var html = "<option value='' selected disabled>Pilih Level Pegawai</option>";
-  	for (var i=0;i<json.length;i++){
-  	     html = html+ "<option value='"+json[i].id+"'>"+json[i].nama+"</option>";
-  	}
-  	$("#id_pegawai_level").html(html);
-  }
   
   function get_kota(){
   	if ($("#id_provinsi").val() == "" || $("#id_provinsi").val()==null){
@@ -157,20 +128,19 @@
   	$("#id_kota").prop("disabled",true);
   	
   	$.ajax({
-  	   url :"<?php echo base_url('Pegawai/Master/get_kota')?>/",
+  	   url :"<?php echo base_url('Supplier_produk/Master/get_kota')?>/",
   	   type : "GET",
   	   data :"id_prov="+$("#id_provinsi").val(),
   	   dataType : "json",
   	   success : function(data){
   	      $("#id_kota").prop("disabled",false);
   	      load_kota(data);
-  	      
   	   }
   	});
   }
   function sync_kota(provinsi){
     $.ajax({
-       url :"<?php echo base_url('Pegawai/Master/get_kota')?>/",
+       url :"<?php echo base_url('Supplier_produk/Master/get_kota')?>/",
        type : "GET",
        data :"id_prov="+provinsi,
        dataType : "json",
@@ -212,42 +182,36 @@
   
   
   function showAdd(){
-    $("#myModalLabel").text("Tambah Pegawai");
+    $("#myModalLabel").text("Tambah Supplier Produk");
     $("#id").val("");
     $("#nama").val("");
     $("#alamat").val("");
     $("#no_telp").val("");
     $("#email").val("");
-    $("#kodepos").val("");
-    $("#id_pegawai_level").val("");
-    load_prov(jsonprov);
-    load_level(jsonLevel);
+    load_prov(jsonProv);
     $("#modalform").modal("show");    
   }
   
   function showUpdate(i){
-    load_prov(jsonprov);
+    load_prov(jsonProv);
     load_kota(jsonKota);
-    load_level(jsonLevel);
 
-    $("#myModalLabel").text("Ubah Pegawai");
-    $("#id").val(jsonlist[i].id);
-    $("#nama").val(jsonlist[i].nama);
-    $("#alamat").val(jsonlist[i].alamat);
-    $("#no_telp").val(jsonlist[i].no_telp);
-    $("#email").val(jsonlist[i].email);
-    $("#kodepos").val(jsonlist[i].kode_pos);
-  	$("#id_provinsi").val(jsonlist[i].id_provinsi);
-    $("#id_kota").val(jsonlist[i].id_kota);
-  	$("#id_pegawai_level").val(jsonlist[i].id_pegawai_level);
+    $("#myModalLabel").text("Ubah Supplier Produk");
+    $("#id").val(jsonList[i].id);
+    $("#nama").val(jsonList[i].nama);
+    $("#alamat").val(jsonList[i].alamat);
+    $("#no_telp").val(jsonList[i].no_telp);
+    $("#email").val(jsonList[i].email);
+  	$("#id_provinsi").val(jsonList[i].id_provinsi);
+  	$("#id_kota").val(jsonList[i].id_kota);
 	  $("#modalform").modal("show");
   }
   
   $("#myform").on('submit', function(e){
     e.preventDefault();
-	  var action = "<?php echo base_url('Pegawai/Master/add')?>/";
+	  var action = "<?php echo base_url('Supplier_produk/Master/add')?>/";
 	  if ($("#id").val() != ""){
-		  action = "<?php echo base_url('Pegawai/Master/edit')?>/";
+		  action = "<?php echo base_url('Supplier_produk/Master/edit')?>/";
 	  }
 	  var param = $('#myform').serialize();
 	  if ($("#id").val() != ""){
@@ -266,8 +230,8 @@
       success: function (data) {
   			if (data.status == '3'){
   				console.log("ojueojueokl"+data.status);
-  				jsonlist = data.list;
-  				loadData(jsonlist);
+  				jsonList = data.list;
+  				loadData(jsonList);
           $('#aSimpan').html('Simpan');
   				$("#modalform").modal('hide');
   				$("#notif-top").fadeIn(500);
@@ -282,11 +246,11 @@
 		console.log(el);
 		var id  = el.replace("aConfirm","");
 		var i = parseInt(id);
-		//console.log(jsonlist[i]);
+		//console.log(jsonList[i]);
 		$.ajax({
           type: 'post',
-          url: '<?php echo base_url('Pegawai/Master/delete'); ?>/',
-          data: {"id":jsonlist[i].id},
+          url: '<?php echo base_url('Supplier_produk/Master/delete'); ?>/',
+          data: {"id":jsonList[i].id},
 		      dataType: 'json',
           beforeSend: function() { 
             // kasi loading
@@ -296,8 +260,8 @@
       			if (data.status == '3'){
   				$("#notif-top").fadeIn(500);
   				$("#notif-top").fadeOut(2500);
-      				jsonlist = data.list;
-      				loadData(jsonlist);
+      				jsonList = data.list;
+      				loadData(jsonList);
       			}
           }    
         });
@@ -308,9 +272,11 @@
 		console.log(element);
 		var id  = element.replace("group","");
 		var i = parseInt(id);
-		$(el).attr("data-content","<button class=\'btn btn-danger myconfirm\'  href=\'#\' onclick=\'deleteData(this)\' id=\'aConfirm"+i+"\' style=\'min-width:85px\'><i class=\'fa fa-trash\'></i> Ya</button>");
+    $(el).attr("data-content","<button class=\'btn btn-danger myconfirm\'  href=\'#\' onclick=\'deleteData(this)\' id=\'aConfirm"+i+"\' style=\'min-width:85px\'><i class=\'fa fa-trash\'></i> Ya</button>");
 		$(el).popover();
 
 	}
+  
+
   
 </script>

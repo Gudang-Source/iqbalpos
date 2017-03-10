@@ -9,7 +9,7 @@
       <table id="Table" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
               <tr>
-                  <th class="text-center">Nama Customer Level</th>
+                  <th class="text-center">Nama Pegawai Level</th>
                   <th class="text-center" class="hidden-xs">Tanggal Buat</th>
                   <th class="text-center">Aksi</th>
               </tr>
@@ -22,30 +22,77 @@
    </div>
    <!-- Button trigger modal -->
    <button type="button" class="btn btn-add btn-lg"  onclick="showAdd()">
-     Tambah Customer Level
+     Tambah Pegawai Level
    </button>
 </div>
 <!-- /.container -->
 
 <!-- Modal Add -->
 <div class="modal fade" id="modalform" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
- <div class="modal-dialog" role="document">
+ <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Tambah Customer Level</h4>
+        <h4 class="modal-title" id="myModalLabel">Tambah Pegawai Level</h4>
       </div>
       <form action="" method="POST" id="myform">      
         <div class="modal-body">
            <div class="row">
-             <div class="col-sm-12">
+             <div class="col-md-6 col-sm-12">
                 <div class="form-group">
-                 <label for="nama">Nama Customer Level</label>
-                 <input type="text" name="nama" maxlength="50" Required class="form-control" id="nama" placeholder="Nama Customer Level">
-                 <input type="hidden" name="id" maxlength="50" Required class="form-control" id="id" placeholder="ID Customer Level">
+                 <label for="nama">Nama Pegawai Level</label>
+                 <input type="text" name="nama" maxlength="50" Required class="form-control" id="nama" placeholder="Nama Pegawai Level">
+                 <input type="hidden" name="id" maxlength="50" Required class="form-control" id="id" placeholder="ID Pegawai Level">
                </div>
              </div>
-        </div>
+             <div class="col-sm-12">
+                <div class="form-group">
+                 <label for="permission">Permission</label>
+               </div>
+               <div class="row">
+                  <div class="col-sm-4">
+                   <div class="panel panel-primary">
+                     <div class="panel-heading"> Menu A </div>
+                     <div class="panel-body">
+                      <div class="form-group">
+                        <label>
+                          <input type="hidden" name="menu_" value="0" />
+                          <input type="checkbox" name="menu_" value="1">
+                          <span class="label-text">Opsi 1</span>
+                        </label>
+                      </div>
+                      <div class="form-group">
+                        <label>
+                          <input type="checkbox" name="menu_" value="2">
+                          <span class="label-text">Opsi 2</span>
+                        </label>
+                      </div>
+                     </div>
+                   </div>
+                  </div>
+                  <div class="col-sm-4">
+                   <div class="panel panel-primary">
+                     <div class="panel-heading"> Menu B </div>
+                     <div class="panel-body">
+                      <div class="form-group">
+                        <label>
+                          <input type="hidden" name="menu_" value="0" />
+                          <input type="checkbox" name="menu_" value="1">
+                          <span class="label-text">Opsi 1</span>
+                        </label>
+                      </div>
+                      <div class="form-group">
+                        <label>
+                          <input type="checkbox" name="menu_" value="2">
+                          <span class="label-text">Opsi 2</span>
+                        </label>
+                      </div>
+                     </div>
+                   </div>
+                  </div>
+               </div>
+             </div>
+          </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
           <button type="submit" class="btn btn-add" id="aSimpan">Simpan</button>
@@ -93,14 +140,14 @@
   
   
   function showAdd(){
-    $("#myModalLabel").text("Tambah Customer Level");
+    $("#myModalLabel").text("Tambah Pegawai Level");
     $("#id").val("");
     $("#nama").val("");
     $("#modalform").modal("show");    
   }
   
   function showUpdate(i){
-    $("#myModalLabel").text("Ubah Customer Level");
+    $("#myModalLabel").text("Ubah Pegawai Level");
     $("#id").val(jsonlist[i].id);
     $("#nama").val(jsonlist[i].nama);
 	  $("#modalform").modal("show");
@@ -108,9 +155,9 @@
   
   $("#myform").on('submit', function(e){
     e.preventDefault();
-	  var action = "<?php echo base_url('Customer_level/Master/add')?>/";
+	  var action = "<?php echo base_url('Pegawai_level/Master/add')?>/";
 	  if ($("#id").val() != ""){
-		  action = "<?php echo base_url('Customer_level/Master/edit')?>/";
+		  action = "<?php echo base_url('Pegawai_level/Master/edit')?>/";
 	  }
 	  var param = $('#myform').serialize();
 	  if ($("#id").val() != ""){
@@ -148,7 +195,7 @@
 		//console.log(jsonlist[i]);
 		$.ajax({
           type: 'post',
-          url: '<?php echo base_url('Customer_level/Master/delete'); ?>/',
+          url: '<?php echo base_url('Pegawai_level/Master/delete'); ?>/',
           data: {"id":jsonlist[i].id},
 		      dataType: 'json',
           beforeSend: function() { 

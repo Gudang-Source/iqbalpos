@@ -121,7 +121,7 @@
   load_level(jsonLevel);
   
   function load_prov(json){
-  	var html = "<option value=''>Pilih Provinsi</option>";
+  	var html = "<option value='' selected disabled>Pilih Provinsi</option>";
   	for (var i=0;i<json.length;i++){
   	     html = html+ "<option value='"+json[i].id+"'>"+json[i].nama+"</option>";
   	}
@@ -129,7 +129,7 @@
   }
   function load_kota(json){
     console.log(json);
-    var html = "<option value=''>Pilih Kota</option>";
+    var html = "<option value='' selected disabled>Pilih Kota</option>";
     for (var i=0;i<json.length;i++){
          html = html+ "<option value='"+json[i].id+"'>"+json[i].nama+"</option>";
     }
@@ -137,7 +137,7 @@
   }
   function load_level(json){
     console.log(json);
-  	var html = "<option value=''>Pilih Customer Level</option>";
+  	var html = "<option value='' selected disabled>Pilih Customer Level</option>";
   	for (var i=0;i<json.length;i++){
   	     html = html+ "<option value='"+json[i].id+"'>"+json[i].nama+"</option>";
   	}
