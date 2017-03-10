@@ -9,7 +9,7 @@ class Master extends MX_Controller {
     	$dataSelect['deleted'] = 1;
         $data['list_prov'] = json_encode($this->Kotamodel->select($dataSelect, 'm_provinsi')->result());
 
-        $sql = "SELECT m_kota.*, m_provinsi.id AS id_provinsi, m_provinsi.nama AS nama_provinsi FROM m_kota LEFT JOIN m_provinsi ON m_kota.id_provinsi = m_provinsi.id WHERE m_kota.deleted = '1' ORDER BY m_kota.date_add";
+        $sql = "SELECT m_kota.*, m_provinsi.id AS id_provinsi, m_provinsi.nama AS nama_provinsi FROM m_kota LEFT JOIN m_provinsi ON m_kota.id_provinsi = m_provinsi.id WHERE m_kota.deleted = '1' ORDER BY m_kota.date_add DESC";
         $data['list'] = json_encode($this->Kotamodel->rawQuery($sql)->result());
     	// $data['list'] = json_encode($this->Kotamodel->select($dataSelect, 'm_kota')->result());
 		//echo $data;
@@ -34,7 +34,7 @@ class Master extends MX_Controller {
 			$insert = $this->Kotamodel->insert($dataInsert, 'm_kota');
 			if($insert){
 				$dataSelect['deleted'] = 1;
-                $sql = "SELECT m_kota.*, m_provinsi.id AS id_provinsi, m_provinsi.nama AS nama_provinsi FROM m_kota LEFT JOIN m_provinsi ON m_kota.id_provinsi = m_provinsi.id WHERE m_kota.deleted = '1' ORDER BY m_kota.date_add";
+                $sql = "SELECT m_kota.*, m_provinsi.id AS id_provinsi, m_provinsi.nama AS nama_provinsi FROM m_kota LEFT JOIN m_provinsi ON m_kota.id_provinsi = m_provinsi.id WHERE m_kota.deleted = '1' ORDER BY m_kota.date_add DESC";
 				$list = $this->Kotamodel->rawQuery($sql)->result();
                 echo json_encode(array('status' => 3,'list' => $list));
 			}else{
@@ -77,7 +77,7 @@ class Master extends MX_Controller {
 			$update = $this->Kotamodel->update($dataCondition, $dataUpdate, 'm_kota');
 			if($update){
 				$dataSelect['deleted'] = 1;
-				$sql = "SELECT m_kota.*, m_provinsi.id AS id_provinsi, m_provinsi.nama AS nama_provinsi FROM m_kota LEFT JOIN m_provinsi ON m_kota.id_provinsi = m_provinsi.id WHERE m_kota.deleted = '1' ORDER BY m_kota.date_add";
+				$sql = "SELECT m_kota.*, m_provinsi.id AS id_provinsi, m_provinsi.nama AS nama_provinsi FROM m_kota LEFT JOIN m_provinsi ON m_kota.id_provinsi = m_provinsi.id WHERE m_kota.deleted = '1' ORDER BY m_kota.date_add DESC";
                 $list = $this->Kotamodel->rawQuery($sql)->result();
 				echo json_encode(array('status' => '3','list' => $list));
 			}else{
@@ -95,7 +95,7 @@ class Master extends MX_Controller {
     		$update = $this->Kotamodel->update($dataCondition, $dataUpdate, 'm_kota');
     		if($update){
     			$dataSelect['deleted'] = 1;
-				$sql = "SELECT m_kota.*, m_provinsi.id AS id_provinsi, m_provinsi.nama AS nama_provinsi FROM m_kota LEFT JOIN m_provinsi ON m_kota.id_provinsi = m_provinsi.id WHERE m_kota.deleted = '1' ORDER BY m_kota.date_add";
+				$sql = "SELECT m_kota.*, m_provinsi.id AS id_provinsi, m_provinsi.nama AS nama_provinsi FROM m_kota LEFT JOIN m_provinsi ON m_kota.id_provinsi = m_provinsi.id WHERE m_kota.deleted = '1' ORDER BY m_kota.date_add DESC";
                 $list = $this->Kotamodel->rawQuery($sql)->result();
 				echo json_encode(array('status' => '3','list' => $list));
     		}else{
