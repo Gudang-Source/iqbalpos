@@ -153,8 +153,6 @@
   }
   
   function loadData(json){
-	 
-	  var html = "";
     //clear table
 	  table.clear().draw();
 	  for(var i=0;i<json.length;i++){
