@@ -274,7 +274,4 @@
 		$(el).popover();
 
 	}
-  
-
-  
 </script>
