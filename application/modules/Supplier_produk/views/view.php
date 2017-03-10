@@ -272,7 +272,4 @@
 		$(el).popover();
 
 	}
-  
-
-  
 </script>

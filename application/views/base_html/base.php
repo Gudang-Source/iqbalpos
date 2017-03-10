@@ -8,81 +8,85 @@
       <meta name="author" content="">
       <title>POS - point of sale</title>
       <!-- jQuery -->
-      <script type="text/javascript" src="<?=base_url()?>assets/js/jquery-2.2.2.min.js"></script>
-      <script type="text/javascript" src="<?=base_url()?>assets/js/loading.js"></script>
+      <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/jquery-2.2.2.min.js"></script>
+      <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/loading.js"></script>
       <!-- normalize & reset style -->
-      <link rel="stylesheet" href="<?=base_url()?>assets/css/normalize.min.css"  type='text/css'>
-      <link rel="stylesheet" href="<?=base_url()?>assets/css/reset.min.css"  type='text/css'>
-      <link rel="stylesheet" href="<?=base_url()?>assets/css/jquery-ui.css"  type='text/css'>
+      <link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/normalize.min.css"  type='text/css'>
+      <link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/reset.min.css"  type='text/css'>
+      <link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/jquery-ui.css"  type='text/css'>
       <!-- google lato font -->
       <link href='https://fonts.googleapis.com/css?family=Lato:400,700,900,300' rel='stylesheet' type='text/css'>
       <!-- Bootstrap Core CSS -->
-      <link href="<?=base_url()?>assets/css/bootstrap.min.css" rel="stylesheet">
+      <link href="<?php echo base_url(); ?>assets/css/bootstrap.min.css" rel="stylesheet">
       <!-- bootstrap-horizon -->
-      <link href="<?=base_url()?>assets/css/bootstrap-horizon.css" rel="stylesheet">
+      <link href="<?php echo base_url(); ?>assets/css/bootstrap-horizon.css" rel="stylesheet">
       <!-- datatable style -->
-      <link href="<?=base_url()?>assets/datatables/css/dataTables.bootstrap.css" rel="stylesheet">
+      <link href="<?php echo base_url(); ?>assets/datatables/css/dataTables.bootstrap.css" rel="stylesheet">
       <!-- font awesome -->
-      <link rel="stylesheet" href="<?=base_url()?>assets/css/font-awesome.min.css">
+      <link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/font-awesome.min.css">
       <!-- include summernote css-->
-      <link href="<?=base_url()?>assets/css/summernote.css" rel="stylesheet">
+      <link href="<?php echo base_url(); ?>assets/css/summernote.css" rel="stylesheet">
       <!-- waves -->
-      <link rel="stylesheet" href="<?=base_url()?>assets/css/waves.min.css">
+      <link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/waves.min.css">
       <!-- daterangepicker -->
-      <link rel="stylesheet" type="text/css" href="<?=base_url()?>assets/css/daterangepicker.css" />
+      <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/daterangepicker.css" />
       <!-- css for the preview keyset extension -->
-      <link href="<?=base_url()?>assets/css/keyboard-previewkeyset.css" rel="stylesheet">
+      <link href="<?php echo base_url(); ?>assets/css/keyboard-previewkeyset.css" rel="stylesheet">
       <!-- keyboard widget style -->
-      <link href="<?=base_url()?>assets/css/keyboard.css" rel="stylesheet">
+      <link href="<?php echo base_url(); ?>assets/css/keyboard.css" rel="stylesheet">
       <!-- Select 2 style -->
-      <link href="<?=base_url()?>assets/css/select2.min.css" rel="stylesheet">
+      <link href="<?php echo base_url(); ?>assets/css/select2.min.css" rel="stylesheet">
       <!-- Sweet alert swal -->
-      <link rel="stylesheet" type="text/css" href="<?=base_url()?>assets/css/sweetalert.css">
+      <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/sweetalert.css">
       <!-- datepicker css -->
-      <link rel="stylesheet" type="text/css" href="<?=base_url()?>assets/css/bootstrap-datepicker.min.css">
+      <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/bootstrap-datepicker.min.css">
       <!-- Custom CSS -->
-      <link href="<?=base_url()?>assets/css/Style-Dark.css" rel="stylesheet">
+      <link href="<?php echo base_url(); ?>assets/css/Style-Dark.css" rel="stylesheet">
+      <link href="<?php echo base_url(); ?>assets/js/notify/pnotify.custom.min.css" rel="stylesheet">
      
        <!-- slim scroll script -->
-      <script type="text/javascript" src="<?=base_url()?>assets/js/jquery.slimscroll.min.js"></script>
+      <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/jquery.slimscroll.min.js"></script>
       <!-- waves material design effect -->
-      <script type="text/javascript" src="<?=base_url()?>assets/js/waves.min.js"></script>
+      <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/waves.min.js"></script>
       <!-- Bootstrap Core JavaScript -->
-      <script type="text/javascript" src="<?=base_url()?>assets/js/bootstrap.min.js"></script>
+      <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/bootstrap.min.js"></script>
       <!-- keyboard widget dependencies -->
-      <script type="text/javascript" src="<?=base_url()?>assets/js/jquery.keyboard.js"></script>
-      <script type="text/javascript" src="<?=base_url()?>assets/js/jquery.keyboard.extension-all.js"></script>
-      <script type="text/javascript" src="<?=base_url()?>assets/js/jquery.keyboard.extension-extender.js"></script>
-      <script type="text/javascript" src="<?=base_url()?>assets/js/jquery.keyboard.extension-typing.js"></script>
-      <script type="text/javascript" src="<?=base_url()?>assets/js/jquery.mousewheel.js"></script>
+      <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/jquery.keyboard.js"></script>
+      <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/jquery.keyboard.extension-all.js"></script>
+      <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/jquery.keyboard.extension-extender.js"></script>
+      <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/jquery.keyboard.extension-typing.js"></script>
+      <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/jquery.mousewheel.js"></script>
       <!-- select2 plugin script -->
-      <script type="text/javascript" src="<?=base_url()?>assets/js/select2.min.js"></script>
+      <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/select2.min.js"></script>
       <!-- dalatable scripts -->
-      <script src="<?=base_url()?>assets/datatables/js/jquery.dataTables.min.js"></script>
-      <script src="<?=base_url()?>assets/datatables/js/dataTables.bootstrap.js"></script>
+      <script src="<?php echo base_url(); ?>assets/datatables/js/jquery.dataTables.min.js"></script>
+      <script src="<?php echo base_url(); ?>assets/datatables/js/dataTables.bootstrap.js"></script>
       <!-- summernote js -->
-      <script src="<?=base_url()?>assets/js/summernote.js"></script>
+      <script src="<?php echo base_url(); ?>assets/js/summernote.js"></script>
       <!-- chart.js script -->
-      <script src="<?=base_url()?>assets/js/Chart.js"></script>
+      <script src="<?php echo base_url(); ?>assets/js/Chart.js"></script>
       <!-- moment JS -->
-      <script type="text/javascript" src="<?=base_url()?>assets/js/moment.min.js"></script>
+      <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/moment.min.js"></script>
       <!-- Include Date Range Picker -->
-      <script type="text/javascript" src="<?=base_url()?>assets/js/daterangepicker.js"></script>
+      <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/daterangepicker.js"></script>
       <!-- Sweet Alert swal -->
-      <script src="<?=base_url()?>assets/js/sweetalert.min.js"></script>
+      <script src="<?php echo base_url(); ?>assets/js/sweetalert.min.js"></script>
       <!-- datepicker script -->
-      <script src="<?=base_url()?>assets/js/bootstrap-datepicker.min.js"></script>
+      <script src="<?php echo base_url(); ?>assets/js/bootstrap-datepicker.min.js"></script>
       <!-- dateformat script -->
-      <script src="<?=base_url()?>assets/js/dateFormat.min.js"></script>
+      <script src="<?php echo base_url(); ?>assets/js/dateFormat.min.js"></script>
       <!-- creditCardValidator script -->
-      <script src="<?=base_url()?>assets/js/jquery.creditCardValidator.js"></script>
+      <script src="<?php echo base_url(); ?>assets/js/jquery.creditCardValidator.js"></script>
       <!-- creditCardValidator script -->
-      <script src="<?=base_url()?>assets/js/credit-card-scanner.js"></script>
-      <script src="<?=base_url()?>assets/js/jquery.redirect.js"></script>
+      <script src="<?php echo base_url(); ?>assets/js/credit-card-scanner.js"></script>
+      <script src="<?php echo base_url(); ?>assets/js/jquery.redirect.js"></script>
       <!-- ajax form -->
-      <script src="<?=base_url()?>assets/js/jquery.form.min.js"></script>
+      <script src="<?php echo base_url(); ?>assets/js/jquery.form.min.js"></script>
       <!-- custom script -->
-      <script src="<?=base_url()?>assets/js/app.js"></script>
+      <script src="<?php echo base_url(); ?>assets/js/app.js"></script>
+      <script src="<?php echo base_url(); ?>assets/js/app.js"></script>
+      <script src="<?php echo base_url(); ?>assets/js/app.js"></script>
+      <script src="<?php echo base_url(); ?>assets/js/notify/pnotify.custom.min.js"></script>
    </head>
    <body>
       <!-- Navigation -->
