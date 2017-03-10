@@ -146,7 +146,7 @@
   function load_level(json){
     console.log(json);
     var html = "<option value='' selected disabled>Pilih Level Pegawai</option>";
-  	// html += "<option value='1'>LEVEL 1</option>";
+  	html += "<option value='1'>LEVEL 1</option>";
   	for (var i=0;i<json.length;i++){
   	     html = html+ "<option value='"+json[i].id+"'>"+json[i].nama+"</option>";
   	}
@@ -302,7 +302,11 @@
       			if (data.status == '3'){
               new PNotify({
                               title: 'Sukses',
+<<<<<<< HEAD
                               text: 'Data berhasil dihapus!',
+=======
+                              text: 'Tambah Pegawai Berhasil',
+>>>>>>> master
                               type: 'success',
                               hide: true,
                               delay: 5000,
