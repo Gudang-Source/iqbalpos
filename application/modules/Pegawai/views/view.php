@@ -243,9 +243,11 @@
   
   $("#myform").on('submit', function(e){
     e.preventDefault();
-	  var action = "<?php echo base_url('Pegawai/Master/add')?>/";
-	  if ($("#id").val() != ""){
-		  action = "<?php echo base_url('Pegawai/Master/edit')?>/";
+    var notifText = 'Data berhasil ditambahkan!';
+    var action = "<?php echo base_url('Pegawai/Master/add')?>/";
+    if ($("#id").val() != ""){
+      action = "<?php echo base_url('Pegawai/Master/edit')?>/";
+      notifText = 'Data berhasil diubah!';
 	  }
 	  var param = $('#myform').serialize();
 	  if ($("#id").val() != ""){
@@ -269,12 +271,13 @@
           $('#aSimpan').html('Simpan');
   				$("#modalform").modal('hide');
           new PNotify({
-                          title: 'Sukses',
-                          text: 'Tambah Pegawai Berhasil',
-                          type: 'success',
-                          hide: true,
-                          styling: 'bootstrap3'
-                        });          
+                      title: 'Sukses',
+                      text: notifText,
+                      type: 'success',
+                      hide: true,
+                      delay: 5000,
+                      styling: 'bootstrap3'
+                    });          
   			}
       }
     });
@@ -299,9 +302,10 @@
       			if (data.status == '3'){
               new PNotify({
                               title: 'Sukses',
-                              text: 'Tambah Pegawai Berhasil',
-                              type: 'error',
+                              text: 'Data berhasil dihapus!',
+                              type: 'success',
                               hide: true,
+                              delay: 5000,
                               styling: 'bootstrap3'
                             });          
       				jsonlist = data.list;

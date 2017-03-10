@@ -150,9 +150,11 @@
   
   $("#myform").on('submit', function(e){
     e.preventDefault();
-	  var action = "<?php echo base_url('Pegawai_level/Master/add')?>/";
-	  if ($("#id").val() != ""){
-		  action = "<?php echo base_url('Pegawai_level/Master/edit')?>/";
+    var notifText = 'Data berhasil ditambahkan!';
+    var action = "<?php echo base_url('Pegawai_level/Master/add')?>/";
+    if ($("#id").val() != ""){
+      action = "<?php echo base_url('Pegawai_level/Master/edit')?>/";
+      notifText = 'Data berhasil diubah!';
 	  }
 	  var param = $('#myform').serialize();
 	  if ($("#id").val() != ""){
@@ -175,8 +177,16 @@
   				loadData(jsonlist);
           $('#aSimpan').html('Simpan');
   				$("#modalform").modal('hide');
-  				$("#notif-top").fadeIn(500);
-  				$("#notif-top").fadeOut(2500);
+  				// $("#notif-top").fadeIn(500);
+  				// $("#notif-top").fadeOut(2500);
+          new PNotify({
+                      title: 'Sukses',
+                      text: notifText,
+                      type: 'success',
+                      hide: true,
+                      delay: 5000,
+                      styling: 'bootstrap3'
+                    });
   			}
       }
     });
@@ -199,8 +209,16 @@
           },
           success: function (data) {
       			if (data.status == '3'){
-  				$("#notif-top").fadeIn(500);
-  				$("#notif-top").fadeOut(2500);
+  				// $("#notif-top").fadeIn(500);
+  				// $("#notif-top").fadeOut(2500);
+              new PNotify({
+                          title: 'Sukses',
+                          text: 'Data berhasil dihapus!',
+                          type: 'success',
+                          hide: true,
+                          delay: 5000,
+                          styling: 'bootstrap3'
+                        });
       				jsonlist = data.list;
       				loadData(jsonlist);
       			}
