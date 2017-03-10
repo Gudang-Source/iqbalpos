@@ -6,7 +6,7 @@
   </div>
 </div>
    <div class="row" style="margin-top:10px;">
-      <table id="Table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+      <table id="TableMain" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
               <tr>
                   <th class="text-center">Nama Pegawai</th>
@@ -114,17 +114,18 @@
 
 
 <script type="text/javascript">
-
+  // initialize datatable
+  var table    = $("#TableMain").DataTable();
   var jsonlist = <?php echo $list; ?>;
-  var jsonprov = <?php echo $list_prov; ?>;
+  var jsonProv = <?php echo $list_prov; ?>;
   var jsonKota = <?php echo $list_kota; ?>;
   var jsonLevel = <?php echo $list_level; ?>;
  
   var awalLoad = true;
   
   loadData(jsonlist);
-  load_prov(jsonprov);
-  load_level(jsonlevel);
+  load_prov(jsonProv);
+  load_level(jsonLevel);
   
   function load_prov(json){
   	var html = "<option value='' selected disabled>Pilih Provinsi</option>";
@@ -182,27 +183,22 @@
   }
   
   function loadData(json){
-	 
-	  var html = "";
-	  $("#bodytable").html("");
-	  
+	  //clear table
+    table.clear().draw();
 	  for(var i=0;i<json.length;i++){
-		  html = html+'<tr >'+
-                 '<td>'+json[i].nama+'</td>'+
-                 '<td>'+json[i].alamat+'</td>'+
-                 '<td>'+json[i].no_telp+'</td>'+
-                 '<td class="hidden-xs">'+json[i].email+'</td>'+
-                 '<td class="hidden-xs text-center">'+DateFormat.format.date(json[i].date_add, "dd-MM-yyyy HH:mm")+'</td>'+
-                 '<td class="text-center"><div class="btn-group" >'+
-                      '<a id="group'+i+'" class="divpopover btn btn-sm btn-default" href="javascript:void(0)" data-toggle="popover" data-placement="top" onclick="confirmDelete(this)" data-html="true" title="Hapus Data?" ><i class="fa fa-times"></i></a>'+
-                      '<a class="btn btn-sm btn-default" data-toggle="tooltip" data-placement="top" title="Ubah Data" onclick="showUpdate('+i+')"><i class="fa fa-pencil"></i></a>'+
-                     '</div>'+
-                  '</td>'+
-              '</tr>';
+		  table.row.add( [
+            json[i].nama,
+            json[i].alamat,
+            json[i].no_telp,
+            json[i].email,
+            DateFormat.format.date(json[i].date_add, "dd-MM-yyyy HH:mm"),
+            '<td class="text-center"><div class="btn-group" >'+
+                '<a id="group'+i+'" class="divpopover btn btn-sm btn-default" href="javascript:void(0)" data-toggle="popover" data-placement="top" onclick="confirmDelete(this)" data-html="true" title="Hapus Data?" ><i class="fa fa-times"></i></a>'+
+                '<a class="btn btn-sm btn-default" data-toggle="tooltip" data-placement="top" title="Ubah Data" onclick="showUpdate('+i+')"><i class="fa fa-pencil"></i></a>'+
+               '</div>'+
+            '</td>'
+        ] ).draw( false );
 	  }
-	  
-	  $("#bodytable").html(html);
-	  // $("#tablemain").DataTable();
 	  if (!awalLoad){
 		  $('.divpopover').attr("data-content","ok");
 		  $('.divpopover').popover();
@@ -220,13 +216,13 @@
     $("#email").val("");
     $("#kodepos").val("");
     $("#id_pegawai_level").val("");
-    load_prov(jsonprov);
+    load_prov(jsonProv);
     load_level(jsonLevel);
     $("#modalform").modal("show");    
   }
   
   function showUpdate(i){
-    load_prov(jsonprov);
+    load_prov(jsonProv);
     load_kota(jsonKota);
     load_level(jsonLevel);
 
