@@ -91,6 +91,7 @@
                <div class="form-group">
                  <label for="id_pegawai_level">Level</label>
                  <select name="id_pegawai_level" class="form-control" id="id_pegawai_level" required="">
+                  <option value="1">LEVEL 1</option>
                  </select>
                </div>
              </div>
@@ -144,7 +145,8 @@
   }
   function load_level(json){
     console.log(json);
-  	var html = "<option value='' selected disabled>Pilih Level Pegawai</option>";
+    var html = "<option value='' selected disabled>Pilih Level Pegawai</option>";
+  	// html += "<option value='1'>LEVEL 1</option>";
   	for (var i=0;i<json.length;i++){
   	     html = html+ "<option value='"+json[i].id+"'>"+json[i].nama+"</option>";
   	}
@@ -266,8 +268,13 @@
   				loadData(jsonlist);
           $('#aSimpan').html('Simpan');
   				$("#modalform").modal('hide');
-  				$("#notif-top").fadeIn(500);
-  				$("#notif-top").fadeOut(2500);
+          new PNotify({
+                          title: 'Sukses',
+                          text: 'Tambah Pegawai Berhasil',
+                          type: 'success',
+                          hide: true,
+                          styling: 'bootstrap3'
+                        });          
   			}
       }
     });
@@ -290,8 +297,13 @@
           },
           success: function (data) {
       			if (data.status == '3'){
-  				$("#notif-top").fadeIn(500);
-  				$("#notif-top").fadeOut(2500);
+              new PNotify({
+                              title: 'Sukses',
+                              text: 'Tambah Pegawai Berhasil',
+                              type: 'error',
+                              hide: true,
+                              styling: 'bootstrap3'
+                            });          
       				jsonlist = data.list;
       				loadData(jsonlist);
       			}
