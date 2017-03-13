@@ -3,7 +3,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Master extends MX_Controller {
 	function __construct() {
         parent::__construct();
+        //check_auth()
+        $this->checksession();
         $this->load->model('Pegawaimodel');
+    }
+    function checksession(){
+        if($this->session->userdata("isLoggedin") != 1){
+            //tampilkan logout. rdirect login
+        }
     }
     function index(){
     	$dataSelect['deleted'] = 1;

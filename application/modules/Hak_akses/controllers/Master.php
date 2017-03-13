@@ -7,10 +7,14 @@ class Master extends MX_Controller {
     }
     function index(){
     	$dataSelect['deleted'] = 1;
-    	$data['list'] = json_encode($this->Pegawailevelmodel->select($dataSelect, 'm_pegawai_level')->result());
+        $data['list'] = json_encode($this->Pegawailevelmodel->select($dataSelect, 'm_pegawai_level')->result());
+
+        $data['list_permission'] = json_encode($this->Pegawailevelmodel->get('m_pegawai_permission')->result());
+        $sql = "SELECT DISTINCT kategori FROM m_pegawai_permission";
+    	$data['list_menu'] = json_encode($this->Pegawailevelmodel->rawQuery($sql)->result());
 		//echo $data;
 		//print_r($data);
-    	$this->load->view('Pegawai_level/view', $data);
+    	$this->load->view('Hak_akses/view', $data);
     }
 	
 	function test(){
@@ -22,7 +26,8 @@ class Master extends MX_Controller {
 	
     function add(){
 		$params = $this->input->post();
-		$dataInsert['nama'] 			= $params['nama'];
+        $dataInsert['nama']             = $params['nama'];
+        $dataInsert['permission'] 		= isset($params['menu']) ? json_encode($params['menu']) : 0;
 		$dataInsert['deleted'] 			= 1;
 		$checkData = $this->Pegawailevelmodel->select($dataInsert, 'm_pegawai_level');
 		if($checkData->num_rows() < 1){
@@ -50,7 +55,8 @@ class Master extends MX_Controller {
     				array(
     					'status'			=> 2,
     					'id'				=> $selectData->row()->id,
-    					'nama'				=> $selectData->row()->nama,
+                        'nama'              => $selectData->row()->nama,
+    					'permission'		=> json_decode($selectData->row()->permission),
     				));
     		}else{
     			echo json_encode(array('status' => 1));
@@ -64,6 +70,7 @@ class Master extends MX_Controller {
 		$params = $this->input->post();
 		$dataCondition['id']			= $params['id'];
 		$dataUpdate['nama'] 			= $params['nama'];
+        $dataUpdate['permission']       = isset($params['menu']) ? json_encode($params['menu']) : 0;
 		$checkData = $this->Pegawailevelmodel->select($dataCondition, 'm_pegawai_level');
 		if($checkData->num_rows() > 0){
 			$update = $this->Pegawailevelmodel->update($dataCondition, $dataUpdate, 'm_pegawai_level');

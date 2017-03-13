@@ -20,16 +20,20 @@ class Index extends MX_Controller {
     	// var_dump($Pegawai);
     }
     function sale(){
-    	$data['view'] = 'base_html/sale';
-    	$this->load->view('base_html/base', $data);    	
+        $data['view'] = 'base_html/sale';
+        $this->load->view('base_html/base', $data);     
     }
     function modul($modul = null){
-    	if($modul != null){
-    		$modul=str_replace("-", "/", $modul);
-    		$data['view'] = $modul;
-    	}else{
-    		$data['view'] = 'index/base_sale';
-    	}
-    	$this->load->view('base_html/base', $data);
+        if($modul != null){
+            $modul=str_replace("-", "/", $modul);
+            $data['view'] = $modul;
+        }else{
+            $data['view'] = 'index/base_sale';
+        }
+        $this->load->view('base_html/base', $data);
+    }
+
+    function login(){
+    	$this->load->view('Login/view');
     }
 }
