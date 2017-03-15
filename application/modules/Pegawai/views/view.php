@@ -45,7 +45,7 @@
                 <div class="form-group">
                  <label for="nama">Nama Pegawai</label>
                  <input type="text" name="nama" maxlength="50" Required class="form-control" id="nama" placeholder="Nama Pegawai">
-                 <input type="hidden" name="id" maxlength="50" Required class="form-control" id="id" placeholder="Nama Pegawai">
+                 <input type="hidden" name="id" maxlength="50" Required class="form-control" id="id" placeholder="ID Pegawai">
                </div>
              </div>
              <div class="col-sm-12">
@@ -78,7 +78,6 @@
                  <label for="id_kota">Kota</label>
                  <select name="id_kota" class="form-control" id="id_kota"  required="">
                  </select>
-                
                </div>
              </div>
              <div class="col-sm-6">
@@ -91,19 +90,44 @@
                <div class="form-group">
                  <label for="id_pegawai_level">Level</label>
                  <select name="id_pegawai_level" class="form-control" id="id_pegawai_level" required="">
-                  <option value="1">LEVEL 1</option>
                  </select>
                </div>
              </div>
-             <div class="col-sm-6">
-               <div class="form-group">
-                 <label for="password">Password</label>
-                 <input type="password" maxlength="50" name="password" class="form-control" id="password" placeholder="Password" required="">
+             <div class="col-sm-12">
+              <div class="row">
+                <div class="col-xs-12">
+                  <div class="form-group" id="showFormPassword">
+                    <label>
+                      <input type="checkbox" name="" id="show_form_password" value="" data-toggle="collapse" data-target="#formPassword">
+                      <span class="label-text">Ubah Password</span>
+                    </label>
+                  </div>
+                </div>                
+                <div id="formPassword" class="col-xs-12 collapse in">
+                 <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                       <label for="password">Password</label>
+                       <input type="password" maxlength="50" name="password" class="form-control" id="password" oninput="checkPasswordConfirm();" placeholder="Password" required="">
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                    <div class="form-group">
+                      <label for="password_confirm">Ulangi Password</label>
+                      <input type="password" maxlength="50" name="password_confirm" class="form-control" id="password_confirm" oninput="checkPasswordConfirm();" placeholder="Ulangi Password" required="">
+                    </div>
+                    <span id="passwordConfirmText" class="text-danger" style="display: none;">Konfirmasi Password tidak sama!</span>
+                   </div>
+                 </div>
                </div>
-             </div>
+              </div>
+            </div>
            </div>
         </div>
         <div class="modal-footer">
+          <div class="pull-left">
+            <a href="javascript:void(0)" id="reset_password" class="btn btn-link" data-id="id" data-toggle="popover" data-placement="top" onclick="confirmReset(this);" data-html="true" title="Reset Password?">Reset Password</a>
+          </div>
           <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
           <button type="submit" class="btn btn-add" id="aSimpan">Simpan</button>
         </div>
@@ -135,16 +159,18 @@
   	}
   	$("#id_provinsi").html(html);
   }
-  function load_kota(json){
-    console.log(json);
+  function load_kota(json, idProv=0){
+    // console.log(json);
     var html = "<option value='' selected disabled>Pilih Kota</option>";
     for (var i=0;i<json.length;i++){
-         html = html+ "<option value='"+json[i].id+"'>"+json[i].nama+"</option>";
+         if(json[i].id_provinsi == idProv){
+          html = html+ "<option value='"+json[i].id+"'>"+json[i].nama+"</option>";
+         }
     }
     $("#id_kota").html(html);
   }
   function load_level(json){
-    console.log(json);
+    // console.log(json);
     var html = "<option value='' selected disabled>Pilih Level Pegawai</option>";
   	// html += "<option value='1'>LEVEL 1</option>";
   	for (var i=0;i<json.length;i++){
@@ -166,7 +192,7 @@
   	   dataType : "json",
   	   success : function(data){
   	      $("#id_kota").prop("disabled",false);
-  	      load_kota(data);
+  	      load_kota(data, $("#id_provinsi").val());
   	      
   	   }
   	});
@@ -179,7 +205,7 @@
        dataType : "json",
        success : function(data){
           $("#id_kota").prop("disabled",false);
-          load_kota(data);
+          load_kota(data, provinsi);
        }
     });
   }
@@ -195,7 +221,7 @@
             json[i].email,
             DateFormat.format.date(json[i].date_add, "dd-MM-yyyy HH:mm"),
             '<td class="text-center"><div class="btn-group" >'+
-                '<a id="group'+i+'" class="divpopover btn btn-sm btn-default" href="javascript:void(0)" data-toggle="popover" data-placement="top" onclick="confirmDelete(this)" data-html="true" title="Hapus Data?" ><i class="fa fa-times"></i></a>'+
+                '<a id="group'+i+'" class="divpopover btn btn-sm btn-default" href="javascript:void(0)" data-toggle="popover" data-placement="top" onclick="confirmDelete(this);" data-html="true" title="Hapus Data?" ><i class="fa fa-times"></i></a>'+
                 '<a class="btn btn-sm btn-default" data-toggle="tooltip" data-placement="top" title="Ubah Data" onclick="showUpdate('+i+')"><i class="fa fa-pencil"></i></a>'+
                '</div>'+
             '</td>'
@@ -210,6 +236,11 @@
   
   
   function showAdd(){
+    load_kota(jsonKota, 0);
+    $("#reset_password").hide();
+    $("#showFormPassword").hide();
+    $("#formPassword").collapse("show");
+
     $("#myModalLabel").text("Tambah Pegawai");
     $("#id").val("");
     $("#nama").val("");
@@ -218,15 +249,21 @@
     $("#email").val("");
     $("#kodepos").val("");
     $("#id_pegawai_level").val("");
+    $("#password").val("");
+    $("#password_confirm").val("");
+    checkPasswordConfirm();
     load_prov(jsonProv);
     load_level(jsonLevel);
     $("#modalform").modal("show");    
   }
-  
   function showUpdate(i){
     load_prov(jsonProv);
-    load_kota(jsonKota);
+    load_kota(jsonKota, jsonlist[i].id_provinsi);
     load_level(jsonLevel);
+    $("#showFormPassword").show();
+    $("#reset_password").show();
+    $("#formPassword").collapse("hide");
+    $("#show_form_password").attr("checked", false);
 
     $("#myModalLabel").text("Ubah Pegawai");
     $("#id").val(jsonlist[i].id);
@@ -238,68 +275,77 @@
   	$("#id_provinsi").val(jsonlist[i].id_provinsi);
     $("#id_kota").val(jsonlist[i].id_kota);
   	$("#id_pegawai_level").val(jsonlist[i].id_pegawai_level);
+    $("#password").val("");
+    $("#password_confirm").val("");
+    $("#reset_password").attr("data-id", jsonlist[i].id);
+    checkPasswordConfirm();
 	  $("#modalform").modal("show");
   }
   
   $("#myform").on('submit', function(e){
     e.preventDefault();
-    var notifText = 'Data berhasil ditambahkan!';
-    var action = "<?php echo base_url('Pegawai/Master/add')?>/";
-    if ($("#id").val() != ""){
-      action = "<?php echo base_url('Pegawai/Master/edit')?>/";
-      notifText = 'Data berhasil diubah!';
-	  }
-	  var param = $('#myform').serialize();
-	  if ($("#id").val() != ""){
-		 param = $('#myform').serialize()+"&id="+$('#id').val();
-	  }
-	  
-    $.ajax({
-      type: 'post',
-      url: action,
-      data: param,
-	    dataType: 'json',
-      beforeSend: function() { 
-        // tambahkan loading
-        $('#aSimpan').html('Sedang Menyimpan...');
-      },
-      success: function (data) {
-  			if (data.status == '3'){
-  				console.log("ojueojueokl"+data.status);
-  				jsonlist = data.list;
-  				loadData(jsonlist);
-          $('#aSimpan').html('Simpan');
-  				$("#modalform").modal('hide');
-          new PNotify({
-                      title: 'Sukses',
-                      text: notifText,
-                      type: 'success',
-                      hide: true,
-                      delay: 5000,
-                      styling: 'bootstrap3'
-                    });          
-  			}
-      }
-    });
+    if(checkPasswordConfirm() == true) {
+      var notifText = 'Data berhasil ditambahkan!';
+      var action = "<?php echo base_url('Pegawai/Master/add')?>/";
+      if ($("#id").val() != ""){
+        action = "<?php echo base_url('Pegawai/Master/edit')?>/";
+        notifText = 'Data berhasil diubah!';
+  	  }
+  	  var param = $('#myform').serialize();
+  	  if ($("#id").val() != ""){
+  		 param = $('#myform').serialize()+"&id="+$('#id').val();
+  	  }
+  	  
+      $.ajax({
+        type: 'post',
+        url: action,
+        data: param,
+  	    dataType: 'json',
+        beforeSend: function() { 
+          // tambahkan loading
+          $("#aSimpan").prop("disabled", true);
+          $('#aSimpan').html('Sedang Menyimpan...');
+        },
+        success: function (data) {
+          if (data.status == '3'){
+            console.log("ojueojueokl"+data.status);
+            jsonlist = data.list;
+            loadData(jsonlist);
+            $('#aSimpan').html('Simpan');
+            $("#aSimpan").prop("disabled", false);
+    				$("#modalform").modal('hide');
+            new PNotify({
+                        title: 'Sukses',
+                        text: notifText,
+                        type: 'success',
+                        hide: true,
+                        delay: 5000,
+                        styling: 'bootstrap3'
+                      });          
+    			}
+        }
+      });
+    }
   });
-	
 	function deleteData(element){
-		var el = $(element).attr("id");
-		console.log(el);
-		var id  = el.replace("aConfirm","");
-		var i = parseInt(id);
-		//console.log(jsonlist[i]);
-		$.ajax({
+    var el = $(element).attr("id");
+    console.log(el);
+    var id  = el.replace("aConfirm","");
+    var i = parseInt(id);
+    //console.log(jsonlist[i]);
+    $.ajax({
           type: 'post',
           url: '<?php echo base_url('Pegawai/Master/delete'); ?>/',
           data: {"id":jsonlist[i].id},
-		      dataType: 'json',
+          dataType: 'json',
           beforeSend: function() { 
             // kasi loading
+            $("#aConfirm"+i).prop("disabled", true);
             $("#aConfirm"+i).html("Sedang Menghapus...");
           },
           success: function (data) {
-      			if (data.status == '3'){
+            if (data.status == '3'){
+              $("#aConfirm"+i).prop("disabled", false);
               new PNotify({
                               title: 'Sukses',
                               text: 'Data berhasil dihapus!',
@@ -308,21 +354,101 @@
                               delay: 5000,
                               styling: 'bootstrap3'
                             });          
-      				jsonlist = data.list;
-      				loadData(jsonlist);
+              jsonlist = data.list;
+              loadData(jsonlist);
+            }
+          }    
+        });
+  }
+  function resetPassword(element){
+		var el = $(element).attr("id");
+		var id  = el.replace("aReset","");
+		var i = parseInt(id);
+		$.ajax({
+          type: 'post',
+          url: '<?php echo base_url('Pegawai/Master/reset_password'); ?>/',
+          data: {"id":id},
+		      dataType: 'json',
+          beforeSend: function() { 
+            // kasi loading
+            $("#aReset"+i).prop("disabled", true);
+            $("#aReset"+i).html("Sedang Mereset...");
+          },
+          success: function (data) {
+            if (data.status == '3'){
+              $("#aReset"+i).prop("disabled", false);
+              $("#aReset"+i).html("<i class='fa fa-rotate-left'></i> Ya");
+              new PNotify({
+                              title: 'Sukses',
+                              text: 'Password telah diubah menjadi \'admin\'!',
+                              type: 'success',
+                              hide: true,
+                              delay: 5000,
+                              styling: 'bootstrap3'
+                            });          
+              jsonlist = data.list;
+              loadData(jsonlist);
       			}
           }    
         });
 	}
 	
 	function confirmDelete(el){
-		var element = $(el).attr("id");
-		console.log(element);
-		var id  = element.replace("group","");
-		var i = parseInt(id);
-		$(el).attr("data-content","<button class=\'btn btn-danger myconfirm\'  href=\'#\' onclick=\'deleteData(this)\' id=\'aConfirm"+i+"\' style=\'min-width:85px\'><i class=\'fa fa-trash\'></i> Ya</button>");
-		$(el).popover();
-
-	}
+    var element = $(el).attr("id");
+    // console.log(element);
+    var id  = element.replace("group","");
+    var i = parseInt(id);
+    $(el).attr("data-content","<button class=\'btn btn-danger myconfirm\'  href=\'#\' onclick=\'deleteData(this)\' id=\'aConfirm"+i+"\' style=\'min-width:85px\'><i class=\'fa fa-trash\'></i> Ya</button>");
+    // $('[data-toggle="popover"]').popover('hide'); //hide all popover first
+    $(el).popover();
+  }
+  function confirmReset(el){
+    var element = $(el).attr("id");
+    var i = parseInt($(el).attr("data-id"));
+    $(el).attr("data-content","<button class=\'btn btn-danger myconfirm\'  href=\'#\' onclick=\'resetPassword(this)\' id=\'aReset"+i+"\' style=\'min-width:85px\'><i class=\'fa fa-rotate-left\'></i> Ya</button>");
+    // $('[data-toggle="popover"]').popover('hide'); //hide all popover first
+    $(el).popover();
+  }
   
+  //Checking (Validating) Password & Password Confirmation
+  function checkPasswordConfirm() { 
+    var check = true;
+    var pass = $("#password").val();
+    var passConfirm = $("#password_confirm").val();
+    //Check if input is disabled
+    if($("#password").prop('disabled') == false) {
+      //check if password value is the same with password confirmation
+      if(pass != passConfirm) {
+        $("#passwordConfirmText").fadeIn();
+        check = false;
+      } else {
+        $("#passwordConfirmText").fadeOut();
+        check = true;
+      }
+    }
+    return check;
+  };
+
+  //Hack untuk bootstrap popover (popover hilang jika diklik di luar)
+  $(document).on('click', function (e) {
+    $('[data-toggle="popover"],[data-original-title]').each(function () {
+        //the 'is' for buttons that trigger popups
+        //the 'has' for icons within a button that triggers a popup
+        if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {                
+            (($(this).popover('hide').data('bs.popover')||{}).inState||{}).click = false  // fix for BS 3.3.6
+        }
+    });
+  });
+
+  //Show/Hide checkbox show password
+  $("#show_form_password").on("click", function() {
+    $("#formPassword").collapse("toggle");
+  });
+  // Disable/Enable form password inputs on hide/show collapse 
+  $("#formPassword").on("shown.bs.collapse", function() {
+    $("#formPassword :input").prop("disabled", false);
+  });
+  $("#formPassword").on("hidden.bs.collapse", function() {
+    $("#formPassword :input").prop("disabled", true);
+  });
 </script>

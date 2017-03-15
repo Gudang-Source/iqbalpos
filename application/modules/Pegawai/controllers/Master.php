@@ -95,7 +95,10 @@ class Master extends MX_Controller {
 		$dataUpdate['kode_pos'] 		= $params['kodepos'];
 		$dataUpdate['id_provinsi'] 		= $params['id_provinsi'];
 		$dataUpdate['id_kota'] 			= $params['id_kota'];
-		$dataUpdate['id_pegawai_level'] = $params['id_pegawai_level'];
+        $dataUpdate['id_pegawai_level'] = $params['id_pegawai_level'];
+        if(isset($params['password'])) {
+		  $dataUpdate['password'] = hash('sha512', $params['password']);
+        }
 		$checkData = $this->Pegawaimodel->select($dataCondition, 'm_pegawai');
 		if($checkData->num_rows() > 0){
 			$update = $this->Pegawaimodel->update($dataCondition, $dataUpdate, 'm_pegawai');
@@ -127,6 +130,24 @@ class Master extends MX_Controller {
     		echo "0";
     	}
     }
+    function reset_password(){
+        $params = $this->input->post();
+        $dataCondition['id']    = $params['id'];
+        $dataUpdate['password'] = hash('sha512', 'admin'); //default password
+        $checkData = $this->Pegawaimodel->select($dataCondition, 'm_pegawai');
+        if($checkData->num_rows() > 0){
+            $update = $this->Pegawaimodel->update($dataCondition, $dataUpdate, 'm_pegawai');
+            if($update){
+                $dataSelect['deleted'] = 1;
+                $list = $this->Pegawaimodel->select($dataSelect, 'm_pegawai')->result();
+                echo json_encode(array('status' => '3','list' => $list));
+            }else{
+                echo json_encode(array( 'status'=>'2' ));
+            }
+        }else{          
+            echo json_encode(array( 'status'=>'1' ));
+        }
+    }
     function buttonDelete($id=null){
     	if($id!=null){
     		echo "<button class='btn btn-danger' onclick='delRow(".$id.")'>YA</button>";
@@ -134,12 +155,11 @@ class Master extends MX_Controller {
     		echo "NOT FOUND";
     	}
     }
-    
    
     function get_kota(){
         $dataSelect['id_provinsi'] = $this->input->get("id_prov");
-    	$dataSelect['deleted'] = 1;
-    	echo json_encode($this->Pegawaimodel->select($dataSelect, 'm_kota')->result());
+        $dataSelect['deleted'] = 1;
+        echo json_encode($this->Pegawaimodel->select($dataSelect, 'm_kota')->result());
     }
-    
+
 }

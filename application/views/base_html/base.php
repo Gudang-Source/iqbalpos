@@ -82,6 +82,9 @@
       <script src="<?php echo base_url(); ?>assets/js/jquery.redirect.js"></script>
       <!-- ajax form -->
       <script src="<?php echo base_url(); ?>assets/js/jquery.form.min.js"></script>
+      <!-- jquery form validation-->
+      <script src="<?php echo base_url(); ?>assets/js/jquery.form-validator.min.js"></script>
+
       <!-- custom script -->
       <script src="<?php echo base_url(); ?>assets/js/app.js"></script>
       <script src="<?php echo base_url(); ?>assets/js/app.js"></script>
