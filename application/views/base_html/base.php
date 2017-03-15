@@ -92,6 +92,12 @@
       <script src="<?php echo base_url(); ?>assets/js/notify/pnotify.custom.min.js"></script>
    </head>
    <body>
+      <!-- TESTER -->
+      <?php
+        echo "<pre>";
+        print_r($_SESSION);
+        echo "</pre>";
+      ?>
       <!-- Navigation -->
       <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
          <div class="container-fluid">

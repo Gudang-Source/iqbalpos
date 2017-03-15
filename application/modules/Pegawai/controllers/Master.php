@@ -41,8 +41,13 @@ class Master extends MX_Controller {
 		$dataInsert['id_provinsi'] 		= $params['id_provinsi'];
 		$dataInsert['id_kota'] 			= $params['id_kota'];
 		$dataInsert['id_pegawai_level'] = $params['id_pegawai_level'];
+        $dataInsert['last_edited']      = date("Y-m-d H:i:s");
+        $dataInsert['edited_by']        = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+        $dataInsert['edited_by']        = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
 		$dataInsert['deleted'] 			= 1;
-		$checkData = $this->Pegawaimodel->select($dataInsert, 'm_pegawai');
+
+        $condition = array('email' => $dataInsert['email']);
+		$checkData = $this->Pegawaimodel->select($condition, 'm_pegawai'); //check if this email is already exist
 		if($checkData->num_rows() < 1){
 			$insert = $this->Pegawaimodel->insert($dataInsert, 'm_pegawai');
 			if($insert){
@@ -75,7 +80,7 @@ class Master extends MX_Controller {
     					'kode_pos'			=> $selectData->row()->kode_pos,
     					'id_provinsi'		=> $selectData->row()->id_provinsi,
     					'id_kota'			=> $selectData->row()->id_kota,
-    					'id_pegawai_level'	=> $selectData->row()->id_pegawai_level
+                        'id_pegawai_level'  => $selectData->row()->id_pegawai_level
     				));
     		}else{
     			echo json_encode(array('status' => 1));

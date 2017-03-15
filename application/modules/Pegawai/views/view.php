@@ -57,7 +57,7 @@
              <div class="col-sm-6">
                <div class="form-group">
                  <label for="no_telp">No Telp Pegawai</label>
-                 <input type="text" maxlength="50" name="no_telp" class="form-control" id="no_telp" placeholder="No Telp Pegawai"  required="">
+                 <input type="number" min="0" maxlength="50" name="no_telp" class="form-control" id="no_telp" placeholder="No Telp Pegawai"  required="">
                </div>
              </div>
              <div class="col-sm-6">
@@ -83,7 +83,7 @@
              <div class="col-sm-6">
                <div class="form-group">
                  <label for="kodepos">Kode Pos</label>
-                 <input type="text" maxlength="10" name="kodepos" class="form-control" id="kodepos" placeholder="Kode Pos"  required="">
+                 <input type="number" min="0" maxlength="10" name="kodepos" class="form-control" id="kodepos" placeholder="Kode Pos"  required="">
                </div>
              </div>
              <div class="col-sm-6">
@@ -307,8 +307,20 @@
           $('#aSimpan').html('Sedang Menyimpan...');
         },
         success: function (data) {
-          if (data.status == '3'){
-            console.log("ojueojueokl"+data.status);
+          if (data.status == '1'){ //jika email telah terdaftar dalam db
+            $('#aSimpan').html('Simpan');
+            $("#aSimpan").prop("disabled", false);
+            new PNotify({
+                        title: 'Gagal',
+                        text: "Email telah terdaftar dalam database!",
+                        type: 'danger',
+                        hide: true,
+                        delay: 5000,
+                        styling: 'bootstrap3'
+                      });          
+          }
+          else if (data.status == '3'){ //sukses
+            // console.log("ojueojueokl"+data.status);
             jsonlist = data.list;
             loadData(jsonlist);
             $('#aSimpan').html('Simpan');
