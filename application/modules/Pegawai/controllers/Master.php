@@ -42,24 +42,24 @@ class Master extends MX_Controller {
 		$dataInsert['id_kota'] 			= $params['id_kota'];
 		$dataInsert['id_pegawai_level'] = $params['id_pegawai_level'];
         $dataInsert['last_edited']      = date("Y-m-d H:i:s");
-        $dataInsert['edited_by']        = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+        $dataInsert['add_by']        = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
         $dataInsert['edited_by']        = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
 		$dataInsert['deleted'] 			= 1;
 
-        $condition = array('email' => $dataInsert['email']);
+        $condition = array('email' => $dataInsert['email'], 'deleted' => 1);
 		$checkData = $this->Pegawaimodel->select($condition, 'm_pegawai'); //check if this email is already exist
 		if($checkData->num_rows() < 1){
 			$insert = $this->Pegawaimodel->insert($dataInsert, 'm_pegawai');
 			if($insert){
 				$dataSelect['deleted'] = 1;
 				$list = $this->Pegawaimodel->select($dataSelect, 'm_pegawai')->result();
-				echo json_encode(array('status' => 3,'list' => $list));
+				echo json_encode(array('status' => '3','list' => $list));
 			}else{
-				echo json_encode(array('status' => 1));
+				echo json_encode(array('status' => '2'));
 			}
 			
 		}else{			
-    		echo json_encode(array( 'status'=>1 ));
+    		echo json_encode(array( 'status'=>'1' ));
 		}
     }
    
@@ -101,11 +101,15 @@ class Master extends MX_Controller {
 		$dataUpdate['id_provinsi'] 		= $params['id_provinsi'];
 		$dataUpdate['id_kota'] 			= $params['id_kota'];
         $dataUpdate['id_pegawai_level'] = $params['id_pegawai_level'];
+        $dataUpdate['last_edited']      = date("Y-m-d H:i:s");
+        $dataUpdate['edited_by']        = isset($_SESSION['id_user']) ?$_SESSION['id_user'] : 0;
         if(isset($params['password'])) {
-		  $dataUpdate['password'] = hash('sha512', $params['password']);
+          $dataUpdate['password'] = hash('sha512', $params['password']);
         }
-		$checkData = $this->Pegawaimodel->select($dataCondition, 'm_pegawai');
-		if($checkData->num_rows() > 0){
+
+        $condition = array('email' => $dataUpdate['email'], 'deleted' => 1);
+		$checkData = $this->Pegawaimodel->select($condition, 'm_pegawai');
+		if(($checkData->num_rows() < 1) OR ($checkData->row()->id == $params['id'])){
 			$update = $this->Pegawaimodel->update($dataCondition, $dataUpdate, 'm_pegawai');
 			if($update){
 				$dataSelect['deleted'] = 1;

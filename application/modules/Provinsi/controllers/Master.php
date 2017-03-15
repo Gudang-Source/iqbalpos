@@ -23,7 +23,11 @@ class Master extends MX_Controller {
     function add(){
 		$params = $this->input->post();
 		$dataInsert['nama'] 			= $params['nama'];
+        $dataInsert['last_edited']      = date("Y-m-d H:i:s");
+        $dataInsert['add_by']           = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+        $dataInsert['edited_by']        = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
 		$dataInsert['deleted'] 			= 1;
+
 		$checkData = $this->Provinsimodel->select($dataInsert, 'm_provinsi');
 		if($checkData->num_rows() < 1){
 			$insert = $this->Provinsimodel->insert($dataInsert, 'm_provinsi');
@@ -64,6 +68,9 @@ class Master extends MX_Controller {
 		$params = $this->input->post();
 		$dataCondition['id']			= $params['id'];
 		$dataUpdate['nama'] 			= $params['nama'];
+        $dataUpdate['last_edited']      = date("Y-m-d H:i:s");
+        $dataUpdate['edited_by']        = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+        
 		$checkData = $this->Provinsimodel->select($dataCondition, 'm_provinsi');
 		if($checkData->num_rows() > 0){
 			$update = $this->Provinsimodel->update($dataCondition, $dataUpdate, 'm_provinsi');

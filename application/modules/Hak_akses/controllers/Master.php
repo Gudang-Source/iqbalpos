@@ -28,7 +28,11 @@ class Master extends MX_Controller {
 		$params = $this->input->post();
         $dataInsert['nama']             = $params['nama'];
         $dataInsert['permission'] 		= isset($params['menu']) ? json_encode($params['menu']) : 0;
+        $dataInsert['last_edited']      = date("Y-m-d H:i:s");
+        $dataInsert['add_by']           = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+        $dataInsert['edited_by']        = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
 		$dataInsert['deleted'] 			= 1;
+        
 		$checkData = $this->Pegawailevelmodel->select($dataInsert, 'm_pegawai_level');
 		if($checkData->num_rows() < 1){
 			$insert = $this->Pegawailevelmodel->insert($dataInsert, 'm_pegawai_level');
@@ -71,6 +75,9 @@ class Master extends MX_Controller {
 		$dataCondition['id']			= $params['id'];
 		$dataUpdate['nama'] 			= $params['nama'];
         $dataUpdate['permission']       = isset($params['menu']) ? json_encode($params['menu']) : 0;
+        $dataUpdate['last_edited']      = date("Y-m-d H:i:s");
+        $dataUpdate['edited_by']        = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+
 		$checkData = $this->Pegawailevelmodel->select($dataCondition, 'm_pegawai_level');
 		if($checkData->num_rows() > 0){
 			$update = $this->Pegawailevelmodel->update($dataCondition, $dataUpdate, 'm_pegawai_level');

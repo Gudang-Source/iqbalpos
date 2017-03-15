@@ -121,14 +121,28 @@
 	    dataType: 'json',
       beforeSend: function() { 
         // tambahkan loading
+        $("#aSimpan").prop("disabled", true);
         $('#aSimpan').html('Sedang Menyimpan...');
       },
       success: function (data) {
-  			if (data.status == '3'){
-  				console.log("ojueojueokl"+data.status);
-  				jsonlist = data.list;
-  				loadData(jsonlist);
+        if (data.status == '1'){ //jika email telah terdaftar dalam db
+            $('#aSimpan').html('Simpan');
+            $("#aSimpan").prop("disabled", false);
+            new PNotify({
+                        title: 'Gagal',
+                        text: "Nama telah terdaftar dalam database!",
+                        type: 'danger',
+                        hide: true,
+                        delay: 5000,
+                        styling: 'bootstrap3'
+                      });          
+        }
+        else if (data.status == '3'){
+          console.log("ojueojueokl"+data.status);
+          jsonlist = data.list;
+          loadData(jsonlist);
           $('#aSimpan').html('Simpan');
+          $("#aSimpan").prop("disabled", false);
   				$("#modalform").modal('hide');
   				// $("#notif-top").fadeIn(500);
   				// $("#notif-top").fadeOut(2500);
@@ -159,9 +173,11 @@
           beforeSend: function() { 
             // kasi loading
             $("#aConfirm"+i).html("Sedang Menghapus...");
+            $("#aConfirm"+i).prop("disabled", true);
           },
           success: function (data) {
-      			if (data.status == '3'){
+            if (data.status == '3'){
+              $("#aConfirm"+i).prop("disabled", false);
       				// $("#notif-top").fadeIn(500);
       				// $("#notif-top").fadeOut(2500);
               new PNotify({
@@ -186,9 +202,17 @@
 		var i = parseInt(id);
     $(el).attr("data-content","<button class=\'btn btn-danger myconfirm\'  href=\'#\' onclick=\'deleteData(this)\' id=\'aConfirm"+i+"\' style=\'min-width:85px\'><i class=\'fa fa-trash\'></i> Ya</button>");
 		$(el).popover();
-
 	}
-  
 
+  //Hack untuk bootstrap popover (popover hilang jika diklik di luar)
+  $(document).on('click', function (e) {
+    $('[data-toggle="popover"],[data-original-title]').each(function () {
+        //the 'is' for buttons that trigger popups
+        //the 'has' for icons within a button that triggers a popup
+        if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {                
+            (($(this).popover('hide').data('bs.popover')||{}).inState||{}).click = false  // fix for BS 3.3.6
+        }
+    });
+  });  
   
 </script>

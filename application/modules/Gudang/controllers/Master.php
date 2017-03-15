@@ -30,7 +30,11 @@ class Master extends MX_Controller {
 		$dataInsert['alamat'] 			= $params['alamat'];
 		$dataInsert['id_provinsi'] 		= $params['id_provinsi'];
 		$dataInsert['id_kota'] 			= $params['id_kota'];
+        $dataInsert['last_edited']      = date("Y-m-d H:i:s");
+        $dataInsert['add_by']           = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+        $dataInsert['edited_by']        = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
 		$dataInsert['deleted'] 			= 1;
+
 		$checkData = $this->Gudangmodel->select($dataInsert, 'm_gudang');
 		if($checkData->num_rows() < 1){
 			$insert = $this->Gudangmodel->insert($dataInsert, 'm_gudang');
@@ -78,6 +82,9 @@ class Master extends MX_Controller {
 		$dataUpdate['alamat'] 			= $params['alamat'];
 		$dataUpdate['id_provinsi'] 		= $params['id_provinsi'];
 		$dataUpdate['id_kota'] 			= $params['id_kota'];
+        $dataUpdate['last_edited']      = date("Y-m-d H:i:s");
+        $dataUpdate['edited_by']        = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+        
 		$checkData = $this->Gudangmodel->select($dataCondition, 'm_gudang');
 		if($checkData->num_rows() > 0){
 			$update = $this->Gudangmodel->update($dataCondition, $dataUpdate, 'm_gudang');

@@ -28,7 +28,11 @@ class Master extends MX_Controller {
 		$params = $this->input->post();
 		$dataInsert['nama'] 			= $params['nama'];
 		$dataInsert['id_provinsi'] 		= $params['id_provinsi'];
+        $dataInsert['last_edited']      = date("Y-m-d H:i:s");
+        $dataInsert['add_by']           = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+        $dataInsert['edited_by']        = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
 		$dataInsert['deleted'] 			= 1;
+        
 		$checkData = $this->Kotamodel->select($dataInsert, 'm_kota');
 		if($checkData->num_rows() < 1){
 			$insert = $this->Kotamodel->insert($dataInsert, 'm_kota');
@@ -72,6 +76,9 @@ class Master extends MX_Controller {
 		$dataCondition['id']			= $params['id'];
 		$dataUpdate['nama'] 			= $params['nama'];
 		$dataUpdate['id_provinsi'] 		= $params['id_provinsi'];
+        $dataUpdate['last_edited']      = date("Y-m-d H:i:s");
+        $dataUpdate['edited_by']        = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+
 		$checkData = $this->Kotamodel->select($dataCondition, 'm_kota');
 		if($checkData->num_rows() > 0){
 			$update = $this->Kotamodel->update($dataCondition, $dataUpdate, 'm_kota');

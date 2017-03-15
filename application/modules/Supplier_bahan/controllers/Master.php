@@ -30,7 +30,11 @@ class Master extends MX_Controller {
 		$dataInsert['email'] 			= $params['email'];
 		$dataInsert['id_provinsi'] 		= $params['id_provinsi'];
 		$dataInsert['id_kota'] 			= $params['id_kota'];
+        $dataInsert['last_edited']      = date("Y-m-d H:i:s");
+        $dataInsert['add_by']           = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+        $dataInsert['edited_by']        = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
 		$dataInsert['deleted'] 			= 1;
+
 		$checkData = $this->Supplierbahanmodel->select($dataInsert, 'm_supplier_bahan');
 		if($checkData->num_rows() < 1){
 			$insert = $this->Supplierbahanmodel->insert($dataInsert, 'm_supplier_bahan');
@@ -81,6 +85,9 @@ class Master extends MX_Controller {
 		$dataUpdate['email'] 			= $params['email'];
 		$dataUpdate['id_provinsi'] 		= $params['id_provinsi'];
 		$dataUpdate['id_kota'] 			= $params['id_kota'];
+        $dataUpdate['last_edited']      = date("Y-m-d H:i:s");
+        $dataUpdate['edited_by']        = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+        
 		$checkData = $this->Supplierbahanmodel->select($dataCondition, 'm_supplier_bahan');
 		if($checkData->num_rows() > 0){
 			$update = $this->Supplierbahanmodel->update($dataCondition, $dataUpdate, 'm_supplier_bahan');

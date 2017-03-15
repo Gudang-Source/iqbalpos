@@ -122,13 +122,15 @@
       beforeSend: function() { 
         // tambahkan loading
         $('#aSimpan').html('Sedang Menyimpan...');
+        $("#aSimpan").prop("disabled", true);
       },
       success: function (data) {
-  			if (data.status == '3'){
-  				console.log("ojueojueokl"+data.status);
-  				jsonlist = data.list;
-  				loadData(jsonlist);
+        if (data.status == '3'){
+          console.log("ojueojueokl"+data.status);
+          jsonlist = data.list;
+          loadData(jsonlist);
           $('#aSimpan').html('Simpan');
+          $("#aSimpan").prop("disabled", false);
   				$("#modalform").modal('hide');
   				// $("#notif-top").fadeIn(500);
   				// $("#notif-top").fadeOut(2500);
@@ -159,9 +161,11 @@
           beforeSend: function() { 
             // kasi loading
             $("#aConfirm"+i).html("Sedang Menghapus...");
+            $("#aConfirm"+i).prop("disabled", true);
           },
           success: function (data) {
-      			if (data.status == '3'){
+            if (data.status == '3'){
+             $("#aConfirm"+i).prop("disabled", false);
   				  // $("#notif-top").fadeIn(500);
   				  // $("#notif-top").fadeOut(2500);
               new PNotify({
@@ -189,6 +193,14 @@
 
 	}
   
-
-  
+  //Hack untuk bootstrap popover (popover hilang jika diklik di luar)
+  $(document).on('click', function (e) {
+    $('[data-toggle="popover"],[data-original-title]').each(function () {
+        //the 'is' for buttons that trigger popups
+        //the 'has' for icons within a button that triggers a popup
+        if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {                
+            (($(this).popover('hide').data('bs.popover')||{}).inState||{}).click = false  // fix for BS 3.3.6
+        }
+    });
+  });      
 </script>

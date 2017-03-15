@@ -57,7 +57,7 @@
              <div class="col-sm-6">
                <div class="form-group">
                  <label for="no_telp">No Telp Customer</label>
-                 <input type="text" maxlength="50" name="no_telp" class="form-control" id="no_telp" placeholder="No Telp Customer" required="">
+                 <input type="number" min="0" maxlength="50" name="no_telp" class="form-control" id="no_telp" placeholder="No Telp Customer" required="">
                </div>
              </div>
              <div class="col-sm-6">
@@ -84,7 +84,7 @@
              <div class="col-sm-6">
                <div class="form-group">
                  <label for="kodepos">Kode Pos</label>
-                 <input type="text" maxlength="10" name="kodepos" class="form-control" id="kodepos" placeholder="Kode Pos" required="">
+                 <input type="number" min="0" maxlength="10" name="kodepos" class="form-control" id="kodepos" placeholder="Kode Pos" required="">
                </div>
              </div>
              <div class="col-sm-6">
@@ -128,11 +128,13 @@
   	}
   	$("#id_provinsi").html(html);
   }
-  function load_kota(json){
-    console.log(json);
+  function load_kota(json, idProv=0){
+    // console.log(json);
     var html = "<option value='' selected disabled>Pilih Kota</option>";
     for (var i=0;i<json.length;i++){
-         html = html+ "<option value='"+json[i].id+"'>"+json[i].nama+"</option>";
+         if(json[i].id_provinsi == idProv){
+          html = html+ "<option value='"+json[i].id+"'>"+json[i].nama+"</option>";
+         }
     }
     $("#id_kota").html(html);
   }
@@ -158,7 +160,7 @@
   	   dataType : "json",
   	   success : function(data){
   	      $("#id_kota").prop("disabled",false);
-  	      load_kota(data);
+  	      load_kota(data, $("#id_provinsi").val());
   	      
   	   }
   	});
@@ -171,7 +173,7 @@
        dataType : "json",
        success : function(data){
           $("#id_kota").prop("disabled",false);
-          load_kota(data);
+          load_kota(data, provinsi);
        }
     });
   }
@@ -202,6 +204,8 @@
   
   
   function showAdd(){
+    load_kota(jsonKota, 0);
+
     $("#myModalLabel").text("Tambah Customer");
     $("#id").val("");
     $("#nama").val("");
@@ -217,7 +221,7 @@
   
   function showUpdate(i){
     load_prov(jsonProv);
-    load_kota(jsonKota);
+    load_kota(jsonKota, jsonList[i].id_provinsi);
     load_level(jsonLevel);
 
     $("#myModalLabel").text("Ubah Customer");
@@ -254,6 +258,7 @@
       beforeSend: function() { 
         // tambahkan loading
         $('#aSimpan').html('Sedang Menyimpan...');
+        $("#aSimpan").prop("disabled", true);
       },
       success: function (data) {
   			if (data.status == '3'){
@@ -261,6 +266,7 @@
   				jsonList = data.list;
   				loadData(jsonList);
           $('#aSimpan').html('Simpan');
+          $("#aSimpan").prop("disabled", false);
   				$("#modalform").modal('hide');
   				// $("#notif-top").fadeIn(500);
   				// $("#notif-top").fadeOut(2500);
@@ -291,9 +297,11 @@
           beforeSend: function() { 
             // kasi loading
             $("#aConfirm"+i).html("Sedang Menghapus...");
+            $("#aConfirm"+i).prop("disabled", true);
           },
           success: function (data) {
       			if (data.status == '3'){
+              $("#aConfirm"+i).prop("disabled", false);
   				// $("#notif-top").fadeIn(500);
   				// $("#notif-top").fadeOut(2500);
               new PNotify({
@@ -318,9 +326,18 @@
 		var i = parseInt(id);
     $(el).attr("data-content","<button class=\'btn btn-danger myconfirm\'  href=\'#\' onclick=\'deleteData(this)\' id=\'aConfirm"+i+"\' style=\'min-width:85px\'><i class=\'fa fa-trash\'></i> Ya</button>");
 		$(el).popover();
-
 	}
   
+  //Hack untuk bootstrap popover (popover hilang jika diklik di luar)
+  $(document).on('click', function (e) {
+    $('[data-toggle="popover"],[data-original-title]').each(function () {
+        //the 'is' for buttons that trigger popups
+        //the 'has' for icons within a button that triggers a popup
+        if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {                
+            (($(this).popover('hide').data('bs.popover')||{}).inState||{}).click = false  // fix for BS 3.3.6
+        }
+    });
+  });  
 
   
 </script>

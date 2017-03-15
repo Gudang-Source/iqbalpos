@@ -23,8 +23,13 @@ class Master extends MX_Controller {
     function add(){
 		$params = $this->input->post();
 		$dataInsert['nama'] 			= $params['nama'];
+        $dataInsert['last_edited']      = date("Y-m-d H:i:s");
+        $dataInsert['add_by']           = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+        $dataInsert['edited_by']        = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
 		$dataInsert['deleted'] 			= 1;
-		$checkData = $this->Customerlevelmodel->select($dataInsert, 'm_customer_level');
+
+        $condition = array('nama' => $params['nama'], 'deleted' => 1);
+		$checkData = $this->Customerlevelmodel->select($condition, 'm_customer_level');
 		if($checkData->num_rows() < 1){
 			$insert = $this->Customerlevelmodel->insert($dataInsert, 'm_customer_level');
 			if($insert){
@@ -32,7 +37,7 @@ class Master extends MX_Controller {
 				$list = $this->Customerlevelmodel->select($dataSelect, 'm_customer_level')->result();
 				echo json_encode(array('status' => 3,'list' => $list));
 			}else{
-				echo json_encode(array('status' => 1));
+				echo json_encode(array('status' => 2));
 			}
 			
 		}else{			
@@ -64,8 +69,12 @@ class Master extends MX_Controller {
 		$params = $this->input->post();
 		$dataCondition['id']			= $params['id'];
 		$dataUpdate['nama'] 			= $params['nama'];
-		$checkData = $this->Customerlevelmodel->select($dataCondition, 'm_customer_level');
-		if($checkData->num_rows() > 0){
+        $dataUpdate['last_edited']      = date("Y-m-d H:i:s");
+        $dataUpdate['edited_by']        = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+
+        $condition = array('nama' => $params['nama'], 'deleted' => 1);
+		$checkData = $this->Customerlevelmodel->select($condition, 'm_customer_level');
+		if(($checkData->num_rows() < 1) OR ($checkData->row()->id == $params['id'])){
 			$update = $this->Customerlevelmodel->update($dataCondition, $dataUpdate, 'm_customer_level');
 			if($update){
 				$dataSelect['deleted'] = 1;

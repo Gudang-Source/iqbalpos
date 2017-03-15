@@ -23,7 +23,11 @@ class Master extends MX_Controller {
     function add(){
 		$params = $this->input->post();
 		$dataInsert['nama'] 			= $params['nama'];
+        $dataInsert['last_edited']      = date("Y-m-d H:i:s");
+        $dataInsert['add_by']           = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+        $dataInsert['edited_by']        = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
 		$dataInsert['deleted'] 			= 1;
+
 		$checkData = $this->Satuanmodel->select($dataInsert, 'm_satuan');
 		if($checkData->num_rows() < 1){
 			$insert = $this->Satuanmodel->insert($dataInsert, 'm_satuan');
@@ -64,6 +68,9 @@ class Master extends MX_Controller {
 		$params = $this->input->post();
 		$dataCondition['id']			= $params['id'];
 		$dataUpdate['nama'] 			= $params['nama'];
+        $dataUpdate['last_edited']      = date("Y-m-d H:i:s");
+        $dataUpdate['edited_by']        = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+        
 		$checkData = $this->Satuanmodel->select($dataCondition, 'm_satuan');
 		if($checkData->num_rows() > 0){
 			$update = $this->Satuanmodel->update($dataCondition, $dataUpdate, 'm_satuan');

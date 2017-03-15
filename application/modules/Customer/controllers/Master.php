@@ -3,7 +3,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Master extends MX_Controller {
 	function __construct() {
         parent::__construct();
-        $this->load->helper('format_date_helper');
         $this->load->model('Customermodel');
     }
     function index(){
@@ -34,7 +33,11 @@ class Master extends MX_Controller {
 		$dataInsert['id_provinsi'] 		= $params['id_provinsi'];
 		$dataInsert['id_kota'] 			= $params['id_kota'];
 		$dataInsert['id_customer_level'] = $params['id_customer_level'];
+        $dataInsert['last_edited']      = date("Y-m-d H:i:s");
+        $dataInsert['add_by']        = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+        $dataInsert['edited_by']        = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
 		$dataInsert['deleted'] 			= 1;
+
 		$checkData = $this->Customermodel->select($dataInsert, 'm_customer');
 		if($checkData->num_rows() < 1){
 			$insert = $this->Customermodel->insert($dataInsert, 'm_customer');
@@ -43,7 +46,7 @@ class Master extends MX_Controller {
 				$list = $this->Customermodel->select($dataSelect, 'm_customer')->result();
 				echo json_encode(array('status' => 3,'list' => $list));
 			}else{
-				echo json_encode(array('status' => 1));
+				echo json_encode(array('status' => 2));
 			}
 			
 		}else{			
@@ -89,6 +92,9 @@ class Master extends MX_Controller {
 		$dataUpdate['id_provinsi'] 		= $params['id_provinsi'];
 		$dataUpdate['id_kota'] 			= $params['id_kota'];
 		$dataUpdate['id_customer_level'] = $params['id_customer_level'];
+        $dataUpdate['last_edited']      = date("Y-m-d H:i:s");
+        $dataUpdate['edited_by']        = isset($_SESSION['id_user']) ?$_SESSION['id_user'] : 0;
+        
 		$checkData = $this->Customermodel->select($dataCondition, 'm_customer');
 		if($checkData->num_rows() > 0){
 			$update = $this->Customermodel->update($dataCondition, $dataUpdate, 'm_customer');
