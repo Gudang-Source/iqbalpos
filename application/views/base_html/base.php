@@ -42,6 +42,8 @@
       <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/bootstrap-datepicker.min.css">
       <!-- Custom CSS -->
       <link href="<?php echo base_url(); ?>assets/css/Style-Dark.css" rel="stylesheet">
+      <link href="<?php echo base_url(); ?>assets/css/custom_style.css" rel="stylesheet">
+
       <link href="<?php echo base_url(); ?>assets/js/notify/pnotify.custom.min.css" rel="stylesheet">
      
        <!-- slim scroll script -->
@@ -94,9 +96,9 @@
    <body>
       <!-- TESTER -->
       <?php
-        echo "<pre>";
-        print_r($_SESSION);
-        echo "</pre>";
+        // echo "<pre>";
+        // print_r($_SESSION);
+        // echo "</pre>";
       ?>
       <!-- Navigation -->
       <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
