@@ -5,19 +5,11 @@ class Index extends MX_Controller {
         parent::__construct();
     }
     function index(){
-        // $Pegawai = new MasterPegawai();
-    	// $data['view'] = $Pegawai->index();
     	$data['view'] = 'base_html/sale';
     	$this->load->view('base_html/base', $data);
     }
     function base_sale(){
     	$this->load->view('base_html/sale');
-    }
-    function testClass(){
-     //    $Pegawai = new MasterPegawai();
-    	// $data = $Pegawai->index();
-    	// echo $data;
-    	// var_dump($Pegawai);
     }
     function sale(){
         $data['view'] = 'base_html/sale';
@@ -32,7 +24,6 @@ class Index extends MX_Controller {
         }
         $this->load->view('base_html/base', $data);
     }
-
     function login(){
     	$this->load->view('Login/view');
     }
