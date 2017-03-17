@@ -22,6 +22,19 @@ class Produkmodel extends CI_Model {
 		$this->db->close();
 		return $result;
 	}
+	public function insert_batch($data, $table) {
+		$this->load->database();
+		$result = $this->db->insert_batch($table, $data);
+		$this->db->close();
+		return $result;
+	}
+	public function insert_id($data, $table){
+		$this->load->database();
+		$result = $this->db->insert($this->table_prefix."".$table, $data);
+		$insert_id = $this->db->insert_id();
+		$this->db->close();
+		return $insert_id;
+	}
 	public function update($condition, $data, $table){
 		$this->load->database();
 		$this->db->where($condition);
@@ -61,5 +74,9 @@ class Produkmodel extends CI_Model {
 		$result = $this->db->get($this->table_prefix."".$table);
 		$this->db->close();
 		return $result;
+	}
+	public function get_last_id($table) {
+		$last_row = $this->db->select('id')->order_by('id',"desc")->limit(1)->get($table)->row();
+		return $last_row->id;
 	}
 }

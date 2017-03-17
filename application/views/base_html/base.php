@@ -30,6 +30,8 @@
       <link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/waves.min.css">
       <!-- daterangepicker -->
       <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/daterangepicker.css" />
+      <!-- multi select -->
+      <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/bootstrap-multiselect.css" />
       <!-- css for the preview keyset extension -->
       <link href="<?php echo base_url(); ?>assets/css/keyboard-previewkeyset.css" rel="stylesheet">
       <!-- keyboard widget style -->
@@ -75,6 +77,8 @@
       <script src="<?php echo base_url(); ?>assets/js/sweetalert.min.js"></script>
       <!-- datepicker script -->
       <script src="<?php echo base_url(); ?>assets/js/bootstrap-datepicker.min.js"></script>
+      <!-- multiselect script -->
+      <script src="<?php echo base_url(); ?>assets/js/bootstrap-multiselect.js"></script>
       <!-- dateformat script -->
       <script src="<?php echo base_url(); ?>assets/js/dateFormat.min.js"></script>
       <!-- creditCardValidator script -->
