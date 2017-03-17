@@ -44,6 +44,7 @@
                 error: function(){
                     $("#TableMain").append('<tbody class="employee-grid-error"><tr><th colspan="3">No data found in the server</th></tr></tbody>');
                     // $("#employee-grid_processing").css("display","none");
+                    // dataTable.ajax.reload( null, false );
                 }
             }
         });
