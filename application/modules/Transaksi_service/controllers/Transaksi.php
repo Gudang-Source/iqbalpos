@@ -109,6 +109,31 @@ class Transaksi extends MX_Controller {
     	$this->cart->destroy();
     	echo $this->getOrder();	
     }
+	function tambahCart(){
+		$datas = array(
+	        array(
+	                'id'      => 'sku_123ABC',
+	                'qty'     => 1,
+	                'price'   => 39.95,
+	                'name'    => 'T-Shirt',
+	                'options' => array('Size' => 'L', 'Color' => 'Red')
+	        ),
+	        array(
+	                'id'      => 'sku_567ZYX',
+	                'qty'     => 1,
+	                'price'   => 9.95,
+	                'name'    => 'Coffee Mug'
+	        ),
+	        array(
+	                'id'      => 'sku_965QRS',
+	                'qty'     => 1,
+	                'price'   => 29.95,
+	                'name'    => 'Shot Glass'
+	        )
+		);
+
+		$this->cart->insert($datas); 
+	}
     function data_transaksi(){
 		$datas = array(
 		        array(
