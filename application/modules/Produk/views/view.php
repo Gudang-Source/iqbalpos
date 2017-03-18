@@ -29,6 +29,105 @@
    </button>
 </div>
 <!-- /.container -->
+<!-- Modal Detail Product -->
+<div class="modal fade" id="Viewproduct" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+   <div class="modal-dialog modal-lg" role="document" id="viewModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="view">Detail Produk</h4>
+        </div>
+        <div class="modal-body" id="modal-body">
+           <div id="viewSectionProduct">
+              <!-- view goes here -->
+              <div class="col-md-12"><div class="media">
+                 <div class="media-left">
+                    <img id="det_foto" class="media-object img-rounded" src="<?php echo base_url()?>upload/produk/product_placeholder.png" alt="image" width="200px">
+                 </div>
+                 <div class="media-body">
+                  <h1 class="media-heading" id="det_nama">sfsdg</h1>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <p><b>SKU :</b> <span id="det_sku"></span></p>
+                      <p><b>Kode Barang :</b> <span id="det_kode_barang"></span></p>
+                      <p><b>Harga Beli :</b> Rp <span id="det_harga_beli"></span></p>
+                      <p><b>Stok :</b> <span id="det_stok"></p>
+                      <p><b>Berat :</b> <span id="det_berat"> gram</p>
+                      <p><b>Deskripsi :</b> <span id="det_deskripsi"></p></p>
+                    </div>
+                    <div class="col-sm-6">
+                      <p><b>Supplier :</b> <span id="det_supplier"></span></p>
+                      <p><b>Satuan :</b> <span id="det_satuan"></span></p>
+                      <p><b>Gudang :</b> <span id="det_gudang"></span></p>
+                      <p><b>Kategori :</b> <span id="det_kategori"></span></p>
+                      <p><b>Bahan :</b> <span id="det_bahan"></span></p>
+                      <p><b>Katalog :</b> <span id="det_katalog"></span></p>
+                      <p><b>Ukuran :</b> <span id="det_ukuran"></span></p>
+                      <p><b>Warna :</b> <span id="det_warna"></span></p>
+                    </div>
+                  </div>
+                 </div>
+              </div></div>
+              <div class="col-md-6">
+                  
+              </div>
+           </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default hiddenpr" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+   </div>
+</div>
+<!-- /.Modal -->
+
+<!-- Modal harga -->
+  <div class="modal fade" id="modalharga" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+   <div class="modal-dialog" role="document" id="stockModal">
+      <div class="modal-content">
+        <form action="" id="formHarga" method="post">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="modalHargaTitle">Harga Jual</h4>
+        </div>
+        <div class="modal-body" id="modal-body">
+           <div>
+             <!-- content -->
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Level Customer</th>
+                    <th>Harga Jual</th>
+                  </tr>
+                </thead>
+                <tbody class="itemslist">
+                 <input type="hidden" name="id" maxlength="50" Required class="form-control" id="id_produk" placeholder="ID Produk">
+                  <?php foreach (json_decode($list_customer_level) as $cust_level) { ?>
+                    <tr>
+                      <td><p><?php echo $cust_level->nama?></p></td>
+                      <td>
+                        <div class="form-group">
+                          <div class="input-group">
+                            <span class="input-group-addon">Rp</span>
+                            <input type="number" name="harga_<?php echo $cust_level->id?>" id="harga_<?php echo $cust_level->id?>" class="form-control" min="0" placeholder="Harga untuk <?php echo $cust_level->nama?>">
+                          </div>
+                          </div>
+                        </td>
+                    </tr>
+                  <?php } ?>
+                </tbody>
+              </table>
+           </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default hiddenpr" data-dismiss="modal">Batal</button>
+          <button type="submit" id="hSimpan" class="btn btn-add hiddenpr">Simpan</button>
+        </div>
+       </form> 
+      </div>
+   </div>
+  </div>
+  <!-- /.Modal -->
 
 <!-- Modal Add -->
 <div class="modal fade" id="modalform" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -157,7 +256,6 @@
 </div>
 <!-- /.Modal Add-->
 
-
 <script type="text/javascript">
   //var table    = $("#TableMainServer").DataTable();
   // $(document).ready(function() {
@@ -174,6 +272,7 @@
   //   });
   // });
   var jsonlist = <?php echo $list; ?>;
+  var jsonCustomerLevel = <?php echo $list_customer_level; ?>;
   var jsonSupplier = <?php echo $list_supplier; ?>;
   var jsonSatuan = <?php echo $list_satuan; ?>;
   var jsonGudang = <?php echo $list_gudang; ?>;
@@ -185,6 +284,7 @@
   var jsonWarna = <?php echo $list_warna; ?>;
   var jsonDetUkuran = <?php echo $list_det_ukuran; ?>;
   var jsonDetWarna = <?php echo $list_det_warna; ?>;
+  var jsonDetHarga = <?php echo $list_det_harga; ?>;
   
   var awalLoad = true;
   var initDataTable = $('#TableMainServer').DataTable({
@@ -271,6 +371,7 @@
     $("#kode_barang").val("");
     $("#berat").val("");
     $("#harga_beli").val("");
+    $("#foto").attr("required", true);
     $("#foto").val("");
     $("#versi_foto").val("");
     $("#deskripsi").val("");
@@ -284,27 +385,113 @@
     console.log(dataUpdate);
     var getUkuran = jsonDetUkuran.filter(function (index) { return index.id_produk == i }); 
     var getWarna = jsonDetWarna.filter(function (index) { return index.id_produk == i });
-    var id_ukuran = (getUkuran.length > 0) ? getUkuran[0].id_ukuran : "";
-    var id_warna = (getUkuran.warna > 0) ? getWarna[0].id_warna : "";
+    var id_ukuran = [];
+    id_ukuran = $.map(getUkuran, function(el, idx){
+       return [el["id_ukuran"]];
+    }); 
+    var id_warna = [];
+    id_warna = $.map(getWarna, function(el, idx){
+       return [el["id_warna"]];
+    }); 
 
+    $("#foto").attr("required", false);
     $("#myModalLabel").text("Ubah Produk");
     $("#id").val(dataUpdate[0].id);
     $("#nama").val(dataUpdate[0].nama);
-    $("#id_supplier").val(dataUpdate[0].id_supplier);
-    $("#id_satuan").val(dataUpdate[0].id_satuan);
-    $("#id_gudang").val(dataUpdate[0].id_gudang);
-    $("#id_kategori").val(dataUpdate[0].id_kategori);
-    $("#id_bahan").val(dataUpdate[0].id_bahan);
-    $("#id_katalog").val(dataUpdate[0].id_katalog);
-    $("#id_ukuran").val(id_ukuran);
-    $("#id_warna").val(id_warna);
+    $("#id_supplier").val((dataUpdate[0].id_supplier==0) ? "" : dataUpdate[0].id_supplier);
+    $("#id_satuan").val((dataUpdate[0].id_satuan==0) ? "" : dataUpdate[0].id_satuan);
+    $("#id_gudang").val((dataUpdate[0].id_gudang==0) ? "" : dataUpdate[0].id_gudang);
+    $("#id_kategori").val((dataUpdate[0].id_kategori==0) ? "" : dataUpdate[0].id_kategori);
+    $("#id_bahan").val((dataUpdate[0].id_bahan==0) ? "" : dataUpdate[0].id_bahan);
+    $("#id_katalog").val((dataUpdate[0].id_katalog==0) ? "" : dataUpdate[0].id_katalog);
     $("#sku").val(dataUpdate[0].sku);
     $("#kode_barang").val(dataUpdate[0].kode_barang);
     $("#berat").val(dataUpdate[0].berat);
     $("#harga_beli").val(dataUpdate[0].harga_beli);
     $("#foto").val("");
     $("#deskripsi").val(dataUpdate[0].deskripsi);
-	  $("#modalform").modal("show");
+    
+    $("#id_ukuran").val(id_ukuran);
+    $("#id_ukuran").multiselect("refresh");
+    $("#id_warna").val(id_warna);
+    $("#id_warna").multiselect("refresh");
+    
+    $("#modalform").modal("show");
+  }
+  function showDetail(i){
+    //data ukuran & warna diambil dari tabel yang berbeda
+    var dataDetail = jsonlist.filter(function (index) { return index.id == i }); 
+    console.log(dataDetail);
+    var getUkuran = jsonDetUkuran.filter(function (index) { return index.id_produk == i }); 
+    var getWarna = jsonDetWarna.filter(function (index) { return index.id_produk == i });
+    
+    var id_ukuran = [];
+    id_ukuran = $.map(getUkuran, function(el, idx){
+       return [el["id_ukuran"]];
+    }); 
+    var id_warna = [];
+    id_warna = $.map(getWarna, function(el, idx){
+       return [el["id_warna"]];
+    }); 
+
+    var list_ukuran = [];
+    $.each(id_ukuran, function(idx, val) {
+       list_ukuran.push($.map(jsonUkuran, function(index, value) {
+        if(id_ukuran[idx] == index["id"]){
+          return [index["nama"]];
+        }
+      }));
+    });
+    var list_warna = [];
+    $.each(id_warna, function(idx, val) {
+       list_warna.push($.map(jsonWarna, function(index, value) {
+        if(id_warna[idx] == index["id"]){
+          return [index["nama"]];
+        }
+      }));
+    });
+
+    $("#det_nama").text(dataDetail[0].nama ? dataDetail[0].nama : '-');
+    $("#det_sku").text(dataDetail[0].sku ? dataDetail[0].sku : '-');
+    $("#det_kode_barang").text(dataDetail[0].kode_barang ? dataDetail[0].kode_barang : '-');
+    $("#det_harga_beli").text(dataDetail[0].harga_beli);
+    $("#det_stok").text(dataDetail[0].stok);
+    $("#det_berat").text(dataDetail[0].berat);
+    $("#det_deskripsi").text(dataDetail[0].deskripsi ? dataDetail[0].deskripsi : '-');
+
+    $("#det_supplier").text(getMasterById(jsonSupplier, dataDetail[0].id_supplier));
+    $("#det_satuan").text(getMasterById(jsonSatuan, dataDetail[0].id_satuan));
+    $("#det_gudang").text(getMasterById(jsonGudang, dataDetail[0].id_gudang));
+    $("#det_kategori").text(getMasterById(jsonKategori, dataDetail[0].id_kategori));
+    $("#det_bahan").text(getMasterById(jsonBahan, dataDetail[0].id_bahan));
+    $("#det_katalog").text(getMasterById(jsonKatalog, dataDetail[0].id_katalog));
+    $("#det_ukuran").text((list_ukuran.length>0) ? list_ukuran.join() : '-');
+    $("#det_warna").text((list_warna.length>0) ? list_warna.join() : '-');
+    $("#det_foto").attr("src", "<?php echo base_url('upload/produk')?>/"+dataDetail[0].foto);
+
+    $("#Viewproduct").modal("show");
+  }
+  function showHarga(i){
+    $("#modalharga :input").val(""); //empty inputs first!
+    $("#id_produk").val(i);
+    var getHarga = jsonDetHarga.filter(function (index) { return index.id_produk == i });
+
+    $.each(getHarga, function(i) {
+      $("#modalharga #harga_"+getHarga[i].id_customer_level).val(getHarga[i].harga);
+      // console.log(getHarga[i].harga);
+    });
+    $("#modalharga").modal("show");
+  }
+
+  function getMasterById(jsonData, id){
+    dataNama = '-';
+    data = jsonData.filter(function(index) {return index.id == id});
+    // console.log(data);
+    if(data.length > 0) {
+      dataNama = data[0].nama;
+      // console.log(data[0].nama);
+    }
+    return dataNama;
   }
   
   $("#myform").on('submit', function(e){
@@ -314,14 +501,14 @@
     if ($("#id").val() != ""){
       action = "<?php echo base_url('Produk/Master/edit')?>/";
       notifText = 'Data berhasil diubah!';
-	  }
-	  // var param = $('#myform').serialize();
+    }
+    // var param = $('#myform').serialize();
     var paramImg = new FormData(jQuery('#myform')[0]);
     // if ($("#id").val() != ""){
     //   paramImg = new FormData(jQuery('#myform')[0])+"&id="+$('#id').val();
     //   // param = $('#myform').serialize()+"&id="+$('#id').val();
     // }
-	  
+    
     $.ajax({
       url: action,
       type: 'post',
@@ -329,7 +516,7 @@
       cache: false,
       contentType: false,
       processData: false,
-	    dataType: 'json',
+      dataType: 'json',
       beforeSend: function() { 
         // tambahkan loading
         $("#aSimpan").prop("disabled", true);
@@ -338,15 +525,52 @@
       success: function (data) {
         if (data.status == '3'){
           console.log("ojueojueokl"+data.status);
-          // jsonlist = data.list;
+          jsonlist = data.list;
+          jsonDetUkuran = data.list_det_ukuran;
+          jsonDetWarna = data.list_det_warna;
           // loadData(jsonlist);
           initDataTable.ajax.reload();
 
           $('#aSimpan').html('Simpan');
           $("#aSimpan").prop("disabled", false);
-  				$("#modalform").modal('hide');
-  				// $("#notif-top").fadeIn(500);
-  				// $("#notif-top").fadeOut(2500);
+          $("#modalform").modal('hide');
+          // $("#notif-top").fadeIn(500);
+          // $("#notif-top").fadeOut(2500);
+          new PNotify({
+                      title: 'Sukses',
+                      text: notifText,
+                      type: 'success',
+                      hide: true,
+                      delay: 5000,
+                      styling: 'bootstrap3'
+                    });
+        }
+      }
+    });
+  });
+  $("#formHarga").on('submit', function(e){
+    e.preventDefault();
+    var notifText = 'Data berhasil diubah!';
+    var action = "<?php echo base_url('Produk/Master/add_det_harga')?>/";
+    var param = $('#formHarga').serialize()+"&id="+$('#id_produk').val();
+	  
+    $.ajax({
+      url: action,
+      type: 'post',
+      data: param,
+	    dataType: 'json',
+      beforeSend: function() { 
+        // tambahkan loading
+        $("#hSimpan").prop("disabled", true);
+        $('#hSimpan').html('Sedang Menyimpan...');
+      },
+      success: function (data) {
+        if (data.status == '3'){
+          console.log("ojueojueokl"+data.status);
+          jsonDetHarga = data.list;
+          $('#hSimpan').html('Simpan');
+          $("#hSimpan").prop("disabled", false);
+  				$("#modalharga").modal('hide');
           new PNotify({
                       title: 'Sukses',
                       text: notifText,

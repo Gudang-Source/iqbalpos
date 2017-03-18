@@ -13,12 +13,14 @@ class Master extends MX_Controller {
         $data['list_kategori'] = json_encode($this->Produkmodel->select($dataSelect, 'm_produk_kategori')->result());
         $data['list_bahan'] = json_encode($this->Produkmodel->select($dataSelect, 'm_produk_bahan')->result());
         $data['list_katalog'] = json_encode($this->Produkmodel->select($dataSelect, 'm_produk_katalog')->result());
+        $data['list_customer_level'] = json_encode($this->Produkmodel->select($dataSelect, 'm_customer_level')->result());
         
         $data['list_ukuran'] = json_encode($this->Produkmodel->select($dataSelect, 'm_produk_ukuran')->result());
         $data['list_warna'] = json_encode($this->Produkmodel->select($dataSelect, 'm_produk_warna')->result());
 
         $data['list_det_ukuran'] = json_encode($this->Produkmodel->get('m_produk_det_ukuran')->result());
         $data['list_det_warna'] = json_encode($this->Produkmodel->get('m_produk_det_warna')->result());
+        $data['list_det_harga'] = json_encode($this->Produkmodel->get('m_produk_det_harga')->result());
 
         $data['list'] = json_encode($this->Produkmodel->select($dataSelect, 'm_produk')->result());
 		//echo $data;
@@ -68,8 +70,8 @@ class Master extends MX_Controller {
             $nestedData[]   .=   '<td class="text-center"><div class="btn-group" >'
                 .'<a id="group'.$row["id"].'" class="divpopover btn btn-sm btn-default" href="javascript:void(0)" data-toggle="popover" data-placement="top" onclick="confirmDelete(this)" data-html="true" title="Hapus Data?" ><i class="fa fa-times"></i></a>'
                 .'<a class="btn btn-sm btn-default" data-toggle="tooltip" data-placement="top" title="Ubah Data" onclick="showUpdate('.$row["id"].')"><i class="fa fa-pencil"></i></a>'
-                .'<a class="btn btn-sm btn-default" data-toggle="tooltip" data-placement="top" title="Lihat Detail" onclick="showDetail('.$row["id"].')"><i class="fa fa-eye"></i></a>'
-                .'<a class="btn btn-sm btn-default" data-toggle="tooltip" data-placement="top" title="Lihat Harga" onclick="showHarga('.$row["id"].')"><i class="fa fa-money"></i></a>'
+                .'<a class="btn btn-sm btn-default" data-toggle="tooltip" data-placement="top" title="Lihat Detail" onclick="showDetail('.$row["id"].')"><i class="fa fa-file-text-o"></i></a>'
+                .'<a class="btn btn-sm btn-default" data-toggle="tooltip" data-placement="top" title="Harga Jual" onclick="showHarga('.$row["id"].')"><i class="fa fa-dollar"></i></a>'
                .'</div>'
             .'</td>';
             
@@ -92,7 +94,7 @@ class Master extends MX_Controller {
 	}
 	
     function add(){
-		$params = $this->input->post();
+        $params = $this->input->post();
         $id = (!empty($params['id'])) ? $params['id'] : $this->Produkmodel->get_last_id("m_produk") + 1;
 
         $dataInsert['nama']             = $params['nama'];
@@ -119,20 +121,57 @@ class Master extends MX_Controller {
         if($checkData->num_rows() < 1){
             $insert = $this->Produkmodel->insert_id($dataInsert, 'm_produk');
             if($insert){
-                $this->insert_detail($insert, $params['id_ukuran'], "ukuran");
-                $this->insert_detail($insert, $params['id_warna'], "warna");
-				$dataSelect['deleted'] = 1;
-				$list = $this->Produkmodel->select($dataSelect, 'm_produk')->result();
-				echo json_encode(array('status' => 3,'list' => $list));
-			}else{
-				echo json_encode(array('status' => 1));
-			}
-			
-		}else{			
-    		echo json_encode(array( 'status'=>1 ));
-		}
+                if(isset($params['id_ukuran'])){
+                    $this->insert_detail($insert, $params['id_ukuran'], "ukuran");
+                }
+                if(isset($params['id_warna'])){
+                    $this->insert_detail($insert, $params['id_warna'], "warna");
+                }
+                $dataSelect['deleted'] = 1;
+                $list = $this->Produkmodel->select($dataSelect, 'm_produk')->result();
+                echo json_encode(array('status' => 3,'list' => $list));
+            }else{
+                echo json_encode(array('status' => 1));
+            }
+            
+        }else{          
+            echo json_encode(array( 'status'=>1 ));
+        }
     }
-   
+
+    function add_det_harga(){
+		$params = $this->input->post();
+        $id = (!empty($params['id'])) ? $params['id'] : '';
+        unset($params['id']);
+
+        if(isset($id)){
+            foreach ($params as $key => $value) {
+                $split = explode("_", $key);
+                $dataInsert[] = array(
+                            'id_produk' => $id, 
+                            'id_customer_level' => $split[1], 
+                            'harga' => $value, 
+                        );
+            }
+        
+            $dataCondition = array('id_produk' => $id);
+            $checkData = $this->Produkmodel->select($dataCondition, 'm_produk_det_harga');
+            if($checkData->num_rows() > 0) {
+                $this->Produkmodel->delete($dataCondition, 'm_produk_det_harga');       
+            }
+
+            $insert = $this->Produkmodel->insert_batch($dataInsert, 'm_produk_det_harga');
+            if($insert) {
+                $list = $this->Produkmodel->get('m_produk_det_harga')->result();
+                echo json_encode(array('status' => 3,'list' => $list));
+            }else{
+                echo json_encode(array('status' => 2));
+            }
+        }
+        else{
+            echo json_encode(array( 'status'=>1 ));
+        }
+    }
 	
 	function get($id = null){   	
     	if($id != null){
@@ -175,19 +214,28 @@ class Master extends MX_Controller {
         $dataUpdate['harga_beli']       = $params['harga_beli'];
         // $dataUpdate['versi_foto']       = $params['versi_foto'];
         $dataUpdate['deskripsi']        = $params['deskripsi'];
-        $dataUpdate['foto']             = $this->proses_foto($id);
         $dataUpdate['last_edited']      = date("Y-m-d H:i:s");
         $dataUpdate['edited_by']        = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+        if(!$_FILES['foto']['error']) {
+            $dataUpdate['foto']         = $this->proses_foto($id);
+        }
         
 		$checkData = $this->Produkmodel->select($dataCondition, 'm_produk');
 		if($checkData->num_rows() > 0){
 			$update = $this->Produkmodel->update($dataCondition, $dataUpdate, 'm_produk');
-            $this->insert_detail($params['id'], $params['id_ukuran'], "ukuran");
-            $this->insert_detail($params['id'], $params['id_warna'], "warna");
+            if(isset($params['id_ukuran'])){
+                $this->insert_detail($params['id'], $params['id_ukuran'], "ukuran");
+            }
+            if(isset($params['id_warna'])){
+                $this->insert_detail($params['id'], $params['id_warna'], "warna");
+            }
+
 			if($update){
 				$dataSelect['deleted'] = 1;
 				$list = $this->Produkmodel->select($dataSelect, 'm_produk')->result();
-				echo json_encode(array('status' => '3','list' => $list));
+                $list_det_ukuran= $this->Produkmodel->get('m_produk_det_ukuran')->result();
+                $list_det_warna = $this->Produkmodel->get('m_produk_det_warna')->result();
+				echo json_encode(array('status'=>'3','list'=>$list ,'list_det_ukuran'=>$list_det_ukuran ,'list_det_warna' => $list_det_warna));
 			}else{
 				echo json_encode(array( 'status'=>'2' ));
 			}
