@@ -9,7 +9,7 @@
       <table id="TableMainServer" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
               <tr>
-                  <th class="text-center">Nama Produk</th>
+                  <th class="text-center">Nama Bahan Baku</th>
                   <th class="text-center">SKU</th>
                   <th class="text-center">Kode Barang</th>
                   <th class="text-center">Stok</th>
@@ -25,24 +25,24 @@
    </div>
    <!-- Button trigger modal -->
    <button type="button" class="btn btn-add btn-lg"  onclick="showAdd()">
-     Tambah Produk
+     Tambah Bahan Baku
    </button>
 </div>
 <!-- /.container -->
-<!-- Modal Detail Product -->
+<!-- Modal Detail Bahan baku -->
 <div class="modal fade" id="Viewproduct" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
    <div class="modal-dialog modal-lg" role="document" id="viewModal">
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="view">Detail Produk</h4>
+          <h4 class="modal-title" id="view">Detail Bahan Baku</h4>
         </div>
         <div class="modal-body" id="modal-body">
            <div id="viewSectionProduct">
               <!-- view goes here -->
               <div class="col-md-12"><div class="media">
                  <div class="media-left">
-                    <img id="det_foto" class="media-object img-rounded" src="<?php echo base_url()?>upload/produk/placeholder.png" alt="image" width="200px">
+                    <img id="det_foto" class="media-object img-rounded" src="<?php echo base_url()?>upload/bahan_baku/product_placeholder.png" alt="image" width="200px">
                  </div>
                  <div class="media-body">
                   <h1 class="media-heading" id="det_nama">sfsdg</h1>
@@ -60,9 +60,6 @@
                       <p><b>Satuan :</b> <span id="det_satuan"></span></p>
                       <p><b>Gudang :</b> <span id="det_gudang"></span></p>
                       <p><b>Kategori :</b> <span id="det_kategori"></span></p>
-                      <p><b>Bahan :</b> <span id="det_bahan"></span></p>
-                      <p><b>Katalog :</b> <span id="det_katalog"></span></p>
-                      <p><b>Ukuran :</b> <span id="det_ukuran"></span></p>
                       <p><b>Warna :</b> <span id="det_warna"></span></p>
                     </div>
                   </div>
@@ -81,74 +78,26 @@
 </div>
 <!-- /.Modal -->
 
-<!-- Modal harga -->
-  <div class="modal fade" id="modalharga" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-   <div class="modal-dialog" role="document" id="stockModal">
-      <div class="modal-content">
-        <form action="" id="formHarga" method="post">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="modalHargaTitle">Harga Jual</h4>
-        </div>
-        <div class="modal-body" id="modal-body">
-           <div>
-             <!-- content -->
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>Level Customer</th>
-                    <th>Harga Jual</th>
-                  </tr>
-                </thead>
-                <tbody class="itemslist">
-                 <input type="hidden" name="id" maxlength="50" Required class="form-control" id="id_produk" placeholder="ID Produk">
-                  <?php foreach (json_decode($list_customer_level) as $cust_level) { ?>
-                    <tr>
-                      <td><p><?php echo $cust_level->nama?></p></td>
-                      <td>
-                        <div class="form-group">
-                          <div class="input-group">
-                            <span class="input-group-addon">Rp</span>
-                            <input type="number" name="harga_<?php echo $cust_level->id?>" id="harga_<?php echo $cust_level->id?>" class="form-control" min="0" placeholder="Harga untuk <?php echo $cust_level->nama?>">
-                          </div>
-                          </div>
-                        </td>
-                    </tr>
-                  <?php } ?>
-                </tbody>
-              </table>
-           </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default hiddenpr" data-dismiss="modal">Batal</button>
-          <button type="submit" id="hSimpan" class="btn btn-add hiddenpr">Simpan</button>
-        </div>
-       </form> 
-      </div>
-   </div>
-  </div>
-  <!-- /.Modal -->
-
 <!-- Modal Add -->
 <div class="modal fade" id="modalform" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
  <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Tambah Produk</h4>
+        <h4 class="modal-title" id="myModalLabel">Tambah Bahan Baku</h4>
       </div>
       <form action="" method="POST" id="myform" enctype="multipart/form-data"> <div class="modal-body">
            <div class="row">
              <div class="col-sm-12">
                 <div class="form-group">
-                 <label for="nama">Nama Produk</label>
-                 <input type="text" name="nama" maxlength="50" Required class="form-control" id="nama" placeholder="Nama Produk">
-                 <input type="hidden" name="id" maxlength="50" Required class="form-control" id="id" placeholder="ID Produk">
+                 <label for="nama">Nama Bahan Baku</label>
+                 <input type="text" name="nama" maxlength="50" Required class="form-control" id="nama" placeholder="Nama Bahan Baku">
+                 <input type="hidden" name="id" maxlength="50" Required class="form-control" id="id" placeholder="ID Bahan Baku">
                </div>
              </div>
              <div class="col-sm-6">
                <div class="form-group">
-                 <label for="id_supplier">Supplier Produk</label>
+                 <label for="id_supplier">Supplier Bahan Baku</label>
                  <select name="id_supplier" class="form-control" id="id_supplier" required="">
                  </select>
                </div>
@@ -162,18 +111,12 @@
              </div>
              <div class="col-sm-6">
                <div class="form-group">
-                 <label for="id_ukuran">Ukuran</label>
-                 <select name="id_ukuran[]" class="form-control" id="id_ukuran" multiple="">
-                 </select>
-               </div>
-             </div>
-             <div class="col-sm-6">
-               <div class="form-group">
                  <label for="id_warna">Warna</label>
                  <select name="id_warna[]" class="form-control" id="id_warna" multiple="">
                  </select>
                </div>
              </div>
+             <div class="col-sm-6"></div>
              <div class="col-sm-6">
                <div class="form-group">
                  <label for="id_gudang">Gudang</label>
@@ -183,22 +126,8 @@
              </div>
              <div class="col-sm-6">
                <div class="form-group">
-                 <label for="id_kategori">Kategori Produk</label>
+                 <label for="id_kategori">Kategori Bahan Baku</label>
                  <select name="id_kategori" class="form-control" id="id_kategori" required="">
-                 </select>
-               </div>
-             </div>
-             <div class="col-sm-6">
-               <div class="form-group">
-                 <label for="id_bahan">Bahan Produk</label>
-                 <select name="id_bahan" class="form-control" id="id_bahan" required="">
-                 </select>
-               </div>
-             </div>
-             <div class="col-sm-6">
-               <div class="form-group">
-                 <label for="id_katalog">Katalog</label>
-                 <select name="id_katalog" class="form-control" id="id_katalog" required="">
                  </select>
                </div>
              </div>
@@ -257,70 +186,28 @@
 <!-- /.Modal Add-->
 
 <script type="text/javascript">
-  //var table    = $("#TableMainServer").DataTable();
-  // $(document).ready(function() {
-  //   $('#TableMainServer').dataTable( {
-  //     "bProcessing": true,
-  //     "bServerSide": true,
-  //     "ajax":{
-  //           url :"<?php echo base_url()?>Produk/Master/data",
-  //           type: "post",  // type of method  , by default would be get
-  //           error: function(){  // error handling code
-  //             $("#employee_grid_processing").css("display","none");
-  //           }
-  //         }
-  //   });
-  // });
   var jsonlist = <?php echo $list; ?>;
-  var jsonCustomerLevel = <?php echo $list_customer_level; ?>;
   var jsonSupplier = <?php echo $list_supplier; ?>;
   var jsonSatuan = <?php echo $list_satuan; ?>;
   var jsonGudang = <?php echo $list_gudang; ?>;
   var jsonKategori = <?php echo $list_kategori; ?>;
-  var jsonBahan = <?php echo $list_bahan; ?>;
-  var jsonKatalog = <?php echo $list_katalog; ?>;
   
-  var jsonUkuran = <?php echo $list_ukuran; ?>;
   var jsonWarna = <?php echo $list_warna; ?>;
-  var jsonDetUkuran = <?php echo $list_det_ukuran; ?>;
   var jsonDetWarna = <?php echo $list_det_warna; ?>;
-  var jsonDetHarga = <?php echo $list_det_harga; ?>;
   
   var awalLoad = true;
   var initDataTable = $('#TableMainServer').DataTable({
       "bProcessing": true,
       "bServerSide": true,
       "ajax":{
-            url :"<?php echo base_url()?>Produk/Master/data",
+            url :"<?php echo base_url()?>Bahan_baku/Master/data",
             type: "post",  // type of method  , by default would be get
             error: function(){  // error handling code
               // $("#employee_grid_processing").css("display","none");
             }
           }
     });
-  
-  // loadData(jsonlist);
-
-  /*function loadData(json){
-	  //clear table
-    table.clear().draw();
-	  for(var i=0;i<json.length;i++){
-      table.row.add( [
-            json[i].nama,
-            DateFormat.format.date(json[i].date_add, "dd-MM-yyyy HH:mm"),
-            '<td class="text-center"><div class="btn-group" >'+
-                '<a id="group'+i+'" class="divpopover btn btn-sm btn-default" href="javascript:void(0)" data-toggle="popover" data-placement="top" onclick="confirmDelete(this)" data-html="true" title="Hapus Data?" ><i class="fa fa-times"></i></a>'+
-                '<a class="btn btn-sm btn-default" data-toggle="tooltip" data-placement="top" title="Ubah Data" onclick="showUpdate('+i+')"><i class="fa fa-pencil"></i></a>'+
-               '</div>'+
-            '</td>'
-        ] ).draw( false );
-	  }
-	  if (!awalLoad){
-		  $('.divpopover').attr("data-content","ok");
-		  $('.divpopover').popover();
-	  }
-	  awalLoad = false;	 
-  }*/
+ 
   function load_select_option(json, target_id, nama=""){
     var html = "";
     if(!nama == "") {
@@ -335,17 +222,7 @@
     load_select_option(jsonSatuan, "#id_satuan", "Satuan");
     load_select_option(jsonGudang, "#id_gudang", "Gudang");
     load_select_option(jsonKategori, "#id_kategori", "Kategori");
-    load_select_option(jsonBahan, "#id_bahan", "Bahan");
-    load_select_option(jsonKatalog, "#id_katalog", "Katalog");
-    load_select_option(jsonUkuran, "#id_ukuran", "");
     load_select_option(jsonWarna, "#id_warna","");
-    $("#id_ukuran").multiselect({
-      buttonWidth: '100%',
-      inheritClass: true,
-      enableFiltering: true,
-      includeSelectAllOption: true,
-      nonSelectedText: "Pilih Ukuran"
-    });
     $("#id_warna").multiselect({
       buttonWidth: '100%',
       inheritClass: true,
@@ -356,16 +233,13 @@
   }
   function showAdd(){
     load_select();
-    $("#myModalLabel").text("Tambah Produk");
+    $("#myModalLabel").text("Tambah Bahan Baku");
     $("#id").val("");
     $("#nama").val("");
     $("#id_supplier").val("");
     $("#id_satuan").val("");
     $("#id_gudang").val("");
     $("#id_kategori").val("");
-    $("#id_bahan").val("");
-    $("#id_katalog").val("");
-    $("#id_ukuran").multiselect('refresh');
     $("#id_warna").multiselect('refresh');
     $("#sku").val("");
     $("#kode_barang").val("");
@@ -383,27 +257,20 @@
     //data ukuran & warna diambil dari tabel yang berbeda
     var dataUpdate = jsonlist.filter(function (index) { return index.id == i }); 
     console.log(dataUpdate);
-    var getUkuran = jsonDetUkuran.filter(function (index) { return index.id_produk == i }); 
-    var getWarna = jsonDetWarna.filter(function (index) { return index.id_produk == i });
-    var id_ukuran = [];
-    id_ukuran = $.map(getUkuran, function(el, idx){
-       return [el["id_ukuran"]];
-    }); 
+    var getWarna = jsonDetWarna.filter(function (index) { return index.id_bahan == i });
     var id_warna = [];
     id_warna = $.map(getWarna, function(el, idx){
        return [el["id_warna"]];
     }); 
 
     $("#foto").attr("required", false);
-    $("#myModalLabel").text("Ubah Produk");
+    $("#myModalLabel").text("Ubah Bahan Baku");
     $("#id").val(dataUpdate[0].id);
     $("#nama").val(dataUpdate[0].nama);
-    $("#id_supplier").val((dataUpdate[0].id_supplier==0) ? "" : dataUpdate[0].id_supplier);
+    $("#id_supplier").val((dataUpdate[0].id_supplier_bahan==0) ? "" : dataUpdate[0].id_supplier_bahan);
     $("#id_satuan").val((dataUpdate[0].id_satuan==0) ? "" : dataUpdate[0].id_satuan);
     $("#id_gudang").val((dataUpdate[0].id_gudang==0) ? "" : dataUpdate[0].id_gudang);
-    $("#id_kategori").val((dataUpdate[0].id_kategori==0) ? "" : dataUpdate[0].id_kategori);
-    $("#id_bahan").val((dataUpdate[0].id_bahan==0) ? "" : dataUpdate[0].id_bahan);
-    $("#id_katalog").val((dataUpdate[0].id_katalog==0) ? "" : dataUpdate[0].id_katalog);
+    $("#id_kategori").val((dataUpdate[0].id_kategori_bahan==0) ? "" : dataUpdate[0].id_kategori_bahan);
     $("#sku").val(dataUpdate[0].sku);
     $("#kode_barang").val(dataUpdate[0].kode_barang);
     $("#berat").val(dataUpdate[0].berat);
@@ -411,8 +278,6 @@
     $("#foto").val("");
     $("#deskripsi").val(dataUpdate[0].deskripsi);
     
-    $("#id_ukuran").val(id_ukuran);
-    $("#id_ukuran").multiselect("refresh");
     $("#id_warna").val(id_warna);
     $("#id_warna").multiselect("refresh");
     
@@ -422,26 +287,13 @@
     //data ukuran & warna diambil dari tabel yang berbeda
     var dataDetail = jsonlist.filter(function (index) { return index.id == i }); 
     console.log(dataDetail);
-    var getUkuran = jsonDetUkuran.filter(function (index) { return index.id_produk == i }); 
-    var getWarna = jsonDetWarna.filter(function (index) { return index.id_produk == i });
+    var getWarna = jsonDetWarna.filter(function (index) { return index.id_bahan == i });
     
-    var id_ukuran = [];
-    id_ukuran = $.map(getUkuran, function(el, idx){
-       return [el["id_ukuran"]];
-    }); 
     var id_warna = [];
     id_warna = $.map(getWarna, function(el, idx){
        return [el["id_warna"]];
     }); 
 
-    var list_ukuran = [];
-    $.each(id_ukuran, function(idx, val) {
-       list_ukuran.push($.map(jsonUkuran, function(index, value) {
-        if(id_ukuran[idx] == index["id"]){
-          return [index["nama"]];
-        }
-      }));
-    });
     var list_warna = [];
     $.each(id_warna, function(idx, val) {
        list_warna.push($.map(jsonWarna, function(index, value) {
@@ -459,30 +311,16 @@
     $("#det_berat").text(dataDetail[0].berat);
     $("#det_deskripsi").text(dataDetail[0].deskripsi ? dataDetail[0].deskripsi : '-');
 
-    $("#det_supplier").text(getMasterById(jsonSupplier, dataDetail[0].id_supplier));
+    $("#det_supplier").text(getMasterById(jsonSupplier, dataDetail[0].id_supplier_bahan));
     $("#det_satuan").text(getMasterById(jsonSatuan, dataDetail[0].id_satuan));
     $("#det_gudang").text(getMasterById(jsonGudang, dataDetail[0].id_gudang));
-    $("#det_kategori").text(getMasterById(jsonKategori, dataDetail[0].id_kategori));
-    $("#det_bahan").text(getMasterById(jsonBahan, dataDetail[0].id_bahan));
-    $("#det_katalog").text(getMasterById(jsonKatalog, dataDetail[0].id_katalog));
-    $("#det_ukuran").text((list_ukuran.length>0) ? list_ukuran.join() : '-');
+    $("#det_kategori").text(getMasterById(jsonKategori, dataDetail[0].id_kategori_bahan));
     $("#det_warna").text((list_warna.length>0) ? list_warna.join() : '-');
-    $("#det_foto").attr("src", "<?php echo base_url('upload/produk')?>/"+dataDetail[0].foto);
+    $("#det_foto").attr("src", "<?php echo base_url('upload/bahan_baku')?>/"+dataDetail[0].foto);
 
     $("#Viewproduct").modal("show");
   }
-  function showHarga(i){
-    $("#modalharga :input").val(""); //empty inputs first!
-    $("#id_produk").val(i);
-    var getHarga = jsonDetHarga.filter(function (index) { return index.id_produk == i });
-
-    $.each(getHarga, function(i) {
-      $("#modalharga #harga_"+getHarga[i].id_customer_level).val(getHarga[i].harga);
-      // console.log(getHarga[i].harga);
-    });
-    $("#modalharga").modal("show");
-  }
-
+  
   function getMasterById(jsonData, id){
     dataNama = '-';
     data = jsonData.filter(function(index) {return index.id == id});
@@ -497,17 +335,12 @@
   $("#myform").on('submit', function(e){
     e.preventDefault();
     var notifText = 'Data berhasil ditambahkan!';
-    var action = "<?php echo base_url('Produk/Master/add')?>/";
+    var action = "<?php echo base_url('Bahan_baku/Master/add')?>/";
     if ($("#id").val() != ""){
-      action = "<?php echo base_url('Produk/Master/edit')?>/";
+      action = "<?php echo base_url('Bahan_baku/Master/edit')?>/";
       notifText = 'Data berhasil diubah!';
     }
-    // var param = $('#myform').serialize();
     var paramImg = new FormData(jQuery('#myform')[0]);
-    // if ($("#id").val() != ""){
-    //   paramImg = new FormData(jQuery('#myform')[0])+"&id="+$('#id').val();
-    //   // param = $('#myform').serialize()+"&id="+$('#id').val();
-    // }
     
     $.ajax({
       url: action,
@@ -526,7 +359,6 @@
         if (data.status == '3'){
           console.log("ojueojueokl"+data.status);
           jsonlist = data.list;
-          jsonDetUkuran = data.list_det_ukuran;
           jsonDetWarna = data.list_det_warna;
           // loadData(jsonlist);
           initDataTable.ajax.reload();
@@ -534,8 +366,6 @@
           $('#aSimpan').html('Simpan');
           $("#aSimpan").prop("disabled", false);
           $("#modalform").modal('hide');
-          // $("#notif-top").fadeIn(500);
-          // $("#notif-top").fadeOut(2500);
           new PNotify({
                       title: 'Sukses',
                       text: notifText,
@@ -548,51 +378,15 @@
       }
     });
   });
-  $("#formHarga").on('submit', function(e){
-    e.preventDefault();
-    var notifText = 'Data berhasil diubah!';
-    var action = "<?php echo base_url('Produk/Master/add_det_harga')?>/";
-    var param = $('#formHarga').serialize()+"&id="+$('#id_produk').val();
-	  
-    $.ajax({
-      url: action,
-      type: 'post',
-      data: param,
-	    dataType: 'json',
-      beforeSend: function() { 
-        // tambahkan loading
-        $("#hSimpan").prop("disabled", true);
-        $('#hSimpan').html('Sedang Menyimpan...');
-      },
-      success: function (data) {
-        if (data.status == '3'){
-          console.log("ojueojueokl"+data.status);
-          jsonDetHarga = data.list;
-          $('#hSimpan').html('Simpan');
-          $("#hSimpan").prop("disabled", false);
-  				$("#modalharga").modal('hide');
-          new PNotify({
-                      title: 'Sukses',
-                      text: notifText,
-                      type: 'success',
-                      hide: true,
-                      delay: 5000,
-                      styling: 'bootstrap3'
-                    });
-  			}
-      }
-    });
-  });
 	
 	function deleteData(element){
 		var el = $(element).attr("id");
 		console.log(el);
 		var id  = el.replace("aConfirm","");
 		var i = parseInt(id);
-		//console.log(jsonlist[i]);
 		$.ajax({
           type: 'post',
-          url: '<?php echo base_url('Produk/Master/delete'); ?>/',
+          url: '<?php echo base_url('Bahan_baku/Master/delete'); ?>/',
           data: {"id":jsonlist[i].id},
 		      dataType: 'json',
           beforeSend: function() { 
@@ -604,8 +398,6 @@
             if (data.status == '3'){
               $("#aConfirm"+i).prop("disabled", false);
               initDataTable.ajax.reload();
-              // $("#notif-top").fadeIn(500);
-              // $("#notif-top").fadeOut(2500);
               new PNotify({
                             title: 'Sukses',
                             text: 'Data berhasil dihapus!',
@@ -614,8 +406,6 @@
                             delay: 5000,
                             styling: 'bootstrap3'
                           });
-              // jsonlist = data.list;
-              // loadData(jsonlist);
             }
           }    
         });
