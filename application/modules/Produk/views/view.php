@@ -50,7 +50,7 @@
                     <div class="col-sm-6">
                       <p><b>SKU :</b> <span id="det_sku"></span></p>
                       <p><b>Kode Barang :</b> <span id="det_kode_barang"></span></p>
-                      <p><b>Harga Beli :</b> Rp <span id="det_harga_beli"></span></p>
+                      <p><b>Harga Beli :</b> Rp <span id="det_harga_beli" class="money"></span></p>
                       <p><b>Stok :</b> <span id="det_stok"></p>
                       <p><b>Berat :</b> <span id="det_berat"> gram</p>
                       <p><b>Deskripsi :</b> <span id="det_deskripsi"></p></p>
@@ -109,7 +109,7 @@
                         <div class="form-group">
                           <div class="input-group">
                             <span class="input-group-addon">Rp</span>
-                            <input type="number" name="harga_<?php echo $cust_level->id?>" id="harga_<?php echo $cust_level->id?>" class="form-control" min="0" placeholder="Harga untuk <?php echo $cust_level->nama?>">
+                            <input type="text" name="harga_<?php echo $cust_level->id?>" id="harga_<?php echo $cust_level->id?>" class="form-control money" placeholder="Harga untuk <?php echo $cust_level->nama?>">
                           </div>
                           </div>
                         </td>
@@ -223,7 +223,10 @@
              <div class="col-sm-6">
                 <div class="form-group">
                  <label for="harga_beli">Harga Beli (IDR)</label>
-                 <input type="number" name="harga_beli" min="0" Required class="form-control" id="harga_beli" placeholder="Harga Beli">
+                 <div class="input-group">
+                  <span class="input-group-addon">Rp</span> 
+                  <input type="text" name="harga_beli" min="0" Required class="form-control money" id="harga_beli" placeholder="Harga Beli">
+                 </div>
                </div>
              </div>
              <div class="col-sm-6">
@@ -257,20 +260,17 @@
 <!-- /.Modal Add-->
 
 <script type="text/javascript">
-  //var table    = $("#TableMainServer").DataTable();
-  // $(document).ready(function() {
-  //   $('#TableMainServer').dataTable( {
-  //     "bProcessing": true,
-  //     "bServerSide": true,
-  //     "ajax":{
-  //           url :"<?php echo base_url()?>Produk/Master/data",
-  //           type: "post",  // type of method  , by default would be get
-  //           error: function(){  // error handling code
-  //             $("#employee_grid_processing").css("display","none");
-  //           }
-  //         }
-  //   });
-  // });
+  $(document).ready(function() {
+    //initialize input money masking
+    maskInputMoney();
+  });
+  function maskInputMoney(){
+    $('.money').mask('#.##0', {reverse: true});
+  }
+  function unmaskInputMoney(){
+    $('.money').unmask();
+  }
+  
   var jsonlist = <?php echo $list; ?>;
   var jsonCustomerLevel = <?php echo $list_customer_level; ?>;
   var jsonSupplier = <?php echo $list_supplier; ?>;
@@ -299,28 +299,6 @@
           }
     });
   
-  // loadData(jsonlist);
-
-  /*function loadData(json){
-	  //clear table
-    table.clear().draw();
-	  for(var i=0;i<json.length;i++){
-      table.row.add( [
-            json[i].nama,
-            DateFormat.format.date(json[i].date_add, "dd-MM-yyyy HH:mm"),
-            '<td class="text-center"><div class="btn-group" >'+
-                '<a id="group'+i+'" class="divpopover btn btn-sm btn-default" href="javascript:void(0)" data-toggle="popover" data-placement="top" onclick="confirmDelete(this)" data-html="true" title="Hapus Data?" ><i class="fa fa-times"></i></a>'+
-                '<a class="btn btn-sm btn-default" data-toggle="tooltip" data-placement="top" title="Ubah Data" onclick="showUpdate('+i+')"><i class="fa fa-pencil"></i></a>'+
-               '</div>'+
-            '</td>'
-        ] ).draw( false );
-	  }
-	  if (!awalLoad){
-		  $('.divpopover').attr("data-content","ok");
-		  $('.divpopover').popover();
-	  }
-	  awalLoad = false;	 
-  }*/
   function load_select_option(json, target_id, nama=""){
     var html = "";
     if(!nama == "") {
@@ -356,6 +334,7 @@
   }
   function showAdd(){
     load_select();
+    maskInputMoney();
     $("#myModalLabel").text("Tambah Produk");
     $("#id").val("");
     $("#nama").val("");
@@ -375,6 +354,7 @@
     $("#foto").val("");
     $("#versi_foto").val("");
     $("#deskripsi").val("");
+    unmaskInputMoney(); maskInputMoney();
     $("#modalform").modal("show");    
   }
   
@@ -415,7 +395,7 @@
     $("#id_ukuran").multiselect("refresh");
     $("#id_warna").val(id_warna);
     $("#id_warna").multiselect("refresh");
-    
+    unmaskInputMoney(); maskInputMoney();
     $("#modalform").modal("show");
   }
   function showDetail(i){
@@ -468,7 +448,7 @@
     $("#det_ukuran").text((list_ukuran.length>0) ? list_ukuran.join() : '-');
     $("#det_warna").text((list_warna.length>0) ? list_warna.join() : '-');
     $("#det_foto").attr("src", "<?php echo base_url('upload/produk')?>/"+dataDetail[0].foto);
-
+    unmaskInputMoney(); maskInputMoney();
     $("#Viewproduct").modal("show");
   }
   function showHarga(i){
@@ -480,6 +460,7 @@
       $("#modalharga #harga_"+getHarga[i].id_customer_level).val(getHarga[i].harga);
       // console.log(getHarga[i].harga);
     });
+    unmaskInputMoney(); maskInputMoney();
     $("#modalharga").modal("show");
   }
 
@@ -503,7 +484,9 @@
       notifText = 'Data berhasil diubah!';
     }
     // var param = $('#myform').serialize();
+    unmaskInputMoney(); //clean input masking first
     var paramImg = new FormData(jQuery('#myform')[0]);
+    maskInputMoney(); //re run masking
     // if ($("#id").val() != ""){
     //   paramImg = new FormData(jQuery('#myform')[0])+"&id="+$('#id').val();
     //   // param = $('#myform').serialize()+"&id="+$('#id').val();
@@ -552,7 +535,9 @@
     e.preventDefault();
     var notifText = 'Data berhasil diubah!';
     var action = "<?php echo base_url('Produk/Master/add_det_harga')?>/";
+    unmaskInputMoney(); //clean input masking first
     var param = $('#formHarga').serialize()+"&id="+$('#id_produk').val();
+    maskInputMoney(); //re run masking
 	  
     $.ajax({
       url: action,

@@ -50,7 +50,7 @@
                     <div class="col-sm-6">
                       <p><b>SKU :</b> <span id="det_sku"></span></p>
                       <p><b>Kode Barang :</b> <span id="det_kode_barang"></span></p>
-                      <p><b>Harga Beli :</b> Rp <span id="det_harga_beli"></span></p>
+                      <p><b>Harga Beli :</b> Rp <span id="det_harga_beli" class="money"></span></p>
                       <p><b>Stok :</b> <span id="det_stok"></p>
                       <p><b>Berat :</b> <span id="det_berat"> gram</p>
                       <p><b>Deskripsi :</b> <span id="det_deskripsi"></p></p>
@@ -152,7 +152,10 @@
              <div class="col-sm-6">
                 <div class="form-group">
                  <label for="harga_beli">Harga Beli (IDR)</label>
-                 <input type="number" name="harga_beli" min="0" Required class="form-control" id="harga_beli" placeholder="Harga Beli">
+                 <div class="input-group">
+                  <span class="input-group-addon">Rp</span> 
+                  <input type="text" name="harga_beli" Required class="form-control money" id="harga_beli" placeholder="Harga Beli">
+                 </div>
                </div>
              </div>
              <div class="col-sm-6">
@@ -186,6 +189,16 @@
 <!-- /.Modal Add-->
 
 <script type="text/javascript">
+  $(document).ready(function() {
+    //initialize input money masking
+    maskInputMoney();
+  });
+  function maskInputMoney(){
+    $('.money').mask('#.##0', {reverse: true});
+  }
+  function unmaskInputMoney(){
+    $('.money').unmask();
+  }
   var jsonlist = <?php echo $list; ?>;
   var jsonSupplier = <?php echo $list_supplier; ?>;
   var jsonSatuan = <?php echo $list_satuan; ?>;
@@ -249,6 +262,7 @@
     $("#foto").val("");
     $("#versi_foto").val("");
     $("#deskripsi").val("");
+    unmaskInputMoney(); maskInputMoney();
     $("#modalform").modal("show");    
   }
   
@@ -280,7 +294,7 @@
     
     $("#id_warna").val(id_warna);
     $("#id_warna").multiselect("refresh");
-    
+    unmaskInputMoney(); maskInputMoney();
     $("#modalform").modal("show");
   }
   function showDetail(i){
@@ -317,7 +331,7 @@
     $("#det_kategori").text(getMasterById(jsonKategori, dataDetail[0].id_kategori_bahan));
     $("#det_warna").text((list_warna.length>0) ? list_warna.join() : '-');
     $("#det_foto").attr("src", "<?php echo base_url('upload/bahan_baku')?>/"+dataDetail[0].foto);
-
+    unmaskInputMoney(); maskInputMoney();
     $("#Viewproduct").modal("show");
   }
   
@@ -340,7 +354,9 @@
       action = "<?php echo base_url('Bahan_baku/Master/edit')?>/";
       notifText = 'Data berhasil diubah!';
     }
+    unmaskInputMoney();
     var paramImg = new FormData(jQuery('#myform')[0]);
+    maskInputMoney(); 
     
     $.ajax({
       url: action,
