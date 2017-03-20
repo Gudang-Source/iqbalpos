@@ -169,67 +169,70 @@
     var option = "";
     var select = "";
     $("#productList").html("");
-    for (var i=0;i<json.length;i++){
-      option = json[i].options;
-      select = "stok-"+json[i].rowid;
-      html = "<div class='col-xs-12'>"+
-                "<div class='panel panel-default product-details'>"+
-                    "<div class='panel-body' style=''>"+
-                        "<div class='col-xs-4 nopadding'>"+
-                            "<div class='col-xs-2 nopadding'>"+
-                                "<a href='javascript:void(0)' onclick=delete_order(\'"+json[i].rowid+"\')>"+
-                                "<span class='fa-stack fa-sm productD'>"+
-                                  "<i class='fa fa-circle fa-stack-2x delete-product'></i>"+
-                                  "<i class='fa fa-times fa-stack-1x fa-fw fa-inverse'></i>"+
-                                "</span>"+
-                                "</a>"+
-                            "</div>"+
-                            "<div class='col-xs-10 nopadding'>"+
-                              "<span class='textPD'>"+json[i].produk+"</span>"+
-                            "</div>"+
-                        "</div>"+
-                        "<div class='col-xs-2'>"+
-                          "<span class='textPD'>"+json[i].price+"</span>"+
-                        "</div>"+
-                        "<div class='col-xs-2 nopadding productNum'>"+
-                          "<a href='javascript:void(0)' onclick=reduce_qty(\'"+json[i].rowid+"\')>"+
-                            "<span class='fa-stack fa-sm decbutton'>"+
-                              "<i class='fa fa-square fa-stack-2x light-grey'></i>"+
-                              "<i class='fa fa-minus fa-stack-1x fa-inverse white'></i>"+
-                            "</span>"+
-                          "</a>"+
-                          "<input id=\'qt-"+json[i].rowid+"\' onchange=change_total(\'"+json[i].rowid+"\') class='form-control' value='"+json[i].qty+"' placeholder='0' maxlength='2' type='text'>"+
-                          "<a href='javascript:void(0)' onclick=add_qty(\'"+json[i].rowid+"\')>"+
-                          "<span class='fa-stack fa-sm incbutton'>"+
-                            "<i class='fa fa-square fa-stack-2x light-grey'></i>"+
-                            "<i class='fa fa-plus fa-stack-1x fa-inverse white'></i>"+
-                          "</span>"+
-                          "</a>"+
-                        "</div>"+
-                        "<div class='col-xs-2 nopadding'>"+
-                            "<div class='col-xs-2 nopadding'>"+
-                              "<span class='textPD'>"+
-                                "<select id=\'"+select+"\' onchange=changeOption(\'"+json[i].rowid+"\')>"+                                  
-                                  "<option value=\'2\'>TIDAK KURANGI</option>"+
-                                  "<option value=\'1\'>KURANGI</option>"+
-                                "</select>"+
+    console.log(json);
+    if(json.length > 0){      
+      for (var i=0;i<json.length;i++){
+        option = json[i].options;
+        select = "stok-"+json[i].rowid;
+        html = "<div class='col-xs-12'>"+
+                  "<div class='panel panel-default product-details'>"+
+                      "<div class='panel-body' style=''>"+
+                          "<div class='col-xs-4 nopadding'>"+
+                              "<div class='col-xs-2 nopadding'>"+
+                                  "<a href='javascript:void(0)' onclick=delete_order(\'"+json[i].rowid+"\')>"+
+                                  "<span class='fa-stack fa-sm productD'>"+
+                                    "<i class='fa fa-circle fa-stack-2x delete-product'></i>"+
+                                    "<i class='fa fa-times fa-stack-1x fa-fw fa-inverse'></i>"+
+                                  "</span>"+
+                                  "</a>"+
+                              "</div>"+
+                              "<div class='col-xs-10 nopadding'>"+
+                                "<span class='textPD'>"+json[i].produk+"</span>"+
+                              "</div>"+
+                          "</div>"+
+                          "<div class='col-xs-2'>"+
+                            "<span class='textPD'>"+json[i].price+"</span>"+
+                          "</div>"+
+                          "<div class='col-xs-2 nopadding productNum'>"+
+                            "<a href='javascript:void(0)' onclick=reduce_qty(\'"+json[i].rowid+"\')>"+
+                              "<span class='fa-stack fa-sm decbutton'>"+
+                                "<i class='fa fa-square fa-stack-2x light-grey'></i>"+
+                                "<i class='fa fa-minus fa-stack-1x fa-inverse white'></i>"+
                               "</span>"+
-                            "</div>"+
-                        "</div>"+
-                        "<div class='col-xs-2 nopadding '>"+
-                          "<span class='subtotal textPD'>"+json[i].subtotal+"</span>"+
-                        "</div>"+
-                    "</div>"+
-                "</div>"+
-            "</div>";
-      $("#productList").append(html);
-    }
-    if(option == 1){
-      // kurangi stok
-      $("#"+select).val(1);
-    }else{
-      // tidak kurangi stok
-      $("#"+select).val(2);              
+                            "</a>"+
+                            "<input id=\'qt-"+json[i].rowid+"\' onchange=change_total(\'"+json[i].rowid+"\') class='form-control' value='"+json[i].qty+"' placeholder='0' maxlength='2' type='text'>"+
+                            "<a href='javascript:void(0)' onclick=add_qty(\'"+json[i].rowid+"\')>"+
+                            "<span class='fa-stack fa-sm incbutton'>"+
+                              "<i class='fa fa-square fa-stack-2x light-grey'></i>"+
+                              "<i class='fa fa-plus fa-stack-1x fa-inverse white'></i>"+
+                            "</span>"+
+                            "</a>"+
+                          "</div>"+
+                          "<div class='col-xs-2 nopadding'>"+
+                              "<div class='col-xs-2 nopadding'>"+
+                                "<span class='textPD'>"+
+                                  "<select id=\'"+select+"\' onchange=changeOption(\'"+json[i].rowid+"\')>"+                                  
+                                    "<option value=\'2\'>TIDAK KURANGI</option>"+
+                                    "<option value=\'1\'>KURANGI</option>"+
+                                  "</select>"+
+                                "</span>"+
+                              "</div>"+
+                          "</div>"+
+                          "<div class='col-xs-2 nopadding '>"+
+                            "<span class='subtotal textPD'>"+json[i].subtotal+"</span>"+
+                          "</div>"+
+                      "</div>"+
+                  "</div>"+
+              "</div>";
+        $("#productList").append(html);
+        if(option == 1){
+          // kurangi stok
+          $("#"+select).val(1);
+        }else{
+          // tidak kurangi stok
+          $("#"+select).val(2);              
+        }
+      }
     }
   }
   function filterProduk(){
@@ -305,6 +308,7 @@
       data :"",
       dataType : "json",
       success : function(data){
+        console.log(data);
         load_order(data);
         fillInformation();
       }
@@ -343,15 +347,7 @@
                   doClear();
               },
               cancel: function () {
-                  $.alert('Canceled!');
-              },
-              somethingElse: {
-                  text: 'Something else',
-                  btnClass: 'btn-blue',
-                  keys: ['enter', 'shift'],
-                  action: function(){
-                      $.alert('Something else?');
-                  }
+                  // $.alert('Canceled!');
               }
           }
       });    
@@ -363,7 +359,9 @@
       url :'<?php echo base_url("Transaksi_service/Transaksi/destroyCart"); ?>',
       type : $('#serviceOrder').attr('method'),
       data : $('#serviceOrder').serialize(),
-      success : function(data){        
+      dataType : "json",
+      success : function(data){
+        // console.log(data);        
         load_order(data);
         fillInformation();        
         $('#btnDoOrder').html("<h5 class=\'text-bold\'>Servis Stok</h5>");
@@ -376,7 +374,9 @@
       url :$('#serviceOrder').attr('action'),
       type : $('#serviceOrder').attr('method'),
       data : $('#serviceOrder').serialize(),
+      dataType : "json",
       success : function(data){        
+        console.log(data);        
         load_order(data);
         fillInformation();        
         $('#btnDoOrder').html("<h5 class=\'text-bold\'>Servis Stok</h5>");
