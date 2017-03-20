@@ -47,6 +47,7 @@
       <link href="<?php echo base_url(); ?>assets/css/custom_style.css" rel="stylesheet">
 
       <link href="<?php echo base_url(); ?>assets/js/notify/pnotify.custom.min.css" rel="stylesheet">
+      <link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/jquery-confirm.min.css">
      
        <!-- slim scroll script -->
       <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/jquery.slimscroll.min.js"></script>
@@ -96,6 +97,7 @@
       <script src="<?php echo base_url(); ?>assets/js/app.js"></script>
       <script src="<?php echo base_url(); ?>assets/js/app.js"></script>
       <script src="<?php echo base_url(); ?>assets/js/notify/pnotify.custom.min.js"></script>
+      <script src="<?php echo base_url(); ?>assets/js/jquery-confirm.min.js"></script>      
    </head>
    <body>
       <!-- TESTER -->

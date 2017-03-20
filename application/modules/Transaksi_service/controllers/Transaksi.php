@@ -76,14 +76,35 @@ class Transaksi extends MX_Controller {
     		$nestedData['produk'] = $items['name'];
     		$nestedData['rowid'] = $items['rowid'];
     		$nestedData['subtotal'] = $items['subtotal'];
+    		$nestedData['options'] = $items['options']['stok'];
     		array_push($data, $nestedData);
     	}
     	return json_encode($data);
     }
+    function getProduk($supplier = null){
+    	$list = null;
+    	$dataSelect['deleted'] = 1;
+    	// $query = "SELECT * FROM m_produk ";
+    	// $query .= "INNER JOIN m_det"
+    	if($supplier != null){
+    		// $query .= " AND id_supplier = '".$supplier."'"
+    		$dataSelect['id_supplier'] = $supplier;
+    	}
+    	$list = $this->Transaksiservicemodel->select($dataSelect, 'm_produk');
+    	return json_encode($list->result_array());
+    }
+    function getSupplier(){
+    	$dataSelect['deleted'] = 1;
+    	return json_encode($this->Transaksiservicemodel->select($dataSelect, 'm_supplier_produk')->result_array());
+    }
+    function filterProduk($supplier){
+    	echo $this->getProduk($supplier);
+    }
     function transaksi(){
     	$dataSelect['deleted'] = 1;
-    	$data['list_produk'] = json_encode($this->Transaksiservicemodel->select($dataSelect, 'm_produk')->result());
+    	$data['list_produk'] = $this->getProduk();
         $data['list_order'] = $this->getOrder();
+        $data['list_supplier'] = $this->getSupplier();
         $data['total'] = $this->cart->total();
         $data['total_items'] = $this->cart->total_items();
         $data['tax'] = 0;
@@ -93,13 +114,41 @@ class Transaksi extends MX_Controller {
     function getTotal(){
     	echo json_encode(array("tax"=>0, "discount"=> 0, "total"=> $this->cart->total(), "total_items"=>$this->cart->total_items()));
     }
-    function updateCart($id, $qty){
+    function updateCart($id, $qty, $state = 'tambah'){
+    	$getid = $this->in_cart($id, 'id', 'rowid');
+    	$dataSelect['deleted'] = 1;
+    	$dataSelect['id'] = $getid;
+    	$selectData = $this->Transaksiservicemodel->select($dataSelect, 'm_produk');
+    	$lastQty = $this->in_cart($id, 'qty', 'rowid');
+    	if($state == 'tambah'){		
+	    	if($lastQty <= $selectData->row()->stok){
+				$data = array(
+				        'rowid'  => $id,
+				        'qty'    => $qty
+				);
+				$this->cart->update($data);
+				echo $this->getOrder();   	
+	    	}
+    	}else{
+			$data = array(
+			        'rowid'  => $id,
+			        'qty'    => $qty
+			);
+			$this->cart->update($data);
+			echo $this->getOrder();   	    		
+    	}
+    }
+    function updateOption($id, $options){
 		$data = array(
 		        'rowid'  => $id,
-		        'qty'    => $qty,
+		        'options'=> array('stok'=>$options)
 		);
 		$this->cart->update($data);
-		echo $this->getOrder();   	
+		echo $this->getOrder();  
+    }
+    function testLastQty($id){
+    	$lastQty = $this->in_cart($id, 'qty', 'rowid');
+    	echo $lastQty;    	
     }
     function deleteCart($id){
     	$this->cart->remove($id);
@@ -109,31 +158,50 @@ class Transaksi extends MX_Controller {
     	$this->cart->destroy();
     	echo $this->getOrder();	
     }
-	function tambahCart(){
-		$datas = array(
-	        array(
-	                'id'      => 'sku_123ABC',
-	                'qty'     => 1,
-	                'price'   => 39.95,
-	                'name'    => 'T-Shirt',
-	                'options' => array('Size' => 'L', 'Color' => 'Red')
-	        ),
-	        array(
-	                'id'      => 'sku_567ZYX',
-	                'qty'     => 1,
-	                'price'   => 9.95,
-	                'name'    => 'Coffee Mug'
-	        ),
-	        array(
-	                'id'      => 'sku_965QRS',
-	                'qty'     => 1,
-	                'price'   => 29.95,
-	                'name'    => 'Shot Glass'
-	        )
-		);
+	function tambahCart($id){
+		$inCart = $this->in_cart($id);
+		$dataSelect['deleted'] 	= 1;
+		$dataSelect['id']		= $id;
+		$selectData = $this->Transaksiservicemodel->select($dataSelect, 'm_produk');
+		if($inCart != 'false'){
+			if($this->in_cart($id, 'qty') < $selectData->row()->stok){			
+				$qty = $this->in_cart($id, 'qty') + 1;
+				$this->updateCart($inCart, $qty);
+			}
+		}else if($inCart == 'false'){		
+			if($selectData->row()->stok > 1){			
+				$datas = array(
+			                'id'      => $selectData->row()->id,
+			                'qty'     => 1,
+			                'price'   => $selectData->row()->harga_beli,
+			                'name'    => $selectData->row()->nama,
+    				        'options' => array('stok'=>1)
 
-		$this->cart->insert($datas); 
+				);
+				$this->cart->insert($datas);
+				echo $this->getOrder();
+			}
+		}
 	}
+	function in_cart($product_id = null, $type = 'rowid', $filter = 'id') {
+	    if($this->cart->total_items() > 0){
+	        $in_cart = array();
+	        foreach ($this->cart->contents() AS $item){
+	            $in_cart[$item[$filter]] = $item[$type];
+	        }
+	        if($product_id){
+	            if (array_key_exists($product_id, $in_cart)){
+	                return $in_cart[$product_id];
+	            }else{            	
+		            return "false";
+	            }
+	        }else{
+	            return $in_cart;
+	        }
+	    }else{    	
+		    return "false";
+	    }
+	}	
     function data_transaksi(){
 		$datas = array(
 		        array(
@@ -204,5 +272,64 @@ class Transaksi extends MX_Controller {
 					"data"            => $data
 					);
 		echo json_encode($json_data);
+    }
+    function doServices(){
+    	$params = $this->input->post();
+    	if($params != null){
+    		$dataInsertPrimer['id_supplier'] 			= $params['supplier'];
+    		$dataInsertPrimer['catatan']				= $params['catatan'];
+    		$dataInsertPrimer['jumlah_barang_service']	= $this->cart->total_items();
+    		$dataInsertPrimer['total_harga']			= $this->cart->total();
+    		$dataInsertPrimer['jumlah_barang_kembali']	= 0;
+    		$dataInsertPrimer['jumlah_uang_kembali']	= 0;
+    		$dataInsertPrimer['status']					= 1;
+    		$dataInsertPrimer['add_by']					= 1;
+    		$dataInsertPrimer['edited_by']				= 0;
+    		$insertPrimer = $this->Transaksiservicemodel->insert($dataInsertPrimer, 't_service');
+    		if($insertPrimer){
+    			$getId = $this->Transaksiservicemodel->select($dataInsertPrimer, 't_service');
+    			$id = $getId->row()->id;
+	    		$dataInsertSekunder['id_service'] = $id;
+	    		$dataInsertHistori['id_service'] = $id;
+		    	foreach ($this->cart->contents() as $items){
+		    		$dataInsertSekunder['id_produk']				=	$items['id'];
+		    		$dataInsertSekunder['harga_beli']				=	$items['price'];
+		    		$dataInsertSekunder['jumlah']					=	$items['qty'];
+		    		$dataInsertSekunder['total_harga']				=	$items['subtotal'];
+		    		$dataInsertSekunder['uang_kembali']				=	0;
+		    		$dataInsertSekunder['kurangi_stok']				=	$items['options']['stok'];
+		    		$dataInsertSekunder['status']					=	1;
+		    		$dataInsertSekunder['jumlah_barang_kembali']	=	0;
+		    		$dataInsertSekunder['stok_kembali']				=	0;
+		    		$insertDataSekunder = $this->Transaksiservicemodel->insert($dataInsertSekunder, 't_service_detail');
+		    		if($insertDataSekunder){
+		    			if($items['options']['stok'] == 1){
+		    				$dataSelectLastStok['id'] = $items['id'];
+		    				$dataSelectLastStok['deleted'] = 1;
+		    				$getDataLastStok = $this->Transaksiservicemodel->select($dataSelectLastStok, 'm_produk');
+
+			    			$dataInsertHistori['id_produk']			=	$items['id'];
+			    			$dataInsertHistori['id_order_detail']	=	0;
+			    			$dataInsertHistori['jumlah']			=	$items['qty'];
+			    			$dataInsertHistori['stok_akhir']		=	$getDataLastStok->row()->stok - $items['qty'];
+			    			$dataInsertHistori['keterangan']		=	$params['catatan'];
+			    			$dataInsertHistori['status']			=	5;
+			    			$dataInsertHistori['add_by']			=	0;
+			    			$dataInsertHistori['edited_by']			=	0;
+			    			$dataInsertHistori['deleted']			=	1;
+			    			$insertHistori = $this->Transaksiservicemodel->insert($dataInsertHistori, 'h_stok_produk');
+			    			if($insertHistori){
+			    				$dataUpdate['stok']					=	$getDataLastStok->row()->stok - $items['qty'];
+			    				$updateStok							=	$this->Transaksiservicemodel->update($dataUpdate, $dataSelectLastStok, 'm_produk');
+			    				if($updateStok){
+			    					$this->destroyCart();
+			    				}
+			    			}
+		    			}
+		    		}
+		    	}    			
+    		}
+    	}
+    	echo $this->getOrder();
     }
 }
