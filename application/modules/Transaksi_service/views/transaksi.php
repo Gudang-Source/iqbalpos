@@ -364,9 +364,6 @@
       type : $('#serviceOrder').attr('method'),
       data : $('#serviceOrder').serialize(),
       success : function(data){        
-        var jsonObjectParse = JSON.parse(data);
-        var jsonObjectStringify = JSON.stringify(jsonObjectParse);
-        var jsonObjectFinal = JSON.parse(jsonObjectStringify);
         load_order(data);
         fillInformation();        
         $('#btnDoOrder').html("<h5 class=\'text-bold\'>Servis Stok</h5>");
@@ -380,9 +377,6 @@
       type : $('#serviceOrder').attr('method'),
       data : $('#serviceOrder').serialize(),
       success : function(data){        
-        var jsonObjectParse = JSON.parse(data);
-        var jsonObjectStringify = JSON.stringify(jsonObjectParse);
-        var jsonObjectFinal = JSON.parse(jsonObjectStringify);
         load_order(data);
         fillInformation();        
         $('#btnDoOrder').html("<h5 class=\'text-bold\'>Servis Stok</h5>");

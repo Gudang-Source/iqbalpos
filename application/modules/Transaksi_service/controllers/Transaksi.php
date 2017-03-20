@@ -202,77 +202,6 @@ class Transaksi extends MX_Controller {
 		    return "false";
 	    }
 	}	
-    function data_transaksi(){
-		$datas = array(
-		        array(
-		                'id'      => 'sku_123ABC',
-		                'qty'     => 1,
-		                'price'   => 39.95,
-		                'name'    => 'T-Shirt',
-		                'options' => array('Size' => 'L', 'Color' => 'Red')
-		        ),
-		        array(
-		                'id'      => 'sku_567ZYX',
-		                'qty'     => 1,
-		                'price'   => 9.95,
-		                'name'    => 'Coffee Mug'
-		        ),
-		        array(
-		                'id'      => 'sku_965QRS',
-		                'qty'     => 1,
-		                'price'   => 29.95,
-		                'name'    => 'Shot Glass'
-		        )
-		);
-
-		$this->cart->insert($datas);    	
-		$columns = array( 
-			0 	=>	'produk', 
-			1 	=>	'price', 
-			2 	=> 	'quantity',
-			3	=> 	'total'
-		);
-		$data = array();
-		foreach ($this->cart->contents() as $items){
-			$nestedData		=	array(); 
-
-			$nestedData[] 	= 	"<div class=\'col-xs-2 nopadding\'>
-				                   <a href=\'javascript:void(0)\'>
-				                   <span class=\'fa-stack fa-sm productD\'>
-				                     <i class=\'fa fa-circle fa-stack-2x delete-product\'></i>
-				                     <i class=\'fa fa-times fa-stack-1x fa-fw fa-inverse\'></i>
-				                   </span>
-				                   </a>
-				                 </div>
-				                 <div class=\'col-xs-10 nopadding\'>                  
-				                   <span class=\'textPD\'>".$items["name"]."</span>
-				                 </div>";
-			$nestedData[] 	= 	"<span class='textPD'>Rp. ".$items["price"]."</span>";
-			$nestedData[] 	= 	"<a href='javascript:void(0)''>
-									<span class='fa-stack fa-sm decbutton'>
-									  <i class='fa fa-square fa-stack-2x light-grey'></i>
-									  <i class='fa fa-minus fa-stack-1x fa-inverse white'></i>
-									</span>
-								</a>
-								<input id='qt-3074' onchange='edit_posale(3074)' class='form-control' value='".$items['qty']."' placeholder='0' maxlength='2' type='text'>
-								<a href='javascript:void(0)'>
-									<span class='fa-stack fa-sm incbutton'>
-										<i class='fa fa-square fa-stack-2x light-grey'></i>
-										<i class='fa fa-plus fa-stack-1x fa-inverse white'></i>
-									</span>
-								</a>";
-			$nestedData[] 	= 	"<span class='subtotal textPD'>Rp. ".$items["price"] * $items['qty']."</span>";
-
-			$data[] = $nestedData;			
-		}
-		$json_data = array(
-					"draw"            => 1,
-					"recordsTotal"    => $this->cart->total_items(),
-					"recordsFiltered" => $this->cart->total_items(),
-					"data"            => $data
-					);
-		echo json_encode($json_data);
-    }
     function doServices(){
     	$params = $this->input->post();
     	if($params != null){
@@ -322,14 +251,18 @@ class Transaksi extends MX_Controller {
 			    				$dataUpdate['stok']					=	$getDataLastStok->row()->stok - $items['qty'];
 			    				$updateStok							=	$this->Transaksiservicemodel->update($dataUpdate, $dataSelectLastStok, 'm_produk');
 			    				if($updateStok){
-			    					$this->destroyCart();
+			    					$this->cart->destroy();
+			    					echo $this->getOrder();
 			    				}
 			    			}
+		    			}else{
+		    				$this->cart->destroy();
+		    				echo $this->getOrder();
 		    			}
 		    		}
 		    	}    			
     		}
     	}
-    	echo $this->getOrder();
+    	
     }
 }
