@@ -8,6 +8,9 @@ class Transaksi extends MX_Controller {
     function index(){
     	$this->load->view('Transaksi_service/view');
     }
+    function detail($id = 0){
+    	$this->load->view('Transaksi_service/detail');
+    }
     function data(){
 		$requestData= $_REQUEST;
 		$columns = array( 
@@ -54,7 +57,7 @@ class Transaksi extends MX_Controller {
 			$nestedData[] 	= 	$row["jumlah_uang_kembali"];
 			$nestedData[] 	= 	$row["status"];
 			$nestedData[] 	= 	$row["date_add"];
-			$nestedData[] 	= 	"<button>CONFIRM</button>";
+			$nestedData[] 	= 	"<button onclick=detail('".$row['id']."')>CONFIRM</button>";
 			
 			$data[] = $nestedData;
 		}
@@ -69,15 +72,13 @@ class Transaksi extends MX_Controller {
     function data_detail($id_service){
 		$requestData= $_REQUEST;
 		$columns = array( 
-			0 	=>	'id_supplier', 
-			1 	=> 	'catatan',
-			2	=> 	'jumlah_barang_service',
-			3	=> 	'total_harga',
-			4	=> 	'jumlah_barang_kembali',
-			5	=> 	'jumlah_uang_kembali',
-			6	=> 	'status',
-			7	=> 	'date_add',
-			7	=> 	'aksi'
+			0 	=>	'no', 
+			1 	=> 	'produk',
+			2	=> 	'sku',
+			3	=> 	'barang_diservis',
+			4	=> 	'barang_kembali',
+			5	=> 	'uang_kembali',
+			6	=> 	'status'
 		);
 		$sql = "SELECT * ";
 		$sql.=" FROM t_service";
@@ -85,36 +86,35 @@ class Transaksi extends MX_Controller {
 		$totalData = $query->num_rows();
 		$totalFiltered = $totalData;
 		// $sql = "SELECT * ";
-		$sql.=" WHERE deleted=1 ";
+		$sql.=" INNER JOIN t_service_detail ON t_service.id = t_service_detail.id_service";
+		$sql.=" INNER JOIN m_produk on t_service_detail.id_produk = m_produk.id";
+		$sql.=" WHERE t_service.deleted=1 ";
+		$sql.=" AND t_service.id=".$id_service;
 		if( !empty($requestData['search']['value']) ) {
-			$sql.=" AND ( id_supplier LIKE '".$requestData['search']['value']."%' ";    
-			$sql.=" OR catatan LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR jumlah_barang_service LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR total_harga LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR jumlah_barang_kembali LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR jumlah_uang_kembali LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR status LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR date_add LIKE '".$requestData['search']['value']."%' )";
+			$sql.=" AND m_produk.nama LIKE '%".$requestData['search']['value']."%' ";    
+			$sql.=" OR m_produk.sku LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR m_produk.kode_barang LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR m_produk.deskripsi LIKE '%".$requestData['search']['value']."%' ";
 		}
 		$query=$this->Transaksiservicemodel->rawQuery($sql);
 		$totalFiltered = $query->num_rows();
 		$sql.=" ORDER BY ". $columns[$requestData['order'][0]['column']]."   ".$requestData['order'][0]['dir']."   LIMIT ".$requestData['start']." ,".$requestData['length']."   "; 
 		$query=$this->Transaksiservicemodel->rawQuery($sql);
 		$data = array();
+		$i=1;
 		foreach ($query->result_array() as $row) {
 			$nestedData		=	array(); 
 
-			$nestedData[] 	= 	$row["id_supplier"];
-			$nestedData[] 	= 	$row["catatan"];
-			$nestedData[] 	= 	$row["jumlah_barang_service"];
-			$nestedData[] 	= 	$row["total_harga"];
-			$nestedData[] 	= 	$row["jumlah_barang_kembali"];
-			$nestedData[] 	= 	$row["jumlah_uang_kembali"];
-			$nestedData[] 	= 	$row["status"];
-			$nestedData[] 	= 	$row["date_add"];
-			$nestedData[] 	= 	"<button>CONFIRM</button>";
+			$nestedData[] 	= 	$i;
+			$nestedData[] 	= 	$row["nama"];
+			$nestedData[] 	= 	$row["sku"];
+			$nestedData[] 	= 	$row["t_service_detail.jumlah"];
+			$nestedData[] 	= 	$row["t_service_detail.jumlah_barang_kembali"];
+			$nestedData[] 	= 	$row["t_service_detail.jumlah_uang_kembali"];
+			$nestedData[] 	= 	$row["t_service_detail.status"];
 			
 			$data[] = $nestedData;
+			$i++;
 		}
 		$json_data = array(
 					"draw"            => intval( $requestData['draw'] ),

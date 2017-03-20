@@ -34,6 +34,21 @@
 <!-- /.container -->
 
 <script type="text/javascript" language="javascript" >
+    function detail(id){
+      $.confirm({
+          title: 'Title',
+          content: 'url:<?php echo base_url('Transaksi_service/Transaksi/detail'); ?>/'+id,
+          onContentReady: function () {
+              var self = this;
+          },
+          columnClass: 'col-lg-12',
+          alignMiddle: 'true',
+          theme: 'material'
+      });
+    }
+
+
+
     $(document).ready(function() {
         var dataTable = $('#TableMain').DataTable( {
             "processing": true,
