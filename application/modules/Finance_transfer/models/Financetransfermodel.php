@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-class Bahanbakumodel extends CI_Model {
+class Financetransfermodel extends CI_Model {
 	private $table_prefix = "";
 
 	public function get($table){

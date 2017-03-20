@@ -244,7 +244,7 @@ class Master extends MX_Controller {
 
         $config['overwrite'] = true;
         $config['upload_path'] = $img_path;
-        $config['allowed_types'] = "png|jpg";
+        $config['allowed_types'] = "png|jpg|jpeg";
         $config['file_name'] = $img_name;
 
         $this->load->library('upload', $config);

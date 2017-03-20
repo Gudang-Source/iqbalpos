@@ -77,6 +77,6 @@ class Produkmodel extends CI_Model {
 	}
 	public function get_last_id($table) {
 		$last_row = $this->db->select('id')->order_by('id',"desc")->limit(1)->get($table)->row();
-		return $last_row->id;
+		return !empty($last_row) ? $last_row->id : 0;
 	}
 }

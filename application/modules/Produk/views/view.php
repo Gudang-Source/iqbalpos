@@ -14,7 +14,7 @@
                   <th class="text-center">Kode Barang</th>
                   <th class="text-center">Stok</th>
                   <th class="text-center" class="hidden-xs">Tanggal Buat</th>
-                  <th class="text-center">Aksi</th>
+                  <th class="text-center no-sort">Aksi</th>
               </tr>
           </thead>
 
@@ -290,13 +290,18 @@
   var initDataTable = $('#TableMainServer').DataTable({
       "bProcessing": true,
       "bServerSide": true,
+      "order": [[4, 'DESC']],
       "ajax":{
             url :"<?php echo base_url()?>Produk/Master/data",
             type: "post",  // type of method  , by default would be get
             error: function(){  // error handling code
               // $("#employee_grid_processing").css("display","none");
             }
-          }
+          },
+      "columnDefs": [ {
+        "targets"  : 'no-sort',
+        "orderable": false,
+      }]
     });
   
   function load_select_option(json, target_id, nama=""){
