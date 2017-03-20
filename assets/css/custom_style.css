@@ -16,3 +16,7 @@
 .multiselect-container .checkbox input[type=checkbox] {
 	display: block;
 }
+
+.datepicker.dropdown-menu {
+  background-color:#435059;
+}
