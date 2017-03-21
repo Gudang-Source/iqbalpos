@@ -7,13 +7,13 @@
 </div>
 
   <ul class="nav nav-tabs">
-    <li class=""><a href="#tab_tabel" data-toggle="tab"><i class="fa fa-cog" aria-hidden="true"></i> Tabel</a></li>
-    <li class="active"><a href="#tab_grafik" data-toggle="tab"><i class="fa fa-users" aria-hidden="true"></i> Grafik</a></li>
+    <li class="active"><a href="#tab_tabel" data-toggle="tab"><i class="fa fa-cog" aria-hidden="true"></i> Tabel</a></li>
+    <li class=""><a href="#tab_grafik" data-toggle="tab"><i class="fa fa-users" aria-hidden="true"></i> Grafik</a></li>
   </ul>
    <div class="tab-content">
     
     <!-- TAB TABEL -->
-    <div class="tab-pane fade in" id="tab_tabel">
+    <div class="tab-pane fade in active" id="tab_tabel">
        <div class="row">
           <form id="formTabel" method="post">
             <div class="col-sm-8">
@@ -38,9 +38,9 @@
                   <tr>
                     <th class="text-center no-sort">#</th>
                     <th class="text-center">Nama Customer</th>
-                    <th class="text-center">Total Berat</th>
+                    <th class="text-center">Total Berat (gr)</th>
                     <th class="text-center">Total Qty</th>
-                    <th class="text-center">Grand Total</th>
+                    <th class="text-center">Grand Total (IDR)</th>
                     <th class="text-center">Jenis Order</th>
                     <th class="text-center">Metode Pembayaran</th>
                     <th class="text-center">Tanggal Order</th>
@@ -56,7 +56,7 @@
     </div>
 
     <!-- TAB GRAFIK -->
-    <div class="tab-pane fade in active" id="tab_grafik">
+    <div class="tab-pane fade in" id="tab_grafik">
       <div class="row">
           <form id="formGrafik" method="post">
           <div class="col-sm-6">
@@ -79,11 +79,11 @@
        <hr>
 
        <div class="row">
-          <div class="col-sm-12">
-            <div id="chart1_container"></div>
+          <div class="col-sm-6">
+            <div id="chart1_container" class="form-group"></div>
           </div>
-          <div class="col-sm-12">
-            <div id="chart-area2"></div>
+          <div class="col-sm-6">
+            <div id="chart2_container" class="form-group"></div>
           </div>
        </div>
     </div>
@@ -95,6 +95,18 @@
 
 <script type="text/javascript">
   $(document).ready(function() {
+    //set data awal grafik
+    var jsonGrafik = <?php echo $data_grafik;?>;
+    var chart1 = $('#chart1_container').highcharts();
+    var chart2 = $('#chart2_container').highcharts();
+    set_grafik_hari();
+    chart1.xAxis[0].setCategories(jsonGrafik.data_per);
+    chart1.series[0].setData(jsonGrafik.jumlah_penjualan);
+    chart2.xAxis[0].setCategories(jsonGrafik.data_per);
+    chart2.series[0].setData(jsonGrafik.total_penjualan);
+    
+
+
     //initialize input money masking
     maskInputMoney();
     $('.datepicker').datepicker({
@@ -254,13 +266,34 @@
 <?php include "chart.php"; ?>
 
 <script type="text/javascript">
+  function set_grafik_hari() {
+    var chart1 = $('#chart1_container').highcharts();
+    var chart2 = $('#chart2_container').highcharts();
+    chart1.title.update({text: 'Jumlah Penjualan Per Hari'});
+    chart1.subtitle.update({text: "<?php echo date('F Y');?>"});
+    chart2.title.update({text: 'Total Penjualan Per Hari'});
+    chart2.subtitle.update({text: "<?php echo date('F Y');?>"});
+  }
+  function set_grafik_bulan() { 
+    var chart1 = $('#chart1_container').highcharts();
+    var chart2 = $('#chart2_container').highcharts();
+    chart1.title.update({text: 'Jumlah Penjualan Per Bulan'});
+    chart1.subtitle.update({text: "<?php echo 'Tahun '. date('Y');?>"});
+    chart2.title.update({text: 'Total Penjualan Per Bulan'});
+    chart2.subtitle.update({text: "<?php echo 'Tahun '. date('Y');?>"});
+  }
+  function set_grafik_tahun() { 
+    var chart1 = $('#chart1_container').highcharts();
+    var chart2 = $('#chart2_container').highcharts();
+    chart1.title.update({text: 'Jumlah Penjualan Per Tahun'});
+    chart1.subtitle.update({text: "<?php echo (date('Y')-5) .' s/d '.date('Y') ;?>"});
+    chart2.title.update({text: 'Total Penjualan Per Tahun'});
+    chart2.subtitle.update({text: "<?php echo (date('Y')-5) .' s/d '.date('Y') ;?>"});
+  }
+
   $("#gSubmit").click(function(e) {
     e.preventDefault();
-    // chart1.scale.xLabels = ["100","200","100","20","40","50"];
-    // chart1.update();
-
     var action = "<?php echo base_url('Laporan_penjualan/Master/chart_data')?>/";
-
     $.ajax({
       url: action,
       type: 'post',
@@ -274,12 +307,28 @@
       success: function (response) {
           $('#gSubmit').html('<i class="fa fa-filter"></i> Tampilkan');
           $("#gSubmit").prop("disabled", false);
-          console.log("new Dates: "+response.dates);
-          console.log("new Values: "+response.values);
-          var chart1 = $('#chart1_container').highcharts();
-          chart1.xAxis[0].setCategories(response.dates);
-          chart1.series[0].setData(response.values);
 
+          var chart1 = $('#chart1_container').highcharts();
+          var chart2 = $('#chart2_container').highcharts();
+          chart1.xAxis[0].setCategories(response.data_per);
+          chart1.series[0].setData(response.jumlah_penjualan);
+          chart2.xAxis[0].setCategories(response.data_per);
+          chart2.series[0].setData(response.total_penjualan);
+
+          switch($("#filter_grafik").val()) {
+            case 'hari':
+              set_grafik_hari();
+              break;
+            case 'bulan':
+              set_grafik_bulan();
+              break;
+            case 'tahun':
+              set_grafik_tahun();
+              break;
+            default:
+              set_grafik_hari();
+              break;
+          }
       }
     });
   })
