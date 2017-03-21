@@ -27,19 +27,50 @@
       </table>
    </div>
    <!-- Button trigger modal -->
-   <button type="button" class="btn btn-add btn-lg"  onclick="showAdd()">
-     Tambah Supplier Produk
-   </button>
+   <a type="button" class="btn btn-add btn-lg" href="<?php echo base_url('index/modul/Stok_service-Transaksi-transaksi'); ?>" target="_blank">
+     Tambah Stok Services
+   </a>
 </div>
 <!-- /.container -->
-
+<!-- Modal Detail -->
+<div class="modal fade" id="modaldetail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+ <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Detail Barang Service</h4>
+      </div>
+      <div class="modal-body">
+         <div class="row">
+           <div class="col-lg-12"  id="body-detail">
+           </div>
+         </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-success" data-dismiss="modal">Ok</button>
+      </div>
+    </div>
+ </div>
+</div>
+<!-- /.Modal Detail-->
 <script type="text/javascript" language="javascript" >
+    function detail(id){
+      $.ajax({
+        url :"<?php echo base_url('Stok_service/Transaksi/detail')?>/"+id,
+        type : "GET",
+        data :"",
+        success : function(data){
+          $("#body-detail").html(data);
+        }
+      });       
+      $("#modaldetail").modal("show");
+    }
     $(document).ready(function() {
         var dataTable = $('#TableMain').DataTable( {
             "processing": true,
             "serverSide": true,
             "ajax":{
-                url : "<?php echo base_url('Transaksi_service/Transaksi/data'); ?>",
+                url : "<?php echo base_url('Stok_service/Transaksi/data'); ?>",
                 type: "post",
                 error: function(){
                     $("#TableMain").append('<tbody class="employee-grid-error"><tr><th colspan="3">No data found in the server</th></tr></tbody>');

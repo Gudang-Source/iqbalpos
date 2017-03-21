@@ -5,7 +5,7 @@
         <li data-toggle="tooltip"  data-html="true" data-placement="left" title="switshregister"><a href="pos/switshregister"><i class="fa fa-random" aria-hidden="true"></i></a></li>
       </ul> -->
     <div class="col-md-5 left-side">
-      <form action="<?php echo base_url('Transaksi_service/Transaksi/doServices'); ?>" method="post" id="serviceOrder">
+      <form action="<?php echo base_url('Stok_service/Transaksi/doServices'); ?>" method="post" id="serviceOrder">
           
 <!--          <div class="row">
             <div class="row row-horizon">
@@ -237,7 +237,7 @@
   }
   function filterProduk(){
     $.ajax({
-      url :"<?php echo base_url('Transaksi_service/Transaksi/filterProduk')?>/"+$("#supplierSelect").val(),
+      url :"<?php echo base_url('Stok_service/Transaksi/filterProduk')?>/"+$("#supplierSelect").val(),
       type : "GET",
       data :"",
       dataType : "json",
@@ -248,7 +248,7 @@
   }
   function addToCart(id){
     $.ajax({
-      url :"<?php echo base_url('Transaksi_service/Transaksi/tambahCart')?>/"+id,
+      url :"<?php echo base_url('Stok_service/Transaksi/tambahCart')?>/"+id,
       type : "GET",
       data :"",
       dataType : "json",
@@ -260,7 +260,7 @@
   }
   function delete_order(id){
     $.ajax({
-      url :"<?php echo base_url('Transaksi_service/Transaksi/deleteCart')?>/"+id,
+      url :"<?php echo base_url('Stok_service/Transaksi/deleteCart')?>/"+id,
       type : "GET",
       data :"",
       dataType : "json",
@@ -274,7 +274,7 @@
     var qty = $("#qt-"+id).val();
     var option = $("#stok-"+id).val();
     $.ajax({
-      url :"<?php echo base_url('Transaksi_service/Transaksi/updateOption')?>/"+id+"/"+option,
+      url :"<?php echo base_url('Stok_service/Transaksi/updateOption')?>/"+id+"/"+option,
       type : "GET",
       data :"",
       dataType : "json",
@@ -303,7 +303,7 @@
   function change_total(id, state){
     var qty = $("#qt-"+id).val();
     $.ajax({
-      url :"<?php echo base_url('Transaksi_service/Transaksi/updateCart')?>/"+id+"/"+qty+"/"+state,
+      url :"<?php echo base_url('Stok_service/Transaksi/updateCart')?>/"+id+"/"+qty+"/"+state,
       type : "GET",
       data :"",
       dataType : "json",
@@ -322,7 +322,7 @@
   }
   function fillInformation(){
     $.ajax({
-      url :"<?php echo base_url('Transaksi_service/Transaksi/getTotal')?>",
+      url :"<?php echo base_url('Stok_service/Transaksi/getTotal')?>",
       type : "GET",
       data :"",
       success : function(data){        
@@ -356,7 +356,7 @@
     $('#btnDoOrder').html("<h5 class=\'text-bold\'>Clearing...</h5>");
     $("#btnDoOrder").prop("disabled", true);    
     $.ajax({
-      url :'<?php echo base_url("Transaksi_service/Transaksi/destroyCart"); ?>',
+      url :'<?php echo base_url("Stok_service/Transaksi/destroyCart"); ?>',
       type : $('#serviceOrder').attr('method'),
       data : $('#serviceOrder').serialize(),
       dataType : "json",
