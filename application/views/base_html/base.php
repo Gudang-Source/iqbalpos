@@ -32,6 +32,8 @@
       <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/daterangepicker.css" />
       <!-- multi select -->
       <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/bootstrap-multiselect.css" />
+      <!-- highcharts -->
+      <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/highcharts.css" />
       <!-- css for the preview keyset extension -->
       <link href="<?php echo base_url(); ?>assets/css/keyboard-previewkeyset.css" rel="stylesheet">
       <!-- keyboard widget style -->
@@ -69,7 +71,13 @@
       <!-- summernote js -->
       <script src="<?php echo base_url(); ?>assets/js/summernote.js"></script>
       <!-- chart.js script -->
-      <script src="<?php echo base_url(); ?>assets/js/Chart.js"></script>
+      <!--<script src="<?php echo base_url(); ?>assets/js/Chart.js"></script>-->
+      <!-- highchart.js script -->
+      <!--<script src="<?php echo base_url(); ?>assets/js/highcharts.js"></script>
+      <script src="<?php echo base_url(); ?>assets/js/highcharts_modules/exporting.js"></script>
+      <script src="<?php echo base_url(); ?>assets/js/highcharts_themes/sand-signika.js"></script>-->
+      <script src="https://code.highcharts.com/highcharts.js"></script>
+      <script src="https://code.highcharts.com/modules/exporting.js"></script>
       <!-- moment JS -->
       <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/moment.min.js"></script>
       <!-- Include Date Range Picker -->
