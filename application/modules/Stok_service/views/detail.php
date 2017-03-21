@@ -25,7 +25,7 @@
         "processing": true,
         "serverSide": true,
         "ajax":{
-            url : "<?php echo base_url('Transaksi_service/Transaksi/data_detail'); ?>/"+<?php echo $id; ?>,
+            url : "<?php echo base_url('Stok_service/Transaksi/data_detail'); ?>/"+<?php echo $id; ?>,
             type: "get",
             dataType : "json",
             error: function(){
@@ -41,7 +41,7 @@
       var sts = $('#sts-'+id).val();
       /* alert('JBK'+jbk+' JUK'+juk); */
       $.ajax({
-        url :"<?php echo base_url('Transaksi_service/Transaksi/confirm')?>/"+id,
+        url :"<?php echo base_url('Stok_service/Transaksi/confirm')?>/"+id,
         type : "POST",
         data : "jbk="+jbk+"&juk="+juk+"&sts="+sts+"&id="+id,
         success : function(data){

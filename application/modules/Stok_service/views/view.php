@@ -27,8 +27,8 @@
       </table>
    </div>
    <!-- Button trigger modal -->
-   <a type="button" class="btn btn-add btn-lg" href="<?php echo base_url('index/modul/Transaksi_service-Transaksi-transaksi'); ?>" target="_blank">
-     Tambah Supplier Produk
+   <a type="button" class="btn btn-add btn-lg" href="<?php echo base_url('index/modul/Stok_service-Transaksi-transaksi'); ?>" target="_blank">
+     Tambah Stok Services
    </a>
 </div>
 <!-- /.container -->
@@ -56,7 +56,7 @@
 <script type="text/javascript" language="javascript" >
     function detail(id){
       $.ajax({
-        url :"<?php echo base_url('Transaksi_service/Transaksi/detail')?>/"+id,
+        url :"<?php echo base_url('Stok_service/Transaksi/detail')?>/"+id,
         type : "GET",
         data :"",
         success : function(data){
@@ -70,7 +70,7 @@
             "processing": true,
             "serverSide": true,
             "ajax":{
-                url : "<?php echo base_url('Transaksi_service/Transaksi/data'); ?>",
+                url : "<?php echo base_url('Stok_service/Transaksi/data'); ?>",
                 type: "post",
                 error: function(){
                     $("#TableMain").append('<tbody class="employee-grid-error"><tr><th colspan="3">No data found in the server</th></tr></tbody>');
