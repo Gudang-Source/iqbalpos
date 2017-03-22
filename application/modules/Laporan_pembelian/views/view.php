@@ -37,13 +37,11 @@
               <thead>
                   <tr>
                     <th class="text-center no-sort">#</th>
-                    <th class="text-center">Nama Customer</th>
+                    <th class="text-center">Supplier</th>
                     <th class="text-center">Total Berat (gr)</th>
                     <th class="text-center">Total Qty</th>
-                    <th class="text-center">Total Harga Barang (IDR)</th>
-                    <th class="text-center">Jenis Order</th>
-                    <th class="text-center">Metode Pembayaran</th>
-                    <th class="text-center">Tanggal Order</th>
+                    <th class="text-center">Total Harga Beli (IDR)</th>
+                    <th class="text-center">Tanggal Beli</th>
                     <!-- <th class="text-center no-sort">Aksi</th> -->
                   </tr>
               </thead>
@@ -114,9 +112,9 @@
       initDataTable = $('#TableMainServer').DataTable({
         "bProcessing": true,
         "bServerSide": true,
-        "order": [[7, 'DESC']],
+        "order": [[5, 'DESC']],
         "ajax":{
-              url :"<?php echo base_url()?>Laporan_penjualan/Master/data",
+              url :"<?php echo base_url()?>Laporan_pembelian/Master/data",
               type: "post",  // type of method  , by default would be get
               "data": {
                   start_date: $("#start_date").val(),
@@ -142,9 +140,9 @@
       initDataTable = $('#TableMainServer').DataTable({
         "bProcessing": true,
         "bServerSide": true,
-        "order": [[7, 'DESC']],
+        "order": [[5, 'DESC']],
         "ajax":{
-              url :"<?php echo base_url()?>Laporan_penjualan/Master/data",
+              url :"<?php echo base_url()?>Laporan_pembelian/Master/data",
               type: "post",  // type of method  , by default would be get
               "data": {
                   start_date: "", end_date: ""
@@ -174,9 +172,9 @@
   var initDataTable = $('#TableMainServer').DataTable({
       "bProcessing": true,
       "bServerSide": true,
-      "order": [[7, 'DESC']],
+      "order": [[5, 'DESC']],
       "ajax":{
-            url :"<?php echo base_url()?>Laporan_penjualan/Master/data",
+            url :"<?php echo base_url()?>Laporan_pembelian/Master/data",
             type: "post",  // type of method  , by default would be get
             "data": {
                 start_date: $("#start_date").val(),
@@ -201,27 +199,27 @@
     chart1.reflow(); chart2.reflow(); // console.log("REFLOW DONG");
   });
   function set_grafik_hari() {
-    chart1.title.update({text: 'Jumlah Penjualan Per Hari'});
+    chart1.title.update({text: 'Jumlah Pembelian Per Hari'});
     chart1.subtitle.update({text: "<?php echo date('F Y');?>"});
-    chart2.title.update({text: 'Total Penjualan Per Hari'});
+    chart2.title.update({text: 'Total Pembelian Per Hari'});
     chart2.subtitle.update({text: "<?php echo date('F Y');?>"});
   }
   function set_grafik_bulan() { 
-    chart1.title.update({text: 'Jumlah Penjualan Per Bulan'});
+    chart1.title.update({text: 'Jumlah Pembelian Per Bulan'});
     chart1.subtitle.update({text: "<?php echo 'Tahun '. date('Y');?>"});
-    chart2.title.update({text: 'Total Penjualan Per Bulan'});
+    chart2.title.update({text: 'Total Pembelian Per Bulan'});
     chart2.subtitle.update({text: "<?php echo 'Tahun '. date('Y');?>"});
   }
   function set_grafik_tahun() { 
-    chart1.title.update({text: 'Jumlah Penjualan Per Tahun'});
+    chart1.title.update({text: 'Jumlah Pembelian Per Tahun'});
     chart1.subtitle.update({text: "<?php echo (date('Y')-5) .' s/d '.date('Y') ;?>"});
-    chart2.title.update({text: 'Total Penjualan Per Tahun'});
+    chart2.title.update({text: 'Total Pembelian Per Tahun'});
     chart2.subtitle.update({text: "<?php echo (date('Y')-5) .' s/d '.date('Y') ;?>"});
   }
 
   $("#gSubmit").click(function(e) {
     e.preventDefault();
-    var action = "<?php echo base_url('Laporan_penjualan/Master/chart_data')?>/";
+    var action = "<?php echo base_url('Laporan_pembelian/Master/chart_data')?>/";
     $.ajax({
       url: action,
       type: 'post',
@@ -240,9 +238,9 @@
           var chart1 = $('#chart1_container').highcharts();
           var chart2 = $('#chart2_container').highcharts();
           chart1.xAxis[0].setCategories(response.data_per);
-          chart1.series[0].setData(response.jumlah_penjualan);
+          chart1.series[0].setData(response.jumlah_pembelian);
           chart2.xAxis[0].setCategories(response.data_per);
-          chart2.series[0].setData(response.total_penjualan);
+          chart2.series[0].setData(response.total_pembelian);
           //reconfigure charts title & subtitle
           switch($("#filter_grafik").val()) {
             case 'hari':

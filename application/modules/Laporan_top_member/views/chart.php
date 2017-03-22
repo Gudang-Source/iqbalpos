@@ -5,7 +5,7 @@ Highcharts.chart('chart1_container', {
         type: 'column'
     },
     title: {
-        text: 'Jumlah Penjualan Per Hari'
+        text: 'Top Customer Per Hari (Banyaknya Order)'
     },
     subtitle: {
         text: "<?php echo date('F Y');?>"
@@ -17,7 +17,7 @@ Highcharts.chart('chart1_container', {
     yAxis: {
         min: 0,
         title: {
-            text: 'Jumlah Transaksi Penjualan'
+            text: 'Jumlah Order'
         }
     },
     tooltip: {
@@ -35,8 +35,8 @@ Highcharts.chart('chart1_container', {
         }
     },
     series: [{
-        name: 'Jumlah Penjualan',
-        data: jsonGrafik.jumlah_penjualan
+        name: 'Jumlah Order',
+        data: jsonGrafik.jumlah_order
     }]
   });
 
@@ -46,7 +46,7 @@ Highcharts.chart('chart2_container', {
         type: 'column'
     },
     title: {
-        text: 'Total Penjualan Per Hari'
+        text: 'Top Customer Per Hari (Total Nilai Order)'
     },
     subtitle: {
         text: "<?php echo date('F Y');?>"
@@ -58,7 +58,7 @@ Highcharts.chart('chart2_container', {
     yAxis: {
         min: 0,
         title: {
-            text: 'Total Transaksi Penjualan (IDR)'
+            text: 'Total Nilai Order (IDR)'
         }
     },
     tooltip: {
@@ -76,8 +76,8 @@ Highcharts.chart('chart2_container', {
         }
     },
     series: [{
-        name: 'Total Penjualan',
-        data: jsonGrafik.total_penjualan
+        name: 'Total Nilai Order',
+        data: jsonGrafik.total_order
     }]
   });    
 </script>
