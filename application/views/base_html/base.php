@@ -44,6 +44,8 @@
       <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/sweetalert.css">
       <!-- datepicker css -->
       <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/bootstrap-datepicker.min.css">
+      <!-- fileinput css -->
+      <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/fileinput.min.css">
       <!-- Custom CSS -->
       <link href="<?php echo base_url(); ?>assets/css/Style-Dark.css" rel="stylesheet">
       <link href="<?php echo base_url(); ?>assets/css/custom_style.css" rel="stylesheet">
@@ -86,6 +88,8 @@
       <script src="<?php echo base_url(); ?>assets/js/sweetalert.min.js"></script>
       <!-- datepicker script -->
       <script src="<?php echo base_url(); ?>assets/js/bootstrap-datepicker.min.js"></script>
+      <!-- fileinput script -->
+      <script src="<?php echo base_url(); ?>assets/js/fileinput.min.js"></script>
       <!-- multiselect script -->
       <script src="<?php echo base_url(); ?>assets/js/bootstrap-multiselect.js"></script>
       <!-- dateformat script -->

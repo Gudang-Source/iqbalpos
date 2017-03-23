@@ -20,3 +20,7 @@
 .datepicker.dropdown-menu {
   background-color:#435059;
 }
+
+body .popover{
+    max-width: 800px;
+}
