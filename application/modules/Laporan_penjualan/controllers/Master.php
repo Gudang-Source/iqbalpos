@@ -58,10 +58,10 @@ class Master extends MX_Controller {
         $data = array(); $i=0;
         foreach ($query->result_array() as $row) {
             $nestedData     =   array(); 
-            $nestedData[]   =   $i+1;
+            $nestedData[]   =   "<span style='display:block' class='text-center'>".($i+1)."</span>";
             $nestedData[]   =   $row["nama_customer"];
-            $nestedData[]   =   $row["total_berat"];
-            $nestedData[]   =   $row["total_qty"];
+            $nestedData[]   =   "<span class='money'>".$row["total_berat"]."</span>";
+            $nestedData[]   =   "<span style='display:block' class='text-center'>".$row['total_qty']."</span>";
             $nestedData[]   =   "<span class='pull-right money'>".$row['total_harga_barang']."</span>";
             $nestedData[]   =   ($row["jenis_order"] == '1') ? 'Normal' : 'Dropship';
             $nestedData[]   =   $row["metode_pembayaran"];

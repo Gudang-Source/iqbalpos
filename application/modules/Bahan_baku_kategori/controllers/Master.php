@@ -7,7 +7,7 @@ class Master extends MX_Controller {
     }
     function index(){
     	$dataSelect['deleted'] = 1;
-    	$data['list'] = json_encode($this->Bahankategorimodel->select($dataSelect, 'm_bahan_kategori')->result());
+    	$data['list'] = json_encode($this->Bahankategorimodel->select($dataSelect, 'm_bahan_kategori', 'date_add', 'DESC')->result());
 		//echo $data;
 		//print_r($data);
     	$this->load->view('Bahan_baku_kategori/view', $data);
@@ -16,7 +16,7 @@ class Master extends MX_Controller {
 	function test(){
 		header('Content-Type: application/json; charset=utf-8');
 		$dataSelect['deleted'] = 1;
-		$list = $this->Bahankategorimodel->select($dataSelect, 'm_bahan_kategori')->result();
+		$list = $this->Bahankategorimodel->select($dataSelect, 'm_bahan_kategori', 'date_add', 'DESC')->result();
 		echo json_encode(array('status' => '3','list' => $list));
 	}
 	
@@ -33,7 +33,7 @@ class Master extends MX_Controller {
 			$insert = $this->Bahankategorimodel->insert($dataInsert, 'm_bahan_kategori');
 			if($insert){
 				$dataSelect['deleted'] = 1;
-				$list = $this->Bahankategorimodel->select($dataSelect, 'm_bahan_kategori')->result();
+				$list = $this->Bahankategorimodel->select($dataSelect, 'm_bahan_kategori', 'date_add', 'DESC')->result();
 				echo json_encode(array('status' => 3,'list' => $list));
 			}else{
 				echo json_encode(array('status' => 1));
@@ -76,7 +76,7 @@ class Master extends MX_Controller {
 			$update = $this->Bahankategorimodel->update($dataCondition, $dataUpdate, 'm_bahan_kategori');
 			if($update){
 				$dataSelect['deleted'] = 1;
-				$list = $this->Bahankategorimodel->select($dataSelect, 'm_bahan_kategori')->result();
+				$list = $this->Bahankategorimodel->select($dataSelect, 'm_bahan_kategori', 'date_add', 'DESC')->result();
 				echo json_encode(array('status' => '3','list' => $list));
 			}else{
 				echo json_encode(array( 'status'=>'2' ));
@@ -93,7 +93,7 @@ class Master extends MX_Controller {
     		$update = $this->Bahankategorimodel->update($dataCondition, $dataUpdate, 'm_bahan_kategori');
     		if($update){
     			$dataSelect['deleted'] = 1;
-				$list = $this->Bahankategorimodel->select($dataSelect, 'm_bahan_kategori')->result();
+				$list = $this->Bahankategorimodel->select($dataSelect, 'm_bahan_kategori', 'date_add', 'DESC')->result();
 				echo json_encode(array('status' => '3','list' => $list));
     		}else{
     			echo "1";

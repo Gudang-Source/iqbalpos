@@ -55,7 +55,7 @@ class Master extends MX_Controller {
         $data = array(); $i=0;
         foreach ($query->result_array() as $row) {
             $nestedData     =   array(); 
-            $nestedData[]   =   $i+1;
+            $nestedData[]   =   "<span class='text-center' style='display:block;'>".($i+1)."</span>";
             $nestedData[]   =   $row["nama_pegawai"];
             $nestedData[]   =   date("d F Y H:i:s", strtotime($row["date_add"]));
             $nestedData[]   =   $row["rincian"];
@@ -63,12 +63,12 @@ class Master extends MX_Controller {
             $nestedData[]   =   "<span class='pull-right'>".number_format($row["kredit"], 2, ",", ".")."</span>";
             $nestedData[]   =   "<span class='pull-right'>".number_format($row["saldo_akhir"], 2, ",", ".")."</span>";
             $attachment = (!empty($row['nama_foto'])) ? '<a href="'.base_url('upload/finance_kas/')."/".$row['nama_foto'].'" class="btn btn-sm btn-default" data-toggle="tooltip" data-placement="top" title="Download Foto Bukti" download><i class="fa fa-paperclip"></i></a>' : '';
-            $nestedData[]   .=   '<td class="text-center"><div class="btn-group" >'
+            $nestedData[]   .=   '<div class="text-center" style="display:block;"><div class="btn-group" >'
                 // .'<a id="group'.$row["id"].'" class="divpopover btn btn-sm btn-default" href="javascript:void(0)" data-toggle="popover" data-placement="top" onclick="confirmDelete(this)" data-html="true" title="Hapus Data?" ><i class="fa fa-times"></i></a>'
                 // .'<a class="btn btn-sm btn-default" data-toggle="tooltip" data-placement="top" title="Ubah Data" onclick="showUpdate('.$row["id"].')"><i class="fa fa-pencil"></i></a>'
                 .$attachment
                .'</div>'
-            .'</td>';
+            .'</div>';
             
             $data[] = $nestedData; $i++;
         }
@@ -286,8 +286,16 @@ class Master extends MX_Controller {
     }
 
     private function update_setting($saldo_akhir) {
-        //update setting 'saldo kas akhir'
+        //check if data "saldo kas kecil" exist
         $dataCondition = array( 'id' => 1, 'nama' => 'saldo kas kecil' );
+        $data_db = $this->Financekasmodel->select($dataCondition, "setting");
+        if($data_db->num_rows() < 1) {
+            //insert into setting if "saldo kas akhir" not found
+            $dataInsert = array('nama' => 'saldo kas kecil', 'nilai' => 0);
+            $this->Financekasmodel->insert($dataInsert, "setting");
+        }
+
+        //update setting 'saldo kas akhir'
         $dataUpdate = array('nilai' => $saldo_akhir);
         $setting = $this->Financekasmodel->update($dataCondition, $dataUpdate, 'setting');
 

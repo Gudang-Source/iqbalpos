@@ -7,7 +7,7 @@ class Master extends MX_Controller {
     }
     function index(){
     	$dataSelect['deleted'] = 1;
-    	$data['list'] = json_encode($this->Bahanwarnamodel->select($dataSelect, 'm_bahan_warna')->result());
+    	$data['list'] = json_encode($this->Bahanwarnamodel->select($dataSelect, 'm_bahan_warna', 'date_add', 'DESC')->result());
 		//echo $data;
 		//print_r($data);
     	$this->load->view('Bahan_baku_warna/view', $data);
@@ -16,7 +16,7 @@ class Master extends MX_Controller {
 	function test(){
 		header('Content-Type: application/json; charset=utf-8');
 		$dataSelect['deleted'] = 1;
-		$list = $this->Bahanwarnamodel->select($dataSelect, 'm_bahan_warna')->result();
+		$list = $this->Bahanwarnamodel->select($dataSelect, 'm_bahan_warna', 'date_add', 'DESC')->result();
 		echo json_encode(array('status' => '3','list' => $list));
 	}
 	
@@ -33,7 +33,7 @@ class Master extends MX_Controller {
 			$insert = $this->Bahanwarnamodel->insert($dataInsert, 'm_bahan_warna');
 			if($insert){
 				$dataSelect['deleted'] = 1;
-				$list = $this->Bahanwarnamodel->select($dataSelect, 'm_bahan_warna')->result();
+				$list = $this->Bahanwarnamodel->select($dataSelect, 'm_bahan_warna', 'date_add', 'DESC')->result();
 				echo json_encode(array('status' => 3,'list' => $list));
 			}else{
 				echo json_encode(array('status' => 1));
@@ -76,7 +76,7 @@ class Master extends MX_Controller {
 			$update = $this->Bahanwarnamodel->update($dataCondition, $dataUpdate, 'm_bahan_warna');
 			if($update){
 				$dataSelect['deleted'] = 1;
-				$list = $this->Bahanwarnamodel->select($dataSelect, 'm_bahan_warna')->result();
+				$list = $this->Bahanwarnamodel->select($dataSelect, 'm_bahan_warna', 'date_add', 'DESC')->result();
 				echo json_encode(array('status' => '3','list' => $list));
 			}else{
 				echo json_encode(array( 'status'=>'2' ));
@@ -93,7 +93,7 @@ class Master extends MX_Controller {
     		$update = $this->Bahanwarnamodel->update($dataCondition, $dataUpdate, 'm_bahan_warna');
     		if($update){
     			$dataSelect['deleted'] = 1;
-				$list = $this->Bahanwarnamodel->select($dataSelect, 'm_bahan_warna')->result();
+				$list = $this->Bahanwarnamodel->select($dataSelect, 'm_bahan_warna', 'date_add', 'DESC')->result();
 				echo json_encode(array('status' => '3','list' => $list));
     		}else{
     			echo "1";

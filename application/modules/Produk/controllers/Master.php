@@ -67,7 +67,7 @@ class Master extends MX_Controller {
                 }
             }
             $nestedData     =   array(); 
-            $nestedData[]   =   $i+1;
+            $nestedData[]   =   "<span class='text-center' style='display:block;'>".($i+1)."</span>";
             $nestedData[]   .=  "<a href='javascript:void(0)' data-toggle='popover' data-html='true' data-placement='right' onclick='showThumbnail(this)'>"
                             . "<img src='".$foto_url."' class='img-responsive img-rounded' width='70' alt='No Image' style='margin:0 auto;'> </a>";
             $nestedData[]   =   $row["nama"];

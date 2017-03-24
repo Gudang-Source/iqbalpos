@@ -51,11 +51,11 @@ class Master extends MX_Controller {
         $data = array(); $i=0;
         foreach ($query->result_array() as $row) {
             $nestedData     =   array(); 
-            $nestedData[]   =   $i+1;
+            $nestedData[]   =   "<span style='display:block' class='text-center'>".($i+1)."</span>";
             $nestedData[]   =   $row["nama"];
             $nestedData[]   =   $row["sku"];
             $nestedData[]   =   $row['kode_barang'];
-            $nestedData[]   =   $row["stok"];
+            $nestedData[]   =   "<span style='display:block' class='text-center'>".$row["stok"]."</span>";
             // $nestedData[]   .=   '<td class="text-center"><div class="btn-group" >'
             //     .'<a id="group'.$row["id"].'" class="divpopover btn btn-sm btn-default" href="javascript:void(0)" data-toggle="popover" data-placement="top" onclick="confirmDelete(this)" data-html="true" title="Hapus Data?" ><i class="fa fa-times"></i></a>'
             //     .'<a class="btn btn-sm btn-default" data-toggle="tooltip" data-placement="top" title="Ubah Data" onclick="showUpdate('.$row["id"].')"><i class="fa fa-pencil"></i></a>'

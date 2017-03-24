@@ -7,7 +7,7 @@ class Master extends MX_Controller {
     }
     function index(){
     	$dataSelect['deleted'] = 1;
-    	$data['list'] = json_encode($this->Produkwarnamodel->select($dataSelect, 'm_produk_warna')->result());
+    	$data['list'] = json_encode($this->Produkwarnamodel->select($dataSelect, 'm_produk_warna', 'date_add', 'DESC')->result());
 		//echo $data;
 		//print_r($data);
     	$this->load->view('Produk_warna/view', $data);
@@ -16,7 +16,7 @@ class Master extends MX_Controller {
 	function test(){
 		header('Content-Type: application/json; charset=utf-8');
 		$dataSelect['deleted'] = 1;
-		$list = $this->Produkwarnamodel->select($dataSelect, 'm_produk_warna')->result();
+		$list = $this->Produkwarnamodel->select($dataSelect, 'm_produk_warna', 'date_add', 'DESC')->result();
 		echo json_encode(array('status' => '3','list' => $list));
 	}
 	
@@ -33,7 +33,7 @@ class Master extends MX_Controller {
 			$insert = $this->Produkwarnamodel->insert($dataInsert, 'm_produk_warna');
 			if($insert){
 				$dataSelect['deleted'] = 1;
-				$list = $this->Produkwarnamodel->select($dataSelect, 'm_produk_warna')->result();
+				$list = $this->Produkwarnamodel->select($dataSelect, 'm_produk_warna', 'date_add', 'DESC')->result();
 				echo json_encode(array('status' => 3,'list' => $list));
 			}else{
 				echo json_encode(array('status' => 1));
@@ -76,7 +76,7 @@ class Master extends MX_Controller {
 			$update = $this->Produkwarnamodel->update($dataCondition, $dataUpdate, 'm_produk_warna');
 			if($update){
 				$dataSelect['deleted'] = 1;
-				$list = $this->Produkwarnamodel->select($dataSelect, 'm_produk_warna')->result();
+				$list = $this->Produkwarnamodel->select($dataSelect, 'm_produk_warna', 'date_add', 'DESC')->result();
 				echo json_encode(array('status' => '3','list' => $list));
 			}else{
 				echo json_encode(array( 'status'=>'2' ));
@@ -93,7 +93,7 @@ class Master extends MX_Controller {
     		$update = $this->Produkwarnamodel->update($dataCondition, $dataUpdate, 'm_produk_warna');
     		if($update){
     			$dataSelect['deleted'] = 1;
-				$list = $this->Produkwarnamodel->select($dataSelect, 'm_produk_warna')->result();
+				$list = $this->Produkwarnamodel->select($dataSelect, 'm_produk_warna', 'date_add', 'DESC')->result();
 				echo json_encode(array('status' => '3','list' => $list));
     		}else{
     			echo "1";

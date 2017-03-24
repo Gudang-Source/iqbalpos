@@ -5,13 +5,17 @@
     <strong>Sukses!</strong> Data berhasil disimpan
   </div>
 </div>
+  <div class="row">
+    <h3><strong>Produk</strong> - Edisi Katalog</h3>
+  </div>
    <div class="row" style="margin-top:10px;">
       <table id="TableMain" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
               <tr>
+                  <th class="text-center no-sort">#</th>
                   <th class="text-center">Nama Katalog</th>
                   <th class="text-center" class="hidden-xs">Tanggal Buat</th>
-                  <th class="text-center">Aksi</th>
+                  <th class="text-center no-sort">Aksi</th>
               </tr>
           </thead>
 
@@ -59,7 +63,20 @@
 
 <script type="text/javascript">
   // initialize datatable
-  var table    = $("#TableMain").DataTable();
+  var table = $("#TableMain").DataTable({
+    "columnDefs": [ {
+            "searchable": false,
+            "orderable": false,
+            "targets": "no-sort"
+        } ],
+        // "order": [[ 1, 'asc' ]]    
+  });
+  table.on( 'order.dt search.dt', function () {
+        table.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+            cell.innerHTML = "<span style='display:block' class='text-center'>"+(i+1)+"</span>";
+        } );
+  } ).draw();
+
   var jsonlist = <?php echo $list; ?>;
   var awalLoad = true;
   
@@ -70,6 +87,7 @@
     table.clear().draw();
 	  for(var i=0;i<json.length;i++){
       table.row.add( [
+            "",
             json[i].nama,
             DateFormat.format.date(json[i].date_add, "dd-MM-yyyy HH:mm"),
             '<td class="text-center"><div class="btn-group" >'+

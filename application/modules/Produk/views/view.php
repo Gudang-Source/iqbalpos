@@ -5,6 +5,9 @@
     <strong>Sukses!</strong> Data berhasil disimpan
   </div>
 </div>
+   <div class="row">
+    <h3><strong>Produk</strong> - Semua Produk</h3>
+   </div>
    <div class="row" style="margin-top:10px;">
       <table id="TableMainServer" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
@@ -53,7 +56,7 @@
                       <p><b>Kode Barang :</b> <span id="det_kode_barang"></span></p>
                       <p><b>Harga Beli :</b> Rp <span id="det_harga_beli" class="money"></span></p>
                       <p><b>Stok :</b> <span id="det_stok"></span></p>
-                      <p><b>Berat :</b> <span id="det_berat"></span> gram</p>
+                      <p><b>Berat :</b> <span id="det_berat" class="money"></span> gram</p>
                       <p><b>Deskripsi :</b> <span id="det_deskripsi"></span></p>
                     </div>
                     <div class="col-sm-6">
@@ -218,7 +221,7 @@
              <div class="col-sm-6">
                 <div class="form-group">
                  <label for="berat">Berat (gram)</label>
-                 <input type="number" name="berat" min="0" Required class="form-control" id="berat" placeholder="Berat (gram)">
+                 <input type="text" name="berat" min="0" Required class="form-control money" id="berat" placeholder="Berat (gram)">
                </div>
              </div>
              <div class="col-sm-6">
@@ -351,7 +354,7 @@
     $("#berat").val("");
     $("#harga_beli").val("");
     $("#foto").attr("required", true);
-    $("#foto").val("");
+    $("#foto").fileinput("clear");
     $("#deskripsi").val("");
     unmaskInputMoney(); maskInputMoney();
     $("#modalform").modal("show");    
@@ -387,7 +390,7 @@
     $("#kode_barang").val(dataUpdate[0].kode_barang);
     $("#berat").val(dataUpdate[0].berat);
     $("#harga_beli").val(dataUpdate[0].harga_beli);
-    $("#foto").val("");
+    $("#foto").fileinput("clear");
     $("#deskripsi").val(dataUpdate[0].deskripsi);
     
     $("#id_ukuran").val(id_ukuran);

@@ -5,6 +5,9 @@
     <strong>Sukses!</strong> Data berhasil disimpan
   </div>
 </div>
+  <div class="row">
+    <h3><strong>Laporan</strong> - Stok</h3>
+  </div>
    <div class="row">
       <form id="myform" method="post">
       <div class="col-sm-6">

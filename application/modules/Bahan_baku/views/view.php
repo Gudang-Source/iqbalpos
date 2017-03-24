@@ -5,13 +5,17 @@
     <strong>Sukses!</strong> Data berhasil disimpan
   </div>
 </div>
+  <div class="row">
+    <h3><strong>Bahan Baku</strong> - Semua Bahan</h3>
+  </div>
    <div class="row" style="margin-top:10px;">
       <table id="TableMainServer" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
               <tr>
+                  <th class="text-center no-sort">#</th>
+                  <th class="text-center no-sort">Foto</th>
                   <th class="text-center">Nama Bahan Baku</th>
                   <th class="text-center">SKU</th>
-                  <th class="text-center">Kode Barang</th>
                   <th class="text-center">Stok</th>
                   <th class="text-center" class="hidden-xs">Tanggal Buat</th>
                   <th class="text-center no-sort">Aksi</th>
@@ -51,9 +55,9 @@
                       <p><b>SKU :</b> <span id="det_sku"></span></p>
                       <p><b>Kode Barang :</b> <span id="det_kode_barang"></span></p>
                       <p><b>Harga Beli :</b> Rp <span id="det_harga_beli" class="money"></span></p>
-                      <p><b>Stok :</b> <span id="det_stok"></p>
-                      <p><b>Berat :</b> <span id="det_berat"> gram</p>
-                      <p><b>Deskripsi :</b> <span id="det_deskripsi"></p></p>
+                      <p><b>Stok :</b> <span id="det_stok"></span></p>
+                      <p><b>Berat :</b> <span id="det_berat" class="money"></span> gram</p>
+                      <p><b>Deskripsi :</b> <span id="det_deskripsi"></span></p>
                     </div>
                     <div class="col-sm-6">
                       <p><b>Supplier :</b> <span id="det_supplier"></span></p>
@@ -146,7 +150,7 @@
              <div class="col-sm-6">
                 <div class="form-group">
                  <label for="berat">Berat (gram)</label>
-                 <input type="number" name="berat" min="0" Required class="form-control" id="berat" placeholder="Berat (gram)">
+                 <input type="text" name="berat" min="0" Required class="form-control money" id="berat" placeholder="Berat (gram)">
                </div>
              </div>
              <div class="col-sm-6">
@@ -158,23 +162,16 @@
                  </div>
                </div>
              </div>
-             <div class="col-sm-6">
-                <div class="form-group">
-                 <label for="foto">Foto</label>
-                 <input type="file" name="foto" accept="image/png, image/jpeg" Required class="form-control" id="foto" placeholder="Foto">
-               </div>
-             </div>
-             <div class="col-sm-6">
-               <div class="form-group">
-                 <label for="versi_foto">Versi Foto</label>
-                 <select name="versi_foto" class="form-control" id="versi_foto" >
-                 </select>
-               </div>
-             </div>
              <div class="col-sm-12">
                 <div class="form-group">
                  <label for="deskripsi">Deskripsi</label>
                  <textarea name="deskripsi" rows="2" Required class="form-control" id="deskripsi" placeholder="Deskripsi"></textarea>
+               </div>
+             </div>
+             <div class="col-sm-12">
+                <div class="form-group">
+                 <label for="foto">Foto</label>
+                 <input type="file" name="foto" accept="image/png, image/jpeg" Required class="form-control" id="foto" placeholder="Foto">
                </div>
              </div>
         </div>
@@ -192,6 +189,7 @@
   $(document).ready(function() {
     //initialize input money masking
     maskInputMoney();
+    $("#foto").fileinput({ 'showUpload': false });
   });
   function maskInputMoney(){
     $('.money').mask('#.##0', {reverse: true});
@@ -264,8 +262,7 @@
     $("#berat").val("");
     $("#harga_beli").val("");
     $("#foto").attr("required", true);
-    $("#foto").val("");
-    $("#versi_foto").val("");
+    $("#foto").fileinput("clear");
     $("#deskripsi").val("");
     unmaskInputMoney(); maskInputMoney();
     $("#modalform").modal("show");    
@@ -294,7 +291,7 @@
     $("#kode_barang").val(dataUpdate[0].kode_barang);
     $("#berat").val(dataUpdate[0].berat);
     $("#harga_beli").val(dataUpdate[0].harga_beli);
-    $("#foto").val("");
+    $("#foto").fileinput("clear");
     $("#deskripsi").val(dataUpdate[0].deskripsi);
     
     $("#id_warna").val(id_warna);
@@ -408,7 +405,7 @@
 		$.ajax({
           type: 'post',
           url: '<?php echo base_url('Bahan_baku/Master/delete'); ?>/',
-          data: {"id":jsonlist[i].id},
+          data: {"id":i},
 		      dataType: 'json',
           beforeSend: function() { 
             // kasi loading
@@ -441,6 +438,12 @@
     $(el).popover("show");
 	}
   
+  function showThumbnail(el){
+    var img_src = $(el).find("img").attr("src");
+    $(el).attr("data-content","<img src='"+img_src+"' class=\'img-responsive\'  href=\'#\' style=\'max-width:350px\'>");
+    $(el).popover("show");
+  }
+
   //Hack untuk bootstrap popover (popover hilang jika diklik di luar)
   $(document).on('click', function (e) {
     $('[data-toggle="popover"],[data-original-title]').each(function () {
