@@ -20,3 +20,7 @@
 .datepicker.dropdown-menu {
   background-color:#435059;
 }
+
+.jconfirm .jconfirm-box div.jconfirm-title-c .jconfirm-title{
+    color: #000000 !important;
+}

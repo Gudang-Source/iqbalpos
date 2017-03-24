@@ -9,6 +9,18 @@ class Transaksiservicemodel extends CI_Model {
 		$this->db->close();
 		return $result;
 	}
+	public function like($condition = 'null', $like = 'null', $table){
+		$this->load->database();
+		if($condition != 'null'){
+			$this->db->where($condition);
+		}
+		if($like != 'null'){
+			$this->db->like($like);
+		}
+		$result = $this->db->get($this->table_prefix."".$table);
+		$this->db->close();
+		return $result;
+	}
 	public function select($condition, $table){
 		$this->load->database();
 		$this->db->where($condition);

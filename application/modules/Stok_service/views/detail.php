@@ -1,5 +1,5 @@
 <!-- Page Content -->
-      <table id="TableMains" class="table table-striped table-bordered" cellspacing="0" width="80%">
+      <table id="TableMains" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
               <tr>
                   <th class="text-center">No</th>
@@ -9,7 +9,6 @@
                   <th class="text-center" class="hidden-xs">Barang Kembali</th>
                   <th class="text-center" class="hidden-xs">Uang Kembali</th>
                   <th class="text-center" class="hidden-xs">Status Kembali</th>
-                  <th class="text-center" class="hidden-xs">Aksi</th>
               </tr>
           </thead>
 
@@ -18,8 +17,7 @@
           </tbody>
       </table>
 <!-- /.container -->
-<script type="text/javascript" language="javascript" >  
-    // $(document).ready(function() {
+<script type="text/javascript" language="javascript" >
     var dataTables = $('#TableMains').DataTable( {
         "searching": false,
         "processing": true,
@@ -34,12 +32,10 @@
             }
         }
     });
-    // });
     function confirm(id){
       var jbk = $('#jbk-'+id).val();
       var juk = $('#juk-'+id).val();
       var sts = $('#sts-'+id).val();
-      /* alert('JBK'+jbk+' JUK'+juk); */
       $.ajax({
         url :"<?php echo base_url('Stok_service/Transaksi/confirm')?>/"+id,
         type : "POST",
@@ -49,5 +45,7 @@
         }
       });      
     }
-
+    function reloadTable(){
+      dataTable.ajax.reload( null, false );
+    }
 </script>

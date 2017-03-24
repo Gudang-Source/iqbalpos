@@ -9,7 +9,7 @@
       <table id="TableMain" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
               <tr>
-                  <th class="text-center">ID SUPPLIER</th>
+                  <th class="text-center">NAMA SUPPLIER</th>
                   <th class="text-center">CATATAN</th>
                   <th class="text-center">JUMLAH BARANG DISERVICE</th>
                   <th class="text-center" class="hidden-xs">TOTAL HARGA</th>
@@ -47,13 +47,26 @@
          </div>
       </div>
       <div class="modal-footer">
-        <button type="submit" class="btn btn-success" data-dismiss="modal">Ok</button>
+        <button type="submit" class="btn btn-success" data-dismiss="modal" onclick="reloadTable()">Confirm</button>
       </div>
     </div>
  </div>
 </div>
 <!-- /.Modal Detail-->
 <script type="text/javascript" language="javascript" >
+    var dataTable = $('#TableMain').DataTable( {
+        "processing": true,
+        "serverSide": true,
+        "ajax":{
+            url : "<?php echo base_url('Stok_service/Transaksi/data'); ?>",
+            type: "post",
+            error: function(){
+                $("#TableMain").append('<tbody class="employee-grid-error"><tr><th colspan="3">No data found in the server</th></tr></tbody>');
+                // $("#employee-grid_processing").css("display","none");
+                // dataTable.ajax.reload( null, false );
+            }
+        }
+    });
     function detail(id){
       $.ajax({
         url :"<?php echo base_url('Stok_service/Transaksi/detail')?>/"+id,
@@ -65,19 +78,4 @@
       });       
       $("#modaldetail").modal("show");
     }
-    $(document).ready(function() {
-        var dataTable = $('#TableMain').DataTable( {
-            "processing": true,
-            "serverSide": true,
-            "ajax":{
-                url : "<?php echo base_url('Stok_service/Transaksi/data'); ?>",
-                type: "post",
-                error: function(){
-                    $("#TableMain").append('<tbody class="employee-grid-error"><tr><th colspan="3">No data found in the server</th></tr></tbody>');
-                    // $("#employee-grid_processing").css("display","none");
-                    // dataTable.ajax.reload( null, false );
-                }
-            }
-        });
-    });
 </script>

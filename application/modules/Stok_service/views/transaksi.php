@@ -1,37 +1,11 @@
+
+
 <div class="container-fluid">
    <div class="row">
-<!--       <ul class="cbp-vimenu">
-        <li data-toggle="tooltip"  data-html="true" data-placement="left" title="CloseRegister"><a href="javascript:void(0)" onclick="CloseRegister()"><i class="fa fa-times" aria-hidden="true"></i></a></li>
-        <li data-toggle="tooltip"  data-html="true" data-placement="left" title="switshregister"><a href="pos/switshregister"><i class="fa fa-random" aria-hidden="true"></i></a></li>
-      </ul> -->
     <div class="col-md-5 left-side">
       <form action="<?php echo base_url('Stok_service/Transaksi/doServices'); ?>" method="post" id="serviceOrder">
-          
-<!--          <div class="row">
-            <div class="row row-horizon">
-               <span class="holdList"> -->
-                  <!-- list Holds goes here -->
-<!--                </span>
-               <span class="Hold pl" onclick="AddHold()">+</i></span>
-               <span class="Hold pl" onclick="RemoveHold()">-</span>
-            </div>
-         </div> -->
          <div class="col-xs-8">
             <h2>Pilih Supplier</h2>
-         </div>
-         <div class="col-xs-4 client-add">
-            <a href="javascript:void(0)" data-toggle="modal" data-target="#AddCustomer">
-               <span class="fa-stack fa-lg" data-toggle="tooltip" data-placement="top" title="Add New Customer">
-                  <i class="fa fa-square fa-stack-2x grey"></i>
-                  <i class="fa fa-user-plus fa-stack-1x fa-inverse dark-blue"></i>
-               </span>
-            </a>
-            <a href="javascript:void(0)" data-toggle="modal" data-target="#ticket">
-               <span class="fa-stack fa-lg" data-toggle="tooltip" data-placement="top" title="Show Last Receipt">
-                  <i class="fa fa-square fa-stack-2x grey"></i>
-                  <i class="fa fa-ticket fa-stack-1x fa-inverse dark-blue"></i>
-               </span>
-            </a>
          </div>
          <div class="col-sm-12">
             <select class="js-select-options form-control" id="supplierSelect" onchange="filterProduk()" name="supplier" required="required">
@@ -40,15 +14,13 @@
             </select>
          </div>
          <div class="col-sm-12">
-            <!-- <form onsubmit="return barcode()"> -->
-               <textarea name="catatan" class="form-control" placeholder="CATATAN"></textarea><!--  type="text" id="" class="form-control" placeholder="Barcode Scanner"> -->
-            <!-- </form> -->
+          &nbsp;
+         </div>
+         <div class="col-sm-12">
+               <textarea name="catatan" class="form-control" placeholder="CATATAN"></textarea>
          </div>
          <div class="col-xs-4 table-header">
             <h3>Product</h3>
-         </div>
-         <div class="col-xs-2 table-header">
-            <h3>Header</h3>
          </div>
          <div class="col-xs-2 table-header nopadding">
             <h3 class="text-left">Quantity</h3>
@@ -97,14 +69,13 @@
 
       </div>
       <div class="col-md-7 right-side nopadding">
-<!--               <div class="row row-horizon">
+              <div class="row row-horizon" id="kategoriGat">
                   <span class="categories selectedGat" id=""><i class="fa fa-home"></i></span>
-
               </div>
- -->              <div class="col-sm-12">
+              <div class="col-sm-12">
                  <div id="searchContaner">
                      <div class="input-group stylish-input-group">
-                         <input type="text" id="searchProd" class="form-control"  placeholder="Search" >
+                         <input type="text" id="searchProd" class="form-control"  placeholder="Search" oninput="search()">
                          <span class="input-group-addon">
                              <button type="submit">
                                  <span class="glyphicon glyphicon-search"></span>
@@ -130,8 +101,22 @@
   var totalItems = '<?php echo $total_items; ?>';
   inits(tax, discount, total, totalItems);
   load_supplier(listSupplier);
-  load_product(listProduct);
   load_order(listOrder);
+  function search(){
+    var keyword = $("#searchProd").val();
+    var supplier = $("#supplierSelect").val();
+    if(supplier != 0){    
+      $.ajax({
+        url :"<?php echo base_url('Stok_service/Transaksi/filterProdukByName')?>/"+keyword+"/"+supplier,
+        type : "GET",
+        data :"",
+        dataType : "json",
+        success : function(data){
+          load_product(data);
+        }
+      });
+    }
+  }  
   function load_supplier(json){
     var html = "";
     $("#supplierSelect").html('');
@@ -157,7 +142,7 @@
                     "<h3>"+json[i].harga_beli+"</h3>"+
                     "<p>"+json[i].deskripsi+"</p>"+
                   "</div>"+
-                  "<img src='#' alt=\'"+json[i].id_kategori+"\'>"+
+                  "<img src=\'<?php echo base_url('upload/produk/') ?>"+json[i].foto+"\' alt=\'"+json[i].id_kategori+"\'>"+
                 "</div>"+
               "</a>"+
              "</div>";
@@ -189,9 +174,6 @@
                               "<div class='col-xs-10 nopadding'>"+
                                 "<span class='textPD'>"+json[i].produk+"</span>"+
                               "</div>"+
-                          "</div>"+
-                          "<div class='col-xs-2'>"+
-                            "<span class='textPD'>"+json[i].price+"</span>"+
                           "</div>"+
                           "<div class='col-xs-2 nopadding productNum'>"+
                             "<a href='javascript:void(0)' onclick=reduce_qty(\'"+json[i].rowid+"\')>"+
@@ -242,9 +224,46 @@
       data :"",
       dataType : "json",
       success : function(data){
+        filterKategori();
         load_product(data);
       }
     });
+  }
+  function filterKategori(){
+    $.ajax({
+      url :"<?php echo base_url('Stok_service/Transaksi/getKategori')?>/"+$("#supplierSelect").val(),
+      type : "GET",
+      data :"",
+      dataType : "json",
+      success : function(data){
+        load_kategori(data);
+      }
+    });    
+  }
+  function load_kategori(json){
+    var html = "";
+    $("#kategoriGat").html('');
+    html = "<span class='categories selectedGat'><i class='fa fa-home'></i></span>";
+    $("#kategoriGat").append(html);
+    for (var i=0;i<json.length;i++){
+      html = "<span class='categories selectedGat' onclick=filterProdukByKategori(\'"+json[i].id+"\') >"+json[i].nama+"</span>";
+      $("#kategoriGat").append(html);
+    }
+  }
+  function filterProdukByKategori(id){
+    var keyword = $("#searchProd").val();
+    var supplier = $("#supplierSelect").val();
+    if(supplier != 0){    
+      $.ajax({
+        url :"<?php echo base_url('Stok_service/Transaksi/filterProdukByKategori')?>/"+supplier+"/"+id+"/"+keyword,
+        type : "GET",
+        data :"",
+        dataType : "json",
+        success : function(data){
+          load_product(data);
+        }
+      });
+    }
   }
   function addToCart(id){
     $.ajax({
