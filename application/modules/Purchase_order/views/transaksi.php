@@ -19,6 +19,7 @@
             </select>
          </div>
          <div class="col-sm-12">
+         &nbsp;
          </div>
          <div class="col-sm-12">
                <textarea name="catatan" class="form-control" placeholder="CATATAN"></textarea>
@@ -79,10 +80,13 @@
 
       </div>
       <div class="col-md-5 right-side nopadding">
+        <div class="row row-horizon" id="kategoriGat">
+            <span class="categories selectedGat" id=""><i class="fa fa-home"></i></span>
+        </div>
         <div class="col-sm-12">
            <div id="searchContaner">
                <div class="input-group stylish-input-group">
-                   <input type="text" id="searchProd" class="form-control"  placeholder="Search" >
+                   <input type="text" id="searchProd" class="form-control"  placeholder="Search" oninput="search()">
                    <span class="input-group-addon">
                        <button type="submit">
                            <span class="glyphicon glyphicon-search"></span>
@@ -109,7 +113,7 @@
   var totalItems = '<?php echo $total_items; ?>';
   inits(tax, discount, total, totalItems);
   load_supplier(listSupplier);
-  load_product(listProduct);
+  // load_product(listProduct);
   load_order(listOrder);
   function load_supplier(json){
     var html = "";
@@ -274,10 +278,62 @@
       data :"",
       dataType : "json",
       success : function(data){
+        filterKategori();
         load_product(data);
       }
     });
   }
+  function filterKategori(){
+    $.ajax({
+      url :"<?php echo base_url('Purchase_order/Transaksi/getKategori')?>/"+$("#supplierSelect").val(),
+      type : "GET",
+      data :"",
+      dataType : "json",
+      success : function(data){
+        load_kategori(data);
+      }
+    });    
+  }
+  function load_kategori(json){
+    var html = "";
+    $("#kategoriGat").html('');
+    html = "<span class='categories selectedGat'><i class='fa fa-home'></i></span>";
+    $("#kategoriGat").append(html);
+    for (var i=0;i<json.length;i++){
+      html = "<span class='categories selectedGat' onclick=filterProdukByKategori(\'"+json[i].id+"\') >"+json[i].nama+"</span>";
+      $("#kategoriGat").append(html);
+    }
+  }
+  function filterProdukByKategori(id){
+    var keyword = $("#searchProd").val();
+    var supplier = $("#supplierSelect").val();
+    if(supplier != 0){    
+      $.ajax({
+        url :"<?php echo base_url('Purchase_order/Transaksi/filterProdukByKategori')?>/"+supplier+"/"+id+"/"+keyword,
+        type : "GET",
+        data :"",
+        dataType : "json",
+        success : function(data){
+          load_product(data);
+        }
+      });
+    }
+  }
+  function search(){
+    var keyword = $("#searchProd").val();
+    var supplier = $("#supplierSelect").val();
+    if(supplier != 0){    
+      $.ajax({
+        url :"<?php echo base_url('Purchase_order/Transaksi/filterProdukByName')?>",
+        type : "POST",
+        data : "keyword="+keyword+"&supplier="+supplier,
+        dataType : "json",
+        success : function(data){
+          load_product(data);
+        }
+      });
+    }
+  }  
   function addToCart(id){
     $.ajax({
       url :"<?php echo base_url('Purchase_order/Transaksi/tambahCart')?>/"+id,

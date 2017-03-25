@@ -1,5 +1,5 @@
 <!-- Page Content -->
-      <table id="TableMains" class="table table-striped table-bordered" cellspacing="0" width="80%">
+      <table id="TableMains" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
               <tr>
                   <th class="text-center">No</th>
@@ -10,7 +10,6 @@
                   <th class="text-center" class="hidden-xs">Total Berat</th>
                   <th class="text-center" class="hidden-xs">Harga Beli</th>
                   <th class="text-center" class="hidden-xs">Total Harga</th>
-                  <th class="text-center" class="hidden-xs">Aksi</th>
               </tr>
           </thead>
           <tbody id='bodytable'>

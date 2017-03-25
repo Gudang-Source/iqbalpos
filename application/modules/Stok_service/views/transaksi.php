@@ -108,8 +108,8 @@
     if(supplier != 0){    
       $.ajax({
         url :"<?php echo base_url('Stok_service/Transaksi/filterProdukByName')?>/"+keyword+"/"+supplier,
-        type : "GET",
-        data :"",
+        type : "POST",
+        data : "keyword="+keyword+"&supplier="+supplier,
         dataType : "json",
         success : function(data){
           load_product(data);
