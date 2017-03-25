@@ -94,10 +94,10 @@ class Transaksi extends MX_Controller {
 		$sql.=" FROM t_service";
 		// $query=$this->Transaksiservicemodel->rawQuery($sql);
 		// $sql = "SELECT * ";
-		$sql.=" INNER JOIN t_service_detail ON t_service.id = t_service_detail.id_service";
-		$sql.=" INNER JOIN m_produk on t_service_detail.id_produk = m_produk.id";
+		$sql.=" LEFT JOIN t_service_detail ON t_service.id = t_service_detail.id_service";
+		$sql.=" LEFT JOIN m_produk on t_service_detail.id_produk = m_produk.id";
 		$sql.=" WHERE t_service.deleted=1 ";
-		$sql.=" AND t_service_detail.id_service=".$id_service;
+		$sql.=" AND t_service.id=".$id_service;
 		// if( !empty($requestData['search']['value']) ) {
 		// 	$sql.=" AND (m_produk.nama LIKE '".$requestData['search']['value']."%' ";
 		// 	$sql.=" OR m_produk.sku LIKE '".$requestData['search']['value']."%' ";
