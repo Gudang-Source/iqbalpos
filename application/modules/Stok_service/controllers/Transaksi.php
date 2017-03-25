@@ -99,10 +99,10 @@ class Transaksi extends MX_Controller {
 		$sql.=" WHERE t_service.deleted=1 ";
 		$sql.=" AND t_service_detail.id_service=".$id_service;
 		// if( !empty($requestData['search']['value']) ) {
-		// 	$sql.=" AND m_produk.nama LIKE '".$requestData['search']['value']."%' ";
+		// 	$sql.=" AND (m_produk.nama LIKE '".$requestData['search']['value']."%' ";
 		// 	$sql.=" OR m_produk.sku LIKE '".$requestData['search']['value']."%' ";
 		// 	$sql.=" OR m_produk.kode_barang LIKE '".$requestData['search']['value']."%' ";
-		// 	$sql.=" OR m_produk.deskripsi LIKE '".$requestData['search']['value']."%' ";
+		// 	$sql.=" OR m_produk.deskripsi LIKE '".$requestData['search']['value']."%' ) ";
 		// }
 		$query=$this->Transaksiservicemodel->rawQuery($sql);
 		$totalData = $query->num_rows();
