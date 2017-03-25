@@ -7,7 +7,7 @@ class Master extends MX_Controller {
     }
     function index(){
     	$dataSelect['deleted'] = 1;
-    	$data['list'] = json_encode($this->Produkkatalogmodel->select($dataSelect, 'm_produk_katalog')->result());
+    	$data['list'] = json_encode($this->Produkkatalogmodel->select($dataSelect, 'm_produk_katalog', 'date_add', 'DESC')->result());
 		//echo $data;
 		//print_r($data);
     	$this->load->view('Produk_katalog/view', $data);
@@ -16,7 +16,7 @@ class Master extends MX_Controller {
 	function test(){
 		header('Content-Type: application/json; charset=utf-8');
 		$dataSelect['deleted'] = 1;
-		$list = $this->Produkkatalogmodel->select($dataSelect, 'm_produk_katalog')->result();
+		$list = $this->Produkkatalogmodel->select($dataSelect, 'm_produk_katalog', 'date_add', 'DESC')->result();
 		echo json_encode(array('status' => '3','list' => $list));
 	}
 	
@@ -33,7 +33,7 @@ class Master extends MX_Controller {
 			$insert = $this->Produkkatalogmodel->insert($dataInsert, 'm_produk_katalog');
 			if($insert){
 				$dataSelect['deleted'] = 1;
-				$list = $this->Produkkatalogmodel->select($dataSelect, 'm_produk_katalog')->result();
+				$list = $this->Produkkatalogmodel->select($dataSelect, 'm_produk_katalog', 'date_add', 'DESC')->result();
 				echo json_encode(array('status' => 3,'list' => $list));
 			}else{
 				echo json_encode(array('status' => 1));
@@ -76,7 +76,7 @@ class Master extends MX_Controller {
 			$update = $this->Produkkatalogmodel->update($dataCondition, $dataUpdate, 'm_produk_katalog');
 			if($update){
 				$dataSelect['deleted'] = 1;
-				$list = $this->Produkkatalogmodel->select($dataSelect, 'm_produk_katalog')->result();
+				$list = $this->Produkkatalogmodel->select($dataSelect, 'm_produk_katalog', 'date_add', 'DESC')->result();
 				echo json_encode(array('status' => '3','list' => $list));
 			}else{
 				echo json_encode(array( 'status'=>'2' ));
@@ -93,7 +93,7 @@ class Master extends MX_Controller {
     		$update = $this->Produkkatalogmodel->update($dataCondition, $dataUpdate, 'm_produk_katalog');
     		if($update){
     			$dataSelect['deleted'] = 1;
-				$list = $this->Produkkatalogmodel->select($dataSelect, 'm_produk_katalog')->result();
+				$list = $this->Produkkatalogmodel->select($dataSelect, 'm_produk_katalog', 'date_add', 'DESC')->result();
 				echo json_encode(array('status' => '3','list' => $list));
     		}else{
     			echo "1";

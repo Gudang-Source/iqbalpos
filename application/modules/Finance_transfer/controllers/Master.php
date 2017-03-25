@@ -54,7 +54,7 @@ class Master extends MX_Controller {
         $data = array(); $i=0;
         foreach ($query->result_array() as $row) {
             $nestedData     =   array(); 
-            $nestedData[]   =   $i+1;
+            $nestedData[]   =   "<span class='text-center' style='display:block;'>".($i+1)."</span>";
             $nestedData[]   =   $row["nama_pegawai"];
             $nestedData[]   =   $row["nama_bank"];
             $nestedData[]   =   "<span class='pull-right'>".number_format($row["nominal"], 2, ",", ".")."</span>";

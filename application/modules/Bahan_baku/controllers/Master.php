@@ -7,12 +7,12 @@ class Master extends MX_Controller {
     }
     function index(){
     	$dataSelect['deleted'] = 1;
-        $data['list_supplier'] = json_encode($this->Bahanbakumodel->select($dataSelect, 'm_supplier_bahan')->result());
-        $data['list_satuan'] = json_encode($this->Bahanbakumodel->select($dataSelect, 'm_satuan')->result());
-        $data['list_gudang'] = json_encode($this->Bahanbakumodel->select($dataSelect, 'm_gudang')->result());
-        $data['list_kategori'] = json_encode($this->Bahanbakumodel->select($dataSelect, 'm_bahan_kategori')->result());
+        $data['list_supplier'] = json_encode($this->Bahanbakumodel->select($dataSelect, 'm_supplier_bahan', 'nama')->result());
+        $data['list_satuan'] = json_encode($this->Bahanbakumodel->select($dataSelect, 'm_satuan', 'nama')->result());
+        $data['list_gudang'] = json_encode($this->Bahanbakumodel->select($dataSelect, 'm_gudang', 'nama')->result());
+        $data['list_kategori'] = json_encode($this->Bahanbakumodel->select($dataSelect, 'm_bahan_kategori', 'nama')->result());
         
-        $data['list_warna'] = json_encode($this->Bahanbakumodel->select($dataSelect, 'm_bahan_warna')->result());
+        $data['list_warna'] = json_encode($this->Bahanbakumodel->select($dataSelect, 'm_bahan_warna', 'nama')->result());
         $data['list_det_warna'] = json_encode($this->Bahanbakumodel->get('m_bahan_det_warna')->result());
 
         $data['list'] = json_encode($this->Bahanbakumodel->select($dataSelect, 'm_bahan')->result());
@@ -24,24 +24,23 @@ class Master extends MX_Controller {
     function data(){
         $requestData= $_REQUEST;
         $columns = array( 
-            0   =>  'nama', 
-            1   =>  'sku',
-            2   =>  'kode_barang',
-            3   =>  'stok',
-            4   =>  'date_add',
-            5   =>  'aksi'
+            0   =>  '#', 
+            1   =>  'foto', 
+            2   =>  'nama', 
+            3   =>  'sku',
+            4   =>  'stok',
+            5   =>  'date_add',
+            6   =>  'aksi'
         );
-        $sql = "SELECT * ";
-        $sql.=" FROM t_service";
+        $sql = "SELECT * FROM m_bahan WHERE deleted = 1";
         $query=$this->Bahanbakumodel->rawQuery($sql);
         $totalData = $query->num_rows();
-        $totalFiltered = $totalData;
+        // $totalFiltered = $totalData;
         $sql = "SELECT * ";
         $sql.=" FROM m_bahan WHERE deleted = 1";
         if( !empty($requestData['search']['value']) ) {
             $sql.=" AND ( nama LIKE '%".$requestData['search']['value']."%' "; 
             $sql.=" OR sku LIKE '%".$requestData['search']['value']."%' ";
-            $sql.=" OR kode_barang LIKE '%".$requestData['search']['value']."%' ";
             $sql.=" OR stok LIKE '%".$requestData['search']['value']."%' ";
             $sql.=" OR date_add LIKE '%".$requestData['search']['value']."%' )";
         }
@@ -53,11 +52,19 @@ class Master extends MX_Controller {
         
         $data = array(); $i=0;
         foreach ($query->result_array() as $row) {
+            $foto_url = base_url()."/upload/bahan_baku/placeholder.png";
+            if(!empty($row["foto"])) {
+                if(file_exists(URL_UPLOAD."/bahan_baku/".$row["foto"])) {
+                    $foto_url = base_url()."/upload/bahan_baku/".$row["foto"];
+                }
+            }
             $nestedData     =   array(); 
+            $nestedData[]   =   "<span class='text-center' style='display:block;'>".($i+1)."</span>";
+            $nestedData[]   .=  "<a href='javascript:void(0)' data-toggle='popover' data-html='true' data-placement='right' onclick='showThumbnail(this)'>"
+                            . "<img src='".$foto_url."' class='img-responsive img-rounded' width='70' alt='No Image' style='margin:0 auto;'> </a>";
             $nestedData[]   =   $row["nama"];
             $nestedData[]   =   $row["sku"];
-            $nestedData[]   =   $row["kode_barang"];
-            $nestedData[]   =   $row["stok"];
+            $nestedData[]   =   "<span class='text-center' style='display:block;'>".$row["stok"]."</span>";
             $nestedData[]   =   date("d-m-Y H:i", strtotime($row["date_add"]));
             $nestedData[]   .=   '<td class="text-center"><div class="btn-group" >'
                 .'<a id="group'.$row["id"].'" class="divpopover btn btn-sm btn-default" href="javascript:void(0)" data-toggle="popover" data-placement="top" onclick="confirmDelete(this)" data-html="true" title="Hapus Data?" ><i class="fa fa-times"></i></a>'
@@ -68,6 +75,7 @@ class Master extends MX_Controller {
             
             $data[] = $nestedData; $i++;
         }
+        $totalData = count($data);
         $json_data = array(
                     "draw"            => intval( $requestData['draw'] ),
                     "recordsTotal"    => intval( $totalData ),
@@ -97,7 +105,6 @@ class Master extends MX_Controller {
         $dataInsert['kode_barang']      = $params['kode_barang'];
         $dataInsert['berat']            = $params['berat'];
         $dataInsert['harga_beli']       = $params['harga_beli'];
-        // $dataInsert['versi_foto']       = $params['versi_foto'];
         $dataInsert['deskripsi']        = $params['deskripsi'];
         $dataInsert['foto']             = $this->proses_foto($id);
         $dataInsert['last_edited']      = date("Y-m-d H:i:s");
@@ -161,7 +168,6 @@ class Master extends MX_Controller {
         $dataUpdate['kode_barang']      = $params['kode_barang'];
         $dataUpdate['berat']            = $params['berat'];
         $dataUpdate['harga_beli']       = $params['harga_beli'];
-        // $dataUpdate['versi_foto']       = $params['versi_foto'];
         $dataUpdate['deskripsi']        = $params['deskripsi'];
         $dataUpdate['last_edited']      = date("Y-m-d H:i:s");
         $dataUpdate['edited_by']        = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;

@@ -5,6 +5,9 @@
     <strong>Sukses!</strong> Data berhasil disimpan
   </div>
 </div>
+  <div class="row">
+    <h3><strong>Finance</strong> - Transfer Harian</h3>
+  </div>
    <div class="row">
       <div class="input-group input-daterange col-sm-6 pull-right">
         <input type="text" id="start_date" class="form-control datepicker" placeholder="YYYY/MM/DD">

@@ -48,9 +48,9 @@ class Master extends MX_Controller {
         $data = array(); $i=0;
         foreach ($query->result_array() as $row) {
             $nestedData     =   array(); 
-            $nestedData[]   =   $i+1;
+            $nestedData[]   =   "<span style='display:block' class='text-center'>".($i+1)."</span>";
             $nestedData[]   =   $row["nama_customer"];
-            $nestedData[]   =   $row["jumlah_order"];
+            $nestedData[]   =   "<span style='display:block' class='text-center'>".$row["jumlah_order"]."</span>";
             $nestedData[]   =   "<span class='pull-right money'>".$row['total_order']."</span>";
             // $nestedData[]   .=   '<td class="text-center"><div class="btn-group" >'
             //     .'<a id="group'.$row["id"].'" class="divpopover btn btn-sm btn-default" href="javascript:void(0)" data-toggle="popover" data-placement="top" onclick="confirmDelete(this)" data-html="true" title="Hapus Data?" ><i class="fa fa-times"></i></a>'

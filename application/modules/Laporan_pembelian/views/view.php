@@ -5,7 +5,9 @@
     <strong>Sukses!</strong> Data berhasil disimpan
   </div>
 </div>
-
+  <div class="row">
+    <h3><strong>Laporan</strong> - Pembelian</h3>
+  </div>
   <ul class="nav nav-tabs">
     <li class="active"><a href="#tab_tabel" data-toggle="tab"><i class="fa fa-table" aria-hidden="true"></i> Tabel</a></li>
     <li class=""><a href="#tab_grafik" data-toggle="tab"><i class="fa fa-bar-chart" aria-hidden="true"></i> Grafik</a></li>

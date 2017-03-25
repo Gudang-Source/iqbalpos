@@ -5,6 +5,9 @@
     <strong>Sukses!</strong> Data berhasil disimpan
   </div>
 </div>
+  <div class="row">
+    <h3><strong>Finance</strong> - Kas Kecil</h3>
+  </div>
    <div class="row">
       <div class="input-group input-daterange col-sm-6 pull-right">
         <input type="text" id="start_date" class="form-control datepicker" placeholder="YYYY/MM/DD">
@@ -97,7 +100,7 @@
                  <label for="debet">Debet <i class="fa fa-plus-circle"></i> </label>
                  <div class="input-group">
                   <span class="input-group-addon">Rp</span> 
-                  <input type="text" name="debet" Required class="form-control money" id="debet" placeholder="Debet">
+                  <input type="text" name="debet" value="0" Required class="form-control money" id="debet" placeholder="Debet">
                  </div>
                </div>
              </div>
@@ -106,7 +109,7 @@
                  <label for="kredit">Kredit <i class="fa fa-minus-circle"></i> </label>
                  <div class="input-group">
                   <span class="input-group-addon">Rp</span> 
-                  <input type="text" name="kredit" Required class="form-control money" id="kredit" placeholder="Kredit">
+                  <input type="text" name="kredit" value="0" Required class="form-control money" id="kredit" placeholder="Kredit">
                  </div>
                </div>
              </div>
@@ -132,6 +135,7 @@
   $(document).ready(function() {
     //initialize input money masking
     maskInputMoney();
+    $("#foto").fileinput({ 'showUpload': false });
     //initialize input datepicker
     $('.datepicker').datepicker({
       todayBtn: 'linked',
@@ -228,10 +232,10 @@
     $("#myModalLabel").text("Tambah Kas");
     $("#id").val("");
     $("#rincian").val("");
-    $("#debet").val("");
-    $("#kredit").val("");
+    $("#debet").val("0");
+    $("#kredit").val("0");
     // $("#foto").attr("required", true);
-    $("#foto").val("");
+    $("#foto").fileinput("clear");
     unmaskInputMoney(); maskInputMoney();
     $("#modalform").modal("show");    
   }
@@ -243,6 +247,7 @@
     $("#rincian").val(dataUpdate[0].rincian);
     $("#debet").val(dataUpdate[0].debet);
     $("#kredit").val(dataUpdate[0].kredit);
+    $("#foto").fileinput("clear");
     // $("#foto").attr("required", false);
     
     unmaskInputMoney(); maskInputMoney();
