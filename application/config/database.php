@@ -64,9 +64,9 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
-	'username' => 'root',
-	'password' => 'beni123',
+	'hostname' => 'aptikma.com',
+	'username' => 'u5601531_iqbal',
+	'password' => 'u5601531_iqbal',
 	'database' => 'pos',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
