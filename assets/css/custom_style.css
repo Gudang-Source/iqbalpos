@@ -3,7 +3,7 @@
     color: #a94442;
 }
 /*button.multiselect {
-	background-color: #435059 !important;
+    background-color: #435059 !important;
     border: 2px solid rgba(238, 238, 238, 0.1);
     color: #E4E6E7;
     display: block;
@@ -14,18 +14,17 @@
     line-height: 1.42857143;
 }*/
 .multiselect-container .checkbox input[type=checkbox] {
-	display: block;
+    display: block;
 }
 
 .datepicker.dropdown-menu {
   background-color:#435059;
 }
 
-<<<<<<< HEAD
-.jconfirm .jconfirm-box div.jconfirm-title-c .jconfirm-title{
-    color: #000000 !important;
-=======
 body .popover{
     max-width: 800px;
->>>>>>> 24de4973fdaf1161512a477ca09c3f8aa779f152
+}
+
+.jconfirm .jconfirm-box div.jconfirm-title-c .jconfirm-title{
+    color: #000000 !important;
 }
