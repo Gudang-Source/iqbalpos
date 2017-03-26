@@ -1,15 +1,12 @@
 <!-- Page Content -->
 <div class="container">
 <div class="row" style='min-height:80px;'>
-  <div id='notif-top' style="margin-top:50px;display:none;" class="col-md-4 alert alert-success pull-right">
-    <strong>Sukses!</strong> Data berhasil disimpan
-  </div>
 </div>
    <div class="row" style="margin-top:10px;">
       <table id="TableMain" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
               <tr>
-                  <th class="text-center">ID SUPPLIER</th>
+                  <th class="text-center">SUPPLIER</th>
                   <th class="text-center">CATATAN</th>
                   <th class="text-center">TOTAL BERAT</th>
                   <th class="text-center" class="hidden-xs">TOTAL QTY</th>
@@ -25,8 +22,8 @@
       </table>
    </div>
    <!-- Button trigger modal -->
-   <a type="button" class="btn btn-add btn-lg" href="<?php echo base_url('index/modul/Purchase_order-Transaksi-transaksi'); ?>" target="_blank">
-     Tambah Purchase Order
+   <a type="button" class="btn btn-add btn-lg" href="<?php echo base_url('index/modul/Transaksi_pembelian-Transaksi-transaksi'); ?>" target="_blank">
+     Tambah Pembelian
    </a>
 </div>
 <!-- /.container -->
@@ -54,7 +51,7 @@
 <script type="text/javascript" language="javascript" >
     function detail(id){
       $.ajax({
-        url :"<?php echo base_url('Purchase_order/Transaksi/detail')?>/"+id,
+        url :"<?php echo base_url('Transaksi_pembelian/Transaksi/detail')?>/"+id,
         type : "GET",
         data :"",
         success : function(data){
@@ -68,7 +65,7 @@
             "processing": true,
             "serverSide": true,
             "ajax":{
-                url : "<?php echo base_url('Purchase_order/Transaksi/data'); ?>",
+                url : "<?php echo base_url('Transaksi_pembelian/Transaksi/data'); ?>",
                 type: "post",
                 error: function(){
                     $("#TableMain").append('<tbody class="employee-grid-error"><tr><th colspan="7">No data found in the server</th></tr></tbody>');

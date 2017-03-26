@@ -6,7 +6,7 @@
 <div class="container-fluid">
    <div class="row">
     <div class="col-md-7 left-side">
-      <form action="<?php echo base_url('Purchase_order/Transaksi/doSubmit'); ?>" method="post" id="purchaseOrder">          
+      <form action="<?php echo base_url('Transaksi_purchaseorder/Transaksi/doSubmit'); ?>" method="post" id="purchaseOrder">          
          <div class="col-xs-8">
             <h2>Pilih Supplier</h2>
          </div>
@@ -221,7 +221,7 @@
     var warna = $("#wr-"+id).val();
     var totalBerat = $("#tb-"+id).val();
     $.ajax({
-      url :"<?php echo base_url('Purchase_order/Transaksi/updateOption')?>/"+id+"/"+warna+"/"+ukuran+"/"+totalBerat,
+      url :"<?php echo base_url('Transaksi_purchaseorder/Transaksi/updateOption')?>/"+id+"/"+warna+"/"+ukuran+"/"+totalBerat,
       type : "GET",
       data :"",
       dataType : "json",
@@ -234,7 +234,7 @@
   function updateHargaBeli(id){
     var hb = $('#hb-'+id).val();
     $.ajax({
-      url :"<?php echo base_url('Purchase_order/Transaksi/updateHargaBeli')?>/"+id+"/"+hb,
+      url :"<?php echo base_url('Transaksi_purchaseorder/Transaksi/updateHargaBeli')?>/"+id+"/"+hb,
       type : "GET",
       data :"",
       dataType : "json",
@@ -247,7 +247,7 @@
   function updateQty(id){
     var qty = $("#qt-"+id).val();
     $.ajax({
-      url :"<?php echo base_url('Purchase_order/Transaksi/updateQty')?>/"+id+"/"+qty,
+      url :"<?php echo base_url('Transaksi_purchaseorder/Transaksi/updateQty')?>/"+id+"/"+qty,
       type : "GET",
       data :"",
       dataType : "json",
@@ -273,7 +273,7 @@
   }
   function filterProduk(){
     $.ajax({
-      url :"<?php echo base_url('Purchase_order/Transaksi/filterProduk')?>/"+$("#supplierSelect").val(),
+      url :"<?php echo base_url('Transaksi_purchaseorder/Transaksi/filterProduk')?>/"+$("#supplierSelect").val(),
       type : "GET",
       data :"",
       dataType : "json",
@@ -285,7 +285,7 @@
   }
   function filterKategori(){
     $.ajax({
-      url :"<?php echo base_url('Purchase_order/Transaksi/getKategori')?>/"+$("#supplierSelect").val(),
+      url :"<?php echo base_url('Transaksi_purchaseorder/Transaksi/getKategori')?>/"+$("#supplierSelect").val(),
       type : "GET",
       data :"",
       dataType : "json",
@@ -309,7 +309,7 @@
     var supplier = $("#supplierSelect").val();
     if(supplier != 0){    
       $.ajax({
-        url :"<?php echo base_url('Purchase_order/Transaksi/filterProdukByKategori')?>/"+supplier+"/"+id+"/"+keyword,
+        url :"<?php echo base_url('Transaksi_purchaseorder/Transaksi/filterProdukByKategori')?>/"+supplier+"/"+id+"/"+keyword,
         type : "GET",
         data :"",
         dataType : "json",
@@ -324,7 +324,7 @@
     var supplier = $("#supplierSelect").val();
     if(supplier != 0){    
       $.ajax({
-        url :"<?php echo base_url('Purchase_order/Transaksi/filterProdukByName')?>",
+        url :"<?php echo base_url('Transaksi_purchaseorder/Transaksi/filterProdukByName')?>",
         type : "POST",
         data : "keyword="+keyword+"&supplier="+supplier,
         dataType : "json",
@@ -336,7 +336,7 @@
   }  
   function addToCart(id){
     $.ajax({
-      url :"<?php echo base_url('Purchase_order/Transaksi/tambahCart')?>/"+id,
+      url :"<?php echo base_url('Transaksi_purchaseorder/Transaksi/tambahCart')?>/"+id,
       type : "GET",
       data :"",
       dataType : "json",
@@ -348,7 +348,7 @@
   }
   function delete_order(id){
     $.ajax({
-      url :"<?php echo base_url('Purchase_order/Transaksi/deleteCart')?>/"+id,
+      url :"<?php echo base_url('Transaksi_purchaseorder/Transaksi/deleteCart')?>/"+id,
       type : "GET",
       data :"",
       dataType : "json",
@@ -362,7 +362,7 @@
     var qty = $("#qt-"+id).val();
     var option = $("#stok-"+id).val();
     $.ajax({
-      url :"<?php echo base_url('Purchase_order/Transaksi/updateOption')?>/"+id+"/"+option,
+      url :"<?php echo base_url('Transaksi_purchaseorder/Transaksi/updateOption')?>/"+id+"/"+option,
       type : "GET",
       data :"",
       dataType : "json",
@@ -391,7 +391,7 @@
   function change_total(id, state){
     var qty = $("#qt-"+id).val();
     $.ajax({
-      url :"<?php echo base_url('Purchase_order/Transaksi/updateCart')?>/"+id+"/"+qty+"/"+state,
+      url :"<?php echo base_url('Transaksi_purchaseorder/Transaksi/updateCart')?>/"+id+"/"+qty+"/"+state,
       type : "GET",
       data :"",
       dataType : "json",
@@ -410,7 +410,7 @@
   }
   function fillInformation(){
     $.ajax({
-      url :"<?php echo base_url('Purchase_order/Transaksi/getTotal')?>",
+      url :"<?php echo base_url('Transaksi_purchaseorder/Transaksi/getTotal')?>",
       type : "GET",
       data :"",
       success : function(data){        
@@ -444,7 +444,7 @@
     $('#btnDoOrder').html("<h5 class=\'text-bold\'>Clearing...</h5>");
     $("#btnDoOrder").prop("disabled", true);    
     $.ajax({
-      url :'<?php echo base_url("Purchase_order/Transaksi/destroyCart"); ?>',
+      url :'<?php echo base_url("Transaksi_purchaseorder/Transaksi/destroyCart"); ?>',
       type : $('#purchaseOrder').attr('method'),
       data : $('#purchaseOrder').serialize(),
       dataType : "json",

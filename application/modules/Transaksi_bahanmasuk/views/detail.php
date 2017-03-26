@@ -24,7 +24,7 @@
         "processing": true,
         "serverSide": true,
         "ajax":{
-            url : "<?php echo base_url('Purchase_order/Transaksi/data_detail'); ?>/"+<?php echo $id; ?>,
+            url : "<?php echo base_url('Transaksi_pembelian/Transaksi/data_detail'); ?>/"+<?php echo $id; ?>,
             type: "get",
             dataType : "json",
             error: function(){
@@ -52,7 +52,7 @@
       var sts = $('#sts-'+id).val();
       /* alert('JBK'+jbk+' JUK'+juk); */
       $.ajax({
-        url :"<?php echo base_url('Purchase_order/Transaksi/confirm')?>/"+id,
+        url :"<?php echo base_url('Transaksi_pembelian/Transaksi/confirm')?>/"+id,
         type : "POST",
         data : "jbk="+jbk+"&juk="+juk+"&sts="+sts+"&id="+id,
         success : function(data){

@@ -64,10 +64,10 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
-	'username' => 'root',
-	'password' => 'beni123',
-	'database' => 'pos',
+	'hostname' => 'aptikma.com',
+	'username' => 'u5601531_iqbal',
+	'password' => 'u5601531_iqbal',
+	'database' => 'u5601531_iqbalpos',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
