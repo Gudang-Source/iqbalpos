@@ -6,11 +6,11 @@ class Transaksi extends MX_Controller {
         $this->load->model('Transaksipomodel');
     }
     function index(){
-    	$this->load->view('Purchase_order/view');
+    	$this->load->view('Transaksi_purchaseorder/view');
     }
     function detail($id = 0){
     	$data['id'] = $id;
-    	$this->load->view('Purchase_order/detail', $data);
+    	$this->load->view('Transaksi_purchaseorder/detail', $data);
     }
     function data(){
 		$requestData= $_REQUEST;
@@ -300,7 +300,7 @@ class Transaksi extends MX_Controller {
         $data['total_items'] = $this->cart->total_items();
         $data['tax'] = 0;
         $data['discount'] = 0;
-    	$this->load->view('Purchase_order/transaksi', $data);
+    	$this->load->view('Transaksi_purchaseorder/transaksi', $data);
     }
     function getTotal(){
     	$total = 0;
