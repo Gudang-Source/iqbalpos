@@ -135,25 +135,30 @@
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                <ul class="nav navbar-nav">
-                  <li class="flat-box"><a href="http://localhost/zarpos/"><i class="fa fa-credit-card"></i> POS</a></li>
-                 <li class="flat-box"><a href="http://localhost/zarpos/products"><i class="fa fa-archive"></i> Product</a></li>
-                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle flat-box" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-users"></i> People <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                       <li class="flat-box"><a href="http://localhost/zarpos/customers"><i class="fa fa-user"></i> Customers</a></li>
-                       <li class="flat-box"><a href="http://localhost/zarpos/suppliers"><i class="fa fa-truck"></i> Suppliers</a></li>
-                    </ul>
-                 </li>
-                 <li class="flat-box"><a href="http://localhost/zarpos/sales"><i class="fa fa-ticket"></i> Sales</a></li>
-                 <li class="flat-box"><a href="http://localhost/zarpos/expences"><i class="fa fa-usd"></i> Expense</a></li>
-                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle flat-box" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-bookmark"></i> Categories <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                       <li class="flat-box"><a href="http://localhost/zarpos/categories"><i class="fa fa-archive"></i> Product</a></li>
-                       <li class="flat-box"><a href="http://localhost/zarpos/categorie_expences"><i class="fa fa-usd"></i> Expense</a></li>
-                    </ul>
-                 </li>
-                 <li class="flat-box"><a href="http://localhost/zarpos/settings?tab=setting"><i class="fa fa-cogs"></i> Setting</a></li>                 <li class="flat-box"><a href="http://localhost/zarpos/stats"><i class="fa fa-line-chart"></i> Reports</a></li>               </ul>
+                  <?php foreach ($nav_kategori as $nav_kat) { 
+                    $nav_kat_icon = (!empty($nav_kat->kategori_icon)) ? $nav_kat->kategori_icon : 'fa fa-list'; ?>
+                    <li class="dropdown">
+                      <a href="#" class="dropdown-toggle flat-box" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <i class="<?php echo $nav_kat_icon;?>"></i> <?php echo ucfirst($nav_kat->nama);?> <span class="caret"></span>
+                      </a>
+                      
+                      <ul class="dropdown-menu">
+                      <?php foreach ($nav_menu as $nav_item) { ?>
+                        <?php if($nav_kat->id == $nav_item->id_menu) { 
+                          $nav_item_icon = (!empty($nav_item->icon_class)) ? $nav_item->icon_class : 'fa fa-angle-right'; ?>
+                        <li class="flat-box">
+                          <a href="<?php echo base_url().'/'.$nav_item->url;?>"><i class="<?php echo $nav_item_icon?>"></i> <?php echo ucfirst($nav_item->nama);?></a>
+                        </li>
+                        <?php } ?>
+                      <?php } ?>
+                      </ul>
+                    </li>
+                  <?php } ?>
+                  <!-- <li class="flat-box"><a href="http://localhost/zarpos/"><i class="fa fa-credit-card"></i> POS</a></li>
+                 <li class="flat-box"><a href="http://localhost/zarpos/products"><i class="fa fa-archive"></i> Product</a></li> -->
+                 <!-- <li class="flat-box"><a href="http://localhost/zarpos/sales"><i class="fa fa-ticket"></i> Sales</a></li> -->
+                 <!-- <li class="flat-box"><a href="http://localhost/zarpos/expences"><i class="fa fa-usd"></i> Expense</a></li> -->
+               </ul>
                <ul class="nav navbar-nav navbar-right">
                   <li><a href="">
                         <img class="img-circle topbar-userpic hidden-xs" src="http://localhost/zarpos/files/Avatars/9fff9cc26e539214e9a5fd3b6a10cde9.jpg" width="30px" height="30px">

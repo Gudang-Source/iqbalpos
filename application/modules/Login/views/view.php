@@ -92,7 +92,7 @@
                       });
           }
           else if(data.status == '1') {
-            window.location.replace("<?php echo base_url('index/modul/pegawai-master-index')?>");
+            window.location.replace("<?php echo base_url('index/modul/Master_pegawai-master-index')?>");
           }
         }
       });

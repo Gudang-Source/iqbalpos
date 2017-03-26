@@ -60,18 +60,21 @@
                          <div id="bs-permissions">
                             <div class="panel-heading bg-primary">
                               <label>
-                                <input type="checkbox" name="" data-menu="<?php echo $menu->kategori?>" onchange="checkAllMenu(this);">
-                                <span class="label-text"><?php echo ucfirst(str_replace("_", " ",$menu->kategori));?></span>
+                                <input type="checkbox" class="check-all" data-menu="<?php echo $menu->id?>" onchange="checkAllMenu(this);">
+                                <span class="label-text">
+                                  <?php echo ucfirst(str_replace("_", " ",$menu->nama))." ";?>
+                                  <span class="label label-info"><?php echo $menu->jumlah_sub?></span>
+                                </span>
                               </label>
                             </div>
-                           <!-- <h5 class="panel-heading bg-primary"><?php echo ucfirst(str_replace("_", " ",$menu->kategori));?> </h5> -->
+                           <!-- <h5 class="panel-heading bg-primary"><?php echo ucfirst(str_replace("_", " ",$menu->nama));?> </h5> -->
                            <div class="panel-body">
                           <?php foreach ($permissions as $permission) { ?>
-                            <?php if($menu->kategori == $permission->kategori) { ?>
+                            <?php if($menu->id == $permission->id_menu) { ?>
                             <div class="form-group">
                               <!-- <input type="text" name="<?php echo 'menu_'.$permission->id?>" value="0"  /> -->
                               <label>
-                                <input type="checkbox" name="menu[]" id="<?php echo 'menu_'.$permission->id?>" class="menu_<?php echo $permission->kategori?>" value="<?php echo $permission->id?>">
+                                <input type="checkbox" name="menu[]" id="<?php echo 'menu_'.$permission->id?>" class="menu_<?php echo $permission->id_menu?>" value="<?php echo $permission->id?>">
                                 <span class="label-text"><?php echo $permission->nama?></span>
                               </label>
                             </div>
@@ -158,6 +161,9 @@
     $("#id").val(jsonlist[i].id);
     $("#nama").val(jsonlist[i].nama);
     
+    // $(".check-all").prop("checked", false);
+    // $("input[class^='menu_']").prop("checked", false);
+    $("#myform :checkbox:enabled").prop("checked", false);
     var permissions = JSON.parse(jsonlist[i].permission);
     $.each(permissions, function(index, value) {
       // console.log("#menu_"+value);
