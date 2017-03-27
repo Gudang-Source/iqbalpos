@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 26, 2017 at 10:59 PM
+-- Generation Time: Mar 27, 2017 at 08:15 AM
 -- Server version: 5.6.21
 -- PHP Version: 5.6.3
 
@@ -75,7 +75,7 @@ INSERT INTO `m_pegawai_permission` (`id`, `id_menu`, `nama`, `url`, `icon_class`
 (34, 6, 'Stok', '', ''),
 (35, 7, 'Kas Kecil', '', ''),
 (36, 7, 'Transfer Harian', '', ''),
-(37, 8, 'Log Pegawai', '', '');
+(37, 8, 'Log Aktivitas', '', '');
 
 --
 -- Indexes for dumped tables

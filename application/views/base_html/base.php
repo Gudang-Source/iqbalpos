@@ -160,9 +160,10 @@
                  <!-- <li class="flat-box"><a href="http://localhost/zarpos/expences"><i class="fa fa-usd"></i> Expense</a></li> -->
                </ul>
                <ul class="nav navbar-nav navbar-right">
+                <?php $active_user = isset($_SESSION['nama_user']) ? $_SESSION['nama_user'] : 'Anonymous';?>
                   <li><a href="">
                         <img class="img-circle topbar-userpic hidden-xs" src="http://localhost/zarpos/files/Avatars/9fff9cc26e539214e9a5fd3b6a10cde9.jpg" width="30px" height="30px">
-                        <span class="hidden-xs"> &nbsp;&nbsp;admin Doe </span>
+                        <span class="hidden-xs"> &nbsp;&nbsp;<?php echo $active_user?> </span>
                      </a>
                   </li>
 <!--                   <li class="dropdown language">
@@ -180,7 +181,7 @@
                         <li class="flat-box"><a href="http://localhost/zarpos/dashboard/change/greek"><img src="http://localhost/zarpos/assets/img/flags/gr.png" class="flag" alt="language"> Greek</a></li>
                      </ul>
                   </li> -->
-                  <li class="flat-box"><a href="http://localhost/zarpos/logout" title="Logout"><i class="fa fa-sign-out fa-lg"></i></a></li>
+                  <li class="flat-box"><a href="<?php echo base_url()?>Login/master/do_logout" title="Logout"><i class="fa fa-sign-out fa-lg"></i></a></li>
                </ul>
             </div>
             <div id="loadingimg"></div>
