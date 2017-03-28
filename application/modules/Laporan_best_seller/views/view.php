@@ -6,7 +6,7 @@
   </div>
 </div>
   <div class="row">
-    <h3><strong>Laporan</strong> - Top Member</h3>
+    <h3><strong>Laporan</strong> - Best Seller</h3>
   </div>
   <ul class="nav nav-tabs">
     <li class="active"><a href="#tab_tabel" data-toggle="tab"><i class="fa fa-table" aria-hidden="true"></i> Tabel</a></li>
@@ -39,9 +39,9 @@
               <thead>
                   <tr>
                     <th class="text-center no-sort">#</th>
-                    <th class="text-center">Nama Customer</th>
-                    <th class="text-center">Jumlah Order</th>
-                    <th class="text-center">Total Nilai Order (IDR)</th>
+                    <th class="text-center">Nama Produk</th>
+                    <th class="text-center">Jumlah Terjual</th>
+                    <th class="text-center">Total Harga</th>
                     <!-- <th class="text-center no-sort">Aksi</th> -->
                   </tr>
               </thead>
@@ -126,9 +126,9 @@
       initDataTable = $('#TableMainServer').DataTable({
         "bProcessing": true,
         "bServerSide": true,
-        "order": [[3, 'DESC']],
+        "order": [[2, 'DESC']],
         "ajax":{
-              url :"<?php echo base_url()?>Laporan_top_member/Master/data",
+              url :"<?php echo base_url()?>Laporan_best_seller/Master/data",
               type: "post",  // type of method  , by default would be get
               "data": {
                   start_date: $("#start_date").val(),
@@ -154,9 +154,9 @@
       initDataTable = $('#TableMainServer').DataTable({
         "bProcessing": true,
         "bServerSide": true,
-        "order": [[3, 'DESC']],
+        "order": [[2, 'DESC']],
         "ajax":{
-              url :"<?php echo base_url()?>Laporan_top_member/Master/data",
+              url :"<?php echo base_url()?>Laporan_best_seller/Master/data",
               type: "post",  // type of method  , by default would be get
               "data": {
                   start_date: "", end_date: ""
@@ -186,9 +186,9 @@
   var initDataTable = $('#TableMainServer').DataTable({
       "bProcessing": true,
       "bServerSide": true,
-      "order": [[3, 'DESC']],
+      "order": [[2, 'DESC']],
       "ajax":{
-            url :"<?php echo base_url()?>Laporan_top_member/Master/data",
+            url :"<?php echo base_url()?>Laporan_best_seller/Master/data",
             type: "post",  // type of method  , by default would be get
             "data": {
                 start_date: $("#start_date").val(),
@@ -213,33 +213,33 @@
     chart1.reflow(); chart2.reflow(); // console.log("REFLOW DONG");
   });
   function set_grafik_range() {
-    chart1.title.update({text: 'Top Customer Per Hari (Banyaknya Order)'});
+    chart1.title.update({text: 'Best Seller Per Hari (Banyaknya Produk)'});
     chart1.subtitle.update({text: $("#start_date2").val() +' - '+ $("#end_date2").val()});
-    chart2.title.update({text: 'Top Customer Per Hari (Total Nilai Order)'});
+    chart2.title.update({text: 'Best Seller Per Hari (Total Nilai Produk)'});
     chart2.subtitle.update({text: $("#start_date2").val() +' - '+ $("#end_date2").val()});
   }
   /*function set_grafik_hari() {
-    chart1.title.update({text: 'Top Customer Per Hari (Banyaknya Order)'});
+    chart1.title.update({text: 'Best Seller Per Hari (Banyaknya Produk)'});
     chart1.subtitle.update({text: "<?php echo date('F Y');?>"});
-    chart2.title.update({text: 'Top Customer Per Hari (Total Nilai Order)'});
+    chart2.title.update({text: 'Best Seller Per Hari (Total Nilai Produk)'});
     chart2.subtitle.update({text: "<?php echo date('F Y');?>"});
   }
   function set_grafik_bulan() { 
-    chart1.title.update({text: 'Top Customer Per Bulan (Banyaknya Order)'});
+    chart1.title.update({text: 'Best Seller Per Bulan (Banyaknya Produk)'});
     chart1.subtitle.update({text: "<?php echo 'Tahun '. date('Y');?>"});
-    chart2.title.update({text: 'Top Customer Per Bulan (Total Nilai Order)'});
+    chart2.title.update({text: 'Best Seller Per Bulan (Total Nilai Produk)'});
     chart2.subtitle.update({text: "<?php echo 'Tahun '. date('Y');?>"});
   }
   function set_grafik_tahun() { 
-    chart1.title.update({text: 'Top Customer Per Tahun (Banyaknya Order)'});
+    chart1.title.update({text: 'Best Seller Per Tahun (Banyaknya Produk)'});
     chart1.subtitle.update({text: "<?php echo (date('Y')-5) .' s/d '.date('Y') ;?>"});
-    chart2.title.update({text: 'Top Customer Per Tahun (Total Nilai Order)'});
+    chart2.title.update({text: 'Best Seller Per Tahun (Total Nilai Produk)'});
     chart2.subtitle.update({text: "<?php echo (date('Y')-5) .' s/d '.date('Y') ;?>"});
   }*/
 
   $("#fSubmit2").click(function(e) {
     e.preventDefault();
-    var action = "<?php echo base_url('Laporan_top_member/Master/chart_data')?>/";
+    var action = "<?php echo base_url('Laporan_best_seller/Master/chart_data')?>/";
     $.ajax({
       url: action,
       type: 'post',
@@ -258,9 +258,9 @@
           var chart1 = $('#chart1_container').highcharts();
           var chart2 = $('#chart2_container').highcharts();
           chart1.xAxis[0].setCategories(response.data_per);
-          chart1.series[0].setData(response.jumlah_order);
+          chart1.series[0].setData(response.jumlah_produk);
           chart2.xAxis[0].setCategories(response.data_per);
-          chart2.series[0].setData(response.total_order);
+          chart2.series[0].setData(response.total_produk);
           set_grafik_range();
           //reconfigure charts title & subtitle
           /*switch($("#filter_grafik").val()) {
