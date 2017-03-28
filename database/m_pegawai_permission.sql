@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 27, 2017 at 09:31 AM
+-- Generation Time: Mar 27, 2017 at 09:55 AM
 -- Server version: 5.6.21
 -- PHP Version: 5.6.3
 
@@ -34,14 +34,14 @@ CREATE TABLE IF NOT EXISTS `m_pegawai_permission` (
   `icon_class` varchar(50) NOT NULL COMMENT 'additional class untuk icon menu',
   `date_add` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `deleted` tinyint(1) NOT NULL DEFAULT '1' COMMENT '1 = Aktif, 0 = Terhapus'
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_pegawai_permission`
 --
 
 INSERT INTO `m_pegawai_permission` (`id`, `id_menu`, `nama`, `url`, `icon_class`, `date_add`, `deleted`) VALUES
-(1, 1, 'Hak Akses', 'index/modul/Master_hak_akses-master-index', '', '2017-03-27 01:31:44', 1),
+(1, 1, 'Hak Akses', 'index/modul/Master_hak_akses-master-index', '', '2017-03-27 02:33:37', 1),
 (2, 1, 'Pegawai', 'index/modul/Master_pegawai-master-index', '', '2017-03-27 01:31:44', 1),
 (3, 1, 'Customer', 'index/modul/Master_customer-master-index', '', '2017-03-27 01:31:44', 1),
 (4, 1, 'Customer Level', 'index/modul/Master_customer_level-master-index', '', '2017-03-27 01:31:44', 1),
@@ -77,7 +77,8 @@ INSERT INTO `m_pegawai_permission` (`id`, `id_menu`, `nama`, `url`, `icon_class`
 (34, 6, 'Stok', '', '', '2017-03-27 01:31:44', 1),
 (35, 7, 'Kas Kecil', '', '', '2017-03-27 01:31:44', 1),
 (36, 7, 'Transfer Harian', '', '', '2017-03-27 01:31:44', 1),
-(37, 8, 'Log Aktivitas', '', '', '2017-03-27 01:31:44', 1);
+(37, 8, 'Log Aktivitas', '', '', '2017-03-27 01:31:44', 1),
+(38, 5, 'text', 'asfaf', '', '2017-03-27 02:34:02', 0);
 
 --
 -- Indexes for dumped tables
@@ -97,7 +98,7 @@ ALTER TABLE `m_pegawai_permission`
 -- AUTO_INCREMENT for table `m_pegawai_permission`
 --
 ALTER TABLE `m_pegawai_permission`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=38;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=39;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

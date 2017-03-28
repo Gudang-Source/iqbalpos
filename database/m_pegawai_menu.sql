@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 27, 2017 at 09:31 AM
+-- Generation Time: Mar 27, 2017 at 09:54 AM
 -- Server version: 5.6.21
 -- PHP Version: 5.6.3
 
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `m_pegawai_menu` (
 --
 
 INSERT INTO `m_pegawai_menu` (`id`, `nama`, `icon_class`, `date_add`, `deleted`) VALUES
-(1, 'master', '', '2017-03-27 01:31:33', 1),
+(1, 'master', '', '2017-03-27 02:34:17', 1),
 (2, 'produk', '', '2017-03-27 01:31:33', 1),
 (3, 'bahan baku', '', '2017-03-27 01:31:33', 1),
 (4, 'stok', '', '2017-03-27 01:31:33', 1),
