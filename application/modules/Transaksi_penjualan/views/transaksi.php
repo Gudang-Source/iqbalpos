@@ -5,33 +5,21 @@
 </style>
 <div class="container-fluid">
    <div class="row">
-    <div class="col-md-7 left-side">
-      <form action="<?php echo base_url('Transaksi_pembelian/Transaksi/doSubmit'); ?>" method="post" id="pembelian">          
+    <div class="col-md-5 left-side">
+      <form action="<?php echo base_url('Transaksi_penjualan/Transaksi/doSubmit'); ?>" method="post" id="pembelian">          
          <div class="col-xs-8">
-            <h2>Pilih Supplier</h2>
+            <h2>Pilih Customer</h2>
          </div>
-         <div class="col-xs-4 client-add">
-            <a href="javascript:void(0)" data-toggle="modal" data-target="#ticket" onclick="showPO()">
-               <span class="fa-stack fa-lg" data-toggle="tooltip" data-placement="top" title="Choose From Purchase Order">
-                  <i class="fa fa-square fa-stack-2x grey"></i>
-                  <i class="fa fa-ticket fa-stack-1x fa-inverse dark-blue"></i>
-               </span>
-            </a>
-         </div>         
          <div class="col-xs-8">
           &nbsp;
          </div>         
          <div class="col-sm-12">
-            <select class="js-select-options form-control" id="supplierSelect" onchange="filterProduk()" name="supplier" required="required">
-              <option value="0">Pilih Supplier</option>
+            <select class="js-select-options form-control" id="customerSelect" name="customer" required="required" onchange="filterProduk()">
+              <option value="0">Pilih Customer</option>
             </select>
-            <input type="hidden" name="idpo" value="0" id="idpo">
          </div>
          <div class="col-sm-12">
          &nbsp;
-         </div>
-         <div class="col-sm-12">
-               <textarea name="catatan" class="form-control" placeholder="CATATAN" id="catatan"></textarea>
          </div>
          <div class="col-xs-2 table-header">
             <h3>Product</h3>
@@ -45,11 +33,8 @@
          <div class="col-xs-2 table-header nopadding">
             <h3 class="text-left">QTY</h3>
          </div>
-         <div class="col-xs-2 table-header nopadding">
-            <h3 class="text-left">Harga Beli</h3>
-         </div>
-         <div class="col-xs-2 table-header nopadding">
-            <h3 class="text-left">Total Berat</h3>
+         <div class="col-xs-4 table-header nopadding">
+            <h3 class="text-left">Harga</h3>
          </div>
          <div id="productList">
             <!-- product List goes here  -->
@@ -83,12 +68,12 @@
                </table>
             </div>
             <button type="button" onclick="cancelOrder()" class="btn btn-red col-md-6 flat-box-btn"><h5 class="text-bold">Cancel</h5></button>
-            <button type="submit" class="btn btn-green col-md-6 flat-box-btn" data-toggle="modal" data-target="#AddSale" id="btnDoOrder"><h5 class="text-bold">Proses Pembelian</h5></button>
+            <button type="button" class="btn btn-green col-md-6 flat-box-btn" onclick="payment()" id="btnDoOrder"><h5 class="text-bold">Proses Pembelian</h5></button>
          </div>
         </form>
 
       </div>
-      <div class="col-md-5 right-side nopadding">
+      <div class="col-md-7 right-side nopadding">
         <div class="row row-horizon" id="kategoriGat">
             <span class="categories selectedGat" id=""><i class="fa fa-home"></i></span>
         </div>
@@ -110,32 +95,129 @@
    </div>
 </div>
 <!-- /.container -->
-<!-- Modal PO -->
-<div class="modal fade" id="modalpo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
- <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">List Purchase Order</h4>
+  <!-- Modal -->
+  <div class="modal fade" id="modalpayment" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+   <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="Addpayament">Pembayaran</h4>
+        </div>
+        <form method="POST" action="<?php echo base_url('Transaksi_penjualan/Transaksi/payment'); ?>" id="formpayment">
+        <div class="modal-body">
+             <div class="form-group">
+               <h2 id="TotalModal"></h2>
+            </div>
+             <div class="form-group">
+               <label for="paymentMethod">Metode Pembayaran</label>               
+               <select class="js-select-options form-control" id="paymentMethod" name="paymentMethod">
+                 <option value="0">Cash</option>
+                 <option value="1">BNI</option>
+                 <option value="2">Mandiri</option>
+                 <option value="3">BNI</option>
+                 <option value="4">TRANSFER</option>
+              </select>
+             </div>
+             <div class="form-group">
+               <label for="jenisOrder">Jenis Order</label>
+               <input type="hidden" name="id_customer" id="idCustomer">
+               <select class="js-select-options form-control" id="jenisOrder" name="jenisOrder">
+                 <option value="1">Take Away</option>
+                 <option value="2">DropShip</option>
+              </select>
+             </div>
+             <div class="form-group">
+               <label for="jenisOrder">Catatan</label>
+               <textarea name="catatan" class="form-control" placeholder="CATATAN" id="catatan"></textarea>
+             </div>
+             <div class="form-group Paid">
+               <label for="Paid">Nominal</label>
+               <input type="text" value="0" name="paid" class="form-control" id="Paid" placeholder="Nominal">
+             </div>
+             <div class="form-group CreditCardNum">
+               <i class="fa fa-cc-visa fa-2x" id="visa" aria-hidden="true"></i>
+               <i class="fa fa-cc-mastercard fa-2x" id="mastercard" aria-hidden="true"></i>
+               <i class="fa fa-cc-amex fa-2x" id="amex" aria-hidden="true"></i>
+               <i class="fa fa-cc-discover fa-2x" id="discover" aria-hidden="true"></i>
+               <label for="CreditCardNum">Nomor Kartu Kredit</label>
+               <input type="text" class="form-control cc-num" id="CreditCardNum" placeholder="Nomor Kartu Kredit">
+             </div>
+             <div class="clearfix"></div>
+             <div class="form-group CreditCardHold col-md-4 padding-s">
+               <input type="text" class="form-control" id="CreditCardHold" placeholder="CVV">
+             </div>
+             <div class="form-group CreditCardHold col-md-2 padding-s">
+               <input type="text" class="form-control" id="CreditCardMonth" placeholder="Bulan">
+             </div>
+             <div class="form-group CreditCardHold col-md-2 padding-s">
+               <input type="text" class="form-control" id="CreditCardYear" placeholder="TAHUN">
+             </div>
+             <div class="form-group CreditCardHold col-md-4 padding-s">
+               <input type="text" class="form-control" id="CreditCardCODECV" placeholder="VCC">
+             </div>
+             <div class="form-group ChequeNum">
+               <label for="ChequeNum">Nomor Referensi</label>
+               <input type="text" name="chequenum" class="form-control" id="ChequeNum" placeholder="Nomor Cek">
+             </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>          
+          <button type="submit" class="btn btn-add" id="btnBayar">Bayar</button>
+        </div>
+        </form>
       </div>
-      <div class="modal-body">
-         <div class="row">
-           <div class="col-lg-12"  id="body-detail-po">
-           </div>
-         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="submit" class="btn btn-success" data-dismiss="modal">Ok</button>
-      </div>
-    </div>
- </div>
-</div>
-<!-- /.Modal PO-->
+   </div>
+  </div>
+  <!-- /.Modal -->
 
 <script type="text/javascript">
+      $('.Paid').show();
+      $('.ReturnChange').show();
+      $('.CreditCardNum').hide();
+      $('.CreditCardHold').hide();
+      $('.ChequeNum').hide();
+      $('.stripe-btn').hide();
+
+      $("#paymentMethod").change(function(){
+         var p_met = $(this).find('option:selected').val();
+         if (p_met === '0') {
+            $('.Paid').show();
+            $('.ReturnChange').show();
+            $('.CreditCardNum').hide();
+            $('.CreditCardHold').hide();
+            $('.CreditCardMonth').hide();
+            $('.CreditCardYear').hide();
+            $('.CreditCardCODECV').hide();
+            $('#CreditCardNum').val('');
+            $('#CreditCardHold').val('');
+            $('#CreditCardYear').val('');
+            $('#CreditCardMonth').val('');
+            $('#CreditCardCODECV').val('');
+            $('.stripe-btn').hide();
+            $('.ChequeNum').hide();
+         } else {
+            $('.Paid').show();
+            $('.ReturnChange').hide();
+            $('.CreditCardNum').hide();
+            $('.CreditCardHold').hide();
+            $('.CreditCardMonth').hide();
+            $('.CreditCardYear').hide();
+            $('.CreditCardCODECV').hide();
+            $('#CreditCardNum').val('');
+            $('#CreditCardHold').val('');
+            $('#CreditCardYear').val('');
+            $('#CreditCardMonth').val('');
+            $('#CreditCardCODECV').val('');
+            $('.stripe-btn').hide();
+            $('.ChequeNum').show();
+         }
+      });
+
   var listProduct = <?php echo $list_produk; ?>;
   var listOrder = <?php echo $list_order; ?>;
-  var listSupplier = <?php echo $list_supplier; ?>;
+  var listCustomer = <?php echo $list_customer; ?>;
+  var listKategori = <?php echo $list_kategori; ?>;
   var listWarna = <?php echo $list_warna; ?>;
   var listUkuran = <?php echo $list_ukuran; ?>;
   var tax = '<?php echo $tax; ?>';
@@ -143,17 +225,16 @@
   var total = '<?php echo $total; ?>';
   var totalItems = '<?php echo $total_items; ?>';
   inits(tax, discount, total, totalItems);
-  load_supplier(listSupplier);
-  // load_product(listProduct);
+  load_customer(listCustomer);
   load_order(listOrder);
-  function load_supplier(json){
+  function load_customer(json){
     var html = "";
-    $("#supplierSelect").html('');
-    html = "<option value='0' selected disabled>Pilih Supplier</option>";
-    $("#supplierSelect").append(html);
+    $("#customerSelect").html('');
+    html = "<option value='0' selected disabled>Pilih Customer</option>";
+    $("#customerSelect").append(html);
     for (var i=0;i<json.length;i++){
       html = "<option value=\'"+json[i].id+"\'>"+json[i].nama+"</option>";
-      $("#supplierSelect").append(html);
+      $("#customerSelect").append(html);
     }
   }
   function load_product(json){
@@ -219,11 +300,8 @@
                           "<div class='col-xs-2 nopadding productNum'>"+
                             "<input id=\'qt-"+json[i].rowid+"\' class='form-control' value='"+json[i].qty+"' placeholder='0' maxlength='2' type='text' onchange=updateQty(\'"+json[i].rowid+"\')>"+
                           "</div>"+
-                          "<div class='col-xs-2 nopadding productNum'>"+
-                            "<input type=text id=\'hb-"+json[i].rowid+"\' class=\'form-control\' value='"+json[i].harga_beli+"'  onchange=updateHargaBeli(\'"+json[i].rowid+"\')>"+
-                          "</div>"+
-                          "<div class='col-xs-2 nopadding productNum'>"+
-                            "<input type=text id=\'tb-"+json[i].rowid+"\' class=\'form-control\' value='"+json[i].total_berat+"' onchange=updateOption(\'"+json[i].rowid+"\')>"+
+                          "<div class='col-xs-4 nopadding productNum'>"+
+                            "<span class='textPD'>"+json[i].harga_beli+"</span>"+
                           "</div>"+
                       "</div>"+
                   "</div>"+
@@ -252,7 +330,7 @@
     var warna = $("#wr-"+id).val();
     var totalBerat = $("#tb-"+id).val();
     $.ajax({
-      url :"<?php echo base_url('Transaksi_pembelian/Transaksi/updateOption')?>/"+id+"/"+warna+"/"+ukuran+"/"+totalBerat,
+      url :"<?php echo base_url('Transaksi_penjualan/Transaksi/updateOption')?>/"+id+"/"+warna+"/"+ukuran+"/"+totalBerat,
       type : "GET",
       data :"",
       dataType : "json",
@@ -265,7 +343,7 @@
   function updateHargaBeli(id){
     var hb = $('#hb-'+id).val();
     $.ajax({
-      url :"<?php echo base_url('Transaksi_pembelian/Transaksi/updateHargaBeli')?>/"+id+"/"+hb,
+      url :"<?php echo base_url('Transaksi_penjualan/Transaksi/updateHargaBeli')?>/"+id+"/"+hb,
       type : "GET",
       data :"",
       dataType : "json",
@@ -278,7 +356,7 @@
   function updateQty(id){
     var qty = $("#qt-"+id).val();
     $.ajax({
-      url :"<?php echo base_url('Transaksi_pembelian/Transaksi/updateQty')?>/"+id+"/"+qty,
+      url :"<?php echo base_url('Transaksi_penjualan/Transaksi/updateQty')?>/"+id+"/"+qty,
       type : "GET",
       data :"",
       dataType : "json",
@@ -302,28 +380,14 @@
       $("#wr-"+id).append(html);
     }
   }
-  function filterProduk(){
-    $.ajax({
-      url :"<?php echo base_url('Transaksi_pembelian/Transaksi/filterProduk')?>/"+$("#supplierSelect").val(),
-      type : "GET",
-      data :"",
-      dataType : "json",
-      success : function(data){
-        filterKategori();
-        load_product(data);
-      }
-    });
+  function payment(){
+    $("#modalpayment").modal("show");
   }
-  function filterKategori(){
-    $.ajax({
-      url :"<?php echo base_url('Transaksi_pembelian/Transaksi/getKategori')?>/"+$("#supplierSelect").val(),
-      type : "GET",
-      data :"",
-      dataType : "json",
-      success : function(data){
-        load_kategori(data);
-      }
-    });    
+  function filterProduk(){
+    // alert($("#customerSelect").find(":selected").text());
+    $("#idCustomer").val($("#customerSelect").val());
+    load_product(listProduct);
+    load_kategori(listKategori);
   }
   function load_kategori(json){
     var html = "";
@@ -340,7 +404,7 @@
     var supplier = $("#supplierSelect").val();
     if(supplier != 0){    
       $.ajax({
-        url :"<?php echo base_url('Transaksi_pembelian/Transaksi/filterProdukByKategori')?>/"+supplier+"/"+id+"/"+keyword,
+        url :"<?php echo base_url('Transaksi_penjualan/Transaksi/filterProdukByKategori')?>/"+id+"/"+keyword,
         type : "GET",
         data :"",
         dataType : "json",
@@ -355,7 +419,7 @@
     var supplier = $("#supplierSelect").val();
     if(supplier != 0){    
       $.ajax({
-        url :"<?php echo base_url('Transaksi_pembelian/Transaksi/filterProdukByName')?>",
+        url :"<?php echo base_url('Transaksi_penjualan/Transaksi/filterProdukByName')?>",
         type : "POST",
         data : "keyword="+keyword+"&supplier="+supplier,
         dataType : "json",
@@ -367,9 +431,9 @@
   }  
   function addToCart(id){
     $.ajax({
-      url :"<?php echo base_url('Transaksi_pembelian/Transaksi/tambahCart')?>/"+id,
-      type : "GET",
-      data :"",
+      url :"<?php echo base_url('Transaksi_penjualan/Transaksi/tambahCart')?>/"+id,
+      type : "POST",
+      data :"idCustomer="+$("#customerSelect").val(),
       dataType : "json",
       success : function(data){
         load_order(data);
@@ -379,7 +443,7 @@
   }
   function delete_order(id){
     $.ajax({
-      url :"<?php echo base_url('Transaksi_pembelian/Transaksi/deleteCart')?>/"+id,
+      url :"<?php echo base_url('Transaksi_penjualan/Transaksi/deleteCart')?>/"+id,
       type : "GET",
       data :"",
       dataType : "json",
@@ -393,7 +457,7 @@
     var qty = $("#qt-"+id).val();
     var option = $("#stok-"+id).val();
     $.ajax({
-      url :"<?php echo base_url('Transaksi_pembelian/Transaksi/updateOption')?>/"+id+"/"+option,
+      url :"<?php echo base_url('Transaksi_penjualan/Transaksi/updateOption')?>/"+id+"/"+option,
       type : "GET",
       data :"",
       dataType : "json",
@@ -422,7 +486,7 @@
   function change_total(id, state){
     var qty = $("#qt-"+id).val();
     $.ajax({
-      url :"<?php echo base_url('Transaksi_pembelian/Transaksi/updateCart')?>/"+id+"/"+qty+"/"+state,
+      url :"<?php echo base_url('Transaksi_penjualan/Transaksi/updateCart')?>/"+id+"/"+qty+"/"+state,
       type : "GET",
       data :"",
       dataType : "json",
@@ -441,7 +505,7 @@
   }
   function fillInformation(){
     $.ajax({
-      url :"<?php echo base_url('Transaksi_pembelian/Transaksi/getTotal')?>",
+      url :"<?php echo base_url('Transaksi_penjualan/Transaksi/getTotal')?>",
       type : "GET",
       data :"",
       success : function(data){        
@@ -466,7 +530,6 @@
                   doClear();
               },
               cancel: function () {
-                  // $.alert('Canceled!');
               }
           }
       });    
@@ -475,7 +538,7 @@
     $('#btnDoOrder').html("<h5 class=\'text-bold\'>Clearing...</h5>");
     $("#btnDoOrder").prop("disabled", true);    
     $.ajax({
-      url :'<?php echo base_url("Transaksi_pembelian/Transaksi/destroyCart"); ?>',
+      url :'<?php echo base_url("Transaksi_penjualan/Transaksi/destroyCart"); ?>',
       type : $('#pembelian').attr('method'),
       data : $('#pembelian').serialize(),
       dataType : "json",
@@ -502,45 +565,27 @@
       }
     });    
   }
-  function showPO(){
+  $(document).ready(function(){
+    $("#formpayment").on('submit', function(e){
+      $('#btnBayar').html("<h5 class=\'text-bold\'>Saving...</h5>");
+      $("#btnBayar").prop("disabled", true);      
+      e.preventDefault();
       $.ajax({
-        url :"<?php echo base_url('Transaksi_pembelian/Transaksi/listPO')?>",
-        type : "GET",
-        data :"",
-        success : function(data){
-          $("#body-detail-po").html(data);
-        }
-      });       
-      $("#modalpo").modal("show");    
-  }
-  function choosePO(id){
-      $.ajax({
-        url :"<?php echo base_url('Transaksi_pembelian/Transaksi/addCartFromExistingPO')?>/"+id,
-        type : "GET",
-        data :"",
+        url :$('#formpayment').attr('action'),
+        type : $('#formpayment').attr('method'),
+        data : $('#formpayment').serialize(),
         dataType : "json",
         success : function(data){
-          fillInfoPO(id);
-          load_order(data);
-          $("#modalpo").modal("hide");
+          $('#btnBayar').html("<h5 class=\'text-bold\'>Bayar</h5>");
+          $("#btnBayar").prop("disabled", false);
+          var datas = <?php echo json_encode(array()); ?>;
+          load_order(datas);
+          fillInformation();
+          $("#modalpayment").modal('hide');
+          window.open("<?php echo base_url('Transaksi_penjualan/Transaksi/invoices'); ?>/"+data.idOrder, "_blank");
         }
-      });
-  }
-  function fillInfoPO(idPO){
-    // getInfoPO
-    $.ajax({
-      url :"<?php echo base_url('Transaksi_pembelian/Transaksi/getInfoPO')?>/"+idPO,
-      type : "GET",
-      data :"",
-      dataType : "json",
-      success : function(data){
-        $("#idpo").val(data[0].id);
-        $("#supplierSelect").val(data[0].id_supplier);
-        $("#catatan").val(data[0].catatan);
-      }
+      });    
     });
-  }
-  $(document).ready(function(){
     $("#pembelian").on('submit', function(e){
       $('#btnDoOrder').html("<h5 class=\'text-bold\'>Saving...</h5>");
       $("#btnDoOrder").prop("disabled", true);
@@ -552,8 +597,7 @@
               confirm: function () {
                   doSubmit();
               },
-              cancel: function () {
-                  
+              cancel: function () {                  
               }
           }
       });      

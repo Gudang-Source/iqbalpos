@@ -25,7 +25,7 @@ SET time_zone = "+00:00";
 --
 -- Table structure for table `m_pegawai_menu`
 --
-
+DROP TABLE 'm_pegawai_menu';
 CREATE TABLE IF NOT EXISTS `m_pegawai_menu` (
 `id` int(11) NOT NULL,
   `nama` varchar(20) NOT NULL,
