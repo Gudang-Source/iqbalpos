@@ -26,5 +26,8 @@ body .popover{
 }
 
 .jconfirm .jconfirm-box div.jconfirm-title-c .jconfirm-title{
-    color: #000000 !important;
+    color: #333 !important;
+}
+.jconfirm .jconfirm-box div.jconfirm-content{
+    color: #333 !important;
 }

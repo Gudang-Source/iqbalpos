@@ -32,6 +32,8 @@
       <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/daterangepicker.css" />
       <!-- multi select -->
       <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/bootstrap-multiselect.css" />
+      <!-- Bootstrap Toggle -->
+      <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/bootstrap-toggle.min.css" />
       <!-- highcharts -->
       <!--<link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/highcharts.css" />-->
       <!-- css for the preview keyset extension -->
@@ -92,6 +94,8 @@
       <script src="<?php echo base_url(); ?>assets/js/fileinput.min.js"></script>
       <!-- multiselect script -->
       <script src="<?php echo base_url(); ?>assets/js/bootstrap-multiselect.js"></script>
+      <!-- bootstrap toggle script -->
+      <script src="<?php echo base_url(); ?>assets/js/bootstrap-toggle.min.js"></script>
       <!-- dateformat script -->
       <script src="<?php echo base_url(); ?>assets/js/dateFormat.min.js"></script>
       <!-- creditCardValidator script -->
