@@ -96,6 +96,9 @@ class Master extends MX_Controller {
 			$update = $this->Pegawailevelmodel->update($dataCondition, $dataUpdate, 'm_pegawai_level');
 			if($update){
 				$dataSelect['deleted'] = 1;
+                //update current user permission session
+                $this->update_user_permission($params['id'], $params['menu']);
+
 				$list = $this->Pegawailevelmodel->select($dataSelect, 'm_pegawai_level', 'date_add', 'DESC')->result();
 				echo json_encode(array('status' => '3','list' => $list));
 			}else{
@@ -128,6 +131,16 @@ class Master extends MX_Controller {
     	}else{
     		echo "NOT FOUND";
     	}
+    }
+
+    private function update_user_permission($id_user_level=0, $permission) {
+        if(isset($_SESSION['id_user_level'])) {
+            if(!empty($id_user_level) && (count($permission) > 0)) {
+                if($id_user_level == $_SESSION['id_user_level']) {
+                    $_SESSION['user_permission'] = $permission;
+                }
+            }
+        }
     }
     
     

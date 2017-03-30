@@ -125,7 +125,7 @@ class Master extends MX_Controller {
 			$update = $this->Pegawaimodel->update($dataCondition, $dataUpdate, 'm_pegawai');
 			if($update){
                 //updating current session
-                $this->update_pegawai_session($params['id'], $params['nama']);
+                $this->update_pegawai_session($params['id'], $params['nama'], $params['id_pegawai_level']);
 
 				$dataSelect['deleted'] = 1;
 				$list = $this->Pegawaimodel->select($dataSelect, 'm_pegawai', 'date_add', 'DESC')->result();
@@ -184,14 +184,23 @@ class Master extends MX_Controller {
         $dataSelect['id_provinsi'] = $this->input->get("id_prov");
         $dataSelect['deleted'] = 1;
         echo json_encode($this->Pegawaimodel->select($dataSelect, 'm_kota', 'nama')->result());
-    }
+    } 
 
-    private function update_pegawai_session($id, $new_nama) {
+    private function update_pegawai_session($id, $new_nama, $id_pegawai_level=0) {
         //Update nama pegawai of current active session
         if(isset($_SESSION['id_user'])) {
             if($_SESSION['id_user'] == $id) {
+                //Update Nama Active User
                 $_SESSION['nama_user'] = $new_nama;
                 $_SESSION['is_logged_in'] = 1;
+
+                //Update Active User's Permission
+                $condition = array(
+                    'deleted'   => 1,
+                    'id'        => $id_pegawai_level,
+                );
+                $data = $this->Pegawaimodel->select($condition, 'm_pegawai_level')->row();
+                $_SESSION['user_permission'] = json_decode($data->permission);
             }
         }
     }
