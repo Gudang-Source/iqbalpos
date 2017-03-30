@@ -62,7 +62,7 @@
              <div class="col-sm-12">
                 <div class="form-group">
                  <label for="url">URL</label>
-                 <input type="text" name="url" maxlength="50" Required class="form-control" id="url" placeholder="URL (segmen setelah base_url)">
+                 <input type="text" name="url" Required class="form-control" id="url" placeholder="URL (segmen setelah base_url)">
                </div>
              </div>
              <div class="col-sm-12">
