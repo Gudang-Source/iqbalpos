@@ -15,10 +15,12 @@ class Master extends MX_Controller {
         $params = $this->input->post();
         if(isset($params['email']) && !empty($params['password'])) {
             $user = $this->check_userpass($params['email'], $params['password']);
+            $user_level = $this->get_user_permission($user->id_pegawai_level);
             if($user) {
                 $data_session = array(
                         "id_user" => $user->id,
                         "nama_user" => $user->nama,
+                        "user_permission" => json_decode($user_level->permission),
                         "is_logged_in" => 1
                     );
                 $this->session->set_userdata($data_session);
@@ -43,6 +45,14 @@ class Master extends MX_Controller {
                 'password' => hash('sha512', $password),
                 );
         $data = $this->Loginmodel->select($condition, 'm_pegawai')->row();
+        return $data;
+    }
+    private function get_user_permission($id_pegawai_level=0){
+        $condition = array(
+                'deleted'   => 1,
+                'id'        => $id_pegawai_level,
+                );
+        $data = $this->Loginmodel->select($condition, 'm_pegawai_level')->row();
         return $data;
     }
     
