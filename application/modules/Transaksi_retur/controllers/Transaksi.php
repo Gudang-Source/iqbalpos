@@ -1,10 +1,22 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Transaksi extends MX_Controller {
+    private $modul = "Transaksi_retur/";
+    private $fungsi = "";    
 	function __construct() {
         parent::__construct();
         $this->load->model('Transaksireturmodel');
+        $this->modul .= $this->router->fetch_class();
+        $this->fungsi = $this->router->fetch_method();
+        $this->_insertLog();
     }
+    function _insertLog($fungsi = null){
+        $id_user = $this->session->userdata('id_user');
+        $dataInsert['id_user'] = $id_user;
+        $dataInsert['modul'] = $this->modul;
+        $dataInsert['fungsi'] = $this->fungsi;
+        $insertLog = $this->Transaksireturmodel->insert($dataInsert, 't_log');        
+    }  
     function index(){
     	$this->load->view('Transaksi_retur/view');
     }

@@ -1,10 +1,22 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Master extends MX_Controller {
+    private $modul = "Stok/";
+    private $fungsi = "";    
 	function __construct() {
         parent::__construct();
         $this->load->model('Stokmodel');
+        $this->modul .= $this->router->fetch_class();
+        $this->fungsi = $this->router->fetch_method();
+        $this->_insertLog();
     }
+    function _insertLog($fungsi = null){
+        $id_user = $this->session->userdata('id_user');
+        $dataInsert['id_user'] = $id_user;
+        $dataInsert['modul'] = $this->modul;
+        $dataInsert['fungsi'] = $this->fungsi;
+        $insertLog = $this->Stokmodel->insert($dataInsert, 't_log');        
+    }  
     function index(){
     	$dataSelect['deleted'] = 1;
         $sql = "SELECT A.*, B.nama, B.sku, C.id_order, C.nama_warna, C.nama_ukuran FROM h_stok_produk A LEFT JOIN m_produk B ON A.id_produk = B.id LEFT JOIN t_order_detail C ON A.id_order_detail = C.id ORDER BY A.date_add DESC";

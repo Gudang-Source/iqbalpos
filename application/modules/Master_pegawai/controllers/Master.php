@@ -1,12 +1,24 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Master extends MX_Controller {
+    private $modul = "Master_pegawai/";
+    private $fungsi = "";    
 	function __construct() {
         parent::__construct();
         //check_auth()
         $this->checksession();
         $this->load->model('Pegawaimodel');
+        $this->modul .= $this->router->fetch_class();
+        $this->fungsi = $this->router->fetch_method();
+        $this->_insertLog();
     }
+    function _insertLog($fungsi = null){
+        $id_user = $this->session->userdata('id_user');
+        $dataInsert['id_user'] = $id_user;
+        $dataInsert['modul'] = $this->modul;
+        $dataInsert['fungsi'] = $this->fungsi;
+        $insertLog = $this->Pegawaimodel->insert($dataInsert, 't_log');        
+    }  
     function checksession(){
         if($this->session->userdata("isLoggedin") != 1){
             //tampilkan logout. rdirect login

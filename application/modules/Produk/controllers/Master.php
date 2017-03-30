@@ -1,10 +1,22 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Master extends MX_Controller {
+    private $modul = "Produk/";
+    private $fungsi = "";    
 	function __construct() {
         parent::__construct();
         $this->load->model('Produkmodel');
+        $this->modul .= $this->router->fetch_class();
+        $this->fungsi = $this->router->fetch_method();
+        $this->_insertLog();
     }
+    function _insertLog($fungsi = null){
+        $id_user = $this->session->userdata('id_user');
+        $dataInsert['id_user'] = $id_user;
+        $dataInsert['modul'] = $this->modul;
+        $dataInsert['fungsi'] = $this->fungsi;
+        $insertLog = $this->Produkmodel->insert($dataInsert, 't_log');        
+    }  
     function index(){
     	$dataSelect['deleted'] = 1;
         $data['list_supplier'] = json_encode($this->Produkmodel->select($dataSelect, 'm_supplier_produk', 'nama')->result());

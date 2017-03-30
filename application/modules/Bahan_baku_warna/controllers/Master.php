@@ -1,10 +1,22 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Master extends MX_Controller {
+    private $modul = "Bahan_baku_warna/";
+    private $fungsi = "";    
 	function __construct() {
         parent::__construct();
         $this->load->model('Bahanwarnamodel');
+        $this->modul .= $this->router->fetch_class();
+        $this->fungsi = $this->router->fetch_method();
+        $this->_insertLog();
     }
+    function _insertLog($fungsi = null){
+        $id_user = $this->session->userdata('id_user');
+        $dataInsert['id_user'] = $id_user;
+        $dataInsert['modul'] = $this->modul;
+        $dataInsert['fungsi'] = $this->fungsi;
+        $insertLog = $this->Bahanwarnamodel->insert($dataInsert, 't_log');        
+    }  
     function index(){
     	$dataSelect['deleted'] = 1;
     	$data['list'] = json_encode($this->Bahanwarnamodel->select($dataSelect, 'm_bahan_warna', 'date_add', 'DESC')->result());

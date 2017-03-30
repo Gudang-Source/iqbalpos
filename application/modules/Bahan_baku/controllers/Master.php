@@ -1,9 +1,27 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Master extends MX_Controller {
+    private $modul = "Bahan_baku/";
+    private $fungsi = "";
 	function __construct() {
         parent::__construct();
         $this->load->model('Bahanbakumodel');
+        $this->modul .= $this->router->fetch_class();
+        $this->fungsi = $this->router->fetch_method();
+        $this->_insertLog();
+    }
+    function testUri(){
+        print_r($this->uri->uri_to_assoc());
+    }
+    function checkAccess(){
+        print_r($this->session->userdata());
+    }
+    function _insertLog($fungsi = null){
+        $id_user = $this->session->userdata('id_user');
+        $dataInsert['id_user'] = $id_user;
+        $dataInsert['modul'] = $this->modul;
+        $dataInsert['fungsi'] = $this->fungsi;
+        $insertLog = $this->Bahanbakumodel->insert($dataInsert, 't_log');
     }
     function index(){
     	$dataSelect['deleted'] = 1;
@@ -83,15 +101,7 @@ class Master extends MX_Controller {
                     "data"            => $data
                     );
         echo json_encode($json_data);
-    }
-	
-	function test(){
-		header('Content-Type: application/json; charset=utf-8');
-		$dataSelect['deleted'] = 1;
-		$list = $this->Bahanbakumodel->select($dataSelect, 'm_bahan')->result();
-		echo json_encode(array('status' => '3','list' => $list));
-	}
-	
+    }	
     function add(){
         $params = $this->input->post();
         $id = (!empty($params['id'])) ? $params['id'] : $this->Bahanbakumodel->get_last_id("m_bahan") + 1;
@@ -220,6 +230,7 @@ class Master extends MX_Controller {
     }
     
     private function insert_detail($id_bahan, $data, $table) {
+        $this->_insertLog('Insert Detail');        
         if(!empty($table) AND !empty($data)) {
             //check if id_bahan exist in m_bahan_det_ tables
             $dataInsert = array();

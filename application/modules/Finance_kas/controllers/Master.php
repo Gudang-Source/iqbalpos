@@ -1,10 +1,22 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Master extends MX_Controller {
+    private $modul = "Finance_kas/";
+    private $fungsi = "";    
 	function __construct() {
         parent::__construct();
         $this->load->model('Financekasmodel');
+        $this->modul .= $this->router->fetch_class();
+        $this->fungsi = $this->router->fetch_method();
+        $this->_insertLog();
     }
+    function _insertLog($fungsi = null){
+        $id_user = $this->session->userdata('id_user');
+        $dataInsert['id_user'] = $id_user;
+        $dataInsert['modul'] = $this->modul;
+        $dataInsert['fungsi'] = $this->fungsi;
+        $insertLog = $this->Financekasmodel->insert($dataInsert, 't_log');        
+    }  
     function index(){
     	$dataSelect['deleted'] = 1;
         $sql = "SELECT A.*, B.nama AS nama_pegawai FROM fin_kas A LEFT JOIN m_pegawai B ON A.add_by = B.id WHERE A.deleted = 1 ORDER BY A.date_add ASC";

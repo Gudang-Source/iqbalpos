@@ -1,10 +1,22 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Master extends MX_Controller {
+    private $modul = "Laporan_top_member/";
+    private $fungsi = "";    
 	function __construct() {
         parent::__construct();
         $this->load->model('Laporantopmodel');
+        $this->modul .= $this->router->fetch_class();
+        $this->fungsi = $this->router->fetch_method();
+        $this->_insertLog();
     }
+    function _insertLog($fungsi = null){
+        $id_user = $this->session->userdata('id_user');
+        $dataInsert['id_user'] = $id_user;
+        $dataInsert['modul'] = $this->modul;
+        $dataInsert['fungsi'] = $this->fungsi;
+        $insertLog = $this->Laporantopmodel->insert($dataInsert, 't_log');        
+    }  
     function index(){
     	$dataSelect['deleted'] = 1;
         $sql = "SELECT B.nama AS nama_customer, COUNT(A.id) AS jumlah_order, SUM(A.grand_total) AS total_order FROM t_order A LEFT JOIN m_customer B ON A.id_customer = B.id WHERE A.deleted = 1 AND A.status = 3 GROUP BY A.id_customer ORDER BY total_order DESC LIMIT 10";

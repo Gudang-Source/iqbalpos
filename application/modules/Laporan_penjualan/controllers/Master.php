@@ -1,10 +1,22 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Master extends MX_Controller {
+    private $modul = "Laporan_penjualan/";
+    private $fungsi = "";    
 	function __construct() {
         parent::__construct();
         $this->load->model('Laporanpenjualanmodel');
+        $this->modul .= $this->router->fetch_class();
+        $this->fungsi = $this->router->fetch_method();
+        $this->_insertLog();
     }
+    function _insertLog($fungsi = null){
+        $id_user = $this->session->userdata('id_user');
+        $dataInsert['id_user'] = $id_user;
+        $dataInsert['modul'] = $this->modul;
+        $dataInsert['fungsi'] = $this->fungsi;
+        $insertLog = $this->Laporanpenjualanmodel->insert($dataInsert, 't_log');        
+    }  
     function index(){
     	$dataSelect['deleted'] = 1;
         $sql = "SELECT A.*, B.nama AS nama_customer, C.nama AS metode_pembayaran FROM t_order A LEFT JOIN m_customer B ON A.id_customer = B.id LEFT JOIN m_metode_pembayaran C ON A.id_metode_pembayaran = C.id WHERE A.deleted = 1 AND A.status = 3 ORDER BY A.date_add DESC";

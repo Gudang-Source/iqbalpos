@@ -1,10 +1,22 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Master extends MX_Controller {
+    private $modul = "Dev_kategori/";
+    private $fungsi = "";    
 	function __construct() {
         parent::__construct();
         $this->load->model('Devkategorimodel');
+        $this->modul .= $this->router->fetch_class();
+        $this->fungsi = $this->router->fetch_method();
+        $this->_insertLog();
     }
+    function _insertLog($fungsi = null){
+        $id_user = $this->session->userdata('id_user');
+        $dataInsert['id_user'] = $id_user;
+        $dataInsert['modul'] = $this->modul;
+        $dataInsert['fungsi'] = $this->fungsi;
+        $insertLog = $this->Devkategorimodel->insert($dataInsert, 't_log');        
+    }  
     function index(){
     	$dataSelect['deleted'] = 1;
         $sql = "SELECT A.*, (SELECT COUNT(B.id) FROM m_pegawai_permission B WHERE B.id_menu = A.id) AS jumlah_menu FROM m_pegawai_menu A WHERE A.deleted = 1 ";

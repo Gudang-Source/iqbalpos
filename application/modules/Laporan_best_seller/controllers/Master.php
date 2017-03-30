@@ -1,10 +1,22 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Master extends MX_Controller {
+    private $modul = "Laporan_best_seller/";
+    private $fungsi = "";    
 	function __construct() {
         parent::__construct();
         $this->load->model('Laporanbestmodel');
+        $this->modul .= $this->router->fetch_class();
+        $this->fungsi = $this->router->fetch_method();
+        $this->_insertLog();
     }
+    function _insertLog($fungsi = null){
+        $id_user = $this->session->userdata('id_user');
+        $dataInsert['id_user'] = $id_user;
+        $dataInsert['modul'] = $this->modul;
+        $dataInsert['fungsi'] = $this->fungsi;
+        $insertLog = $this->Laporanbestmodel->insert($dataInsert, 't_log');        
+    }  
     function index(){
     	$dataSelect['deleted'] = 1;
         $sql = "SELECT C.*, SUM(B.jumlah) AS jumlah, SUM(B.total_harga) AS total_harga FROM t_order A, t_order_detail B, m_produk C WHERE A.deleted = 1 AND A.status = 3 AND A.id = B.id_order AND B.id_produk = C.id GROUP BY B.id_produk ORDER BY jumlah DESC LIMIT 10";
