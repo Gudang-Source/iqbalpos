@@ -442,8 +442,8 @@ class Transaksi extends MX_Controller {
     		$dataInsert['total_berat'] = $this->getOption('total_berat');
     		$dataInsert['total_qty'] = $getTotal['total_items'];
     		$dataInsert['total_harga_beli'] = $getTotal['total'];
-    		$dataInsert['add_by'] = 0;
-    		$dataInsert['edited_by'] = 0;
+    		$dataInsert['add_by'] = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+    		$dataInsert['edited_by'] = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
     		$dataInsert['deleted'] = 1;
     		$insertDataMaster = $this->Transaksipenjualanmodel->insert($dataInsert, 't_beli');
     		if($insertDataMaster){    		
@@ -488,7 +488,7 @@ class Transaksi extends MX_Controller {
     		$dataInsertTorder['jenis_order']					=	$params['jenisOrder'];
     		$dataInsertTorder['status']							=	1;
     		$dataInsertTorder['date_add']						=	$dateNow;
-    		$dataInsertTorder['add_by']							=	0;
+    		$dataInsertTorder['add_by']							=	isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
     		$dataInsertTorder['deleted']						=	1;
     		$dataInsertTorder['id_metode_pembayaran']			=	$params['paymentMethod'];
     		$insertTorder = $this->Transaksipenjualanmodel->insert($dataInsertTorder, 't_order');
@@ -498,7 +498,7 @@ class Transaksi extends MX_Controller {
     			$dataHtransaksi['id_referensi']		= $params['chequenum'];
     			$dataHtransaksi['keterangan']		= $params['catatan'];
     			$dataHtransaksi['date_add']			= $dateNow;
-    			$dataHtransaksi['add_by']			= 0;
+    			$dataHtransaksi['add_by']			= isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
     			$dataHtransaksi['deleted']			= 1;
     			$insertHtransaksi = $this->Transaksipenjualanmodel->insert($dataHtransaksi, 'h_transaksi');
     			if($insertHtransaksi){
@@ -530,7 +530,7 @@ class Transaksi extends MX_Controller {
 									$dataConditionStok['id'] 					= $idProduks[0];
 									$dataUpdateStok['stok']	 					= $getHargaBeli->row()->stok - $items['qty'];
 									$dataUpdateStok['last_edited']	 			= $dateNow;
-									$dataUpdateStok['edited_by']	 			= 0;
+									$dataUpdateStok['edited_by']	 			= isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
 									$dataUpdateStok['tanggal_kurang_stok']	 	= $dateNow;
 									$updateStokProduk = $this->Transaksipenjualanmodel->update($dataConditionStok, $dataUpdateStok, 'm_produk');
 									if($updateStokProduk){
@@ -543,7 +543,7 @@ class Transaksi extends MX_Controller {
 										$dataHstok['keterangan'] 		= $params['catatan'];
 										$dataHstok['status']			= 1;
 										$dataHstok['date_add']			= $dateNow;
-										$dataHstok['add_by']			= 0;
+										$dataHstok['add_by']			= isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
 										$dataHstok['deleted']			= 1;
 										$insertHstok = $this->Transaksipenjualanmodel->insert($dataHstok, 'h_stok_produk');
 									}

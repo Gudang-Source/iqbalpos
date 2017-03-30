@@ -46,7 +46,7 @@ class Master extends MX_Controller {
 		$dataInsert['id_kota'] 			= $params['id_kota'];
 		$dataInsert['id_customer_level'] = $params['id_customer_level'];
         $dataInsert['last_edited']      = date("Y-m-d H:i:s");
-        $dataInsert['add_by']        = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+        $dataInsert['add_by']           = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
         $dataInsert['edited_by']        = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
 		$dataInsert['deleted'] 			= 1;
 

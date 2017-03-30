@@ -15,7 +15,7 @@ class Master extends MX_Controller {
         $dataInsert['id_user'] = $id_user;
         $dataInsert['modul'] = $this->modul;
         $dataInsert['fungsi'] = $this->fungsi;
-        $insertLog = $this->Gudangmodel->insert($dataInsert, 't_log');        
+        $insertLog = $this->Pegawailevelmodel->insert($dataInsert, 't_log');        
     }  
     function index(){
     	$dataSelect['deleted'] = 1;

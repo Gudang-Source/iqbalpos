@@ -205,7 +205,7 @@ class Transaksi extends MX_Controller {
     				$dataInsertHistori['stok_akhir']		= $stokSekarang;
     				$dataInsertHistori['keterangan']		= "Barang Kembali";
     				$dataInsertHistori['status']			= 5;
-    				$dataInsertHistori['add_by']			= 0;
+    				$dataInsertHistori['add_by']			= isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
     				$dataInsertHistori['edited_by']			= 0;
     				$dataInsertHistori['deleted']			= 1;
     				$insertHistori = $this->Transaksiservicemodel->insert($dataInsertHistori, 'h_stok_produk');
@@ -494,8 +494,8 @@ class Transaksi extends MX_Controller {
     		$dataInsertPrimer['jumlah_barang_kembali']	= 0;
     		$dataInsertPrimer['jumlah_uang_kembali']	= 0;
     		$dataInsertPrimer['status']					= 1;
-    		$dataInsertPrimer['add_by']					= 1;
-    		$dataInsertPrimer['edited_by']				= 0;
+    		$dataInsertPrimer['add_by']					= isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+    		$dataInsertPrimer['edited_by']				= isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
     		$dataInsertPrimer['deleted']				= 1;
     		$insertPrimer = $this->Transaksiservicemodel->insert($dataInsertPrimer, 't_service');
     		if($insertPrimer){
@@ -529,8 +529,8 @@ class Transaksi extends MX_Controller {
 					    			$dataInsertHistori['stok_akhir']		=	$getDataLastStok->row()->stok - $items['qty'];
 					    			$dataInsertHistori['keterangan']		=	$params['catatan'];
 					    			$dataInsertHistori['status']			=	2;
-					    			$dataInsertHistori['add_by']			=	0;
-					    			$dataInsertHistori['edited_by']			=	0;
+					    			$dataInsertHistori['add_by']			=	isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+					    			$dataInsertHistori['edited_by']			=	isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
 					    			$dataInsertHistori['deleted']			=	1;
 					    			$insertHistori = $this->Transaksiservicemodel->insert($dataInsertHistori, 'h_stok_produk');
 					    			if($insertHistori){

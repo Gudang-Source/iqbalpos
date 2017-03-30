@@ -414,8 +414,8 @@ class Transaksi extends MX_Controller {
     		$dataInsert['total_berat'] = $this->getOption('total_berat');
     		$dataInsert['total_qty'] = $getTotal['total_items'];
     		$dataInsert['total_harga_beli'] = $getTotal['total'];
-    		$dataInsert['add_by'] = 0;
-    		$dataInsert['edited_by'] = 0;
+    		$dataInsert['add_by'] = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+    		$dataInsert['edited_by'] = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
     		$dataInsert['deleted'] = 1;
     		$insertDataMaster = $this->Transaksipembelianmodel->insert($dataInsert, 't_beli');
     		if($insertDataMaster){    		

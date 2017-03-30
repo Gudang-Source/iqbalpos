@@ -177,8 +177,8 @@ class Transaksi extends MX_Controller {
     				$dataInsertHistori['stok_akhir']		= $stokSekarang;
     				$dataInsertHistori['keterangan']		= "Barang Kembali";
     				$dataInsertHistori['status']			= 5;
-    				$dataInsertHistori['add_by']			= 0;
-    				$dataInsertHistori['edited_by']			= 0;
+    				$dataInsertHistori['add_by']			= isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+    				$dataInsertHistori['edited_by']			= isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
     				$dataInsertHistori['deleted']			= 1;
     				$insertHistori = $this->Transaksipomodel->insert($dataInsertHistori, 'h_stok_produk');
     				if($insertHistori){
@@ -479,8 +479,8 @@ class Transaksi extends MX_Controller {
     		$dataInsert['total_berat'] = $this->getOption('total_berat');
     		$dataInsert['total_qty'] = $getTotal['total_items'];
     		$dataInsert['total_harga_beli'] = $getTotal['total'];
-    		$dataInsert['add_by'] = 0;
-    		$dataInsert['edited_by'] = 0;
+    		$dataInsert['add_by'] = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+    		$dataInsert['edited_by'] = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
     		$dataInsert['deleted'] = 1;
     		$insertDataMaster = $this->Transaksipomodel->insert($dataInsert, 't_purchase_order');
     		if($insertDataMaster){    		

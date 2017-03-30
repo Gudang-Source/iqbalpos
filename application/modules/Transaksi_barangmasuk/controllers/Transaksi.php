@@ -98,13 +98,13 @@ class Transaksi extends MX_Controller {
     		$lastStok = $dataStok->row()->stok;
     		$dateNow = date('Y-m-d H:i:s');
 
-    		$dataUpdate['edited_by']	=	0;
+    		$dataUpdate['edited_by']	=	isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
 
     		$dataInsert['id_produk']	=	$params['idProduk'];
     		$dataInsert['id_order_detail']	=	0;
     		$dataInsert['id_service']	=	0;
     		$dataInsert['last_edited']	=	$dateNow;
-    		$dataInsert['edited_by']	=	0;
+    		$dataInsert['edited_by']	=	isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
     		$dataInsert['jumlah']		=	$qty;
     		$dataInsert['deleted']		=	1;
 
