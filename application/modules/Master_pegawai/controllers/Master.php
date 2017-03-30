@@ -172,7 +172,7 @@ class Master extends MX_Controller {
         $dataSelect['id_provinsi'] = $this->input->get("id_prov");
         $dataSelect['deleted'] = 1;
         echo json_encode($this->Pegawaimodel->select($dataSelect, 'm_kota', 'nama')->result());
-    }
+    } 
 
     private function update_pegawai_session($id, $new_nama, $id_pegawai_level=0) {
         //Update nama pegawai of current active session

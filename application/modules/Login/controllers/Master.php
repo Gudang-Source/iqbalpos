@@ -26,14 +26,14 @@ class Master extends MX_Controller {
                 $this->session->set_userdata($data_session);
                 $response['status'] = 1;
             }
-        }
+        } 
         
         echo json_encode($response);
     }
     function do_logout(){
         unset($_SESSION['id_user']);
         unset($_SESSION['nama_user']);
-        $_SESSION['is_logged_in'] = 0;
+        $_SESSION['is_logged_in'] = 0; 
 
         redirect('index/login');
     }
