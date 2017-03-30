@@ -20,6 +20,7 @@ class Master extends MX_Controller {
                 $data_session = array(
                         "id_user" => $user->id,
                         "nama_user" => $user->nama,
+                        "id_user_level" => $user_level->id,
                         "user_permission" => json_decode($user_level->permission),
                         "is_logged_in" => 1
                     );
