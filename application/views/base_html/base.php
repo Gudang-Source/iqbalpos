@@ -150,7 +150,7 @@
                         <?php if($nav_kat->id == $nav_item->id_menu) { 
                           $nav_item_icon = (!empty($nav_item->icon_class)) ? $nav_item->icon_class : 'fa fa-angle-right'; ?>
                         <li class="flat-box">
-                          <a href="<?php echo base_url().'/'.$nav_item->url;?>"><i class="<?php echo $nav_item_icon?>"></i> <?php echo ucfirst($nav_item->nama);?></a>
+                          <a href="<?php echo base_url().$nav_item->url;?>"><i class="<?php echo $nav_item_icon?>"></i> <?php echo ucfirst($nav_item->nama);?></a>
                         </li>
                         <?php } ?>
                       <?php } ?>
