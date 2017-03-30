@@ -109,7 +109,6 @@
       <script src="<?php echo base_url(); ?>assets/js/jquery.form-validator.min.js"></script>
       <!-- jquery mask plugin-->
       <script src="<?php echo base_url(); ?>assets/js/jquery.mask.min.js"></script>
-
       <!-- custom script -->
       <script src="<?php echo base_url(); ?>assets/js/app.js"></script>
       <script src="<?php echo base_url(); ?>assets/js/app.js"></script>
