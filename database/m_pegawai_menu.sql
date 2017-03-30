@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 27, 2017 at 09:54 AM
+-- Generation Time: Mar 30, 2017 at 11:10 AM
 -- Server version: 5.6.21
 -- PHP Version: 5.6.3
 
@@ -25,7 +25,7 @@ SET time_zone = "+00:00";
 --
 -- Table structure for table `m_pegawai_menu`
 --
-DROP TABLE 'm_pegawai_menu';
+
 CREATE TABLE IF NOT EXISTS `m_pegawai_menu` (
 `id` int(11) NOT NULL,
   `nama` varchar(20) NOT NULL,
@@ -39,14 +39,14 @@ CREATE TABLE IF NOT EXISTS `m_pegawai_menu` (
 --
 
 INSERT INTO `m_pegawai_menu` (`id`, `nama`, `icon_class`, `date_add`, `deleted`) VALUES
-(1, 'master', '', '2017-03-27 02:34:17', 1),
-(2, 'produk', '', '2017-03-27 01:31:33', 1),
-(3, 'bahan baku', '', '2017-03-27 01:31:33', 1),
-(4, 'stok', '', '2017-03-27 01:31:33', 1),
-(5, 'transaksi', '', '2017-03-27 01:31:33', 1),
-(6, 'laporan', '', '2017-03-27 01:31:33', 1),
-(7, 'finance', '', '2017-03-27 01:31:33', 1),
-(8, 'log', '', '2017-03-27 01:31:33', 1);
+(1, 'master', 'fa fa-dashboard', '2017-03-29 13:37:07', 1),
+(2, 'produk', 'fa fa-shopping-cart', '2017-03-29 13:43:40', 1),
+(3, 'bahan baku', 'fa fa-archive', '2017-03-29 13:47:14', 1),
+(4, 'stok', 'fa fa-cubes', '2017-03-29 13:45:57', 1),
+(5, 'transaksi', 'fa fa-dollar', '2017-03-29 13:38:29', 1),
+(6, 'laporan', 'fa fa-line-chart', '2017-03-29 13:42:48', 1),
+(7, 'finance', 'fa fa-money', '2017-03-29 13:47:57', 1),
+(8, 'log', 'fa fa-desktop', '2017-03-29 13:37:51', 1);
 
 --
 -- Indexes for dumped tables
