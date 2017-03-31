@@ -268,6 +268,21 @@
   function unmaskInputMoney(){
     $('.money').unmask();
   }
+  function fotoInitialPreview(file_source, file_name){
+    $("#foto").fileinput('destroy');
+    $("#foto").fileinput({ 
+      showUpload: false,
+      initialPreview: [file_source],
+      initialPreviewAsData: true,
+      initialPreviewFileType: 'image',
+      initialPreviewConfig: [
+        {caption: file_name}
+        ],
+      // initialPreviewShowDelete: false,
+      purifyHtml: true, // this by default purifies HTML data for preview
+     });
+  }
+
   
   var jsonlist = <?php echo $list; ?>;
   var jsonCustomerLevel = <?php echo $list_customer_level; ?>;
@@ -376,7 +391,6 @@
        return [el["id_warna"]];
     }); 
 
-    $("#foto").attr("required", false);
     $("#myModalLabel").text("Ubah Produk");
     $("#id").val(dataUpdate[0].id);
     $("#nama").val(dataUpdate[0].nama);
@@ -390,8 +404,12 @@
     $("#kode_barang").val(dataUpdate[0].kode_barang);
     $("#berat").val(dataUpdate[0].berat);
     $("#harga_beli").val(dataUpdate[0].harga_beli);
-    $("#foto").fileinput("clear");
     $("#deskripsi").val(dataUpdate[0].deskripsi);
+    $("#foto").attr("required", false);
+    $("#foto").fileinput("clear");
+
+    var file_source = dataUpdate[0].foto || "placeholder.png";
+    fotoInitialPreview("<?php echo base_url();?>"+ "upload/produk/" + file_source, file_source);
     
     $("#id_ukuran").val(id_ukuran);
     $("#id_ukuran").multiselect("refresh");

@@ -197,6 +197,21 @@
   function unmaskInputMoney(){
     $('.money').unmask();
   }
+  function fotoInitialPreview(file_source, file_name){
+    $("#foto").fileinput('destroy');
+    $("#foto").fileinput({ 
+      showUpload: false,
+      initialPreview: [file_source],
+      initialPreviewAsData: true,
+      initialPreviewFileType: 'image',
+      initialPreviewConfig: [
+        {caption: file_name}
+        ],
+      // initialPreviewShowDelete: false,
+      purifyHtml: true, // this by default purifies HTML data for preview
+     });
+  }
+
   var jsonlist = <?php echo $list; ?>;
   var jsonSupplier = <?php echo $list_supplier; ?>;
   var jsonSatuan = <?php echo $list_satuan; ?>;
@@ -279,7 +294,6 @@
        return [el["id_warna"]];
     }); 
 
-    $("#foto").attr("required", false);
     $("#myModalLabel").text("Ubah Bahan Baku");
     $("#id").val(dataUpdate[0].id);
     $("#nama").val(dataUpdate[0].nama);
@@ -291,8 +305,12 @@
     $("#kode_barang").val(dataUpdate[0].kode_barang);
     $("#berat").val(dataUpdate[0].berat);
     $("#harga_beli").val(dataUpdate[0].harga_beli);
-    $("#foto").fileinput("clear");
     $("#deskripsi").val(dataUpdate[0].deskripsi);
+    $("#foto").attr("required", false);
+    $("#foto").fileinput("clear");
+
+    var file_source = dataUpdate[0].foto || "placeholder.png";
+    fotoInitialPreview("<?php echo base_url();?>"+ "upload/bahan_baku/" + file_source, file_source);
     
     $("#id_warna").val(id_warna);
     $("#id_warna").multiselect("refresh");
