@@ -54,6 +54,13 @@ class Index extends MX_Controller {
         }else{
             $data['view'] = 'index/base_sale';
         }
+
+        //exception for Dev_menu & Dev_kategori
+        $segment = strtolower($realmodul[0]);
+        if(($segment == 'dev_kategori') || ($segment == 'dev_menu')){
+            $data['view'] = $modul;
+        } 
+
         $this->load->view('base_html/base', $data);
     }
     function access_restricted(){
