@@ -96,7 +96,7 @@ class Transaksi extends MX_Controller {
 
     		$dataUpdate['edited_by']	=	isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
 
-    		$dataInsert['id_bahan']	=	$params['idProduk'];
+    		$dataInsert['id_bahan']		=	$params['idProduk'];
     		$dataInsert['last_edited']	=	$dateNow;
     		$dataInsert['edited_by']	=	isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
     		$dataInsert['jumlah']		=	$qty;
@@ -112,7 +112,7 @@ class Transaksi extends MX_Controller {
     				$dataUpdate['stok'] = $lastStok - $qty;
     				$dataInsert['status'] = 3;
     				$dataInsert['stok_akhir'] = $lastStok - $qty;
-					$dataInsert['keterangan'] = "DIKURANG MANUAL";
+					$dataInsert['keterangan'] = "DIKURANG MANUAL OLEH ".$this->session->userdata('nama_user');
     			}
     		}else if($state == "tambah"){
 				$dataUpdate['tanggal_tambah_stok'] = $dateNow;
@@ -120,7 +120,7 @@ class Transaksi extends MX_Controller {
 				$dataUpdate['stok'] = $lastStok + $qty;
 				$dataInsert['status'] = 4;
 				$dataInsert['stok_akhir'] = $lastStok + $qty;
-				$dataInsert['keterangan'] = "DITAMBAH MANUAL";
+				$dataInsert['keterangan'] = "DITAMBAH MANUAL OLEH ".$this->session->userdata('nama_user');
     		}
     		$updateProduk = $this->Transaksibahanmasukmodel->update($dataCondition, $dataUpdate, 'm_bahan');
     		if($updateProduk){

@@ -8,7 +8,8 @@ class Index extends MX_Controller {
     }
     function checkLogin(){
         if($this->session->userdata('is_logged_in')!=1){
-            $this->login();            
+            header("location:".base_url('Login/master/index'));
+            exit;
         }
     }
     function index(){
@@ -31,10 +32,11 @@ class Index extends MX_Controller {
         $data['nav_menu'] = $this->Gmodel->get("m_pegawai_permission")->result();
 
         if($modul != null){
-            $realmodul = $modul;
+            $realmodul = explode("-", $modul);
             $modul=str_replace("-", "/", $modul);
-            $selectData['url'] = "index/modul/".$realmodul;
-            $selectDataPermission = $this->Gmodel->select($selectData, 'm_pegawai_permission');
+            $realmoduls = $realmodul[0]."-".$realmodul[1];
+            $selectData['url'] = "index/modul/".$realmoduls;
+            $selectDataPermission = $this->Gmodel->like('null', $selectData, 'm_pegawai_permission');
             if($selectDataPermission->num_rows() > 0){            
                 $idPermission = $selectDataPermission->row()->id;
                 if($idPermission!=null && $this->session->userdata('user_permission')!=null){                

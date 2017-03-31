@@ -23,7 +23,7 @@
       </table>
    </div>
    <!-- Button trigger modal -->
-   <a type="button" class="btn btn-add btn-lg" href="<?php echo base_url('index/modul/Transaksi_penjualan-Transaksi-transaksi'); ?>" target="_blank">
+   <a type="button" class="btn btn-add btn-lg" href="<?php echo base_url('index/modul/Transaksi_retur-Transaksi-transaksi'); ?>" target="_blank">
      Tambah Transaksi Retur
    </a>
 </div>
