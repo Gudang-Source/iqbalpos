@@ -146,13 +146,31 @@
                       </a>
                       
                       <ul class="dropdown-menu">
-                      <?php foreach ($nav_menu as $nav_item) { ?>
-                        <?php if($nav_kat->id == $nav_item->id_menu) { 
-                          $nav_item_icon = (!empty($nav_item->icon_class)) ? $nav_item->icon_class : 'fa fa-angle-right'; ?>
-                        <li class="flat-box">
-                          <a href="<?php echo base_url().$nav_item->url;?>"><i class="<?php echo $nav_item_icon?>"></i> <?php echo ucfirst($nav_item->nama);?></a>
-                        </li>
+                      <?php if (isset($_SESSION['user_permission']) && !empty($_SESSION['user_permission'])) { ?>
+                        
+                        <?php foreach ($nav_menu as $nav_item) { ?>
+                          <?php if($nav_kat->id == $nav_item->id_menu) { 
+                            $nav_item_icon = (!empty($nav_item->icon_class)) ? $nav_item->icon_class : 'fa fa-angle-right'; ?>
+                            
+                            <?php 
+                            $access_granted = 0; $disable_class = 'disabled'; $href = 'javascript:void(0)';
+                            foreach ($_SESSION['user_permission'] as $granted_item) { 
+                              if($nav_item->id == $granted_item) { 
+                                $access_granted = 1;
+                              } 
+                            } 
+                            ?>
+                            <?php if($access_granted == 1) { 
+                              $disable_class = '';
+                              $href = base_url().$nav_item->url; 
+                            } ?>
+                              <li class="flat-box <?php echo $disable_class;?>">
+                                <a href="<?php echo $href; ?>"><i class="<?php echo $nav_item_icon?>"></i> <?php echo ucfirst($nav_item->nama);?></a>
+                              </li>
+
+                          <?php } ?>
                         <?php } ?>
+
                       <?php } ?>
                       </ul>
                     </li>
