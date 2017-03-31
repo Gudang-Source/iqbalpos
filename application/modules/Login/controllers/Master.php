@@ -33,7 +33,9 @@ class Master extends MX_Controller {
     }
     function do_logout(){
         unset($_SESSION['id_user']);
+        unset($_SESSION['id_user_level']);
         unset($_SESSION['nama_user']);
+        unset($_SESSION['user_permission']);
         $_SESSION['is_logged_in'] = 0; 
 
         redirect('index/login');
