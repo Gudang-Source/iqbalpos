@@ -10,6 +10,10 @@ class Transaksi extends MX_Controller {
         $this->fungsi = $this->router->fetch_method();
         $this->_insertLog();
     }
+	// function _remap()
+	// {
+	//       echo 'No direct access allowed';
+	// }    
     function _insertLog($fungsi = null){
         $id_user = $this->session->userdata('id_user');
         $dataInsert['id_user'] = $id_user;
@@ -603,7 +607,7 @@ class Transaksi extends MX_Controller {
 										$dataHstok['id_service']		= 0;
 										$dataHstok['jumlah']	 		= $items['qty'];
 										$dataHstok['stok_akhir'] 		= $getHargaBeli->row()->stok - $items['qty'];
-										$dataHstok['keterangan'] 		= $params['catatan'];
+										$dataHstok['keterangan'] 		= "TRANSAKSI RETUR OLEH ".$this->session->userdata('nama_user');
 										$dataHstok['status']			= 1;
 										$dataHstok['date_add']			= $dateNow;
 										$dataHstok['add_by']			= isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;

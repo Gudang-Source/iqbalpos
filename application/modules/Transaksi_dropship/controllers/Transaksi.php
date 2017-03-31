@@ -586,7 +586,7 @@ class Transaksi extends MX_Controller {
 										$dataHstok['id_service']		= 0;
 										$dataHstok['jumlah']	 		= $items['qty'];
 										$dataHstok['stok_akhir'] 		= $getHargaBeli->row()->stok - $items['qty'];
-										$dataHstok['keterangan'] 		= $params['catatan'];
+										$dataHstok['keterangan'] 		= "TRANSAKSI DROPSHIP OLEH ".$this->session->userdata('nama_user');
 										$dataHstok['status']			= 1;
 										$dataHstok['date_add']			= $dateNow;
 										$dataHstok['add_by']			= isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;

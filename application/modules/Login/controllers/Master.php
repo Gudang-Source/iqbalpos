@@ -6,7 +6,7 @@ class Master extends MX_Controller {
         $this->load->model('Loginmodel');
     }
     function index(){
-    	$this->load->view('Login/view', $data);
+    	$this->load->view('Login/view');
     }
 	
     function do_login(){

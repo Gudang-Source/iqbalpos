@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-class Gmodel extends CI_Model {
+class Logmodel extends CI_Model {
 	private $table_prefix = "";
 
 	public function get($table){
