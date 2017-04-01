@@ -39,25 +39,13 @@
             <div class="table-responsive col-sm-12 totalTab">
                <table class="table">
                   <tr>
-                     <td class="active" width="40%">Subtotal</td>
+                     <td class="active" width="40%">Jumlah Barang</td>
                      <td class="whiteBg" width="60%"><span id="Subtot"></span>
                         <span class="float-right"><b id="eTotalItem"><span></span> Item</b></span>
                      </td>
                   </tr>
                   <tr>
-                     <td class="active">TAX</td>
-                     <td class="whiteBg"><input type="text" value="" id="eTax" class="total-input TAX" placeholder="N/A"  maxlength="5">
-                        <span class="float-right"><b id="taxValue"></b></span>
-                     </td>
-                  </tr>
-                  <tr>
-                     <td class="active">Discount</td>
-                     <td class="whiteBg"><input type="text" value="" id="eDiscount" class="total-input Remise" placeholder="N/A"  maxlength="5">
-                        <span class="float-right"><b id="RemiseValue"></b></span>
-                     </td>
-                  </tr>
-                  <tr>
-                     <td class="active">Total</td>
+                     <td class="active">Total Harga</td>
                      <td class="whiteBg light-blue text-bold"><span id="eTotal"></span></td>
                   </tr>
                </table>
@@ -385,6 +373,7 @@
         fillInformation();        
         $('#btnDoOrder').html("<h5 class=\'text-bold\'>Servis Stok</h5>");
         $("#btnDoOrder").prop("disabled", false);
+        window.close();
       }
     });    
   }
