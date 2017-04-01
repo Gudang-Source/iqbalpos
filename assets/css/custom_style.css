@@ -31,3 +31,8 @@ body .popover{
 .jconfirm .jconfirm-box div.jconfirm-content{
     color: #333 !important;
 }
+
+/*Hides remove button on Krajee File Input Initial Preview Thumbnail */
+.kv-file-remove {
+    display: none;
+}
