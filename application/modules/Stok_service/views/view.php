@@ -47,7 +47,14 @@
          </div>
       </div>
       <div class="modal-footer">
-        <button type="submit" class="btn btn-success" data-dismiss="modal" onclick="reloadTable()">Confirm</button>
+         <div class="row">
+           <div class="col-lg-10">
+           *Barang yang statusnya sudah diubah, tidak akan bisa diubah lagi, <br>mohon periksa kembali sebelum klik tombol confirm
+           </div>
+           <div class="col-lg-1">
+            <button type="submit" class="btn btn-success" data-dismiss="modal" onclick="reloadTable()">Confirm</button>
+           </div>
+         </div>
       </div>
     </div>
  </div>

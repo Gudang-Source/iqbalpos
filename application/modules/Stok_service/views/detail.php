@@ -41,7 +41,7 @@
         type : "POST",
         data : "jbk="+jbk+"&juk="+juk+"&sts="+sts+"&id="+id,
         success : function(data){
-          dataTables.ajax.reload( null, false );
+          // dataTables.ajax.reload( null, false );
         }
       });      
     }

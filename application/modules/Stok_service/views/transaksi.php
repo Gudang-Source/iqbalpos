@@ -22,13 +22,13 @@
          <div class="col-xs-4 table-header">
             <h3>Product</h3>
          </div>
-         <div class="col-xs-2 table-header nopadding">
+         <div class="col-xs-3 table-header nopadding">
             <h3 class="text-left">Quantity</h3>
          </div>
          <div class="col-xs-2 table-header nopadding">
             <h3 class="text-left">Stok</h3>
          </div>
-         <div class="col-xs-2 table-header nopadding">
+         <div class="col-xs-3 table-header nopadding">
             <h3>Total</h3>
          </div>
          <div id="productList">
@@ -58,7 +58,7 @@
       </div>
       <div class="col-md-7 right-side nopadding">
               <div class="row row-horizon" id="kategoriGat">
-                  <span class="categories selectedGat" id=""><i class="fa fa-home"></i></span>
+                  <span class="categories" id=""><i class="fa fa-home"></i></span>
               </div>
               <div class="col-sm-12">
                  <div id="searchContaner">
@@ -93,11 +93,16 @@
   function search(){
     var keyword = $("#searchProd").val();
     var supplier = $("#supplierSelect").val();
+    var kategori = $(".selectedGat").attr('id');
+    var realkategori = "";
+    if(kategori != null || kategori != undefined){    
+      realkategori = kategori;
+    }
     if(supplier != 0){    
       $.ajax({
-        url :"<?php echo base_url('Stok_service/Transaksi/filterProdukByName')?>/"+keyword+"/"+supplier,
+        url :"<?php echo base_url('Stok_service/Transaksi/filterProdukByName')?>",
         type : "POST",
-        data : "keyword="+keyword+"&supplier="+supplier,
+        data : "keyword="+keyword+"&supplier="+supplier+"&kategori="+realkategori,
         dataType : "json",
         success : function(data){
           load_product(data);
@@ -123,14 +128,11 @@
               "<a href='javascript:void(0)' class='addPct' id=\'product-"+json[i].id+"\' onclick=\'addToCart("+json[i].id+")\'>"+
                 "<div class='product color03 flat-box waves-effect waves-block'>"+
                   "<h3 id='proname'>"+json[i].nama+"</h3>"+
-                  "<input id='idname-39' name='name' value='Computer' type='hidden'>"+1
-                  "<input id='idprice-39' name='price' value='350' type='hidden'>"+
-                  "<input id='category' name='category' value='computers' type='hidden'>"+
                   "<div class='mask'>"+
                     "<h3>"+json[i].harga_beli+"</h3>"+
                     "<p>"+json[i].deskripsi+"</p>"+
                   "</div>"+
-                  "<img src=\'<?php echo base_url('upload/produk/') ?>"+json[i].foto+"\' alt=\'"+json[i].id_kategori+"\'>"+
+                  "<img src=\'<?php echo base_url('upload/produk') ?>/"+json[i].foto+"\' alt=\'"+json[i].id_kategori+"\'>"+
                 "</div>"+
               "</a>"+
              "</div>";
@@ -142,7 +144,6 @@
     var option = "";
     var select = "";
     $("#productList").html("");
-    console.log(json);
     if(json.length > 0){      
       for (var i=0;i<json.length;i++){
         option = json[i].options;
@@ -163,7 +164,7 @@
                                 "<span class='textPD'>"+json[i].produk+"</span>"+
                               "</div>"+
                           "</div>"+
-                          "<div class='col-xs-2 nopadding productNum'>"+
+                          "<div class='col-xs-3 nopadding productNum'>"+
                             "<a href='javascript:void(0)' onclick=reduce_qty(\'"+json[i].rowid+"\')>"+
                               "<span class='fa-stack fa-sm decbutton'>"+
                                 "<i class='fa fa-square fa-stack-2x light-grey'></i>"+
@@ -188,7 +189,7 @@
                                 "</span>"+
                               "</div>"+
                           "</div>"+
-                          "<div class='col-xs-2 nopadding '>"+
+                          "<div class='col-xs-3 nopadding '>"+
                             "<span class='subtotal textPD'>"+json[i].subtotal+"</span>"+
                           "</div>"+
                       "</div>"+
@@ -231,16 +232,18 @@
   function load_kategori(json){
     var html = "";
     $("#kategoriGat").html('');
-    html = "<span class='categories selectedGat'><i class='fa fa-home'></i></span>";
+    html = "<span class='categories'><i class='fa fa-home'></i></span>";
     $("#kategoriGat").append(html);
     for (var i=0;i<json.length;i++){
-      html = "<span class='categories selectedGat' onclick=filterProdukByKategori(\'"+json[i].id+"\') >"+json[i].nama+"</span>";
+      html = "<span class='categories' onclick=filterProdukByKategori(\'"+json[i].id+"\') id=\'gat-"+json[i].id+"\'>"+json[i].nama+"</span>";
       $("#kategoriGat").append(html);
     }
   }
   function filterProdukByKategori(id){
     var keyword = $("#searchProd").val();
     var supplier = $("#supplierSelect").val();
+    $( ".categories" ).removeClass('selectedGat');
+    $( "#gat-"+id ).addClass( "selectedGat" );
     if(supplier != 0){    
       $.ajax({
         url :"<?php echo base_url('Stok_service/Transaksi/filterProdukByKategori')?>/"+supplier+"/"+id+"/"+keyword,
@@ -260,8 +263,19 @@
       data :"",
       dataType : "json",
       success : function(data){
-        load_order(data);
-        fillInformation();
+        if(data.status==0){
+          $.confirm({
+              title: 'Stok',
+              content: 'Stok Tidak Mencukupi!',
+              buttons: {
+                  ok: function () {
+                  }
+              }
+          });           
+        }else{        
+          load_order(data);
+          fillInformation();
+        }
       }
     });
   }
@@ -384,11 +398,11 @@
       data : $('#serviceOrder').serialize(),
       dataType : "json",
       success : function(data){        
-        console.log(data);        
         load_order(data);
         fillInformation();        
         $('#btnDoOrder').html("<h5 class=\'text-bold\'>Servis Stok</h5>");
         $("#btnDoOrder").prop("disabled", false);
+        window.close();
       }
     });    
   }
@@ -398,14 +412,15 @@
       $("#btnDoOrder").prop("disabled", true);
       e.preventDefault();
       $.confirm({
-          title: 'Confirm!',
-          content: 'Simple confirm!',
+          title: 'Konfirmasi Service Stok',
+          content: 'Yakin ingin service stok ?',
           buttons: {
               confirm: function () {
                   doSubmit();
               },
               cancel: function () {
-                  
+                  $('#btnDoOrder').html("<h5 class=\'text-bold\'>Service Stok</h5>");
+                  $("#btnDoOrder").prop("disabled", false);
               }
           }
       });      
