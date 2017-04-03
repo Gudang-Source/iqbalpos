@@ -23,20 +23,16 @@ class Transaksi extends MX_Controller {
     function data(){
 		$requestData= $_REQUEST;
 		$columns = array( 
-			0 	=>	'id_supplier', 
-			1 	=> 	'satuan',
-			2 	=> 	'gudang',
-			3 	=> 	'bahan',
-			4 	=> 	'nama',
-			5 	=> 	'sku',
-			6 	=> 	'deskripsi',
-			7 	=> 	'harga_beli',
-			8 	=> 	'stok',
-			9	=> 	'last_edited',
-			10	=> 	'date_add',
-			11	=> 	'aksi'
+			0 	=>	'id',
+			1 	=>	'foto',
+			2 	=> 	'nama_bahan',
+			3 	=> 	'sku',
+			4 	=> 	'stok',
+			5	=> 	'tanggal_tambah_stok',
+			6	=> 	'tanggal_kurang_stok',
+			7	=> 	'aksi'
 		);
-		$sql = " SELECT m_produk.*, m_supplier_produk.nama as namasup, m_satuan.nama as namasat, m_gudang.nama as namagud, m_produk_bahan.nama as namabah";
+		$sql = " SELECT m_produk.*";
 		$sql.= " FROM m_produk ";
 		$sql.= " LEFT JOIN m_supplier_produk ON m_produk.id_supplier = m_supplier_produk.id ";
 		$sql.= " LEFT JOIN m_satuan ON m_produk.id_satuan = m_satuan.id ";
@@ -48,7 +44,7 @@ class Transaksi extends MX_Controller {
 		// $sql = "SELECT * ";
 		$sql.=" WHERE m_produk.deleted=1 ";
 		if( !empty($requestData['search']['value']) ) {
-			$sql.=" AND ( m_produk.id_supplier LIKE '".$requestData['search']['value']."%' ";    
+			$sql.=" AND ( m_supplier_produk.nama LIKE '".$requestData['search']['value']."%' ";    
 			$sql.=" OR m_produk.deskripsi LIKE '".$requestData['search']['value']."%' ";
 			$sql.=" OR m_produk.nama LIKE '".$requestData['search']['value']."%' ";
 			$sql.=" OR m_produk.harga_beli LIKE '".$requestData['search']['value']."%' ";
@@ -60,21 +56,31 @@ class Transaksi extends MX_Controller {
 		$sql.=" ORDER BY ". $columns[$requestData['order'][0]['column']]."   ".$requestData['order'][0]['dir']."   LIMIT ".$requestData['start']." ,".$requestData['length']."   "; 
 		$query=$this->Transaksibarangmasukmodel->rawQuery($sql);
 		$data = array();
+		$i = 1;
 		foreach ($query->result_array() as $row) {
+            $foto_url = base_url()."/upload/produk/placeholder.png";
+            if(!empty($row["foto"])) {
+                if(file_exists(URL_UPLOAD."/produk/".$row["foto"])) {
+                    $foto_url = base_url()."/upload/produk/".$row["foto"];
+                }
+            }			
 			$nestedData		=	array(); 
 
-			$nestedData[] 	= 	$row["namasup"];
-			$nestedData[] 	= 	$row["namasat"];
-			$nestedData[] 	= 	$row["namagud"];
-			$nestedData[] 	= 	$row["namabah"];
+			$nestedData[] 	= 	$i;
+			$i++;
+            $nestedData[]   .=  "<a href='javascript:void(0)' data-toggle='popover' data-html='true' data-placement='right' onclick='showThumbnail(this)'>"
+                            . "<img src='".$foto_url."' class='img-responsive img-rounded' width='70' alt='No Image' style='margin:0 auto;'> </a>";
 			$nestedData[] 	= 	$row["nama"];
 			$nestedData[] 	= 	$row["sku"];
-			$nestedData[] 	= 	$row["deskripsi"];
-			$nestedData[] 	= 	$row["harga_beli"];
 			$nestedData[] 	= 	$row["stok"];
-			$nestedData[] 	= 	$row["last_edited"];
-			$nestedData[] 	= 	$row["date_add"];
-			$nestedData[] 	= 	"<button onclick=tambahStok('".$row['id']."') class='btn btn-success'>TAMBAH STOK</button><button onclick=kurangStok('".$row['id']."') class='btn btn-success'>KURANGI STOK</button>";
+			$nestedData[] 	= 	$row["tanggal_tambah_stok"];
+			$nestedData[] 	= 	$row["tanggal_kurang_stok"];
+			$nestedData[] 	= 	"
+								<a class='divpopover btn btn-sm btn-default' href='javascript:void(0)' data-toggle='popover' data-placement='top' data-html='true' title='Tambah Stok' onclick=tambahStok('".$row['id']."')><i class='fa fa-plus'></i>
+								</a>
+								<a class='divpopover btn btn-sm btn-default' href='javascript:void(0)' data-toggle='popover' data-placement='top' data-html='true' title='Tambah Stok' onclick=kurangStok('".$row['id']."')><i class='fa fa-minus'></i>
+								</a>
+								";
 			
 			$data[] = $nestedData;
 		}
@@ -118,7 +124,7 @@ class Transaksi extends MX_Controller {
     				$dataUpdate['stok'] = $lastStok - $qty;
     				$dataInsert['status'] = 3;
     				$dataInsert['stok_akhir'] = $lastStok - $qty;
-					$dataInsert['keterangan'] = "DIKURANG MANUAL OLEH ".$this->session->userdata('nama_user');
+					$dataInsert['keterangan'] = $this->session->userdata('nama_user')." mengurangi sebanyak ".$qty." stok ";
     			}
     		}else if($state == "tambah"){
 				$dataUpdate['tanggal_tambah_stok'] = $dateNow;
@@ -126,7 +132,7 @@ class Transaksi extends MX_Controller {
 				$dataUpdate['stok'] = $lastStok + $qty;
 				$dataInsert['status'] = 4;
 				$dataInsert['stok_akhir'] = $lastStok + $qty;
-				$dataInsert['keterangan'] = "DITAMBAH MANUAL OLEH ".$this->session->userdata('nama_user');
+				$dataInsert['keterangan'] = $this->session->userdata('nama_user')." menambahkan sebanyak ".$qty." stok ";
     		}
     		$updateProduk = $this->Transaksibarangmasukmodel->update($dataCondition, $dataUpdate, 'm_produk');
     		if($updateProduk){

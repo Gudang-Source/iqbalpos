@@ -6,18 +6,14 @@
       <table id="TableMain" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
               <tr>
-                  <th class="text-center">SUPPLIER</th>
-                  <th class="text-center">SATUAN</th>
-                  <th class="text-center">GUDANG</th>
-                  <th class="text-center">BAHAN</th>
-                  <th class="text-center">NAMA</th>
+                  <th class="text-center">No</th>
+                  <th class="text-center">Foto</th>
+                  <th class="text-center">Nama Produk</th>
                   <th class="text-center">SKU</th>
-                  <th class="text-center">DESKRIPSI</th>
-                  <th class="text-center">HARGA BELI</th>
-                  <th class="text-center">STOK</th>
-                  <th class="text-center">TERAKHIR UPDATE</th>
-                  <th class="text-center" class="hidden-xs">DATE ADD</th>
-                  <th class="text-center" class="hidden-xs">AKSI</th>
+                  <th class="text-center">Stok</th>
+                  <th class="text-center">Terakhir Tambah Stok</th>
+                  <th class="text-center">Terakhir Kurang Stok</th>
+                  <th class="text-center" class="hidden-xs">Aksi</th>
               </tr>
           </thead>
 
@@ -66,7 +62,7 @@
       $("#modalform").modal("show");
     }
     function kurangStok(id){
-      $("#myModalLabel").val("Kurang Stok Produk");
+      $("#myModalLabel").html("Kurang Stok Produk");
       $("#state").val("kurang");
       $("#qty").val("");
       $("#idProduk").val(id);
@@ -80,7 +76,7 @@
                 url : "<?php echo base_url('Transaksi_barangmasuk/Transaksi/data'); ?>",
                 type: "post",
                 error: function(){
-                    $("#TableMain").append('<tbody class="employee-grid-error"><tr><th colspan="12">No data found in the server</th></tr></tbody>');
+                    $("#TableMain").append('<tbody class="employee-grid-error"><tr><th colspan="8">No data found in the server</th></tr></tbody>');
                     // $("#employee-grid_processing").css("display","none");
                     // dataTable.ajax.reload( null, false );
                 }
