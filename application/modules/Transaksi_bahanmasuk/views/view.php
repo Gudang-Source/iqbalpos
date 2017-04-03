@@ -6,17 +6,14 @@
       <table id="TableMain" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
               <tr>
-                  <th class="text-center">SUPPLIER</th>
-                  <th class="text-center">SATUAN</th>
-                  <th class="text-center">GUDANG</th>
-                  <th class="text-center">NAMA</th>
+                  <th class="text-center">No</th>
+                  <th class="text-center">Foto</th>
+                  <th class="text-center">Nama Produk</th>
                   <th class="text-center">SKU</th>
-                  <th class="text-center">DESKRIPSI</th>
-                  <th class="text-center">HARGA BELI</th>
-                  <th class="text-center">STOK</th>
-                  <th class="text-center">TERAKHIR UPDATE</th>
-                  <th class="text-center" class="hidden-xs">DATE ADD</th>
-                  <th class="text-center" class="hidden-xs">AKSI</th>
+                  <th class="text-center">Stok</th>
+                  <th class="text-center">Terakhir Tambah Stok</th>
+                  <th class="text-center">Terakhir Kurang Stok</th>
+                  <th class="text-center" class="hidden-xs">Aksi</th>
               </tr>
           </thead>
 
@@ -32,7 +29,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Ubah Stok Produk</h4>
+        <h4 class="modal-title" id="myModalLabel">Ubah Stok Bahan</h4>
       </div>
       <form action="<?php echo base_url('Transaksi_bahanmasuk/Transaksi/ubahStok') ?>" method="POST" id="myform">      
         <div class="modal-body">
@@ -57,14 +54,14 @@
 <!-- /.Modal Ubah-->
 <script type="text/javascript" language="javascript" >
     function tambahStok(id){
-      $("#myModalLabel").html("Tambah Stok Produk");
+      $("#myModalLabel").html("Tambah Stok Bahan");
       $("#state").val("tambah");
       $("#qty").val("");
       $("#idProduk").val(id);
       $("#modalform").modal("show");
     }
     function kurangStok(id){
-      $("#myModalLabel").val("Kurang Stok Produk");
+      $("#myModalLabel").val("Kurang Stok Bahan");
       $("#state").val("kurang");
       $("#qty").val("");
       $("#idProduk").val(id);
@@ -78,7 +75,7 @@
                 url : "<?php echo base_url('Transaksi_bahanmasuk/Transaksi/data'); ?>",
                 type: "post",
                 error: function(){
-                    $("#TableMain").append('<tbody class="employee-grid-error"><tr><th colspan="12">No data found in the server</th></tr></tbody>');
+                    $("#TableMain").append('<tbody class="employee-grid-error"><tr><th colspan="8">No data found in the server</th></tr></tbody>');
                     // $("#employee-grid_processing").css("display","none");
                     // dataTable.ajax.reload( null, false );
                 }

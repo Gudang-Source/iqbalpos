@@ -23,19 +23,16 @@ class Transaksi extends MX_Controller {
     function data(){
 		$requestData= $_REQUEST;
 		$columns = array( 
-			0 	=>	'id_supplier_bahan', 
-			1 	=> 	'satuan',
-			2 	=> 	'gudang',
-			3 	=> 	'nama',
-			4 	=> 	'sku',
-			5 	=> 	'deskripsi',
-			6 	=> 	'harga_beli',
-			7 	=> 	'stok',
-			8	=> 	'last_edited',
-			9	=> 	'date_add',
-			10	=> 	'aksi'
+			0 	=>	'id',
+			1 	=>	'foto',
+			2 	=> 	'nama_bahan',
+			3 	=> 	'sku',
+			4 	=> 	'stok',
+			5	=> 	'tanggal_tambah_stok',
+			6	=> 	'tanggal_kurang_stok',
+			7	=> 	'aksi'
 		);
-		$sql = " SELECT m_bahan.*, m_supplier_bahan.nama as namasup, m_satuan.nama as namasat, m_gudang.nama as namagud";
+		$sql = " SELECT m_bahan.*";
 		$sql.= " FROM m_bahan ";
 		$sql.= " LEFT JOIN m_supplier_bahan ON m_bahan.id_supplier_bahan = m_supplier_bahan.id ";
 		$sql.= " LEFT JOIN m_satuan ON m_bahan.id_satuan = m_satuan.id ";
@@ -45,7 +42,7 @@ class Transaksi extends MX_Controller {
 		$totalFiltered = $totalData;
 		$sql.=" WHERE m_bahan.deleted=1 ";
 		if( !empty($requestData['search']['value']) ) {
-			$sql.=" AND ( m_bahan.id_supplier LIKE '".$requestData['search']['value']."%' ";    
+			$sql.=" AND ( m_supplier_bahan.nama LIKE '".$requestData['search']['value']."%' ";    
 			$sql.=" OR m_bahan.deskripsi LIKE '".$requestData['search']['value']."%' ";
 			$sql.=" OR m_bahan.nama LIKE '".$requestData['search']['value']."%' ";
 			$sql.=" OR m_bahan.harga_beli LIKE '".$requestData['search']['value']."%' ";
@@ -57,19 +54,25 @@ class Transaksi extends MX_Controller {
 		$sql.=" ORDER BY ". $columns[$requestData['order'][0]['column']]."   ".$requestData['order'][0]['dir']."   LIMIT ".$requestData['start']." ,".$requestData['length']."   "; 
 		$query=$this->Transaksibahanmasukmodel->rawQuery($sql);
 		$data = array();
+		$i = 1;
 		foreach ($query->result_array() as $row) {
+            $foto_url = base_url()."/upload/produk/placeholder.png";
+            if(!empty($row["foto"])) {
+                if(file_exists(URL_UPLOAD."/produk/".$row["foto"])) {
+                    $foto_url = base_url()."/upload/produk/".$row["foto"];
+                }
+            }			
 			$nestedData		=	array(); 
 
-			$nestedData[] 	= 	$row["namasup"];
-			$nestedData[] 	= 	$row["namasat"];
-			$nestedData[] 	= 	$row["namagud"];
+			$nestedData[] 	= 	$i;
+			$i++;
+            $nestedData[]   .=  "<a href='javascript:void(0)' data-toggle='popover' data-html='true' data-placement='right' onclick='showThumbnail(this)'>"
+                            . "<img src='".$foto_url."' class='img-responsive img-rounded' width='70' alt='No Image' style='margin:0 auto;'> </a>";
 			$nestedData[] 	= 	$row["nama"];
 			$nestedData[] 	= 	$row["sku"];
-			$nestedData[] 	= 	$row["deskripsi"];
-			$nestedData[] 	= 	$row["harga_beli"];
 			$nestedData[] 	= 	$row["stok"];
-			$nestedData[] 	= 	$row["last_edited"];
-			$nestedData[] 	= 	$row["date_add"];
+			$nestedData[] 	= 	$row["tanggal_tambah_stok"];
+			$nestedData[] 	= 	$row["tanggal_kurang_stok"];
 			$nestedData[] 	= 	"<button onclick=tambahStok('".$row['id']."') class='btn btn-success'>TAMBAH STOK</button><button onclick=kurangStok('".$row['id']."') class='btn btn-success'>KURANGI STOK</button>";
 			
 			$data[] = $nestedData;
@@ -112,7 +115,7 @@ class Transaksi extends MX_Controller {
     				$dataUpdate['stok'] = $lastStok - $qty;
     				$dataInsert['status'] = 3;
     				$dataInsert['stok_akhir'] = $lastStok - $qty;
-					$dataInsert['keterangan'] = "DIKURANG MANUAL OLEH ".$this->session->userdata('nama_user');
+					$dataInsert['keterangan'] = $this->session->userdata('nama_user')." mengurangi sebanyak ".$qty." stok ";
     			}
     		}else if($state == "tambah"){
 				$dataUpdate['tanggal_tambah_stok'] = $dateNow;
@@ -120,7 +123,7 @@ class Transaksi extends MX_Controller {
 				$dataUpdate['stok'] = $lastStok + $qty;
 				$dataInsert['status'] = 4;
 				$dataInsert['stok_akhir'] = $lastStok + $qty;
-				$dataInsert['keterangan'] = "DITAMBAH MANUAL OLEH ".$this->session->userdata('nama_user');
+				$dataInsert['keterangan'] = $this->session->userdata('nama_user')." menambahkan sebanyak ".$qty." stok ";
     		}
     		$updateProduk = $this->Transaksibahanmasukmodel->update($dataCondition, $dataUpdate, 'm_bahan');
     		if($updateProduk){
