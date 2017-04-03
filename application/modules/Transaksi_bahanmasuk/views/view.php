@@ -61,7 +61,7 @@
       $("#modalform").modal("show");
     }
     function kurangStok(id){
-      $("#myModalLabel").val("Kurang Stok Bahan");
+      $("#myModalLabel").html("Kurang Stok Bahan");
       $("#state").val("kurang");
       $("#qty").val("");
       $("#idProduk").val(id);

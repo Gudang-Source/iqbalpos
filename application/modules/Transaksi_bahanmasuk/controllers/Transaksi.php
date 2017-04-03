@@ -73,7 +73,12 @@ class Transaksi extends MX_Controller {
 			$nestedData[] 	= 	$row["stok"];
 			$nestedData[] 	= 	$row["tanggal_tambah_stok"];
 			$nestedData[] 	= 	$row["tanggal_kurang_stok"];
-			$nestedData[] 	= 	"<button onclick=tambahStok('".$row['id']."') class='btn btn-success'>TAMBAH STOK</button><button onclick=kurangStok('".$row['id']."') class='btn btn-success'>KURANGI STOK</button>";
+			$nestedData[] 	= 	"
+								<a class='divpopover btn btn-sm btn-default' href='javascript:void(0)' data-toggle='popover' data-placement='top' data-html='true' title='Tambah Stok' onclick=tambahStok('".$row['id']."')><i class='fa fa-plus'></i>
+								</a>
+								<a class='divpopover btn btn-sm btn-default' href='javascript:void(0)' data-toggle='popover' data-placement='top' data-html='true' title='Tambah Stok' onclick=kurangStok('".$row['id']."')><i class='fa fa-minus'></i>
+								</a>
+								";
 			
 			$data[] = $nestedData;
 		}
