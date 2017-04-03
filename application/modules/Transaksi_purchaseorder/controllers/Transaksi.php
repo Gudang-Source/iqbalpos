@@ -44,12 +44,12 @@ class Transaksi extends MX_Controller {
 		// $sql = "SELECT * ";
 		$sql.=" WHERE t_purchase_order.deleted=1 ";
 		if( !empty($requestData['search']['value']) ) {
-			$sql.=" AND ( id_supplier LIKE '".$requestData['search']['value']."%' ";    
-			$sql.=" OR catatan LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR total_berat LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR total_qty LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR total_harga_beli LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR date_add LIKE '".$requestData['search']['value']."%' )";
+			$sql.=" AND ( m_supplier_produk.nama LIKE '".$requestData['search']['value']."%' ";    
+			$sql.=" OR t_purchase_order.catatan LIKE '".$requestData['search']['value']."%' ";
+			$sql.=" OR t_purchase_order.total_berat LIKE '".$requestData['search']['value']."%' ";
+			$sql.=" OR t_purchase_order.total_qty LIKE '".$requestData['search']['value']."%' ";
+			$sql.=" OR t_purchase_order.total_harga_beli LIKE '".$requestData['search']['value']."%' ";
+			$sql.=" OR t_purchase_order.date_add LIKE '".$requestData['search']['value']."%' )";
 		}
 		$query=$this->Transaksipomodel->rawQuery($sql);
 		$totalFiltered = $query->num_rows();
@@ -65,7 +65,8 @@ class Transaksi extends MX_Controller {
 			$nestedData[] 	= 	$row["total_qty"];
 			$nestedData[] 	= 	$row["total_harga_beli"];
 			$nestedData[] 	= 	$row["date_add"];
-			$nestedData[] 	= 	"<button onclick=detail('".$row['id']."') class='btn btn-success'>CONFIRM</button>";
+			$nestedData[] 	= 	"<button onclick=detail('".$row['id']."') class='btn btn-success'> Detail </button>
+                                <a href='".base_url('Transaksi_purchaseorder/Transaksi/invoices/'.$row['id'])."') target='_blank' class='btn btn-success'> Print </a>";
 			
 			$data[] = $nestedData;
 		}
@@ -126,8 +127,8 @@ class Transaksi extends MX_Controller {
 
 			$nestedData[] 	= 	$row['poid'];
 			$nestedData[] 	= 	$row['nama'];
-			$nestedData[] 	= 	$row['ukuran'];
-			$nestedData[] 	= 	$row['warna'];
+			$nestedData[] 	= 	$row['ukuran']!=null||$row['ukuran']!=0?$row['ukuran']:"Tidak Ada Ukuran";
+			$nestedData[] 	= 	$row['warna']!=null||$row['warna']!=0?$row['warna']:"Tidak Ada Warna";
 			$nestedData[] 	= 	$row['podjm'];
 			$nestedData[] 	= 	$row['podtb'];
 			$nestedData[] 	= 	$row['podhb'];
@@ -143,6 +144,30 @@ class Transaksi extends MX_Controller {
 					);
 		echo json_encode($json_data);
     }
+    function invoices($idORder){
+        $sql = " SELECT 
+                    m_supplier_produk.nama as namacus,
+                    m_supplier_produk.alamat as alamatcus,
+                    m_supplier_produk.no_telp as notelpcus,
+                    t_purchase_order.id as orderinvoice,
+                    t_purchase_order.date_add as orderdate,
+                    t_purchase_order.total_harga_beli as ordertotal,
+                    m_produk.nama as namaprod,
+                    m_produk.deskripsi as deskprod,
+                    t_purchase_order_detail.harga_beli as detailjual,
+                    t_purchase_order_detail.jumlah as jumlahjual,
+                    t_purchase_order_detail.total_harga as totaljual";
+        $sql.= " FROM t_purchase_order";
+        $sql.= " LEFT JOIN t_purchase_order_detail ON t_purchase_order.id = t_purchase_order_detail.id_purchase_order";
+        $sql.= " LEFT JOIN m_produk on t_purchase_order_detail.id_produk = m_produk.id";
+        $sql.= " LEFT JOIN m_supplier_produk ON t_purchase_order.id_supplier = m_supplier_produk.id";
+        $sql.= " LEFT JOIN m_produk_ukuran on t_purchase_order_detail.id_ukuran = m_produk_ukuran.id";
+        $sql.= " LEFT JOIN m_produk_warna on t_purchase_order_detail.id_warna = m_produk_warna.id";
+        $sql.= " WHERE t_purchase_order.id=".$idORder;
+        $exeQuery = $this->Transaksipomodel->rawQuery($sql);
+        $data['data'] = $exeQuery;
+        $this->load->view('Transaksi_purchaseorder/invoice', $data);
+    }    
     function confirm(){
     	$params = $this->input->post();
     	if($params != null){
@@ -242,16 +267,21 @@ class Transaksi extends MX_Controller {
     	$list = $this->Transaksipomodel->select($dataSelect, 'm_produk');
     	return json_encode($list->result_array());
     }
-    function getProdukByName($keyword = null, $supplier = null){
-    	$list = null;
-    	$dataSelect['deleted'] = 1;
-    	if($keyword != null && $supplier != null){
-    		$dataLike['nama'] = $keyword;
-    		$dataCondition['id_supplier'] = $supplier;
-    	}
-    	$list = $this->Transaksipomodel->like($dataCondition, $dataLike, 'm_produk');
-    	return json_encode($list->result_array());
-    }   
+    function getProdukByName($keyword = null, $supplier = null, $kategori = null){
+        $list = null;
+        $dataSelect['deleted'] = 1;
+        $dataCondition = array();
+        $dataLike = array();
+        if($keyword != null){
+            $dataLike['nama'] = $keyword;
+        }
+        if($kategori != null || $kategori !=""){
+            $dataCondition['id_kategori'] = $kategori;
+        }        
+        $dataCondition['id_supplier'] = $supplier;
+        $list = $this->Transaksiservicemodel->like($dataCondition, $dataLike, 'm_produk');
+        return json_encode($list->result_array());
+    }  
     function getProdukByKategori($supplier = null, $kategori = null, $keyword = null){
     	$list = null;
     	$dataSelect['deleted'] = 1;
@@ -281,23 +311,43 @@ class Transaksi extends MX_Controller {
     	echo json_encode($selectData->result_array());
     }
     function filterProdukByName(){
-    	$params  = $this->input->post();
-    	$keyword = $params['keyword'];
-    	$supplier = $params['supplier'];
-    	echo $this->getProdukByName($keyword, $supplier);
+        $params  = $this->input->post();
+        $keyword = null;
+        $kategori = null;
+        if ($params['keyword'] != null || $params['keyword'] != "") {
+            $keyword = $params['keyword'];
+        }
+        if($params['kategori'] != null || $params['kategori'] != ""){
+            $realkategori = explode("-", $params['kategori']);
+            $kategori = $realkategori[1];
+        }
+        $supplier = $params['supplier'];
+        echo $this->getProdukByName($keyword, $supplier, $kategori);
     }
     function filterProdukByKategori($supplier, $kategori, $keyword = null){
     	echo $this->getProdukByKategori($supplier, $kategori, $keyword);
     }
-    function getWarna(){
-    	$dataSelect['deleted'] = 1;
-    	$selectData = $this->Transaksipomodel->select($dataSelect, 'm_produk_warna');
-    	return json_encode($selectData->result_array());
+    function getWarna($id){
+        $rid = explode("_", $id);
+    	// $dataSelect['deleted'] = 1;
+    	// $selectData = $this->Transaksipomodel->select($dataSelect, 'm_produk_warna');
+        $selectData = $this->Transaksipomodel->rawQuery("SELECT m_produk_warna.id, m_produk_warna.nama
+                                                        FROM m_produk_det_warna
+                                                        INNER JOIN m_produk ON m_produk_det_warna.id_produk = m_produk.id
+                                                        INNER JOIN m_produk_warna ON m_produk_det_warna.id_warna = m_produk_warna.id
+                                                        WHERE m_produk_det_warna.id_produk = ".$rid[0]);
+    	echo json_encode($selectData->result_array());
     }
-    function getUkuran(){
-    	$dataSelect['deleted'] = 1;
-    	$selectData = $this->Transaksipomodel->select($dataSelect, 'm_produk_ukuran');
-    	return json_encode($selectData->result_array());
+    function getUkuran($id){
+        $rid = explode("_", $id);
+    	// $dataSelect['deleted'] = 1;
+    	// $selectData = $this->Transaksipomodel->select($dataSelect, 'm_produk_ukuran');
+        $selectData = $this->Transaksipomodel->rawQuery("SELECT m_produk_ukuran.id, m_produk_ukuran.nama
+                                                        FROM m_produk_det_ukuran
+                                                        INNER JOIN m_produk ON m_produk_det_ukuran.id_produk = m_produk.id
+                                                        INNER JOIN m_produk_ukuran ON m_produk_det_ukuran.id_ukuran =m_produk_ukuran.id
+                                                        WHERE m_produk_det_ukuran.id_produk = ".$rid[0]);
+    	echo json_encode($selectData->result_array());
     }
     function transaksi(){
     	$dataSelect['deleted'] = 1;
@@ -305,8 +355,8 @@ class Transaksi extends MX_Controller {
         $data['list_order'] = $this->getOrder();
         $data['list_supplier'] = $this->getSupplier();
         
-        $data['list_warna'] = $this->getWarna();
-        $data['list_ukuran'] = $this->getUkuran();
+        // $data['list_warna'] = $this->getWarna();
+        // $data['list_ukuran'] = $this->getUkuran();
         
         $data['total'] = $this->cart->total();
         $data['total_items'] = $this->cart->total_items();
@@ -425,12 +475,12 @@ class Transaksi extends MX_Controller {
 			$datas = array(
 		                'id'      => $selectData->row()->id."_PURCHASEORDER",
 		                'qty'     => 1,
-		                'price'   => 0,
+		                'price'   => $selectData->row()->harga_beli,
 		                'name'    => $selectData->row()->nama,
 				        'options' => array(
 				        				'ukuran'=>0,
 				        				'warna'=>0,
-				        				'total_berat'=>0
+				        				'total_berat'=>$selectData->row()->berat
 				        				)
 			);
 			$this->cart->insert($datas);
@@ -474,14 +524,14 @@ class Transaksi extends MX_Controller {
     	$params = $this->input->post();
     	if($params != null){
     		$getTotal = json_decode($this->_getTotal(), true);
-    		$dataInsert['id_supplier'] 	= $params['supplier'];
-    		$dataInsert['catatan']		= $params['catatan'];
-    		$dataInsert['total_berat'] = $this->getOption('total_berat');
-    		$dataInsert['total_qty'] = $getTotal['total_items'];
-    		$dataInsert['total_harga_beli'] = $getTotal['total'];
-    		$dataInsert['add_by'] = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
-    		$dataInsert['edited_by'] = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
-    		$dataInsert['deleted'] = 1;
+    		$dataInsert['id_supplier'] 	      = $params['supplier'];
+    		$dataInsert['catatan']		      = $params['catatan'];
+    		$dataInsert['total_berat']        = $this->getTotalBerat();
+    		$dataInsert['total_qty']          = $getTotal['total_items'];
+    		$dataInsert['total_harga_beli']   = $getTotal['total'];
+    		$dataInsert['add_by']             = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+    		$dataInsert['edited_by']          = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+    		$dataInsert['deleted']            = 1;
     		$insertDataMaster = $this->Transaksipomodel->insert($dataInsert, 't_purchase_order');
     		if($insertDataMaster){    		
 	    		$getDataID = $this->Transaksipomodel->select($dataInsert, 't_purchase_order');
@@ -494,7 +544,7 @@ class Transaksi extends MX_Controller {
 				    		$dataInsertDetail['id_ukuran']				=	$items['options']['ukuran'];
 				    		$dataInsertDetail['id_warna']				=	$items['options']['warna'];
 				    		$dataInsertDetail['jumlah']					=	$items['qty'];
-				    		$dataInsertDetail['total_berat']			=	$items['options']['total_berat'];
+				    		$dataInsertDetail['total_berat']			=	$items['options']['total_berat'] * $items['qty'];
 				    		$dataInsertDetail['harga_beli']				=	$items['price'];
 				    		$dataInsertDetail['total_harga']			=	$items['price'] * $items['qty'];
 				    		$insertDetail = $this->Transaksipomodel->insert($dataInsertDetail, 't_purchase_order_detail');
@@ -504,7 +554,6 @@ class Transaksi extends MX_Controller {
     		}
     	}
     	$this->destroyCart();
-		// echo $this->getOrder();    	
     }
     function getOption($option){
     	$total = 0;
@@ -518,4 +567,17 @@ class Transaksi extends MX_Controller {
     	}
     	return $total;
     }
+    function getTotalBerat(){
+        $total = 0;
+        foreach ($this->cart->contents() as $items){
+            $idProduks = explode("_", $items['id']);
+            if (count($idProduks) > 1) {
+                if ($idProduks[1] == "PURCHASEORDER") {
+                    $total += $items['options']['total_berat'];
+                    $total = $total * $items['qty'];
+                }
+            }
+        }
+        return $total;
+    }    
 }
