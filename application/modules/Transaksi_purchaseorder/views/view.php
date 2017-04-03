@@ -1,11 +1,9 @@
 <!-- Page Content -->
 <div class="container">
-<div class="row" style='min-height:80px;'>
-  <div id='notif-top' style="margin-top:50px;display:none;" class="col-md-4 alert alert-success pull-right">
-    <strong>Sukses!</strong> Data berhasil disimpan
-  </div>
-</div>
-   <div class="row" style="margin-top:10px;">
+    <div class="row">
+      <h3><strong>List</strong> - Purchase Order</h3>
+    </div>
+     <div class="row" style="margin-top:10px;">
       <table id="TableMain" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
               <tr>
@@ -18,13 +16,10 @@
                   <th class="text-center" class="hidden-xs">AKSI</th>
               </tr>
           </thead>
-
           <tbody id='bodytable'>
-            
           </tbody>
       </table>
    </div>
-   <!-- Button trigger modal -->
    <a type="button" class="btn btn-add btn-lg" href="<?php echo base_url('index/modul/Transaksi_purchaseorder-Transaksi-transaksi'); ?>" target="_blank">
      Tambah Purchase Order
    </a>

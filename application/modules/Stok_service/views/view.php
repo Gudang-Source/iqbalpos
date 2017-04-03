@@ -1,10 +1,8 @@
 <!-- Page Content -->
 <div class="container">
-<div class="row" style='min-height:80px;'>
-  <div id='notif-top' style="margin-top:50px;display:none;" class="col-md-4 alert alert-success pull-right">
-    <strong>Sukses!</strong> Data berhasil disimpan
+  <div class="row">
+    <h3><strong>List</strong> - Stok Service</h3>
   </div>
-</div>
    <div class="row" style="margin-top:10px;">
       <table id="TableMain" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>

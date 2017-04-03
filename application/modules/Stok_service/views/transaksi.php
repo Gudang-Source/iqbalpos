@@ -1,6 +1,9 @@
 
 
 <div class="container-fluid">
+  <div class="row">
+    <h3><strong>Transaksi</strong> - Stok Service</h3>
+  </div>
    <div class="row">
     <div class="col-md-5 left-side">
       <form action="<?php echo base_url('Stok_service/Transaksi/doServices'); ?>" method="post" id="serviceOrder">
@@ -361,14 +364,16 @@
   }
   function cancelOrder(){
       $.confirm({
-          title: 'Confirm!',
-          content: 'Simple confirm!',
+          title: 'Batal',
+          content: 'Batalkan Transaksi ?',
           buttons: {
               confirm: function () {
                   doClear();
               },
               cancel: function () {
                   // $.alert('Canceled!');
+                  $('#btnDoOrder').html("<h5 class=\'text-bold\'>Cancel</h5>");
+                  $("#btnDoOrder").prop("disabled", false);  
               }
           }
       });    

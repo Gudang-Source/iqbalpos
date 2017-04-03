@@ -1,11 +1,14 @@
 <style type="text/css">
   .product-details input[type="text"]{
-    width: 7.1em !important;
+    width: 5em !important;
   }
 </style>
 <div class="container-fluid">
+  <div class="row">
+    <h3><strong>Transaksi</strong> - Purchase Order</h3>
+  </div>
    <div class="row">
-    <div class="col-md-7 left-side">
+    <div class="col-md-5 left-side">
       <form action="<?php echo base_url('Transaksi_purchaseorder/Transaksi/doSubmit'); ?>" method="post" id="purchaseOrder">          
          <div class="col-xs-8">
             <h2>Pilih Supplier</h2>
@@ -24,23 +27,20 @@
          <div class="col-sm-12">
                <textarea name="catatan" class="form-control" placeholder="CATATAN"></textarea>
          </div>
-         <div class="col-xs-2 table-header">
+         <div class="col-xs-3 table-header">
             <h3>Product</h3>
          </div>
-         <div class="col-xs-2 table-header nopadding">
-            <h3 class="text-left">Ukuran</h3>
+         <div class="col-xs-3 table-header">
+            <h3>Opsi</h3>
          </div>
-         <div class="col-xs-2 table-header nopadding">
-            <h3 class="text-left">Warna</h3>
+         <div class="col-xs-2 table-header">
+            <h3>QTY</h3>
          </div>
-         <div class="col-xs-2 table-header nopadding">
-            <h3 class="text-left">QTY</h3>
+         <div class="col-xs-2 table-header">
+            <h3>Harga Satuan</h3>
          </div>
-         <div class="col-xs-2 table-header nopadding">
-            <h3 class="text-left">Harga Beli</h3>
-         </div>
-         <div class="col-xs-2 table-header nopadding">
-            <h3 class="text-left">Total Berat</h3>
+         <div class="col-xs-2 table-header">
+            <h3>Subtotal</h3>
          </div>
          <div id="productList">
             <!-- product List goes here  -->
@@ -49,22 +49,9 @@
             <div class="table-responsive col-sm-12 totalTab">
                <table class="table">
                   <tr>
-                     <td class="active" width="40%">Subtotal</td>
+                     <td class="active" width="40%">Total QTY</td>
                      <td class="whiteBg" width="60%"><span id="Subtot"></span>
                         <span class="float-right"><b id="eTotalItem"><span></span> Item</b></span>
-                     </td>
-                  </tr>
-                  <tr>
-                     <td class="active">TAX</td>
-                     <td class="whiteBg"><input type="text" value="" id="eTax" class="total-input TAX" placeholder="N/A"  maxlength="5">
-                        <span class="float-right"><b id="taxValue"></b></span>
-                     </td>
-                  </tr>
-                  <tr>
-                     <td class="active">Discount</td>
-                     <td class="whiteBg">
-                        <input type="text" value="" id="eDiscount" class="total-input Remise" placeholder="N/A"  maxlength="5">
-                        <span class="float-right"><b id="RemiseValue"></b></span>
                      </td>
                   </tr>
                   <tr>
@@ -79,7 +66,7 @@
         </form>
 
       </div>
-      <div class="col-md-5 right-side nopadding">
+      <div class="col-md-7 right-side nopadding">
         <div class="row row-horizon" id="kategoriGat">
             <span class="categories selectedGat" id=""><i class="fa fa-home"></i></span>
         </div>
@@ -105,8 +92,8 @@
   var listProduct = <?php echo $list_produk; ?>;
   var listOrder = <?php echo $list_order; ?>;
   var listSupplier = <?php echo $list_supplier; ?>;
-  var listWarna = <?php echo $list_warna; ?>;
-  var listUkuran = <?php echo $list_ukuran; ?>;
+  var listWarna = "";
+  var listUkuran = "";
   var tax = '<?php echo $tax; ?>';
   var discount = '<?php echo $discount; ?>';
   var total = '<?php echo $total; ?>';
@@ -133,14 +120,11 @@
               "<a href='javascript:void(0)' class='addPct' id=\'product-"+json[i].id+"\' onclick=\'addToCart("+json[i].id+")\'>"+
                 "<div class='product color03 flat-box waves-effect waves-block'>"+
                   "<h3 id='proname'>"+json[i].nama+"</h3>"+
-                  "<input id='idname-39' name='name' value='Computer' type='hidden'>"+1
-                  "<input id='idprice-39' name='price' value='350' type='hidden'>"+
-                  "<input id='category' name='category' value='computers' type='hidden'>"+
                   "<div class='mask'>"+
                     "<h3>"+json[i].harga_beli+"</h3>"+
                     "<p>"+json[i].deskripsi+"</p>"+
                   "</div>"+
-                  "<img src='#' alt=\'"+json[i].id_kategori+"\'>"+
+                  "<img src=\'<?php echo base_url('upload/produk') ?>/"+json[i].foto+"\' alt=\'"+json[i].id_kategori+"\'>"+
                 "</div>"+
               "</a>"+
              "</div>";
@@ -153,12 +137,10 @@
     var select = "";
     $("#productList").html("");
       for (var i=0;i<json.length;i++){
-        // option = json[i].options;
-        // select = "stok-"+json[i].rowid;
         html = "<div class='col-xs-12'>"+
                   "<div class='panel panel-default product-details'>"+
                       "<div class='panel-body' style=''>"+
-                          "<div class='col-xs-2 nopadding'>"+
+                          "<div class='col-xs-3 nopadding'>"+
                               "<div class='col-xs-2 nopadding'>"+
                                   "<a href='javascript:void(0)' onclick=delete_order(\'"+json[i].rowid+"\')>"+
                                   "<span class='fa-stack fa-sm productD'>"+
@@ -171,50 +153,58 @@
                                 "<span class='textPD'>"+json[i].produk+"</span>"+
                               "</div>"+
                           "</div>"+
-                          "<div class='col-xs-2'>"+
-                            "<span class='textPD'>"+
+                          "<div class='col-xs-3'>"+
+                            "<span class='TextPD'>"+
                               "<select name=ukuran id=\'uk-"+json[i].rowid+"\' class=\'form-control\' onchange=updateOption(\'"+json[i].rowid+"\')>"+
                                 "<option value=0 select disabled>Pilih Ukuran</option>"+
                               "</select>"+
                             "</span>"+
-                          "</div>"+
-                          "<div class='col-xs-2'>"+
-                            "<span class='textPD'>"+
+                            "<span class='TextPD'>"+
                               "<select name=warna id=\'wr-"+json[i].rowid+"\' class=\'form-control\' onchange=updateOption(\'"+json[i].rowid+"\')>"+
                                 "<option value=0 select disabled>Pilih Warna</option>"+
                               "</select>"+
                             "</span>"+
                           "</div>"+
-                          "<div class='col-xs-2 nopadding productNum'>"+
+                          "<div class='col-xs-2'>"+
                             "<input id=\'qt-"+json[i].rowid+"\' class='form-control' value='"+json[i].qty+"' placeholder='0' maxlength='2' type='text' onchange=updateQty(\'"+json[i].rowid+"\')>"+
                           "</div>"+
-                          "<div class='col-xs-2 nopadding productNum'>"+
-                            "<input type=text id=\'hb-"+json[i].rowid+"\' class=\'form-control\' value='"+json[i].harga_beli+"'  onchange=updateHargaBeli(\'"+json[i].rowid+"\')>"+
+                          "<div class='col-xs-2 nopadding productNum text-center'>"+
+                            ""+json[i].harga_beli+
+                            "<input type=hidden id=\'hb-"+json[i].rowid+"\' class=\'form-control\' value='"+json[i].harga_beli+"'  onchange=updateHargaBeli(\'"+json[i].rowid+"\')>"+
                           "</div>"+
-                          "<div class='col-xs-2 nopadding productNum'>"+
-                            "<input type=text id=\'tb-"+json[i].rowid+"\' class=\'form-control\' value='"+json[i].total_berat+"' onchange=updateOption(\'"+json[i].rowid+"\')>"+
+                          "<div class='col-xs-2 nopadding productNum text-center'>"+
+                            ""+json[i].subtotal+
+                            "<input type=hidden id=\'tb-"+json[i].rowid+"\' class=\'form-control\' value='"+json[i].total_berat+"' onchange=updateOption(\'"+json[i].rowid+"\')>"+
                           "</div>"+
                       "</div>"+
                   "</div>"+
               "</div>";
         $("#productList").append(html);
-        loadUkuran(json[i].rowid, listUkuran, json[i].ukuran);
-        loadWarna(json[i].rowid, listWarna, json[i].warna);
+        loadUkuran(json[i].id, json[i].rowid, listUkuran, json[i].ukuran);
+        loadWarna(json[i].id, json[i].rowid, listWarna, json[i].warna);
       }
   }
-  function loadUkuran(id, json, pilih){
-    var html = "";
-    $("#uk-"+id).html('');
-    html = "<option value='0' disabled>Pilih Ukuran</option>";
-    $("#uk-"+id).append(html);
-    for (var i=0;i<json.length;i++){
-      var pilihs = "";
-      if(json[i].id == pilih){
-        pilihs = "selected";
+  function loadUkuran(rid, id, json, pilih){
+    $.ajax({
+      url :"<?php echo base_url('Transaksi_purchaseorder/Transaksi/getUkuran')?>/"+rid,
+      type : "GET",
+      data :"",
+      dataType : "json",
+      success : function(data){
+        var html = "";
+        $("#uk-"+id).html('');
+        html = "<option value='0' selected>Tidak Ada Ukuran</option>";
+        $("#uk-"+id).append(html);
+        for (var i=0;i<data.length;i++){
+          var pilihs = "";
+          if(data[i].id == pilih){
+            pilihs = "selected";
+          }
+          html = "<option value=\'"+data[i].id+"\' "+pilihs+">"+data[i].nama+"</option>";
+          $("#uk-"+id).append(html);
+        }
       }
-      html = "<option value=\'"+json[i].id+"\' "+pilihs+">"+json[i].nama+"</option>";
-      $("#uk-"+id).append(html);
-    }
+    });     
   }
   function updateOption(id){
     var ukuran = $("#uk-"+id).val();
@@ -257,19 +247,27 @@
       }
     });
   }
-  function loadWarna(id, json, pilih){
-    var html = "";
-    $("#wr-"+id).html('');
-    html = "<option value='0' selected disabled>Pilih Warna</option>";
-    $("#wr-"+id).append(html);
-    for (var i=0;i<json.length;i++){
-      var pilihs = "";
-      if(json[i].id == pilih){
-        pilihs = "selected";
-      }      
-      html = "<option value=\'"+json[i].id+"\' "+pilihs+">"+json[i].nama+"</option>";
-      $("#wr-"+id).append(html);
-    }
+  function loadWarna(rid, id, json, pilih){
+    $.ajax({
+      url :"<?php echo base_url('Transaksi_purchaseorder/Transaksi/getWarna')?>/"+rid,
+      type : "GET",
+      data :"",
+      dataType : "json",
+      success : function(data){
+        var html = "";
+        $("#wr-"+id).html('');
+        html = "<option value='0' selected>Tidak Ada Warna</option>";
+        $("#wr-"+id).append(html);
+        for (var i=0;i<data.length;i++){
+          var pilihs = "";
+          if(data[i].id == pilih){
+            pilihs = "selected";
+          }      
+          html = "<option value=\'"+data[i].id+"\' "+pilihs+">"+data[i].nama+"</option>";
+          $("#wr-"+id).append(html);
+        }
+      }
+    });    
   }
   function filterProduk(){
     $.ajax({
@@ -297,16 +295,18 @@
   function load_kategori(json){
     var html = "";
     $("#kategoriGat").html('');
-    html = "<span class='categories selectedGat'><i class='fa fa-home'></i></span>";
+    html = "<span class='categories'><i class='fa fa-home'></i></span>";
     $("#kategoriGat").append(html);
     for (var i=0;i<json.length;i++){
-      html = "<span class='categories selectedGat' onclick=filterProdukByKategori(\'"+json[i].id+"\') >"+json[i].nama+"</span>";
+      html = "<span class='categories' onclick=filterProdukByKategori(\'"+json[i].id+"\') id=\'gat-"+json[i].id+"\'>"+json[i].nama+"</span>";
       $("#kategoriGat").append(html);
     }
   }
   function filterProdukByKategori(id){
     var keyword = $("#searchProd").val();
     var supplier = $("#supplierSelect").val();
+    $( ".categories" ).removeClass('selectedGat');
+    $( "#gat-"+id ).addClass( "selectedGat" );
     if(supplier != 0){    
       $.ajax({
         url :"<?php echo base_url('Transaksi_purchaseorder/Transaksi/filterProdukByKategori')?>/"+supplier+"/"+id+"/"+keyword,
@@ -322,18 +322,23 @@
   function search(){
     var keyword = $("#searchProd").val();
     var supplier = $("#supplierSelect").val();
+    var kategori = $(".selectedGat").attr('id');
+    var realkategori = "";
+    if(kategori != null || kategori != undefined){    
+      realkategori = kategori;
+    }
     if(supplier != 0){    
       $.ajax({
-        url :"<?php echo base_url('Transaksi_purchaseorder/Transaksi/filterProdukByName')?>",
+        url :"<?php echo base_url('Stok_service/Transaksi/filterProdukByName')?>",
         type : "POST",
-        data : "keyword="+keyword+"&supplier="+supplier,
+        data : "keyword="+keyword+"&supplier="+supplier+"&kategori="+realkategori,
         dataType : "json",
         success : function(data){
           load_product(data);
         }
       });
     }
-  }  
+  }
   function addToCart(id){
     $.ajax({
       url :"<?php echo base_url('Transaksi_purchaseorder/Transaksi/tambahCart')?>/"+id,
@@ -428,14 +433,15 @@
   }
   function cancelOrder(){
       $.confirm({
-          title: 'Confirm!',
-          content: 'Simple confirm!',
+          title: 'Batal',
+          content: 'Batalkan Transaksi ?',
           buttons: {
               confirm: function () {
                   doClear();
               },
               cancel: function () {
-                  // $.alert('Canceled!');
+                  $('#btnDoOrder').html("<h5 class=\'text-bold\'>Cancel</h5>");
+                  $("#btnDoOrder").prop("disabled", false);  
               }
           }
       });    
@@ -454,6 +460,7 @@
         fillInformation();        
         $('#btnDoOrder').html("<h5 class=\'text-bold\'>Servis Stok</h5>");
         $("#btnDoOrder").prop("disabled", false);
+        window.close();
       }
     });    
   }
@@ -468,6 +475,7 @@
         fillInformation();        
         $('#btnDoOrder').html("<h5 class=\'text-bold\'>Proses Purchase Order</h5>");
         $("#btnDoOrder").prop("disabled", false);
+        window.close();
       }
     });    
   }
@@ -477,14 +485,15 @@
       $("#btnDoOrder").prop("disabled", true);
       e.preventDefault();
       $.confirm({
-          title: 'Confirm!',
-          content: 'Simple confirm!',
+          title: 'Konfirmasi Purchase Order',
+          content: 'Yakin ingin purchase order ?',
           buttons: {
               confirm: function () {
                   doSubmit();
               },
               cancel: function () {
-                  
+                $('#btnDoOrder').html("<h5 class=\'text-bold\'>Proses Purchase Order</h5>");
+                $("#btnDoOrder").prop("disabled", false);
               }
           }
       });      
