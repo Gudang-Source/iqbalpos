@@ -2,19 +2,18 @@
 <div class="container">
 <div class="row" style='min-height:80px;'>
 </div>
+   <div class="row">
+    <h3><strong>Transaksi</strong> - Dropship</h3>
+   </div>
    <div class="row" style="margin-top:10px;">
       <table id="TableMain" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>         
               <tr>
                   <th class="text-center" class="hidden-xs">ID ORDER</th>
                   <th class="text-center" class="hidden-xs">CUSTOMER</th>
-                  <th class="text-center" class="hidden-xs">CATATAN</th>
-                  <th class="text-center" class="hidden-xs">TOTAL BERAT</th>
-                  <th class="text-center" class="hidden-xs">TOTAL QTY</th>
+                  <th class="text-center" class="hidden-xs">DETAIL DROPSHIP</th>
                   <th class="text-center" class="hidden-xs">BIAYA KIRIM</th>
                   <th class="text-center" class="hidden-xs">HARGA BARANG</th>
-                  <th class="text-center" class="hidden-xs">JENIS ORDER</th>
-                  <th class="text-center" class="hidden-xs">STATUS ORDER</th>
                   <th class="text-center" class="hidden-xs">TANGGAL TRANSAKSI</th>
                   <th class="text-center" class="hidden-xs">AKSI</th>
               </tr>
@@ -70,7 +69,7 @@
              <div class="col-sm-12">
                <div class="form-group">
                  <label for="biaya_kirim">Biaya Kirim</label>
-                 <input type="text" name="biaya_kirim" maxlength="30" class="form-control" id="biaya_kirim" placeholder="Biaya Kirim" required="">
+                 <input type="text" name="biaya_kirim" maxlength="30" min="0" class="form-control money" id="biaya_kirim" placeholder="Biaya Kirim" required="">
                </div>
              </div>
            </div>
@@ -86,6 +85,12 @@
 <!-- /.Modal Add-->
 
 <script type="text/javascript" language="javascript" >
+    function maskInputMoney(){
+      $('.money').mask('#.##0', {reverse: true});
+    }
+    function unmaskInputMoney(){
+      $('.money').unmask();
+    }    
     function detail(id){
       // getDataDropship
       $.ajax({
@@ -94,6 +99,7 @@
         data :"",
         success : function(data){
           $("#body-detail").html(data);
+          maskInputMoney();
         }
       });       
       $("#modaldetail").modal("show");
@@ -112,11 +118,13 @@
           $("#no_telp_penerima").val(data.no_telp_penerima);
           $("#alamat_penerima").val(data.alamat_penerima);
           $("#biaya_kirim").val(data.biaya_kirim);
+          unmaskInputMoney(); maskInputMoney();
           $("#modalform").modal('show');
         }
       });       
     }
     $(document).ready(function() {
+        maskInputMoney();
         var dataTable = $('#TableMain').DataTable( {
             "processing": true,
             "serverSide": true,
@@ -130,6 +138,7 @@
         });
         $("#dropshipform").on('submit', function(e){
           e.preventDefault();
+          unmaskInputMoney();
           $.ajax({
             url :$("#dropshipform").attr('action'),
             type :$("#dropshipform").attr('method'),
@@ -139,7 +148,8 @@
               dataTable.ajax.reload(null, false);
               $("#modalform").modal('hide');
             }
-          });  
+          });
+          maskInputMoney();
         });
     });
 </script>

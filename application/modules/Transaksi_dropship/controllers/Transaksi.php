@@ -29,33 +29,28 @@ class Transaksi extends MX_Controller {
 		$columns = array( 
 			0 	=>	'id', 
 			1 	=>	'id_customer', 
-			2 	=> 	'catatan',
-			3	=> 	'total_berat',
-			4	=> 	'total_qty',
-			5	=> 	'biaya_kirim',
-			6	=> 	'grand_total',
-			7	=> 	'jenis_order',
-			8	=> 	'status',
-			9	=> 	'date_add',
-			10	=> 	'aksi'
+			2	=> 	'detail_dropship',
+			3	=> 	'biaya_kirim',
+			4	=> 	'grand_total',
+			5	=> 	'date_add',
+			6	=> 	'aksi'
 		);
 		$sql = " SELECT t_order.* , m_customer.nama as namacus, m_metode_pembayaran.nama as namamet";
 		$sql.= " FROM t_order ";
 		$sql.= " LEFT JOIN m_customer ON t_order.id_customer = m_customer.id ";
 		$sql.= " LEFT JOIN m_metode_pembayaran ON t_order.id_metode_pembayaran = m_metode_pembayaran.id ";
 		$sql.=" WHERE t_order.deleted=1 ";
-		// $sql.=" AND t_order.jenis_order=2 ";
 		$sql.=" AND t_order.status=3 ";
 		$query=$this->Transaksidropshipmodel->rawQuery($sql);
 		$totalData = $query->num_rows();
 		$totalFiltered = $totalData;
 		if( !empty($requestData['search']['value']) ) {
-			$sql.=" AND ( id_customer LIKE '".$requestData['search']['value']."%' ";    
-			$sql.=" OR catatan LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR total_berat LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR total_qty LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR biaya_kirim LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR total_harga_barang LIKE '".$requestData['search']['value']."%' )";
+			$sql.=" AND ( m_customer.nama LIKE '".$requestData['search']['value']."%' ";    
+			$sql.=" OR t_order.catatan LIKE '".$requestData['search']['value']."%' ";
+			$sql.=" OR t_order.total_berat LIKE '".$requestData['search']['value']."%' ";
+			$sql.=" OR t_order.total_qty LIKE '".$requestData['search']['value']."%' ";
+			$sql.=" OR t_order.biaya_kirim LIKE '".$requestData['search']['value']."%' ";
+			$sql.=" OR t_order.total_harga_barang LIKE '".$requestData['search']['value']."%' )";
 		}
 		$query=$this->Transaksidropshipmodel->rawQuery($sql);
 		$totalFiltered = $query->num_rows();
@@ -67,15 +62,24 @@ class Transaksi extends MX_Controller {
 
 			$nestedData[] 	= 	$row["id"];
 			$nestedData[] 	= 	$row["namacus"];
-			$nestedData[] 	= 	$row["catatan"];
-			$nestedData[] 	= 	$row["total_berat"];
-			$nestedData[] 	= 	$row["total_qty"];
-			$nestedData[] 	= 	$row["biaya_kirim"];
-			$nestedData[] 	= 	$row["total_harga_barang"];
-			$nestedData[] 	= 	$row["jenis_order"];
-			$nestedData[] 	= 	$row["status"];
+            $realJson = str_replace("'", '"', $row['detail_dropship']);
+            $getDataDropship = json_decode($realJson, true);
+            $detailDropship = "Nama Pengirim:".$getDataDropship['nama_pengirim']."</br>";
+            $detailDropship .= "Alamat Pengirim :".$getDataDropship['alamat_pengirim']."</br>";
+            $detailDropship .= "Nama Penerima :".$getDataDropship['nama_penerima']."</br>";
+            $detailDropship .= "Alamat Penerima :".$getDataDropship['alamat_penerima']."</br>";
+            $detailDropship .= "No Telp Penerima :".$getDataDropship['no_telp_penerima']."</br>";
+			$nestedData[] 	= 	$detailDropship;
+			$nestedData[] 	= 	"Rp. ".number_format($row["biaya_kirim"]);
+			$nestedData[] 	= 	"Rp. ".number_format($row["grand_total"]);
 			$nestedData[] 	= 	$row["date_add"];
-			$nestedData[] 	= 	"<button class='btn btn-success' onclick=showDropship('".$row["id"]."')>DETAIL</button>";			
+
+            $button = "<button class='btn btn-success' onclick=showDropship('".$row["id"]."')>DETAIL</button>";
+            if($row['jenis_order']==2){
+                $button = "-";
+            }
+
+			$nestedData[] 	= 	$button;	
 			$data[] = $nestedData;
 		}
 		$json_data = array(
@@ -112,9 +116,13 @@ class Transaksi extends MX_Controller {
     		$detailDropship .= "'no_telp_penerima':'".$params['no_telp_penerima']."',";
     		$detailDropship .= "'alamat_penerima':'".$params['alamat_penerima']."'";
     		$detailDropship .= "}";
+
+            $getLastGrandTotal = $this->Transaksidropshipmodel->rawQuery("SELECT * FROM t_order WHERE id=".$params['id_order']);
+
     		$dataUpdate['detail_dropship'] = $detailDropship;
     		$dataUpdate['jenis_order'] = 2;
     		$dataUpdate['biaya_kirim'] = $params['biaya_kirim'];
+            $dataUpdate['grand_total'] = $getLastGrandTotal->row()->grand_total + $params['biaya_kirim'];
     		$dataUpdate['last_edited'] = $dateNow;
     		$dataUpdate['edited_by'] = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
 
