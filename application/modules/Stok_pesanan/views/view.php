@@ -13,10 +13,11 @@
           <thead>
               <tr>
                   <th class="text-center no-sort">#</th>
-                  <th class="text-center">Nama Pemesan</th>
-                  <th class="text-center">Total Berat (gr)</th>
-                  <th class="text-center">Total Qty</th>
-                  <th class="text-center">Jenis Order</th>
+                  <th class="text-center">ID Order</th>
+                  <th class="text-center">Nama Customer</th>
+                  <th class="text-center">Grand Total (IDR)</th>
+                  <th class="text-center">Metode Bayar</th>
+                  <th class="text-center">Catatan</th>
                   <th class="text-center" class="hidden-xs">Tanggal Order</th>
                   <th class="text-center no-sort">Status</th>
                   <th class="text-center no-sort">Aksi</th>
@@ -88,7 +89,7 @@
   var initDataTable = $('#TableMainServer').DataTable({
       "bProcessing": true,
       "bServerSide": true,
-      "order": [[5, 'DESC']],
+      "order": [[6, 'DESC']],
       "ajax":{
             url :"<?php echo base_url()?>Stok_pesanan/Master/data",
             type: "post",  // type of method  , by default would be get

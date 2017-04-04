@@ -71,9 +71,20 @@ class Master extends MX_Controller {
         
         $data = array(); $i=0;
         foreach ($query->result_array() as $row) {
+            if($row['status'] == 1) {
+                 $status = "Berkurang dari proses penjualan"; }
+            else if($row['status'] == 2) {
+                 $status = "Berkurang dari proses service"; }
+            else if($row['status'] == 3) {
+                 $status = "Dikurangi manual oleh admin"; }
+            else if($row['status'] == 4) {
+                 $status = "Ditambah manual oleh admin"; }
+            else if($row['status'] == 5) {
+                 $status = "Ditambah dari barang yang telah diservice"; }
+
             $nestedData     =   array(); 
             $nestedData[]   =   "<span style='display:block' class='text-center'>".($i+1)."</span>";
-            $nestedData[]   =   date("d-m-Y", strtotime($row["date_add"]));
+            $nestedData[]   =   date("d-m-Y H:i", strtotime($row["date_add"]));
             $nestedData[]   =   $row["nama"];
             $nestedData[]   =   $row["sku"];
             $nestedData[]   =   "<span style='display:block' class='text-center'>".$row["jumlah"]."</span>";
@@ -81,7 +92,7 @@ class Master extends MX_Controller {
             $nestedData[]   =   $row['nama_warna'];
             $nestedData[]   =   $row['nama_ukuran'];
             $nestedData[]   =   "<span style='display:block' class='text-center'>".$row["id_order"]."</span>";
-            $nestedData[]   =   "<span style='display:block' class='text-center'>".$row["status"]."</span>";
+            $nestedData[]   =   $status;
             // $nestedData[]   .=   '<td class="text-center"><div class="btn-group" >'
             //     .'<a id="group'.$row["id"].'" class="divpopover btn btn-sm btn-default" href="javascript:void(0)" data-toggle="popover" data-placement="top" onclick="confirmDelete(this)" data-html="true" title="Hapus Data?" ><i class="fa fa-times"></i></a>'
             //     .'<a class="btn btn-sm btn-default" data-toggle="tooltip" data-placement="top" title="Ubah Data" onclick="showUpdate('.$row["id"].')"><i class="fa fa-pencil"></i></a>'

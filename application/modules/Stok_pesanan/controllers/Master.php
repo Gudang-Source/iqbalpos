@@ -23,7 +23,7 @@ class Master extends MX_Controller {
         $data['list_order'] = json_encode($this->Stokpesananmodel->rawQuery($sql)->result());
 
         $dataSelect['status'] = 1;
-        $sql = "SELECT A.*, B.nama FROM t_order A LEFT JOIN m_customer B ON A.id_customer = B.id WHERE A.deleted = 1 AND A.status = 1 ORDER BY A.date_add DESC";
+        $sql = "SELECT A.*, B.nama, C.nama AS nama_metode FROM t_order A LEFT JOIN m_customer B ON A.id_customer = B.id LEFT JOIN m_metode_pembayaran C ON A.id_metode_pembayaran = C.id WHERE A.deleted = 1 AND A.status = 1 ORDER BY A.date_add DESC";
         $data['list'] = json_encode($this->Stokpesananmodel->rawQuery($sql)->result());
 
     	$this->load->view('Stok_pesanan/view', $data);
@@ -33,22 +33,24 @@ class Master extends MX_Controller {
         $requestData= $_REQUEST;
         $columns = array( 
             0   =>  '#', 
-            1   =>  'nama', 
-            2   =>  'total_berat', 
-            3   =>  'total_qty',
-            4   =>  'jenis_order',
-            5   =>  'date_add',
-            6   =>  'status',
-            7   =>  'aksi'
+            1   =>  'id', 
+            2   =>  'nama', 
+            3   =>  'grand_total', 
+            4   =>  'nama_metode',
+            5   =>  'catatan',
+            6   =>  'date_add',
+            7   =>  'status',
+            8   =>  'aksi'
         );
-        $sql = "SELECT A.*, B.nama FROM t_order A LEFT JOIN m_customer B ON A.id_customer = B.id WHERE A.deleted = 1 AND A.status = 1";
+        $sql = "SELECT A.*, B.nama, C.nama AS nama_metode FROM t_order A LEFT JOIN m_customer B ON A.id_customer = B.id LEFT JOIN m_metode_pembayaran C ON A.id_metode_pembayaran = C.id  WHERE A.deleted = 1 AND A.status = 1";
         $query=$this->Stokpesananmodel->rawQuery($sql);
         $totalData = $query->num_rows();
         // $totalFiltered = $totalData;
         if( !empty($requestData['search']['value']) ) {
             $sql.=" AND ( B.nama LIKE '%".$requestData['search']['value']."%' "; 
-            $sql.=" OR A.total_berat LIKE '%".$requestData['search']['value']."%' ";
-            $sql.=" OR A.total_qty LIKE '%".$requestData['search']['value']."%' ";
+            $sql.=" OR A.grand_total LIKE '%".$requestData['search']['value']."%' ";
+            $sql.=" OR C.nama LIKE '%".$requestData['search']['value']."%' ";
+            $sql.=" OR A.catatan LIKE '%".$requestData['search']['value']."%' ";
             $sql.=" OR A.date_add LIKE '%".$requestData['search']['value']."%' )";
         }
         $query=$this->Stokpesananmodel->rawQuery($sql);
@@ -59,13 +61,13 @@ class Master extends MX_Controller {
         
         $data = array(); $i=0;
         foreach ($query->result_array() as $row) {
-            $jenis_order = ($row["jenis_order"] == 1) ? "Normal" : "Dropship";
             $nestedData     =   array(); 
             $nestedData[]   =   "<span class='text-center' style='display:block;'>".($i+1)."</span>";
+            $nestedData[]   =   "<span class='text-center' style='display:block;'>".$row['id']."</span>";
             $nestedData[]   =   $row["nama"];
-            $nestedData[]   =   "<span class='text-center money' style='display:block;'>".$row["total_berat"]."</span>";
-            $nestedData[]   =   "<span class='text-center' style='display:block;'>".$row["total_qty"]."</span>";
-            $nestedData[]   =   $jenis_order;
+            $nestedData[]   =   "<span class='pull-right money'>".$row["grand_total"]."</span>";
+            $nestedData[]   =   $row["nama_metode"];
+            $nestedData[]   =   $row["catatan"];
             $nestedData[]   =   date("d-m-Y H:i", strtotime($row["date_add"]));
             $nestedData[]   .=   '<div class="text-center" style="display:block;><div class="btn-group" >'
                 .'<input type="checkbox" id="toggle_'.$row["id"].'" class="bootstrap-toggle">'
