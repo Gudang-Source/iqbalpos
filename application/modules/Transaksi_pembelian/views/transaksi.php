@@ -5,6 +5,9 @@
 </style>
 <div class="container-fluid">
    <div class="row">
+    <h3><strong>Transaksi</strong> - Pembelian</h3>
+   </div>
+   <div class="row">
     <div class="col-md-5 left-side">
       <form action="<?php echo base_url('Transaksi_pembelian/Transaksi/doSubmit'); ?>" method="post" id="pembelian">          
          <div class="col-xs-8">
@@ -136,6 +139,12 @@
 <!-- /.Modal PO-->
 
 <script type="text/javascript">
+  function maskInputMoney(){
+    $('.money').mask('#.##0', {reverse: true});
+  }
+  function unmaskInputMoney(){
+    $('.money').unmask();
+  }
   var listProduct = <?php echo $list_produk; ?>;
   var listOrder = <?php echo $list_order; ?>;
   var listSupplier = <?php echo $list_supplier; ?>;
@@ -145,10 +154,12 @@
   var discount = '<?php echo $discount; ?>';
   var total = '<?php echo $total; ?>';
   var totalItems = '<?php echo $total_items; ?>';
+  maskInputMoney();
   inits(tax, discount, total, totalItems);
   load_supplier(listSupplier);
   // load_product(listProduct);
   load_order(listOrder);
+
   function load_supplier(json){
     var html = "";
     $("#supplierSelect").html('');
@@ -378,7 +389,7 @@
     }
     if(supplier != 0){    
       $.ajax({
-        url :"<?php echo base_url('Stok_service/Transaksi/filterProdukByName')?>",
+        url :"<?php echo base_url('Transaksi_pembelian/Transaksi/filterProdukByName')?>",
         type : "POST",
         data : "keyword="+keyword+"&supplier="+supplier+"&kategori="+realkategori,
         dataType : "json",

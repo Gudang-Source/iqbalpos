@@ -34,10 +34,8 @@ class Transaksi extends MX_Controller {
 			4	=> 	'total_qty',
 			5	=> 	'biaya_kirim',
 			6	=> 	'grand_total',
-			7	=> 	'jenis_order',
-			8	=> 	'status',
-			9	=> 	'date_add',
-			10	=> 	'aksi'
+			7	=> 	'date_add',
+			8	=> 	'aksi'
 		);
 		$sql = " SELECT t_order.* , m_customer.nama as namacus, m_metode_pembayaran.nama as namamet";
 		$sql.= " FROM t_order ";
@@ -48,12 +46,12 @@ class Transaksi extends MX_Controller {
 		$totalFiltered = $totalData;
 		$sql.=" WHERE t_order.deleted=1 ";
 		if( !empty($requestData['search']['value']) ) {
-			$sql.=" AND ( id_customer LIKE '".$requestData['search']['value']."%' ";    
-			$sql.=" OR catatan LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR total_berat LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR total_qty LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR biaya_kirim LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR total_harga_barang LIKE '".$requestData['search']['value']."%' )";
+			$sql.=" AND ( m_customer.nama LIKE '".$requestData['search']['value']."%' ";    
+			$sql.=" OR t_order.catatan LIKE '".$requestData['search']['value']."%' ";
+			$sql.=" OR t_order.total_berat LIKE '".$requestData['search']['value']."%' ";
+			$sql.=" OR t_order.total_qty LIKE '".$requestData['search']['value']."%' ";
+			$sql.=" OR t_order.biaya_kirim LIKE '".$requestData['search']['value']."%' ";
+			$sql.=" OR t_order.total_harga_barang LIKE '".$requestData['search']['value']."%' )";
 		}
 		$query=$this->Transaksipenjualanmodel->rawQuery($sql);
 		$totalFiltered = $query->num_rows();
@@ -68,10 +66,8 @@ class Transaksi extends MX_Controller {
 			$nestedData[] 	= 	$row["catatan"];
 			$nestedData[] 	= 	$row["total_berat"];
 			$nestedData[] 	= 	$row["total_qty"];
-			$nestedData[] 	= 	$row["biaya_kirim"];
-			$nestedData[] 	= 	$row["total_harga_barang"];
-			$nestedData[] 	= 	$row["jenis_order"];
-			$nestedData[] 	= 	$row["status"];
+			$nestedData[] 	= 	"Rp. ".number_format($row["biaya_kirim"]);
+			$nestedData[] 	= 	"Rp. ".number_format($row["total_harga_barang"]);
 			$nestedData[] 	= 	$row["date_add"];
 			$nestedData[] 	= 	"<button class='btn btn-success' onclick=detail('".$row["id"]."')>DETAIL</button>";			
 			$data[] = $nestedData;
@@ -98,7 +94,9 @@ class Transaksi extends MX_Controller {
 			8	=> 	'total_harga',
 			9	=> 	'profit'
 		);
-		$sql = "SELECT 
+		$sql = "SELECT
+                    t_order_detail.nama_warna as nama_warna,
+                    t_order_detail.nama_ukuran as nama_ukuran,
 					t_order.id as poid,
 					t_order_detail.id as podid, 
 					t_order_detail.jumlah as podjm,
@@ -136,14 +134,14 @@ class Transaksi extends MX_Controller {
 			$nestedData		=	array(); 
 			$nestedData[] 	= 	$i;
 			$nestedData[] 	= 	$row['nama'];
-			$nestedData[] 	= 	$row['ukuran'];
-			$nestedData[] 	= 	$row['warna'];
+			$nestedData[] 	= 	$row['nama_ukuran'];
+			$nestedData[] 	= 	$row['nama_warna'];
 			$nestedData[] 	= 	$row['podjm'];
 			$nestedData[] 	= 	$row['podtb'];
-			$nestedData[] 	= 	$row['podhb'];
-			$nestedData[] 	= 	$row['podhj'];
-			$nestedData[] 	= 	$row['podth'];
-			$nestedData[] 	= 	$row['podp'];
+			$nestedData[] 	= 	"Rp. ".number_format($row['podhb']);
+			$nestedData[] 	= 	"Rp. ".number_format($row['podhj']);
+			$nestedData[] 	= 	"Rp. ".number_format($row['podth']);
+			$nestedData[] 	= 	"Rp. ".number_format($row['podp']);
 			$data[] = $nestedData;
 			$i++;
 		}
@@ -178,7 +176,7 @@ class Transaksi extends MX_Controller {
 		    		$nestedData['harga_beli'] = $items['price'];
 		    		$nestedData['produk'] = $items['name'];
 		    		$nestedData['rowid'] = $items['rowid'];
-		    		$nestedData['subtotal'] = $items['price']*$items['qty'];
+		    		$nestedData['subtotal'] = "Rp. ".number_format($items['price']*$items['qty']);
 
 		    		$nestedData['ukuran'] = $items['options']['ukuran']!=null?$items['options']['ukuran']:0;
 		    		$nestedData['warna'] = $items['options']['warna']!=null?$items['options']['warna']:0;
@@ -189,6 +187,30 @@ class Transaksi extends MX_Controller {
     	}
     	return json_encode($data);
     }
+    function getOrderArray(){
+    	$data = array();
+    	foreach ($this->cart->contents() as $items){
+    		$idProduks = explode("_", $items['id']);
+    		if(count($idProduks) > 1){
+    			if($idProduks[1] == "PENJUALAN"){    				
+		    		$nestedData = array();
+		    		$nestedData['rowid'] = $items['rowid'];
+		    		$nestedData['id'] = $items['id'];
+		    		$nestedData['qty'] = $items['qty'];
+		    		$nestedData['harga_beli'] = $items['price'];
+		    		$nestedData['produk'] = $items['name'];
+		    		$nestedData['rowid'] = $items['rowid'];
+		    		$nestedData['subtotal'] = "Rp. ".number_format($items['price']*$items['qty']);
+
+		    		$nestedData['ukuran'] = $items['options']['ukuran']!=null?$items['options']['ukuran']:0;
+		    		$nestedData['warna'] = $items['options']['warna']!=null?$items['options']['warna']:0;
+		    		$nestedData['total_berat'] = $items['options']['total_berat']!=null?$items['options']['total_berat']:0;
+		    		array_push($data, $nestedData);
+    			}
+    		}
+    	}
+    	return $data;
+    }    
     function getProduk($supplier = null){
     	$list = null;
     	$dataSelect['deleted'] = 1;
@@ -198,15 +220,19 @@ class Transaksi extends MX_Controller {
     	$list = $this->Transaksipenjualanmodel->select($dataSelect, 'm_produk');
     	return json_encode($list->result_array());
     }
-    function getProdukByName($keyword = null, $supplier = null){
-    	$list = null;
-    	$dataSelect['deleted'] = 1;
-    	if($keyword != null && $supplier != null){
-    		$dataLike['nama'] = $keyword;
-    		$dataCondition['id_supplier'] = $supplier;
-    	}
-    	$list = $this->Transaksipenjualanmodel->like($dataCondition, $dataLike, 'm_produk');
-    	return json_encode($list->result_array());
+    function getProdukByName($keyword = null, $supplier = null, $kategori = null){
+        $list = null;
+        $dataSelect['deleted'] = 1;
+        $dataCondition = array();
+        $dataLike = array();
+        if($keyword != null){
+            $dataLike['nama'] = $keyword;
+        }
+        if($kategori != null || $kategori !=""){
+            $dataCondition['id_kategori'] = $kategori;
+        }        
+        $list = $this->Transaksipenjualanmodel->like($dataCondition, $dataLike, 'm_produk');
+        return json_encode($list->result_array());
     }   
     function getProdukByKategori($kategori = null, $keyword = null){
     	$list = null;
@@ -229,23 +255,42 @@ class Transaksi extends MX_Controller {
     	echo $this->getProduk($supplier);
     }
     function filterProdukByName(){
-    	$params  = $this->input->post();
-    	$keyword = $params['keyword'];
-    	$supplier = $params['supplier'];
-    	echo $this->getProdukByName($keyword, $supplier);
+        $params  = $this->input->post();
+        $keyword = null;
+        $kategori = null;
+        if ($params['keyword'] != null || $params['keyword'] != "") {
+            $keyword = $params['keyword'];
+        }
+        if($params['kategori'] != null || $params['kategori'] != ""){
+            $realkategori = explode("-", $params['kategori']);
+            $kategori = $realkategori[1];
+        }
+        echo $this->getProdukByName($keyword, null, $kategori);
     }
     function filterProdukByKategori($kategori, $keyword = null){
     	echo $this->getProdukByKategori($kategori, $keyword);
     }
-    function getWarna(){
-    	$dataSelect['deleted'] = 1;
-    	$selectData = $this->Transaksipenjualanmodel->select($dataSelect, 'm_produk_warna');
-    	return json_encode($selectData->result_array());
+    function getWarna($id){
+        $rid = explode("_", $id);
+    	// $dataSelect['deleted'] = 1;
+    	// $selectData = $this->Transaksipomodel->select($dataSelect, 'm_produk_warna');
+        $selectData = $this->Transaksipenjualanmodel->rawQuery("SELECT m_produk_warna.id, m_produk_warna.nama
+                                                        FROM m_produk_det_warna
+                                                        INNER JOIN m_produk ON m_produk_det_warna.id_produk = m_produk.id
+                                                        INNER JOIN m_produk_warna ON m_produk_det_warna.id_warna = m_produk_warna.id
+                                                        WHERE m_produk_det_warna.id_produk = ".$rid[0]);
+    	echo json_encode($selectData->result_array());
     }
-    function getUkuran(){
-    	$dataSelect['deleted'] = 1;
-    	$selectData = $this->Transaksipenjualanmodel->select($dataSelect, 'm_produk_ukuran');
-    	return json_encode($selectData->result_array());
+    function getUkuran($id){
+        $rid = explode("_", $id);
+    	// $dataSelect['deleted'] = 1;
+    	// $selectData = $this->Transaksipomodel->select($dataSelect, 'm_produk_ukuran');
+        $selectData = $this->Transaksipenjualanmodel->rawQuery("SELECT m_produk_ukuran.id, m_produk_ukuran.nama
+                                                        FROM m_produk_det_ukuran
+                                                        INNER JOIN m_produk ON m_produk_det_ukuran.id_produk = m_produk.id
+                                                        INNER JOIN m_produk_ukuran ON m_produk_det_ukuran.id_ukuran =m_produk_ukuran.id
+                                                        WHERE m_produk_det_ukuran.id_produk = ".$rid[0]);
+    	echo json_encode($selectData->result_array());
     }
     function transaksi(){
     	$dataSelect['deleted'] = 1;
@@ -254,11 +299,11 @@ class Transaksi extends MX_Controller {
         $data['list_customer'] = $this->getCustomer();
         $data['list_kategori'] = $this->getKategori();
         
-        $data['list_warna'] = $this->getWarna();
-        $data['list_ukuran'] = $this->getUkuran();
-        
-        $data['total'] = $this->cart->total();
-        $data['total_items'] = $this->cart->total_items();
+        // $data['list_warna'] = $this->getWarna();
+        // $data['list_ukuran'] = $this->getUkuran();
+        $getTotal = json_decode($this->_getTotal(), true);
+        $data['total'] = $getTotal['total'];
+        $data['total_items'] = $getTotal['total_items'];
         $data['tax'] = 0;
         $data['discount'] = 0;
     	$this->load->view('Transaksi_penjualan/transaksi', $data);
@@ -275,7 +320,7 @@ class Transaksi extends MX_Controller {
     			}
     		}
     	}    	
-    	echo json_encode(array("tax"=>0, "discount"=> 0, "total"=> $total, "total_items"=>$total_item));
+    	echo json_encode(array("tax"=>0, "discount"=> 0, "total"=>"Rp. ".number_format($total), "total_items"=>$total_item." Item"));
     }
     function updateCart($id, $qty, $state = 'tambah'){
     	$getid = $this->in_cart($id, 'id', 'rowid');
@@ -283,20 +328,25 @@ class Transaksi extends MX_Controller {
     	$dataSelect['id'] = $getid;
     	$selectData = $this->Transaksipenjualanmodel->select($dataSelect, 'm_produk');
     	$lastQty = $this->in_cart($id, 'qty', 'rowid');
-    	if($state == 'tambah'){		
-			$data = array(
-			        'rowid'  => $id,
-			        'qty'    => $lastQty+1
-			);
-			$this->cart->update($data);
-			echo $this->getOrder();   	
+    	if($state == 'tambah'){
+    		if($selectData->row()->stok > $lastQty+1){			
+				$data = array(
+				        'rowid'  => $id,
+				        'qty'    => $lastQty+1
+				);
+				$this->cart->update($data);
+				echo json_encode(array("status"=>2, "list"=>$this->getOrderArray()));
+    		}else{
+    			//stok tidak mencukupi
+    			echo json_encode(array("status"=>1, "list"=>$this->getOrderArray()));
+    		}		
     	}else{
 			$data = array(
 			        'rowid'  => $id,
 			        'qty'    => $qty
 			);
 			$this->cart->update($data);
-			echo $this->getOrder();   	    		
+			echo json_encode(array("status"=>2, "list"=>$this->getOrderArray()));
     	}
     }
     function updateOption($id, $warna, $ukuran, $total_berat){
@@ -316,12 +366,21 @@ class Transaksi extends MX_Controller {
 		echo $this->getOrder();      	
     }
     function updateQty($id, $qty){
-		$data = array(
-		        'rowid'  => $id,
-		        'qty'=> $qty
-		);
-		$this->cart->update($data);
-		echo $this->getOrder();      	
+    	$getid = $this->in_cart($id, 'id', 'rowid');
+    	$dataSelect['deleted'] = 1;
+    	$dataSelect['id'] = $getid;
+    	$selectData = $this->Transaksipenjualanmodel->select($dataSelect, 'm_produk');
+    	if($selectData->row()->stok > $qty){
+			$data = array(
+			        'rowid'  => $id,
+			        'qty'=> $qty
+			);
+			$this->cart->update($data);			
+			echo json_encode(array("status"=>2, "list"=>$this->getOrderArray()));
+    	}else{
+    		// stok tidak mencukupi
+    		echo json_encode(array("status"=>1, "list"=>$this->getOrderArray()));
+    	}
     }
     function updateTotalBerat($id,  $warna, $ukuran, $total_berat){
 		$data = array(
@@ -373,20 +432,28 @@ class Transaksi extends MX_Controller {
 			$hargaCustomer = $this->getHargaCustomer($selectData->row()->id, $idCustomer);
 			// echo $hargaCustomer;
 			if($hargaCustomer != 0){
-				$datas = array(
-			                'id'      => $selectData->row()->id."_PENJUALAN",
-			                'qty'     => 1,
-			                'price'   => $this->getHargaCustomer($selectData->row()->id, $idCustomer),
-			                'name'    => $selectData->row()->nama,
-					        'options' => array(
-					        				'ukuran'=>0,
-					        				'warna'=>0,
-					        				'total_berat'=>$selectData->row()->berat*1
-					        				)
-				);
-				$this->cart->insert($datas);
-			}
-			echo $this->getOrder();
+				if($selectData->row()->stok > 0){				
+					$datas = array(
+				                'id'      => $selectData->row()->id."_PENJUALAN",
+				                'qty'     => 1,
+				                'price'   => $this->getHargaCustomer($selectData->row()->id, $idCustomer),
+				                'name'    => $selectData->row()->nama,
+						        'options' => array(
+						        				'ukuran'=>0,
+						        				'warna'=>0,
+						        				'total_berat'=>$selectData->row()->berat
+						        				)
+						        );
+					$this->cart->insert($datas);
+					echo json_encode(array("status"=>2, "list"=>$this->getOrderArray()));
+				}else{
+					// stok kosong
+					echo json_encode(array("status"=>1, "list"=>$this->getOrderArray()));
+				}
+			}else{
+				// harga customer belum diset
+				echo json_encode(array("status"=>0, "list"=>$this->getOrderArray()));
+			}			
 		}else{
 			$qty = $this->in_cart($id."_PENJUALAN", 'qty') + 1;
 			$this->updateCart($inCart, $qty);
@@ -430,7 +497,7 @@ class Transaksi extends MX_Controller {
     			}
     		}
     	}
-    	return json_encode(array("tax"=>0, "discount"=> 0, "total"=> $total, "total_items"=>$total_item));
+    	return json_encode(array("tax"=>0, "discount"=> 0, "total"=>$total, "total_items"=>$total_item));
     }    
     function doSubmit(){
     	$params = $this->input->post();
@@ -480,13 +547,13 @@ class Transaksi extends MX_Controller {
     		$getTotal = json_decode($this->_getTotal(), true);
     		$dataInsertTorder['id_customer'] 					= 	$params['id_customer'];
     		$dataInsertTorder['catatan']						=	$params['catatan'];
-    		$dataInsertTorder['total_berat']					=	$this->getOption('total_berat');
+    		$dataInsertTorder['total_berat']					=	$this->getTotalBerat();
     		$dataInsertTorder['total_qty']						=	$getTotal['total_items'];
     		$dataInsertTorder['total_harga_barang']				=	$getTotal['total'];
     		$dataInsertTorder['grand_total']					=	$getTotal['total'] + 0;
     		$dataInsertTorder['profit']							=	0;
     		$dataInsertTorder['jenis_order']					=	$params['jenisOrder'];
-    		$dataInsertTorder['status']							=	1;
+    		$dataInsertTorder['status']							=	3;
     		$dataInsertTorder['date_add']						=	$dateNow;
     		$dataInsertTorder['add_by']							=	isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
     		$dataInsertTorder['deleted']						=	1;
@@ -518,10 +585,16 @@ class Transaksi extends MX_Controller {
 					    		$dataInsertDetail['id_ukuran']				=	$items['options']['ukuran'];
 					    		$dataInsertDetail['id_warna']				=	$items['options']['warna'];
 					    		$dataInsertDetail['jumlah']					=	$items['qty'];
-					    		$dataInsertDetail['total_berat']			=	$items['options']['total_berat'];
+					    		$dataInsertDetail['total_berat']			=	$items['options']['total_berat'] * $items['qty'];
 					    		$dataInsertDetail['harga_beli']				=	$getHargaBeli->row()->harga_beli;
 					    		$dataInsertDetail['harga_jual']				=	$items['price'];
 					    		$dataInsertDetail['total_harga']			=	$items['price'] * $items['qty'];
+					    		$dataSelectWarna['id']	=	$items['options']['warna'];
+					    		$selectDataWarna = $this->Transaksipenjualanmodel->select($dataSelectWarna, 'm_produk_warna');
+					    		$dataSelectUkuran['id']	=	$items['options']['ukuran'];
+					    		$selectDataUkuran = $this->Transaksipenjualanmodel->select($dataSelectUkuran, 'm_produk_ukuran');
+					    		$dataInsertDetail['nama_warna']				=	$selectDataWarna->num_rows()>0?$selectDataWarna->row()->nama:"Tidak Ada Warna";
+					    		$dataInsertDetail['nama_ukuran']			=	$selectDataUkuran->num_rows()>0?$selectDataUkuran->row()->nama:"Tidak Ada Ukuran";
 					    		$dataInsertDetail['profit']					=	$items['price'] - $getHargaBeli->row()->harga_beli;
 					    		$insertDetail = $this->Transaksipenjualanmodel->insert($dataInsertDetail, 't_order_detail');
 								if($insertDetail){
@@ -540,7 +613,7 @@ class Transaksi extends MX_Controller {
 										$dataHstok['id_service']		= 0;
 										$dataHstok['jumlah']	 		= $items['qty'];
 										$dataHstok['stok_akhir'] 		= $getHargaBeli->row()->stok - $items['qty'];
-										$dataHstok['keterangan'] 		= $params['catatan'];
+										$dataHstok['keterangan'] 		= $_SESSION['id_user']." Menjual Produk dengan id ".$idProduks[0];
 										$dataHstok['status']			= 1;
 										$dataHstok['date_add']			= $dateNow;
 										$dataHstok['add_by']			= isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
@@ -575,6 +648,19 @@ class Transaksi extends MX_Controller {
     		echo json_encode(array('status'=>0));
     	}
     }
+    function getTotalBerat(){
+        $total = 0;
+        foreach ($this->cart->contents() as $items){
+            $idProduks = explode("_", $items['id']);
+            if (count($idProduks) > 1) {
+                if ($idProduks[1] == "PENJUALAN") {
+                    $total += $items['options']['total_berat'];
+                    $total = $total * $items['qty'];
+                }
+            }
+        }
+        return $total;
+    }    
     function getOption($option){
     	$total = 0;
     	foreach ($this->cart->contents() as $items){

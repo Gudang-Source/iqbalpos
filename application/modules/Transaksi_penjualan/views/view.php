@@ -1,7 +1,8 @@
 <!-- Page Content -->
 <div class="container">
-<div class="row" style='min-height:80px;'>
-</div>
+   <div class="row">
+    <h3><strong>Transaksi</strong> - Penjualan</h3>
+   </div>
    <div class="row" style="margin-top:10px;">
       <table id="TableMain" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>         
@@ -13,8 +14,6 @@
                   <th class="text-center" class="hidden-xs">TOTAL QTY</th>
                   <th class="text-center" class="hidden-xs">BIAYA KIRIM</th>
                   <th class="text-center" class="hidden-xs">HARGA BARANG</th>
-                  <th class="text-center" class="hidden-xs">JENIS ORDER</th>
-                  <th class="text-center" class="hidden-xs">STATUS ORDER</th>
                   <th class="text-center" class="hidden-xs">TANGGAL TRANSAKSI</th>
                   <th class="text-center" class="hidden-xs">AKSI</th>
               </tr>
@@ -35,7 +34,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Detail Barang Purchase Order</h4>
+        <h4 class="modal-title" id="myModalLabel">Detail Penjualan</h4>
       </div>
       <div class="modal-body">
          <div class="row">
@@ -70,7 +69,7 @@
                 url : "<?php echo base_url('Transaksi_penjualan/Transaksi/data'); ?>",
                 type: "post",
                 error: function(){
-                    $("#TableMain").append('<tbody class="employee-grid-error"><tr><th colspan="10">No data found in the server</th></tr></tbody>');
+                    $("#TableMain").append('<tbody class="employee-grid-error"><tr><th colspan="9">No data found in the server</th></tr></tbody>');
                     // $("#employee-grid_processing").css("display","none");
                     // dataTable.ajax.reload( null, false );
                 }
