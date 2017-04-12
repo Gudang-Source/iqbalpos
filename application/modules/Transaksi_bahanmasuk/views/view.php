@@ -122,4 +122,21 @@
           });    
         });
     });
+
+    function showThumbnail(el){
+      var img_src = $(el).find("img").attr("src");
+      $(el).attr("data-content","<img src='"+img_src+"' class=\'img-responsive\'  href=\'#\' style=\'max-width:350px\'>");
+      $(el).popover("show");
+    }
+
+    //Hack untuk bootstrap popover (popover hilang jika diklik di luar)
+    $(document).on('click', function (e) {
+      $('[data-toggle="popover"],[data-original-title]').each(function () {
+          //the 'is' for buttons that trigger popups
+          //the 'has' for icons within a button that triggers a popup
+          if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {                
+              (($(this).popover('hide').data('bs.popover')||{}).inState||{}).click = false  // fix for BS 3.3.6
+          }
+      });
+    });  
 </script>
