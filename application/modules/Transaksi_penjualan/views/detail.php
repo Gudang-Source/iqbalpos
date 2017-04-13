@@ -7,11 +7,11 @@
                   <th class="text-center">Ukuran</th>
                   <th class="text-center">Warna</th>
                   <th class="text-center">Jumlah</th>
-                  <th class="text-center">Total Berat</th>
-                  <th class="text-center">Harga Beli</th>
-                  <th class="text-center">Harga Jual</th>
-                  <th class="text-center">Total Harga</th>
-                  <th class="text-center">Profit</th>
+                  <th class="text-center">Total Berat (gr)</th>
+                  <th class="text-center">Harga Beli (IDR)</th>
+                  <th class="text-center">Harga Jual (IDR)</th>
+                  <th class="text-center">Total Harga (IDR)</th>
+                  <th class="text-center">Profit (IDR)</th>
               </tr>
           </thead>
           <tbody id='bodytable'>

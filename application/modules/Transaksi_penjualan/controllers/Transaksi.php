@@ -46,12 +46,12 @@ class Transaksi extends MX_Controller {
 		$totalFiltered = $totalData;
 		$sql.=" WHERE t_order.deleted=1 ";
 		if( !empty($requestData['search']['value']) ) {
-			$sql.=" AND ( m_customer.nama LIKE '".$requestData['search']['value']."%' ";    
-			$sql.=" OR t_order.catatan LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR t_order.total_berat LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR t_order.total_qty LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR t_order.biaya_kirim LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR t_order.total_harga_barang LIKE '".$requestData['search']['value']."%' )";
+			$sql.=" AND ( m_customer.nama LIKE '%".$requestData['search']['value']."%' ";    
+			$sql.=" OR t_order.catatan LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR t_order.total_berat LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR t_order.total_qty LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR t_order.biaya_kirim LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR t_order.total_harga_barang LIKE '%".$requestData['search']['value']."%' )";
 		}
 		$query=$this->Transaksipenjualanmodel->rawQuery($sql);
 		$totalFiltered = $query->num_rows();
@@ -64,12 +64,12 @@ class Transaksi extends MX_Controller {
 			$nestedData[] 	= 	$row["id"];
 			$nestedData[] 	= 	$row["namacus"];
 			$nestedData[] 	= 	$row["catatan"];
-			$nestedData[] 	= 	$row["total_berat"];
+			$nestedData[] 	= 	'<span class="money">'.$row["total_berat"]."</span>";
 			$nestedData[] 	= 	$row["total_qty"];
-			$nestedData[] 	= 	"Rp. ".number_format($row["biaya_kirim"]);
-			$nestedData[] 	= 	"Rp. ".number_format($row["total_harga_barang"]);
+			$nestedData[] 	= 	"<span class='pull-right'>Rp. ".number_format($row["biaya_kirim"])."</span>";
+			$nestedData[] 	= 	"<span class='pull-right'>Rp. ".number_format($row["total_harga_barang"])."</span>";
 			$nestedData[] 	= 	$row["date_add"];
-			$nestedData[] 	= 	"<button class='btn btn-success' onclick=detail('".$row["id"]."')>DETAIL</button>";			
+			$nestedData[] 	= 	"<button class='btn btn-success' onclick=detail('".$row["id"]."')>Detail</button>";			
 			$data[] = $nestedData;
 		}
 		$json_data = array(
@@ -137,11 +137,11 @@ class Transaksi extends MX_Controller {
 			$nestedData[] 	= 	$row['nama_ukuran'];
 			$nestedData[] 	= 	$row['nama_warna'];
 			$nestedData[] 	= 	$row['podjm'];
-			$nestedData[] 	= 	$row['podtb'];
-			$nestedData[] 	= 	"Rp. ".number_format($row['podhb']);
-			$nestedData[] 	= 	"Rp. ".number_format($row['podhj']);
-			$nestedData[] 	= 	"Rp. ".number_format($row['podth']);
-			$nestedData[] 	= 	"Rp. ".number_format($row['podp']);
+			$nestedData[] 	= 	'<span class="money">'.$row['podtb'].'</span>';
+			$nestedData[] 	= 	"<span class='pull-right'>Rp. ".number_format($row['podhb'])."</span>";
+			$nestedData[] 	= 	"<span class='pull-right'>Rp. ".number_format($row['podhj'])."</span>";
+			$nestedData[] 	= 	"<span class='pull-right'>Rp. ".number_format($row['podth'])."</span>";
+			$nestedData[] 	= 	"<span class='pull-right'>Rp. ".number_format($row['podp'])."</span>";
 			$data[] = $nestedData;
 			$i++;
 		}
