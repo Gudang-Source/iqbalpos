@@ -493,8 +493,8 @@
   }
   function cancelOrder(){
       $.confirm({
-          title: 'Confirm!',
-          content: 'Simple confirm!',
+          title: 'Cancel',
+          content: 'Cancel Pembelian Barang?',
           buttons: {
               confirm: function () {
                   doClear();

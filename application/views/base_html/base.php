@@ -15,7 +15,7 @@
       <link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/reset.min.css"  type='text/css'>
       <link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/jquery-ui.css"  type='text/css'>
       <!-- google lato font -->
-      <link href='https://fonts.googleapis.com/css?family=Lato:400,700,900,300' rel='stylesheet' type='text/css'>
+      <!-- <link href='https://fonts.googleapis.com/css?family=Lato:400,700,900,300' rel='stylesheet' type='text/css'> -->
       <!-- Bootstrap Core CSS -->
       <link href="<?php echo base_url(); ?>assets/css/bootstrap.min.css" rel="stylesheet">
       <!-- bootstrap-horizon -->

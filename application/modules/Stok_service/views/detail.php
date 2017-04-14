@@ -1,23 +1,27 @@
 <!-- Page Content -->
-      <table id="TableMains" class="table table-striped table-bordered" cellspacing="0" width="100%">
-          <thead>
-              <tr>
-                  <th class="text-center">No</th>
-                  <th class="text-center">Produk</th>
-                  <th class="text-center">SKU</th>
-                  <th class="text-center" class="hidden-xs">Barang Diservis</th>
-                  <th class="text-center" class="hidden-xs">Barang Kembali</th>
-                  <th class="text-center" class="hidden-xs">Uang Kembali</th>
-                  <th class="text-center" class="hidden-xs">Status Kembali</th>
-              </tr>
-          </thead>
+        <!-- <form action="<?php echo base_url('Stok_service/Transaksi/confirm')?>" method="POST" id="frm-detail"> -->
+        <input type="hidden" name="id_hidden" value="<?php echo $id; ?>">
+        <table id="TableMains" class="table table-striped table-bordered" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th class="text-center">No</th>
+                    <th class="text-center">Produk</th>
+                    <th class="text-center">SKU</th>
+                    <th class="text-center" class="hidden-xs">Barang Diservis</th>
+                    <th class="text-center" class="hidden-xs">Barang Kembali</th>
+                    <th class="text-center" class="hidden-xs">Uang Kembali</th>
+                    <th class="text-center" class="hidden-xs">Status Kembali</th>
+                </tr>
+            </thead>
 
-          <tbody id='bodytable'>
-            
-          </tbody>
-      </table>
+            <tbody id='bodytable'>
+              
+            </tbody>
+        </table>
+        <!-- </form> -->
 <!-- /.container -->
 <script type="text/javascript" language="javascript" >
+  maskInputMoney();
     var dataTables = $('#TableMains').DataTable( {
         "searching": false,
         "processing": true,
@@ -43,7 +47,7 @@
         success : function(data){
           // dataTables.ajax.reload( null, false );
         }
-      });      
+      });
     }
     function reloadTable(){
       dataTable.ajax.reload( null, false );

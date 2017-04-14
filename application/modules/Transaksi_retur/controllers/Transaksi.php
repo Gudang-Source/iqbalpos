@@ -177,10 +177,10 @@ class Transaksi extends MX_Controller {
 		    		$nestedData['rowid'] = $items['rowid'];
 		    		$nestedData['id'] = $items['id'];
 		    		$nestedData['qty'] = $items['qty'];
-		    		$nestedData['harga_beli'] = $items['price'];
+		    		$nestedData['harga_beli'] = "Rp. ".number_format($items['price']);
 		    		$nestedData['produk'] = $items['name'];
 		    		$nestedData['rowid'] = $items['rowid'];
-		    		$nestedData['subtotal'] = $items['price']*$items['qty'];
+		    		$nestedData['subtotal'] = "Rp. ".number_format($items['price']*$items['qty']);
 
 		    		$nestedData['ukuran'] = $items['options']['ukuran']!=null?$items['options']['ukuran']:0;
 		    		$nestedData['warna'] = $items['options']['warna']!=null?$items['options']['warna']:0;
@@ -211,9 +211,11 @@ class Transaksi extends MX_Controller {
     function getProdukByName($keyword = null, $supplier = null){
     	$list = null;
     	$dataSelect['deleted'] = 1;
-    	if($keyword != null && $supplier != null){
+		$dataLike = array();
+		$dataCondition = array();
+    	if($keyword != null || $keyword != ""){
     		$dataLike['nama'] = $keyword;
-    		$dataCondition['id_supplier'] = $supplier;
+    		
     	}
     	$list = $this->Transaksireturmodel->like($dataCondition, $dataLike, 'm_produk');
     	return json_encode($list->result_array());
@@ -240,7 +242,10 @@ class Transaksi extends MX_Controller {
     }
     function filterProdukByName(){
     	$params  = $this->input->post();
-    	$keyword = $params['keyword'];
+		$keyword = null;
+		if($params['keyword'] != null || $params['keyword'] != "" ){
+			$keyword = $params['keyword'];
+		}
     	$supplier = $params['supplier'];
     	echo $this->getProdukByName($keyword, $supplier);
     }

@@ -1,6 +1,6 @@
 <style type="text/css">
   .product-details input[type="text"]{
-    width: 7.1em !important;
+    width: 5em !important;
   }
 </style>
 <div class="container-fluid">
@@ -15,9 +15,6 @@
               <option value="0">Pilih Customer</option>
             </select>
          </div>
-         <div class="col-sm-12">
-         &nbsp;
-         </div>
          <div class="col-xs-8">
             <h2>Pilih Id Order</h2>
          </div>        
@@ -25,9 +22,6 @@
             <select class="js-select-options form-control" id="orderSelect" name="idOrder" required="required" onchange="filterProduk()">
               <option value="0">Pilih Order</option>
             </select>
-         </div>
-         <div class="col-sm-12">
-         &nbsp;
          </div>
          <div class="col-xs-8">
             <h2>Catatan</h2>
@@ -38,20 +32,17 @@
          <div class="col-sm-12">
          &nbsp;
          </div>         
-         <div class="col-xs-2 table-header">
+         <div class="col-xs-3 table-header">
             <h3>Product</h3>
          </div>
-         <div class="col-xs-2 table-header nopadding">
-            <h3 class="text-left">Ukuran</h3>
+         <div class="col-xs-2 table-header">
+            <h3>QTY</h3>
          </div>
-         <div class="col-xs-2 table-header nopadding">
-            <h3 class="text-left">Warna</h3>
+         <div class="col-xs-3 table-header">
+            <h3>Harga Satuan</h3>
          </div>
-         <div class="col-xs-2 table-header nopadding">
-            <h3 class="text-left">QTY</h3>
-         </div>
-         <div class="col-xs-4 table-header nopadding">
-            <h3 class="text-left">Harga</h3>
+         <div class="col-xs-4 table-header">
+            <h3>Total</h3>
          </div>
          <div id="productList">
             <!-- product List goes here  -->
@@ -113,6 +104,13 @@
 </div>
 <!-- /.container -->
 <script type="text/javascript">
+  function maskInputMoney(){
+    $('.money').mask('#.##0', {reverse: true});
+  }
+  function unmaskInputMoney(){
+    $('.money').unmask();
+  }
+
   var listOrder = <?php echo $list_order; ?>;
   var listCustomer = <?php echo $list_customer; ?>;
   var listKategori = <?php echo $list_kategori; ?>;
@@ -122,6 +120,7 @@
   var discount = '<?php echo $discount; ?>';
   var total = '<?php echo $total; ?>';
   var totalItems = '<?php echo $total_items; ?>';
+  maskInputMoney();
   inits(tax, discount, total, totalItems);
   load_customer(listCustomer);
   load_order(listOrder);
@@ -143,6 +142,7 @@
       data :"",
       dataType : "json",
       success : function(data){
+        clear_orderselect();
         load_available_order(data);
       }
     });
@@ -165,9 +165,6 @@
               "<a href='javascript:void(0)' class='addPct' id=\'product-"+json[i].id+"\' onclick=\'addToCart("+json[i].id+")\'>"+
                 "<div class='product color03 flat-box waves-effect waves-block'>"+
                   "<h3 id='proname'>"+json[i].nama+"</h3>"+
-                  "<input id='idname-39' name='name' value='Computer' type='hidden'>"+1
-                  "<input id='idprice-39' name='price' value='350' type='hidden'>"+
-                  "<input id='category' name='category' value='computers' type='hidden'>"+
                   "<div class='mask'>"+
                     "<h3>"+json[i].harga_beli+"</h3>"+
                     "<p>"+json[i].deskripsi+"</p>"+
@@ -190,7 +187,7 @@
         html = "<div class='col-xs-12'>"+
                   "<div class='panel panel-default product-details'>"+
                       "<div class='panel-body' style=''>"+
-                          "<div class='col-xs-2 nopadding'>"+
+                          "<div class='col-xs-3 nopadding'>"+
                               "<div class='col-xs-2 nopadding'>"+
                                   "<a href='javascript:void(0)' onclick=delete_order(\'"+json[i].rowid+"\')>"+
                                   "<span class='fa-stack fa-sm productD'>"+
@@ -203,26 +200,11 @@
                                 "<span class='textPD'>"+json[i].produk+"</span>"+
                               "</div>"+
                           "</div>"+
-                          "<div class='col-xs-2'>"+
-                            "<span class='textPD'>"+
-                              "<select name=ukuran id=\'uk-"+json[i].rowid+"\' class=\'form-control\' onchange=updateOption(\'"+json[i].rowid+"\')>"+
-                                "<option value=0 select disabled>Pilih Ukuran</option>"+
-                              "</select>"+
-                            "</span>"+
-                          "</div>"+
-                          "<div class='col-xs-2'>"+
-                            "<span class='textPD'>"+
-                              "<select name=warna id=\'wr-"+json[i].rowid+"\' class=\'form-control\' onchange=updateOption(\'"+json[i].rowid+"\')>"+
-                                "<option value=0 select disabled>Pilih Warna</option>"+
-                              "</select>"+
-                            "</span>"+
-                          "</div>"+
-                          "<div class='col-xs-2 nopadding productNum'>"+
+                          "<div class='col-xs-2 text-center'>"+
                             "<input id=\'qt-"+json[i].rowid+"\' class='form-control' value='"+json[i].qty+"' placeholder='0' maxlength='2' type='text' onchange=updateQty(\'"+json[i].rowid+"\')>"+
                           "</div>"+
-                          "<div class='col-xs-4 nopadding productNum'>"+
-                            "<span class='textPD'>"+json[i].harga_beli+"</span>"+
-                          "</div>"+
+                          "<div class='col-xs-3 text-center'>"+json[i].harga_beli+"</div>"+
+                          "<div class='col-xs-4 text-center'>"+json[i].subtotal+"</div>"+
                       "</div>"+
                   "</div>"+
               "</div>";
@@ -342,7 +324,7 @@
   }
   function search(){
     var keyword = $("#searchProd").val();
-    var supplier = $("#supplierSelect").val();
+    var supplier = $("#customerSelect").val();
     if(supplier != 0){    
       $.ajax({
         url :"<?php echo base_url('Transaksi_retur/Transaksi/filterProdukByName')?>",
@@ -503,6 +485,68 @@
       }
     });
   }
+  function loadOrder(){
+      var id = $("#supplierSelect").val();
+      $.ajax({
+        url :"<?php echo base_url('Transaksi_pembelian/Transaksi/getDataOrder')?>/"+id,
+        type : "GET",
+        data :"",
+        dataType :"json",
+        success : function(data){
+          if(data.status==1){
+            load_poselect(data.list);
+          }else if(data.status==0){
+            $.confirm({
+                title: 'Purchase Order',
+                content: 'Belum ada PO untuk supplier ini!',
+                buttons: {
+                    confirm: function () {
+                      clear_poselect();           
+                    }
+                }
+            }); 
+          }
+        }
+      });           
+  }
+  function clear_orderselect(){
+    $("#orderSelect").html('');
+    $('#orderSelect').select2({data: [{id: '0', text: 'Pilih Order'}]}).trigger('change');
+  }
+  function load_orderselect(json){
+    var html = "";
+    $("#orderSelect").html('');
+    html = "<option value='0' selected disabled >Pilih Order</option>";
+    $("#orderSelect").append(html);
+    for (var i=0;i<json.length;i++){
+      html = "<option value=\'"+json[i].id+"\'>"+json[i].id+"</option>";
+      $("#orderSelect").append(html);
+    }
+  }  
+  function showORDER(){
+      $.ajax({
+        url :"<?php echo base_url('Transaksi_pembelian/Transaksi/listPO')?>",
+        type : "GET",
+        data :"",
+        success : function(data){
+          $("#body-detail-po").html(data);
+        }
+      });       
+      $("#modalpo").modal("show");    
+  }
+  function choosePO(){
+      var id = $("#poSelect").val();
+      $.ajax({
+        url :"<?php echo base_url('Transaksi_pembelian/Transaksi/addCartFromExistingPO')?>/"+id,
+        type : "GET",
+        data :"",
+        dataType : "json",
+        success : function(data){
+          fillInfoPO(id);
+          load_order(data);
+        }
+      });
+  }  
   function updateProses(id){
     alert(id);
   }

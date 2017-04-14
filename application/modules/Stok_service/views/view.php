@@ -34,6 +34,7 @@
 <div class="modal fade" id="modaldetail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
  <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
+      <form action="<?php echo base_url('Stok_service/Transaksi/confirm')?>" method="POST" id="frm-detail">          
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="myModalLabel">Detail Barang Service</h4>
@@ -45,20 +46,28 @@
          </div>
       </div>
       <div class="modal-footer">
-         <div class="row">
+          <div class="row">
            <div class="col-lg-10">
            *Barang yang statusnya sudah diubah, tidak akan bisa diubah lagi, <br>mohon periksa kembali sebelum klik tombol confirm
            </div>
            <div class="col-lg-1">
-            <button type="submit" class="btn btn-success" data-dismiss="modal" onclick="reloadTable()">Confirm</button>
+            <button type="submit" class="btn btn-success">Confirm</button>
            </div>
-         </div>
+          </div>
       </div>
+      </form>
     </div>
  </div>
 </div>
 <!-- /.Modal Detail-->
 <script type="text/javascript" language="javascript" >
+    function maskInputMoney(){
+      $('.money').mask('#.##0', {reverse: true});
+    }
+    function unmaskInputMoney(){
+      $('.money').unmask();
+    }
+    maskInputMoney();
     var dataTable = $('#TableMain').DataTable( {
         "processing": true,
         "serverSide": true,
@@ -83,4 +92,27 @@
       });       
       $("#modaldetail").modal("show");
     }
+    function testClick(){
+      $("#frm-detail").submit();
+    }
+    $(document).ready(function(){
+      $("#frm-detail").on('submit', function(e){
+        e.preventDefault();
+        unmaskInputMoney();
+        $.ajax({
+          url : $('#frm-detail').attr('action'),
+          type : $('#frm-detail').attr('method'),
+          data : $("#frm-detail").serialize(),
+          dataType : 'json',
+          success : function(data){
+            if(data.status == 1){
+              $("#modaldetail").modal('hide');
+              dataTable.ajax.reload(null, false);
+              maskInputMoney();
+            }
+          }
+        });   
+      });      
+    });
+
 </script>

@@ -120,18 +120,10 @@ class Transaksi extends MX_Controller {
 					m_produk.nama as nama,
 					m_produk.sku as sku";
 		$sql.=" FROM t_service";
-		// $query=$this->Transaksiservicemodel->rawQuery($sql);
-		// $sql = "SELECT * ";
 		$sql.=" LEFT JOIN t_service_detail ON t_service.id = t_service_detail.id_service";
 		$sql.=" LEFT JOIN m_produk on t_service_detail.id_produk = m_produk.id";
 		$sql.=" WHERE t_service.deleted=1 ";
 		$sql.=" AND t_service.id=".$id_service;
-		// if( !empty($requestData['search']['value']) ) {
-		// 	$sql.=" AND (m_produk.nama LIKE '".$requestData['search']['value']."%' ";
-		// 	$sql.=" OR m_produk.sku LIKE '".$requestData['search']['value']."%' ";
-		// 	$sql.=" OR m_produk.kode_barang LIKE '".$requestData['search']['value']."%' ";
-		// 	$sql.=" OR m_produk.deskripsi LIKE '".$requestData['search']['value']."%' ) ";
-		// }
 		$query=$this->Transaksiservicemodel->rawQuery($sql);
 		$totalData = $query->num_rows();
 		$totalFiltered = $totalData;		
@@ -147,41 +139,32 @@ class Transaksi extends MX_Controller {
 			$nestedData[] 	= 	$row["nama"];
 			$nestedData[] 	= 	$row["sku"];
 			$nestedData[] 	= 	$row["sdjm"];
-			$nestedData[] 	= 	$row['sdst']==1?"<input type='text' id='jbk-".$row['sdid']."' value='".$row["sdjbk"]."'  maxlength='2' class='form-control nopadding productNum' style='width: 50%' oninput=confirm('".$row['sdid']."') />":$row["sdjbk"];
-			$nestedData[] 	= 	$row['sdst']==1?"<input class='form-control nopadding productNum' type='text' id='juk-".$row['sdid']."' value='".$row["sdjuk"]."' style='width: 50%' oninput=confirm('".$row['sdid']."') />":$row["sdjuk"];
-            $status  = "<select class='form-control' name='sts' id='sts-".$row['sdid']."' style='width: 100%' onchange=confirm('".$row['sdid']."') >";
+			$nestedData[] 	= 	$row['sdst']==1?"<input type='text' id='jbk-".$row['sdid']."' name='jbk-".$row['sdid']."' value='".$row["sdjbk"]."'  maxlength='2' class='form-control nopadding productNum' style='width: 50%'/>":$row["sdjbk"];
+			$nestedData[] 	= 	$row['sdst']==1?"<input class='form-control nopadding productNum money' type='text' id='juk-".$row['sdid']."' name='juk-".$row['sdid']."' value='".$row["sdjuk"]."' style='width: 50%'/>":$row["sdjuk"];
 			$enableButton	=	"";
 			switch ($row['sdst']) {
 				case 2:
-                    $status .= "<option value='1'>DALAM PROSES</option>";
-                    $status .= "<option value='2' selected>BARANG</option>";
-                    $status .= "<option value='3'>UANG</option>";
-                    $status .= "<option value='4'>UANG DAN BARANG</option>";
+					$status = "DI KEMBALIKAN BARANG";
 					$enableButton = "disabled";
 					break;
 				case 3:
-                    $status .= "<option value='1'>DALAM PROSES</option>";
-                    $status .= "<option value='2'>BARANG</option>";
-                    $status .= "<option value='3' selected>UANG</option>";
-                    $status .= "<option value='4'>UANG DAN BARANG</option>";
+					$status = "DI KEMBALIKAN UANG";
 					$enableButton = "disabled";
 					break;
 				case 4:
-                    $status .= "<option value='1'>DALAM PROSES</option>";
-                    $status .= "<option value='2'>BARANG</option>";
-                    $status .= "<option value='3'>UANG</option>";
-                    $status .= "<option value='4' selected>UANG DAN BARANG</option>";
+					$status = "DI KEMBALIKAN UANG BARANG";
 					$enableButton = "disabled";
 					break;
 				default:
+		            $status  = "<select class='form-control' name='sts-".$row['sdid']."' id='sts-".$row['sdid']."' style='width: 100%'>";
 					$status .= "<option value='1' selected>DALAM PROSES</option>";
 					$status .= "<option value='2'>BARANG</option>";
 					$status .= "<option value='3'>UANG</option>";
 					$status .= "<option value='4'>UANG DAN BARANG</option>";
 					$enableButton = "";
+		            $status .= "</select>";
 					break;
 			}
-            $status .= "</select>";
 			$nestedData[] 	= 	$status;		
 			$aksi = $enableButton=="disabled"?"CONFIRMED":"<button onclick=confirm('".$row['sdid']."') class='btn btn-success'>CONFIRM</button>";
 			$data[] = $nestedData;
@@ -196,6 +179,128 @@ class Transaksi extends MX_Controller {
 		echo json_encode($json_data);
     }
     function confirm(){
+    	$params = $this->input->post();
+    	$data = array();
+    	if($params['id_hidden'] != null){
+    		// get data t_service_detail
+    		$dataSelect['id_service'] = $params['id_hidden'];
+    		$selectDataDetail = $this->Transaksiservicemodel->select($dataSelect, 't_service_detail');
+    		if($selectDataDetail->num_rows() > 0){
+    			foreach ($selectDataDetail->result_array() as $rowDetail) {
+    				if(isset($params['jbk-'.$rowDetail['id']])){
+
+			    		$statusStok = $rowDetail['kurangi_stok'];
+			    		if ($statusStok == 1) {
+			    			$idProduk = $rowDetail['id_produk'];
+			    			$dataSelectMaster['id'] = $idProduk;
+			    			$selectDataMaster = $this->Transaksiservicemodel->select($dataSelectMaster, 'm_produk');
+			    			
+			    			$stokKembali = $params['jbk-'.$rowDetail['id']];
+			    			$stokGudang = $selectDataMaster->row()->stok;
+
+			    			$stokSekarang = $stokGudang + $stokKembali;
+
+			    			// update stok master
+			    			$dataConditionMaster['id'] = $idProduk;
+			    			$dataUpdateMaster['stok'] = $stokSekarang;
+			    			$updateDataMaster = $this->Transaksiservicemodel->update($dataConditionMaster, $dataUpdateMaster, 'm_produk');
+			    			if($updateDataMaster){
+			    				// insert ke h stok produk
+			    				$dataInsertHistori['id_produk'] 		= $idProduk;
+			    				$dataInsertHistori['id_order_detail'] 	= 0;
+			    				$dataInsertHistori['id_service'] 		= $params['id_hidden'];
+			    				$dataInsertHistori['jumlah']			= $stokKembali;
+			    				$dataInsertHistori['stok_akhir']		= $stokSekarang;
+			    				$dataInsertHistori['keterangan']		= "Barang Kembali";
+			    				$dataInsertHistori['status']			= 5;
+			    				$dataInsertHistori['add_by']			= isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+			    				$dataInsertHistori['edited_by']			= 0;
+			    				$dataInsertHistori['deleted']			= 1;
+			    				$insertHistori = $this->Transaksiservicemodel->insert($dataInsertHistori, 'h_stok_produk');
+			    				if($insertHistori){
+			    					// update service detail
+			    					// $dataConditionService['id'] = $dataSelect['id_service'];
+			    					$dataConditionService['id'] = $rowDetail['id'];
+			    					$dataUpdateService['uang_kembali']  		= $params['juk-'.$rowDetail['id']];
+			    					$dataUpdateService['status']				= $params['sts-'.$rowDetail['id']];
+			    					$dataUpdateService['jumlah_barang_kembali']	= $params['jbk-'.$rowDetail['id']];
+			    					$updateService = $this->Transaksiservicemodel->update($dataConditionService, $dataUpdateService, 't_service_detail');
+			    					if($updateService){
+			    						// get last jumlah_uang_kembali
+			    						// get last jumlah_barang_kembali
+			    						$dataSelectTservice['id'] = $rowDetail['id'];
+			    						$selectlastJbk = $this->Transaksiservicemodel->rawQuery("SELECT SUM(jumlah_barang_kembali) as JBK FROM t_service_detail WHERE id_service = ".$params['id_hidden']);
+			    						$lastBarang = $selectlastJbk->row()->JBK;
+			    						$selectlastJuk = $this->Transaksiservicemodel->rawQuery("SELECT SUM(uang_kembali) as JUK FROM t_service_detail WHERE id_service = ".$params['id_hidden']);
+			    						$lastUang = $selectlastJuk->row()->JUK;
+
+			                            //get data all row
+			                            $dataSelectAllRow['id_service'] = $params['id_hidden'];
+			                            $selectDataAllRow = $this->Transaksiservicemodel->select($dataSelectAllRow, 't_service_detail');
+			                            //get data status 1
+			                            $dataSelectstatsOne['id_service'] = $params['id_hidden'];
+			                            $dataSelectstatsOne['status'] = 1;
+			                            $selectDataOne = $this->Transaksiservicemodel->select($dataSelectstatsOne, 't_service_detail');
+			                            $statusTService = 1;
+			                            if($selectDataOne->num_rows() == 0){
+			                                $statusTService = 3;
+			                            }else if($selectDataAllRow->num_rows() == $selectDataOne->num_rows()){
+			                                $statusTService = 1;
+			                            }else if ($selectDataOne->num_rows() < $selectDataAllRow->num_rows()) {
+			                                $statusTService = 2;
+			                            }
+			    						$dataConditionTservice['id'] = $params['id_hidden'];
+			    						$dataInsertTservice['jumlah_barang_kembali'] = $lastBarang;
+			    						$dataInsertTservice['jumlah_uang_kembali'] = $lastUang;
+			    						$dataInsertTservice['status'] = $statusTService;
+			    						$updateTservice = $this->Transaksiservicemodel->update($dataConditionTservice, $dataInsertTservice, 't_service');
+			    						if($updateTservice){    						
+				    						echo json_encode(array("status"=>1));
+			    						}else{
+			    							echo json_encode(array("status"=>0));
+			    						}
+			    					}else{
+			    						echo json_encode(array("status"=>0));
+			    					}
+			    				}
+			    			}
+			    		}else{
+							$dataConditionService['id'] = $dataSelect['id'];
+							$dataUpdateService['uang_kembali']  		= $params['juk-'.$rowDetail['id']];
+							$dataUpdateService['status']				= $params['sts-'.$rowDetail['id']];
+							$dataUpdateService['jumlah_barang_kembali']	= $params['jbk-'.$rowDetail['id']];
+							$updateService = $this->Transaksiservicemodel->update($dataConditionService, $dataUpdateService, 't_service_detail');
+							if($updateService){
+								// get last jumlah_uang_kembali
+								// get last jumlah_barang_kembali
+								$dataSelectTservice['id'] = $selectData->row()->id_service;
+								$selectlastJbk = $this->Transaksiservicemodel->rawQuery("SELECT SUM(jumlah_barang_kembali) as JBK FROM t_service_detail WHERE id_service = ".$selectData->row()->id_service);
+								$lastBarang = $selectlastJbk->row()->JBK;
+								$selectlastJuk = $this->Transaksiservicemodel->rawQuery("SELECT SUM(uang_kembali) as JUK FROM t_service_detail WHERE id_service = ".$selectData->row()->id_service);
+								$lastUang = $selectlastJuk->row()->JUK;
+
+								$dataConditionTservice['id'] = $selectData->row()->id_service;
+								$dataInsertTservice['jumlah_barang_kembali'] = $lastBarang;
+								$dataInsertTservice['jumlah_uang_kembali'] = $lastUang;
+								$dataInsertTservice['status'] = 2;
+								$updateTservice = $this->Transaksiservicemodel->update($dataConditionTservice, $dataInsertTservice, 't_service');
+								if($updateTservice){    						
+									echo json_encode(array("status"=>1));
+								}else{
+									echo json_encode(array("status"=>0));
+								}
+							}else{
+								echo json_encode(array("status"=>0));
+							}
+			    		}
+    				}else{
+						echo json_encode(array("status"=>1));
+    				}
+    			}
+    		}
+    	}
+    }
+    function confirms(){
     	$params = $this->input->post();
     	if($params != null){
     		// update t_service_detail
