@@ -96,7 +96,7 @@
                <h2 id="TotalModal"></h2>
             </div>
              <div class="form-group">
-               <label for="paymentMethod">Metode Pembayaran</label>               
+               <label for="paymentMethod">Metode Pembayaran</label>
                <select class="js-select-options form-control" id="paymentMethod" name="paymentMethod">
                  <option value="0">Cash</option>
                  <option value="1">BNI</option>

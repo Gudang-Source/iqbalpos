@@ -9,13 +9,13 @@
       <table id="TableMain" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>         
               <tr>
-                  <th class="text-center" class="hidden-xs">ID ORDER</th>
-                  <th class="text-center" class="hidden-xs">CUSTOMER</th>
-                  <th class="text-center" class="hidden-xs">DETAIL DROPSHIP</th>
-                  <th class="text-center" class="hidden-xs">BIAYA KIRIM</th>
-                  <th class="text-center" class="hidden-xs">HARGA BARANG</th>
-                  <th class="text-center" class="hidden-xs">TANGGAL TRANSAKSI</th>
-                  <th class="text-center" class="hidden-xs">AKSI</th>
+                  <th class="text-center" class="hidden-xs">ID Order</th>
+                  <th class="text-center" class="hidden-xs">Customer</th>
+                  <th class="text-center" class="hidden-xs">Detail Dropship</th>
+                  <th class="text-center" class="hidden-xs">Biaya Kirim (IDR)</th>
+                  <th class="text-center" class="hidden-xs">Harga Barang (IDR)</th>
+                  <th class="text-center" class="hidden-xs">Tanggal Transaksi</th>
+                  <th class="text-center" class="hidden-xs">Aksi</th>
               </tr>
           </thead>
           <tbody id='bodytable'>            
@@ -68,7 +68,7 @@
              </div>
              <div class="col-sm-12">
                <div class="form-group">
-                 <label for="biaya_kirim">Biaya Kirim</label>
+                 <label for="biaya_kirim">Biaya Kirim (IDR)</label>
                  <input type="text" name="biaya_kirim" maxlength="30" min="0" class="form-control money" id="biaya_kirim" placeholder="Biaya Kirim" required="">
                </div>
              </div>
@@ -91,6 +91,7 @@
     function unmaskInputMoney(){
       $('.money').unmask();
     }    
+
     function detail(id){
       // getDataDropship
       $.ajax({

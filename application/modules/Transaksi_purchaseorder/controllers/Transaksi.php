@@ -27,13 +27,14 @@ class Transaksi extends MX_Controller {
     function data(){
 		$requestData= $_REQUEST;
 		$columns = array( 
-			0 	=>	'id_supplier', 
-			1 	=> 	'catatan',
-			2	=> 	'total_berat',
-			3	=> 	'total_qty',
-			4	=> 	'total_harga_beli',
-			5	=> 	'date_add',
-			6	=> 	'aksi'
+            0   =>  'id', 
+			1 	=>	'id_supplier', 
+			2 	=> 	'catatan',
+			3	=> 	'total_berat',
+			4	=> 	'total_qty',
+			5	=> 	'total_harga_beli',
+			6	=> 	'date_add',
+			7	=> 	'aksi'
 		);
 		$sql = " SELECT t_purchase_order.* , m_supplier_produk.nama as namasup ";
 		$sql.= " FROM t_purchase_order ";
@@ -59,11 +60,12 @@ class Transaksi extends MX_Controller {
 		foreach ($query->result_array() as $row) {
 			$nestedData		=	array(); 
 
+            $nestedData[]   =   $row["id"];
 			$nestedData[] 	= 	$row["namasup"];
 			$nestedData[] 	= 	$row["catatan"];
-			$nestedData[] 	= 	$row["total_berat"];
+			$nestedData[] 	= 	'<span class="money">'.$row["total_berat"].'</span>';
 			$nestedData[] 	= 	$row["total_qty"];
-			$nestedData[] 	= 	$row["total_harga_beli"];
+			$nestedData[] 	= 	'<span class="money pull-right">'.$row["total_harga_beli"].'</span>';
 			$nestedData[] 	= 	$row["date_add"];
 			$nestedData[] 	= 	"<button onclick=detail('".$row['id']."') class='btn btn-success'> Detail </button>
                                 <a href='".base_url('Transaksi_purchaseorder/Transaksi/invoices/'.$row['id'])."') target='_blank' class='btn btn-success'> Print </a>";
@@ -130,9 +132,9 @@ class Transaksi extends MX_Controller {
 			$nestedData[] 	= 	$row['ukuran']!=null||$row['ukuran']!=0?$row['ukuran']:"Tidak Ada Ukuran";
 			$nestedData[] 	= 	$row['warna']!=null||$row['warna']!=0?$row['warna']:"Tidak Ada Warna";
 			$nestedData[] 	= 	$row['podjm'];
-			$nestedData[] 	= 	$row['podtb'];
-			$nestedData[] 	= 	$row['podhb'];
-			$nestedData[] 	= 	$row['podth'];
+			$nestedData[] 	= 	'<span class="money">'.$row['podtb'].'</span>';
+			$nestedData[] 	= 	'<span class="money pull-right">'.$row['podhb'].'</span>';
+			$nestedData[] 	= 	'<span class="money pull-right">'.$row['podth'].'</span>';
 			$data[] = $nestedData;
 			$i++;
 		}

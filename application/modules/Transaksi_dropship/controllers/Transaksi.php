@@ -74,7 +74,8 @@ class Transaksi extends MX_Controller {
 			$nestedData[] 	= 	"Rp. ".number_format($row["grand_total"]);
 			$nestedData[] 	= 	$row["date_add"];
 
-            $button = "<button class='btn btn-success' onclick=showDropship('".$row["id"]."')>DETAIL</button>";
+            $button = "<button class='btn btn-success' onclick=showDropship('".$row["id"]."')>Detail</button> "
+                ."<a href='".base_url('Transaksi_dropship/Transaksi/invoices/'.$row['id'])."') target='_blank' class='btn btn-success'> Print </a>";
             if($row['jenis_order']==2){
                 $button = "-";
             }

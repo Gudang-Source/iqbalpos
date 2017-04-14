@@ -7,15 +7,15 @@
       <table id="TableMain" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>         
               <tr>
-                  <th class="text-center" class="hidden-xs">ID ORDER</th>
-                  <th class="text-center" class="hidden-xs">CUSTOMER</th>
-                  <th class="text-center" class="hidden-xs">CATATAN</th>
-                  <th class="text-center" class="hidden-xs">TOTAL BERAT</th>
-                  <th class="text-center" class="hidden-xs">TOTAL QTY</th>
-                  <th class="text-center" class="hidden-xs">BIAYA KIRIM</th>
-                  <th class="text-center" class="hidden-xs">HARGA BARANG</th>
-                  <th class="text-center" class="hidden-xs">TANGGAL TRANSAKSI</th>
-                  <th class="text-center" class="hidden-xs">AKSI</th>
+                  <th class="text-center" class="hidden-xs">ID Order</th>
+                  <th class="text-center" class="hidden-xs">Customer</th>
+                  <th class="text-center" class="hidden-xs">Catatan</th>
+                  <th class="text-center" class="hidden-xs">Total Berat (gr)</th>
+                  <th class="text-center" class="hidden-xs">Total Qty</th>
+                  <th class="text-center" class="hidden-xs">Biaya Kirim</th>
+                  <th class="text-center" class="hidden-xs">Harga Barang (IDR)</th>
+                  <th class="text-center" class="hidden-xs">Tanggal Transaksi</th>
+                  <th class="text-center" class="hidden-xs">Aksi</th>
               </tr>
           </thead>
           <tbody id='bodytable'>            
@@ -50,6 +50,13 @@
 </div>
 <!-- /.Modal Detail-->
 <script type="text/javascript" language="javascript" >
+    function maskInputMoney(){
+      $('.money').mask('#.##0', {reverse: true});
+    }
+    function unmaskInputMoney(){
+      $('.money').unmask();
+    }    
+
     function detail(id){
       $.ajax({
         url :"<?php echo base_url('Transaksi_penjualan/Transaksi/detail')?>/"+id,
@@ -75,5 +82,6 @@
                 }
             }
         });
+        maskInputMoney();
     });
 </script>
