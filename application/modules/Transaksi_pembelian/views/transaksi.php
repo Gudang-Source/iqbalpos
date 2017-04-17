@@ -83,8 +83,8 @@
       </div>
       <div class="col-md-7 right-side nopadding">
         <div class="row row-horizon" id="kategoriGat">
-            <span class="categories selectedGat" id="">
-              <i class="fa fa-home"></i>
+            <span class="categories selectedGat" id="gat-0">
+              <i class="fa fa-home" onclick="filterProdukByKategori(0)"></i>
             </span>
         </div>
         <div class="col-sm-12">
@@ -162,10 +162,12 @@
   function load_product(json){
     var html = "";
     $("#productList2").html('');
+    var rand = Math.floor(Math.random()*json.length) + 1;
     for (var i=0;i<json.length;i++){
+      rand = Math.floor(Math.random()*json.length) + 1;
       html = "<div class='col-sm-2 col-xs-3' style='display: block;'>"+
               "<a href='javascript:void(0)' class='addPct' id=\'product-"+json[i].id+"\' onclick=\'addToCart("+json[i].id+")\'>"+
-                "<div class='product color03 flat-box waves-effect waves-block'>"+
+                "<div class='product color0"+(i+1)+" flat-box waves-effect waves-block'>"+
                   "<h3 id='proname'>"+json[i].nama+"</h3>"+
                   "<div class='mask'>"+
                     "<h3>"+json[i].harga_beli+"</h3>"+
@@ -343,7 +345,7 @@
   function load_kategori(json){
     var html = "";
     $("#kategoriGat").html('');
-    html = "<span class='categories selectedGat'><i class='fa fa-home'></i></span>";
+    html = "<span class='categories selectedGat' onclick=filterProdukByKategori(0) id=\'gat-0\'><i class='fa fa-home'></i></span>";
     $("#kategoriGat").append(html);
     for (var i=0;i<json.length;i++){
       html = "<span class='categories' onclick=filterProdukByKategori(\'"+json[i].id+"\') id=\'gat-"+json[i].id+"\'>"+json[i].nama+"</span>";

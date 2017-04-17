@@ -216,14 +216,18 @@ class Transaksi extends MX_Controller {
         $list = $this->Transaksiservicemodel->like($dataCondition, $dataLike, 'm_produk');
         return json_encode($list->result_array());
     }  
-    function getProdukByKategori($supplier = null, $kategori = null, $keyword = null){
+    function getProdukByKategori($supplier = null, $kategori = 0, $keyword = null){
     	$list = null;
     	$dataSelect['deleted'] = 1;
     	$dataLike = array();
-    	if($supplier != null && $kategori != null){
+        $dataCondition = array();
+    	if($supplier != null && $kategori != 0){
     		$dataCondition['id_supplier'] = $supplier;
     		$dataCondition['id_kategori'] = $kategori;
     	}
+        if($kategori == 0){
+            $dataCondition['id_supplier'] = $supplier;
+        }
     	if($keyword != null){
     		$dataLike['nama'] = $keyword;
     	}
@@ -258,7 +262,7 @@ class Transaksi extends MX_Controller {
         $supplier = $params['supplier'];
         echo $this->getProdukByName($keyword, $supplier, $kategori);
     }
-    function filterProdukByKategori($supplier, $kategori, $keyword = null){
+    function filterProdukByKategori($supplier = null, $kategori = null, $keyword = null){
     	echo $this->getProdukByKategori($supplier, $kategori, $keyword);
     }
     function getWarna($id){
@@ -632,4 +636,7 @@ class Transaksi extends MX_Controller {
         }
         echo $this->getOrder();
     }
+    function rand_color() {
+        echo sprintf('#%06X', mt_rand(0, 0xFFFFFF));
+    }    
 }
