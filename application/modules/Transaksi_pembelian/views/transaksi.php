@@ -70,19 +70,6 @@
                      </td>
                   </tr>
                   <tr>
-                     <td class="active">TAX</td>
-                     <td class="whiteBg"><input type="text" value="" id="eTax" class="total-input TAX" placeholder="N/A"  maxlength="5">
-                        <span class="float-right"><b id="taxValue"></b></span>
-                     </td>
-                  </tr>
-                  <tr>
-                     <td class="active">Discount</td>
-                     <td class="whiteBg">
-                        <input type="text" value="" id="eDiscount" class="total-input Remise" placeholder="N/A"  maxlength="5">
-                        <span class="float-right"><b id="RemiseValue"></b></span>
-                     </td>
-                  </tr>
-                  <tr>
                      <td class="active">Total</td>
                      <td class="whiteBg light-blue text-bold"><span id="eTotal"></span></td>
                   </tr>
@@ -96,7 +83,9 @@
       </div>
       <div class="col-md-7 right-side nopadding">
         <div class="row row-horizon" id="kategoriGat">
-            <span class="categories selectedGat" id=""><i class="fa fa-home"></i></span>
+            <span class="categories selectedGat" id="">
+              <i class="fa fa-home"></i>
+            </span>
         </div>
         <div class="col-sm-12">
            <div id="searchContaner">
@@ -595,8 +584,9 @@
         data :"",
         dataType : "json",
         success : function(data){
-          fillInfoPO(id);
+          // fillInfoPO(id);
           load_order(data);
+          fillInformation();
         }
       });
   }
@@ -627,6 +617,8 @@
                   doSubmit();
               },
               cancel: function () {
+                $('#btnDoOrder').html("<h5 class=\'text-bold\'>Proses Pembelian</h5>");
+                $("#btnDoOrder").prop("disabled", false);
                   
               }
           }

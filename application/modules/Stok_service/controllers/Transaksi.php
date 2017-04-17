@@ -191,12 +191,15 @@ class Transaksi extends MX_Controller {
 
 			    		$statusStok = $rowDetail['kurangi_stok'];
 			    		if ($statusStok == 1) {
+
 			    			$idProduk = $rowDetail['id_produk'];
 			    			$dataSelectMaster['id'] = $idProduk;
 			    			$selectDataMaster = $this->Transaksiservicemodel->select($dataSelectMaster, 'm_produk');
 			    			
+			    			$inputStokTerakhir = $selectDataDetail->row()->jumlah_barang_kembali;
+
 			    			$stokKembali = $params['jbk-'.$rowDetail['id']];
-			    			$stokGudang = $selectDataMaster->row()->stok;
+			    			$stokGudang = $selectDataMaster->row()->stok - $inputStokTerakhir;
 
 			    			$stokSekarang = $stokGudang + $stokKembali;
 

@@ -507,7 +507,7 @@ class Transaksi extends MX_Controller {
         foreach ($this->cart->contents() as $items){
             $idProduks = explode("_", $items['id']);
             if (count($idProduks) > 1) {
-                if ($idProduks[1] == "PURCHASEORDER") {
+                if ($idProduks[1] == "PEMBELIAN") {
                     $total += $items['options']['total_berat'];
                     $total = $total * $items['qty'];
                 }
@@ -593,7 +593,7 @@ class Transaksi extends MX_Controller {
         $selectPOMaster = $this->Transaksipembelianmodel->select($dataSelect, 't_purchase_order');
         echo json_encode($selectPOMaster->result_array());
     }
-    function addCartFromExistingPO($idPO){
+    function removePembelian(){
         foreach ($this->cart->contents() as $items) {
             $idProduks = explode("_", $items['id']);
             if(count($idProduks) > 1){
@@ -601,12 +601,14 @@ class Transaksi extends MX_Controller {
                     $this->cart->remove($items['rowid']);
                 }
             }
-        }
+        }        
+    }
+    function addCartFromExistingPO($idPO){
+        $this->removePembelian();
         $dataSelect['deleted']  =   1;
         $dataSelect['id']       =   $idPO;
         $selectPOMaster = $this->Transaksipembelianmodel->select($dataSelect, 't_purchase_order');
         if($selectPOMaster->num_rows() > 0){
-            // $dataSelectDetail['id_purchase_order'] = $selectPOMaster->row()->id;
             $selectDataDetail = $this->Transaksipembelianmodel->rawQuery("SELECT * 
                                                                             FROM t_purchase_order_detail
                                                                             INNER JOIN m_produk ON t_purchase_order_detail.id_produk = m_produk.id
@@ -614,17 +616,17 @@ class Transaksi extends MX_Controller {
             if($selectDataDetail->num_rows() > 0){
                 foreach ($selectDataDetail->result_array() as $row) {
                     $datax = array(
-                                'id'      => $selectDataDetail->row()->id."_PEMBELIAN",
-                                'qty'     => 1,
-                                'price'   => 0,
-                                'name'    => $selectDataDetail->row()->nama,
+                                'id'      => $row['id']."_PEMBELIAN",
+                                'qty'     => $row['jumlah'],
+                                'price'   => $row['harga_beli'],
+                                'name'    => $row['nama'],
                                 'options' => array(
-                                                'ukuran'=>0,
-                                                'warna'=>0,
-                                                'total_berat'=>0
+                                                'ukuran'=>$row['id_ukuran'],
+                                                'warna'=>$row['id_warna'],
+                                                'total_berat'=>$row['total_berat']
                                                 )
                     );
-                    $this->cart->insert($datax);                    
+                    $this->cart->insert($datax);
                 }
             }
         }
