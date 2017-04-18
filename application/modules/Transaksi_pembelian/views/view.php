@@ -1,8 +1,9 @@
 <!-- Page Content -->
 <div class="container">
-     <div class="row">
-      <h3><strong>Transaksi</strong> - Pembelian</h3>
-     </div>
+<div class="row" style='min-height:80px;'></div>
+<div class="row">
+  <h3><strong>Transaksi</strong> - Pembelian</h3>
+</div>
      <div class="row" style="margin-top:10px;">
       <table id="TableMain" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
