@@ -2,7 +2,7 @@
       <table id="TableMains" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
               <tr>
-                  <th class="text-center">No</th>
+                  <th class="text-center no-sort">#</th>
                   <th class="text-center">Produk</th>
                   <th class="text-center">Ukuran</th>
                   <th class="text-center">Warna</th>
@@ -25,6 +25,7 @@
         "searching": false,
         "processing": true,
         "serverSide": true,
+        "order": [[1, 'DESC']],
         "ajax":{
             url : "<?php echo base_url('Transaksi_penjualan/Transaksi/data_detail'); ?>/"+<?php echo $id; ?>,
             type: "get",
@@ -34,6 +35,10 @@
                 // dataTable.ajax.reload( null, false );
             }
         },
+        "columnDefs": [ {
+            "targets"  : 'no-sort',
+            "orderable": false,
+        }],
         "buttons": [
             {
                 extend: 'excel',

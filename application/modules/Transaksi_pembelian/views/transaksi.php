@@ -11,7 +11,8 @@
    </div>
    <div class="row">
     <div class="col-md-5 left-side">
-      <form action="<?php echo base_url('Transaksi_pembelian/Transaksi/doSubmit'); ?>" method="post" id="pembelian">          
+      <form action="<?php echo base_url('Transaksi_pembelian/Transaksi/doSubmit'); ?>" method="post" id="pembelian">
+        <div class="col-xs-8"> &nbsp; </div>           
 <!--          <div class="col-xs-4 client-add">
             <a href="javascript:void(0)" data-toggle="modal" data-target="#ticket" onclick="showPO()">
                <span class="fa-stack fa-lg" data-toggle="tooltip" data-placement="top" title="Choose From Purchase Order">
@@ -46,7 +47,7 @@
           </div>
          </div>
          <div class="col-xs-3 table-header text-center">
-            <label>PRODUCT</label>
+            <label>PRODUK</label>
          </div>
          <div class="col-xs-3 table-header nopadding text-center">
             <label>OPSI</label>
@@ -67,9 +68,9 @@
             <div class="table-responsive col-sm-12 totalTab">
                <table class="table">
                   <tr>
-                     <td class="active" width="40%">Subtotal</td>
+                     <td class="active" width="40%">Total Qty</td>
                      <td class="whiteBg" width="60%"><span id="Subtot"></span>
-                        <span class="float-right"><b id="eTotalItem"><span></span> Item</b></span>
+                        <span class="float-right"><b><span id="eTotalItem"></span> Item</b></span>
                      </td>
                   </tr>
                   <tr>
@@ -207,26 +208,28 @@
                               "</div>"+
                           "</div>"+
                           "<div class='col-xs-3'>"+
-                            "<span class='TextPD'>"+
+                            "<span class='textPD'>"+
                               "<select name=ukuran id=\'uk-"+json[i].rowid+"\' class=\'form-control\' onchange=updateOption(\'"+json[i].rowid+"\') title=\'Pilih Ukuran\'>"+
                                 "<option value=0 select disabled>Pilih Ukuran</option>"+
                               "</select>"+
                             "</span>"+
-                            "<span class='TextPD'>"+
+                            "<span class='textPD'>"+
                               "<select name=warna id=\'wr-"+json[i].rowid+"\' class=\'form-control\' onchange=updateOption(\'"+json[i].rowid+"\') title=\'Pilih Warna\'>"+
                                 "<option value=0 select disabled>Pilih Warna</option>"+
                               "</select>"+
                             "</span>"+
                           "</div>"+
                           "<div class='col-xs-2'>"+
-                            "<input id=\'qt-"+json[i].rowid+"\' class='form-control' value='"+json[i].qty+"' placeholder='0' maxlength='2' type='text' onchange=updateQty(\'"+json[i].rowid+"\')>"+
+                            "<span class='textPD'>"+
+                              "<input id=\'qt-"+json[i].rowid+"\' class='form-control' value='"+json[i].qty+"' placeholder='0' maxlength='2' type='text' onchange=updateQty(\'"+json[i].rowid+"\')>"+
+                            "</span>"+
                           "</div>"+
-                          "<div class='col-xs-2 nopadding productNum text-right'>"+
-                            "<span class=\'money\'>"+json[i].harga_beli+"</span>"+
+                          "<div class='col-xs-2 nopadding'>"+
+                            "<span class=\'textPD money\' style='float:right;'>"+json[i].harga_beli+"</span>"+
                             "<input type=hidden id=\'hb-"+json[i].rowid+"\' class=\'form-control\' value='"+json[i].harga_beli+"'  onchange=updateHargaBeli(\'"+json[i].rowid+"\')>"+
                           "</div>"+
-                          "<div class='col-xs-2 nopadding productNum text-center'>"+
-                            "<span class=\'money\'>"+json[i].subtotal+"</span>"+
+                          "<div class='col-xs-2'>"+
+                            "<span class=\'textPD money\'>"+json[i].subtotal+"</span>"+
                             "<input type=hidden id=\'tb-"+json[i].rowid+"\' class=\'form-control\' value='"+json[i].total_berat+"' onchange=updateOption(\'"+json[i].rowid+"\')>"+
                           "</div>"+
                       "</div>"+

@@ -5,36 +5,36 @@
 </style>
 <div class="container-fluid">
    <div class="row">
-    <h3><strong>Transaksi</strong> - Penjualan</h3>
+    <div class="col-sm-12">
+      <h3><strong>Transaksi</strong> - Penjualan</h3>
+    </div>
    </div>
    <div class="row">
     <div class="col-md-5 left-side">
       <form action="<?php echo base_url('Transaksi_penjualan/Transaksi/doSubmit'); ?>" method="post" id="pembelian">          
-         <div class="col-xs-8">
-            <h2>Pilih Customer</h2>
-         </div>
-         <div class="col-xs-8">
-          &nbsp;
-         </div>         
+         <div class="col-xs-8"> &nbsp; </div>         
          <div class="col-sm-12">
+          <div class="form-group">
+            <label class="label-control">Pilih Customer</label>
             <select class="js-select-options form-control" id="customerSelect" name="customer" required="required" onchange="filterProduk()">
               <option value="0">Pilih Customer</option>
             </select>
+          </div>
          </div>
          <div class="col-sm-12">
          &nbsp;
          </div>
-         <div class="col-xs-3 table-header">
-            <h3>Produk</h3>
+         <div class="col-xs-3 table-header text-center">
+            <label>PRODUK</label>
          </div>
-         <div class="col-xs-3 table-header nopadding">
-            <h3>Opsi</h3>
+         <div class="col-xs-3 table-header nopadding text-center">
+            <label>OPSI</label>
          </div>
-         <div class="col-xs-3 table-header nopadding">
-            <h3 class="text-left">QTY</h3>
+         <div class="col-xs-3 table-header nopadding text-center">
+            <label class="text-left">QTY</label>
          </div>
-         <div class="col-xs-3 table-header nopadding">
-            <h3 class="text-left">Subtotal</h3>
+         <div class="col-xs-3 table-header nopadding text-left">
+            <label class="text-left">SUBTOTAL (IDR)</label>
          </div>
          <div id="productList">
             <!-- product List goes here  -->
@@ -43,14 +43,14 @@
             <div class="table-responsive col-sm-12 totalTab">
                <table class="table">
                   <tr>
-                     <td class="active" width="40%">Total qty</td>
+                     <td class="active" width="40%">Total Qty</td>
                      <td class="whiteBg" width="60%"><span id="Subtot"></span>
-                        <span class="float-right"><b id="eTotalItem"><span></span> Item</b></span>
+                        <span class="float-right"><b><span id="eTotalItem"></span> Item</b></span>
                      </td>
                   </tr>
                   <tr>
-                     <td class="active">Total</td>
-                     <td class="whiteBg light-blue text-bold"><span id="eTotal"></span></td>
+                     <td class="active">Total (IDR)</td>
+                     <td class="whiteBg light-blue text-bold"><span id="eTotal" class="money"></span></td>
                   </tr>
                </table>
             </div>
@@ -241,10 +241,11 @@
                 "<div class='product color03 flat-box waves-effect waves-block'>"+
                   "<h3 id='proname'>"+json[i].nama+"</h3>"+
                   "<div class='mask'>"+
-                    "<h3>"+json[i].harga_beli+"</h3>"+
+                    "<h3>Rp <span class='money'>"+json[i].harga_beli+"</span></h3>"+
                     "<p>"+json[i].deskripsi+"</p>"+
                   "</div>"+
-                  "<img src='#' alt=\'"+json[i].id_kategori+"\'>"+
+                  // "<img src='#' alt=\'"+json[i].id_kategori+"\'>"+
+                  "<img src='<?php echo base_url('upload/produk')?>/"+json[i].foto+"'>"+
                 "</div>"+
               "</a>"+
              "</div>";
@@ -261,7 +262,7 @@
                   "<div class='panel panel-default product-details'>"+
                       "<div class='panel-body' style=''>"+
                           "<div class='col-xs-3 nopadding'>"+
-                              "<div class='col-xs-2 nopadding'>"+
+                              "<div class='col-xs-4 nopadding'>"+
                                   "<a href='javascript:void(0)' onclick=delete_order(\'"+json[i].rowid+"\')>"+
                                   "<span class='fa-stack fa-sm productD'>"+
                                     "<i class='fa fa-circle fa-stack-2x delete-product'></i>"+
@@ -269,7 +270,7 @@
                                   "</span>"+
                                   "</a>"+
                               "</div>"+
-                              "<div class='col-xs-10 nopadding'>"+
+                              "<div class='col-xs-8 nopadding'>"+
                                 "<span class='textPD'>"+json[i].produk+"</span>"+
                               "</div>"+
                           "</div>"+
@@ -285,11 +286,13 @@
                               "</select>"+
                             "</span>"+
                           "</div>"+
-                          "<div class='col-xs-3 nopadding productNum'>"+
+                          "<div class='col-xs-3 productNum'>"+
+                            "<span class='textPD'>"+
                             "<input id=\'qt-"+json[i].rowid+"\' class='form-control' value='"+json[i].qty+"' placeholder='0' maxlength='4' type='text' onchange=updateQty(\'"+json[i].rowid+"\')>"+
+                            "</span>"+
                           "</div>"+
                           "<div class='col-xs-3 nopadding productNum'>"+
-                            "<span class='textPD'>"+json[i].subtotal+"</span>"+
+                            "<span class='textPD pull-right'>"+json[i].subtotal+"</span>"+
                           "</div>"+
                       "</div>"+
                   "</div>"+
@@ -547,10 +550,12 @@
     });
   }
   function inits(etax, ediscount, etotal, etotal_items){
+    unmaskInputMoney(); 
     $("#eTax").val(etax);
     $("#eDiscount").val(ediscount);
     $("#eTotal").html(etotal);    
-    $("#eTotalItem").html(etotal_items);    
+    $("#eTotalItem").html(etotal_items);   
+    maskInputMoney(); 
   }
   function fillInformation(){
     $.ajax({

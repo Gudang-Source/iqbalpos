@@ -13,7 +13,7 @@
                   <th class="text-center" class="hidden-xs">Catatan</th>
                   <th class="text-center" class="hidden-xs">Total Berat (gr)</th>
                   <th class="text-center" class="hidden-xs">Total Qty</th>
-                  <th class="text-center" class="hidden-xs">Biaya Kirim</th>
+                  <th class="text-center" class="hidden-xs">Biaya Kirim (IDR)</th>
                   <th class="text-center" class="hidden-xs">Harga Barang (IDR)</th>
                   <th class="text-center" class="hidden-xs">Tanggal Transaksi</th>
                   <th class="text-center" class="hidden-xs">Aksi</th>

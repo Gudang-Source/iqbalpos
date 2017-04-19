@@ -66,8 +66,8 @@ class Transaksi extends MX_Controller {
 			$nestedData[] 	= 	$row["catatan"];
 			$nestedData[] 	= 	'<span class="money">'.$row["total_berat"]."</span>";
 			$nestedData[] 	= 	$row["total_qty"];
-			$nestedData[] 	= 	"<span class='pull-right'>Rp. ".number_format($row["biaya_kirim"])."</span>";
-			$nestedData[] 	= 	"<span class='pull-right'>Rp. ".number_format($row["total_harga_barang"])."</span>";
+			$nestedData[] 	= 	"<span class='pull-right'>".number_format($row["biaya_kirim"])."</span>";
+			$nestedData[] 	= 	"<span class='pull-right'>".number_format($row["total_harga_barang"])."</span>";
 			$nestedData[] 	= 	$row["date_add"];
 			$nestedData[] 	= 	"<button class='btn btn-success' onclick=detail('".$row["id"]."')>Detail</button>";			
 			$data[] = $nestedData;
@@ -84,7 +84,7 @@ class Transaksi extends MX_Controller {
 		$requestData= $_REQUEST;
 		$columns = array( 
 			0 	=>	'podid', 
-			1 	=> 	'produk',
+			1 	=> 	'nama',
 			2	=> 	'ukuran',
 			3	=> 	'warna',
 			4	=> 	'jumlah',
@@ -138,10 +138,10 @@ class Transaksi extends MX_Controller {
 			$nestedData[] 	= 	$row['nama_warna'];
 			$nestedData[] 	= 	$row['podjm'];
 			$nestedData[] 	= 	'<span class="money">'.$row['podtb'].'</span>';
-			$nestedData[] 	= 	"<span class='pull-right'>Rp. ".number_format($row['podhb'])."</span>";
-			$nestedData[] 	= 	"<span class='pull-right'>Rp. ".number_format($row['podhj'])."</span>";
-			$nestedData[] 	= 	"<span class='pull-right'>Rp. ".number_format($row['podth'])."</span>";
-			$nestedData[] 	= 	"<span class='pull-right'>Rp. ".number_format($row['podp'])."</span>";
+			$nestedData[] 	= 	"<span class='pull-right'>".number_format($row['podhb'])."</span>";
+			$nestedData[] 	= 	"<span class='pull-right'>".number_format($row['podhj'])."</span>";
+			$nestedData[] 	= 	"<span class='pull-right'>".number_format($row['podth'])."</span>";
+			$nestedData[] 	= 	"<span class='pull-right'>".number_format($row['podp'])."</span>";
 			$data[] = $nestedData;
 			$i++;
 		}
@@ -176,7 +176,7 @@ class Transaksi extends MX_Controller {
 		    		$nestedData['harga_beli'] = $items['price'];
 		    		$nestedData['produk'] = $items['name'];
 		    		$nestedData['rowid'] = $items['rowid'];
-		    		$nestedData['subtotal'] = "Rp. ".number_format($items['price']*$items['qty']);
+		    		$nestedData['subtotal'] = number_format($items['price']*$items['qty']);
 
 		    		$nestedData['ukuran'] = $items['options']['ukuran']!=null?$items['options']['ukuran']:0;
 		    		$nestedData['warna'] = $items['options']['warna']!=null?$items['options']['warna']:0;
@@ -200,7 +200,7 @@ class Transaksi extends MX_Controller {
 		    		$nestedData['harga_beli'] = $items['price'];
 		    		$nestedData['produk'] = $items['name'];
 		    		$nestedData['rowid'] = $items['rowid'];
-		    		$nestedData['subtotal'] = "Rp. ".number_format($items['price']*$items['qty']);
+		    		$nestedData['subtotal'] = number_format($items['price']*$items['qty']);
 
 		    		$nestedData['ukuran'] = $items['options']['ukuran']!=null?$items['options']['ukuran']:0;
 		    		$nestedData['warna'] = $items['options']['warna']!=null?$items['options']['warna']:0;
@@ -320,7 +320,7 @@ class Transaksi extends MX_Controller {
     			}
     		}
     	}    	
-    	echo json_encode(array("tax"=>0, "discount"=> 0, "total"=>"Rp. ".number_format($total), "total_items"=>$total_item." Item"));
+    	echo json_encode(array("tax"=>0, "discount"=> 0, "total"=>number_format($total), "total_items"=>$total_item));
     }
     function updateCart($id, $qty, $state = 'tambah'){
     	$getid = $this->in_cart($id, 'id', 'rowid');
