@@ -8,13 +8,14 @@
       <table id="TableMain" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
               <tr>
-                  <th class="text-center">SUPPLIER</th>
-                  <th class="text-center">CATATAN</th>
-                  <th class="text-center">TOTAL BERAT</th>
-                  <th class="text-center" class="hidden-xs">TOTAL QTY</th>
-                  <th class="text-center" class="hidden-xs">TOTAL HARGA BELI</th>
-                  <th class="text-center" class="hidden-xs">DATE ADD</th>
-                  <th class="text-center" class="hidden-xs">AKSI</th>
+                  <th class="text-center no-sort">#</th>
+                  <th class="text-center">Supplier</th>
+                  <th class="text-center">Catatan</th>
+                  <th class="text-center">Total Berat (gr)</th>
+                  <th class="text-center hidden-xs">Total Qty</th>
+                  <th class="text-center hidden-xs">Total Harga Beli (IDR)</th>
+                  <th class="text-center hidden-xs">Tanggal Beli</th>
+                  <th class="text-center hidden-xs no-sort">Aksi</th>
               </tr>
           </thead>
 
@@ -35,7 +36,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Detail Barang Purchase Order</h4>
+        <h4 class="modal-title" id="myModalLabel">Detail Pembelian</h4>
       </div>
       <div class="modal-body">
          <div class="row">
@@ -51,6 +52,14 @@
 </div>
 <!-- /.Modal Detail-->
 <script type="text/javascript" language="javascript" >
+    function maskInputMoney(){
+      console.log("MASKED");
+      $('.money').mask('#.##0', {reverse: true});
+    }
+    function unmaskInputMoney(){
+      $('.money').unmask();
+    }
+
     function detail(id){
       $.ajax({
         url :"<?php echo base_url('Transaksi_pembelian/Transaksi/detail')?>/"+id,
@@ -66,6 +75,7 @@
         var dataTable = $('#TableMain').DataTable( {
             "processing": true,
             "serverSide": true,
+            "order": [[6, 'DESC']],
             "ajax":{
                 url : "<?php echo base_url('Transaksi_pembelian/Transaksi/data'); ?>",
                 type: "post",
@@ -74,7 +84,12 @@
                     // $("#employee-grid_processing").css("display","none");
                     // dataTable.ajax.reload( null, false );
                 }
-            }
+            },
+            "columnDefs": [ {
+                "targets"  : 'no-sort',
+                "orderable": false,
+              }]
         });
+        maskInputMoney();
     });
 </script>

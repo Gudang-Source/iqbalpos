@@ -27,13 +27,14 @@ class Transaksi extends MX_Controller {
     function data(){
 		$requestData= $_REQUEST;
 		$columns = array( 
-			0 	=>	'id_supplier', 
-			1 	=> 	'catatan',
-			2	=> 	'total_berat',
-			3	=> 	'total_qty',
-			4	=> 	'total_harga_beli',
-			5	=> 	'date_add',
-			6	=> 	'aksi'
+            0   =>  '#', 
+			1 	=>	'id_supplier', 
+			2 	=> 	'catatan',
+			3	=> 	'total_berat',
+			4	=> 	'total_qty',
+			5	=> 	'total_harga_beli',
+			6	=> 	'date_add',
+			7	=> 	'aksi'
 		);
 		$sql = " SELECT t_beli.* , m_supplier_produk.nama as namasup ";
 		$sql.= " FROM t_beli ";
@@ -44,31 +45,33 @@ class Transaksi extends MX_Controller {
 		// $sql = "SELECT * ";
 		$sql.=" WHERE t_beli.deleted=1 ";
 		if( !empty($requestData['search']['value']) ) {
-			$sql.=" AND ( m_supplier_produk.nama LIKE '".$requestData['search']['value']."%' ";    
-			$sql.=" OR t_beli.catatan LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR t_beli.total_berat LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR t_beli.total_qty LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR t_beli.total_harga_beli LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR t_beli.date_add LIKE '".$requestData['search']['value']."%' )";
+			$sql.=" AND ( m_supplier_produk.nama LIKE '%".$requestData['search']['value']."%' ";    
+			$sql.=" OR t_beli.catatan LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR t_beli.total_berat LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR t_beli.total_qty LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR t_beli.total_harga_beli LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR t_beli.date_add LIKE '%".$requestData['search']['value']."%' )";
 		}
 		$query=$this->Transaksipembelianmodel->rawQuery($sql);
 		$totalFiltered = $query->num_rows();
 		$sql.=" ORDER BY ". $columns[$requestData['order'][0]['column']]."   ".$requestData['order'][0]['dir']."   LIMIT ".$requestData['start']." ,".$requestData['length']."   "; 
 		$query=$this->Transaksipembelianmodel->rawQuery($sql);
-		$data = array();
+		$data = array(); $i = 1;
 		foreach ($query->result_array() as $row) {
 			$nestedData		=	array(); 
 
+            $nestedData[]   =   $i;
 			$nestedData[] 	= 	$row["namasup"];
 			$nestedData[] 	= 	$row["catatan"];
-			$nestedData[] 	= 	$row["total_berat"];
+			$nestedData[] 	= 	"<span class='money' style='display:block;'>". $row["total_berat"] ."</span>";
 			$nestedData[] 	= 	$row["total_qty"];
-			$nestedData[] 	= 	$row["total_harga_beli"];
+			$nestedData[] 	= 	"<span class='pull-right money'>". $row["total_harga_beli"] ."</span>";
 			$nestedData[] 	= 	$row["date_add"];
 			$nestedData[] 	= 	"<button onclick=detail('".$row['id']."') class='btn btn-success'> Detail </button>
                                 <a href='".base_url('Transaksi_pembelian/Transaksi/invoices/'.$row['id'])."') target='_blank' class='btn btn-success'> Print </a>";
 			
 			$data[] = $nestedData;
+            $i++;
 		}
 		$json_data = array(
 					"draw"            => intval( $requestData['draw'] ),
@@ -81,8 +84,8 @@ class Transaksi extends MX_Controller {
     function data_detail($id_po){
 		$requestData= $_REQUEST;
 		$columns = array( 
-			0 	=>	'id_beli', 
-			1 	=> 	'produk',
+			0 	=>	'#', 
+			1 	=> 	'nama',
 			2	=> 	'ukuran',
 			3	=> 	'warna',
 			4	=> 	'jumlah',
@@ -109,10 +112,10 @@ class Transaksi extends MX_Controller {
 		$sql.=" WHERE t_beli.deleted=1 ";
 		$sql.=" AND t_beli_detail.id_beli=".$id_po;
 		if( !empty($requestData['search']['value']) ) {
-			$sql.=" AND ( m_produk.nama LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR m_produk.sku LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR m_produk.kode_barang LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR m_produk.deskripsi LIKE '".$requestData['search']['value']."%' )";
+			$sql.=" AND ( m_produk.nama LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR m_produk.sku LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR m_produk.kode_barang LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR m_produk.deskripsi LIKE '%".$requestData['search']['value']."%' )";
 		}
 		$query=$this->Transaksipembelianmodel->rawQuery($sql);
 		$totalData = $query->num_rows();
@@ -120,19 +123,18 @@ class Transaksi extends MX_Controller {
 		$sql.=" ORDER BY ". $columns[$requestData['order'][0]['column']]."   ".$requestData['order'][0]['dir']."   LIMIT ".$requestData['start']." ,".$requestData['length']."   "; 
 		$query=$this->Transaksipembelianmodel->rawQuery($sql);
 		$totalFiltered = $query->num_rows();
-		$data = array();
-		$i=1;
+		$data = array(); $i = 1;
 		foreach ($query->result_array() as $row) {
 			$nestedData		=	array(); 
 
-			$nestedData[] 	= 	$row['poid'];
+			$nestedData[] 	= 	$i;
 			$nestedData[] 	= 	$row['nama'];
 			$nestedData[] 	= 	$row['ukuran']!=null||$row['ukuran']!=0?$row['ukuran']:"Tidak Ada Ukuran";
 			$nestedData[] 	= 	$row['warna']!=null||$row['warna']!=0?$row['warna']:"Tidak Ada Warna";
 			$nestedData[] 	= 	$row['podjm'];
-			$nestedData[] 	= 	$row['podtb'];
-			$nestedData[] 	= 	$row['podhb'];
-			$nestedData[] 	= 	$row['podth'];
+			$nestedData[] 	= 	"<span class='money'>". $row['podtb'] ."</span>";
+			$nestedData[] 	= 	"<span class='pull-right money'>". $row['podhb'] ."</span>";
+			$nestedData[] 	= 	"<span class='pull-right money'>". $row['podth'] ."</span>";
 			$data[] = $nestedData;
 			$i++;
 		}
