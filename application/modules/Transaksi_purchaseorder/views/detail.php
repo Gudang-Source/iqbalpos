@@ -2,14 +2,14 @@
       <table id="TableMains" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
               <tr>
-                  <th class="text-center">No</th>
+                  <th class="text-center no-sort">#</th>
                   <th class="text-center">Produk</th>
                   <th class="text-center">Ukuran</th>
                   <th class="text-center" class="hidden-xs">Warna</th>
                   <th class="text-center" class="hidden-xs">Jumlah</th>
-                  <th class="text-center" class="hidden-xs">Total Berat</th>
-                  <th class="text-center" class="hidden-xs">Harga Beli</th>
-                  <th class="text-center" class="hidden-xs">Total Harga</th>
+                  <th class="text-center" class="hidden-xs">Total Berat (gr)</th>
+                  <th class="text-center" class="hidden-xs">Harga Beli (IDR)</th>
+                  <th class="text-center" class="hidden-xs">Total Harga (IDR)</th>
               </tr>
           </thead>
           <tbody id='bodytable'>
@@ -23,6 +23,7 @@
         "searching": false,
         "processing": true,
         "serverSide": true,
+        "order": [[2, 'DESC']],
         "ajax":{
             url : "<?php echo base_url('Transaksi_purchaseorder/Transaksi/data_detail'); ?>/"+<?php echo $id; ?>,
             type: "get",
@@ -32,6 +33,10 @@
                 // dataTable.ajax.reload( null, false );
             }
         },
+        "columnDefs": [ {
+          "targets"  : 'no-sort',
+          "orderable": false,
+        }],
         "buttons": [
             {
                 extend: 'excel',

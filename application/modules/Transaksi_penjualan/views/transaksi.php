@@ -15,7 +15,7 @@
          <div class="col-xs-8"> &nbsp; </div>         
          <div class="col-sm-12">
           <div class="form-group">
-            <label class="label-control">Pilih Customer</label>
+            <label class="label-control">Customer</label>
             <select class="js-select-options form-control" id="customerSelect" name="customer" required="required" onchange="filterProduk()">
               <option value="0">Pilih Customer</option>
             </select>
@@ -276,12 +276,12 @@
                           "</div>"+
                           "<div class='col-xs-3'>"+
                             "<span class='textPD'>"+
-                              "<select name=ukuran id=\'uk-"+json[i].rowid+"\' class=\'form-control\' onchange=updateOption(\'"+json[i].rowid+"\')>"+
+                              "<select name=ukuran id=\'uk-"+json[i].rowid+"\' class=\'form-control\' onchange=updateOption(\'"+json[i].rowid+"\') title='Pilih Ukuran'>"+
                                 "<option value=0 select disabled>Pilih Ukuran</option>"+
                               "</select>"+
                             "</span>"+
                             "<span class='textPD'>"+
-                              "<select name=warna id=\'wr-"+json[i].rowid+"\' class=\'form-control\' onchange=updateOption(\'"+json[i].rowid+"\')>"+
+                              "<select name=warna id=\'wr-"+json[i].rowid+"\' class=\'form-control\' onchange=updateOption(\'"+json[i].rowid+"\') title='Pilih Warna'>"+
                                 "<option value=0 select disabled>Pilih Warna</option>"+
                               "</select>"+
                             "</span>"+

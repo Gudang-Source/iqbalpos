@@ -45,12 +45,12 @@ class Transaksi extends MX_Controller {
 		// $sql = "SELECT * ";
 		$sql.=" WHERE t_purchase_order.deleted=1 ";
 		if( !empty($requestData['search']['value']) ) {
-			$sql.=" AND ( m_supplier_produk.nama LIKE '".$requestData['search']['value']."%' ";    
-			$sql.=" OR t_purchase_order.catatan LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR t_purchase_order.total_berat LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR t_purchase_order.total_qty LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR t_purchase_order.total_harga_beli LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR t_purchase_order.date_add LIKE '".$requestData['search']['value']."%' )";
+			$sql.=" AND ( m_supplier_produk.nama LIKE '%".$requestData['search']['value']."%' ";    
+			$sql.=" OR t_purchase_order.catatan LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR t_purchase_order.total_berat LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR t_purchase_order.total_qty LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR t_purchase_order.total_harga_beli LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR t_purchase_order.date_add LIKE '%".$requestData['search']['value']."%' )";
 		}
 		$query=$this->Transaksipomodel->rawQuery($sql);
 		$totalFiltered = $query->num_rows();
@@ -83,8 +83,8 @@ class Transaksi extends MX_Controller {
     function data_detail($id_po){
 		$requestData= $_REQUEST;
 		$columns = array( 
-			0 	=>	'id_purchase_order', 
-			1 	=> 	'produk',
+			0 	=>	'#', 
+			1 	=> 	'nama',
 			2	=> 	'ukuran',
 			3	=> 	'warna',
 			4	=> 	'jumlah',
@@ -111,10 +111,10 @@ class Transaksi extends MX_Controller {
 		$sql.=" WHERE t_purchase_order.deleted=1 ";
 		$sql.=" AND t_purchase_order_detail.id_purchase_order=".$id_po;
 		if( !empty($requestData['search']['value']) ) {
-			$sql.=" AND ( m_produk.nama LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR m_produk.sku LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR m_produk.kode_barang LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR m_produk.deskripsi LIKE '".$requestData['search']['value']."%' )";
+			$sql.=" AND ( m_produk.nama LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR m_produk.sku LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR m_produk.kode_barang LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR m_produk.deskripsi LIKE '%".$requestData['search']['value']."%' )";
 		}
 		$query=$this->Transaksipomodel->rawQuery($sql);
 		$totalData = $query->num_rows();

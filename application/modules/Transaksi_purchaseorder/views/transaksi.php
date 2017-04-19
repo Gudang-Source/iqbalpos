@@ -5,42 +5,42 @@
 </style>
 <div class="container-fluid">
   <div class="row">
-    <h3><strong>Transaksi</strong> - Purchase Order</h3>
+    <div class="col-sm-12">
+      <h3><strong>Transaksi</strong> - Purchase Order</h3>
+    </div>
   </div>
    <div class="row">
     <div class="col-md-5 left-side">
       <form action="<?php echo base_url('Transaksi_purchaseorder/Transaksi/doSubmit'); ?>" method="post" id="purchaseOrder">          
-         <div class="col-xs-8">
-            <h2>Pilih Supplier</h2>
-         </div>
-         <div class="col-xs-8">
-          &nbsp;
-         </div>         
+         <div class="col-xs-8">&nbsp;</div>         
          <div class="col-sm-12">
+          <div class="form-group">
+            <label class="label-control">Supplier</label>
             <select class="js-select-options form-control" id="supplierSelect" onchange="filterProduk()" name="supplier" required="required">
               <option value="0">Pilih Supplier</option>
             </select>
+          </div>
          </div>
          <div class="col-sm-12">
-         &nbsp;
+          <div class="form-group">
+            <label class="label-control">Catatan</label>
+            <textarea name="catatan" class="form-control" placeholder="CATATAN"></textarea>
+           </div>
          </div>
-         <div class="col-sm-12">
-               <textarea name="catatan" class="form-control" placeholder="CATATAN"></textarea>
+         <div class="col-xs-3 table-header text-center">
+            <label>PRODUCT</label>
          </div>
-         <div class="col-xs-3 table-header">
-            <h3>Product</h3>
+         <div class="col-xs-3 table-header text-center">
+            <label>OPSI</label>
          </div>
-         <div class="col-xs-3 table-header">
-            <h3>Opsi</h3>
+         <div class="col-xs-2 table-header text-center">
+            <label>QTY</label>
          </div>
-         <div class="col-xs-2 table-header">
-            <h3>QTY</h3>
+         <div class="col-xs-2 table-header text-center">
+            <label>HARGA@ (IDR)</label>
          </div>
-         <div class="col-xs-2 table-header">
-            <h3>Harga Satuan</h3>
-         </div>
-         <div class="col-xs-2 table-header">
-            <h3>Subtotal</h3>
+         <div class="col-xs-2 table-header text-center">
+            <label>SUBTOTAL (IDR)</label>
          </div>
          <div id="productList">
             <!-- product List goes here  -->
@@ -49,14 +49,14 @@
             <div class="table-responsive col-sm-12 totalTab">
                <table class="table">
                   <tr>
-                     <td class="active" width="40%">Total QTY</td>
+                     <td class="active" width="40%">Total Qty</td>
                      <td class="whiteBg" width="60%"><span id="Subtot"></span>
-                        <span class="float-right"><b id="eTotalItem"><span></span> Item</b></span>
+                        <span class="float-right"><b><span id="eTotalItem"></span> Item</b></span>
                      </td>
                   </tr>
                   <tr>
-                     <td class="active">Total</td>
-                     <td class="whiteBg light-blue text-bold"><span id="eTotal"></span></td>
+                     <td class="active">Total (IDR)</td>
+                     <td class="whiteBg light-blue text-bold"><span id="eTotal" class="money"></span></td>
                   </tr>
                </table>
             </div>
@@ -89,6 +89,13 @@
 </div>
 <!-- /.container -->
 <script type="text/javascript">
+  function maskInputMoney(){
+    $('.money').mask('#.##0', {reverse: true});
+  }
+  function unmaskInputMoney(){
+    $('.money').unmask();
+  }
+
   var listProduct = <?php echo $list_produk; ?>;
   var listOrder = <?php echo $list_order; ?>;
   var listSupplier = <?php echo $list_supplier; ?>;
@@ -121,10 +128,11 @@
                 "<div class='product color03 flat-box waves-effect waves-block'>"+
                   "<h3 id='proname'>"+json[i].nama+"</h3>"+
                   "<div class='mask'>"+
-                    "<h3>"+json[i].harga_beli+"</h3>"+
+                    "<h3>Rp <span class='money'>"+json[i].harga_beli+"</span></h3>"+
                     "<p>"+json[i].deskripsi+"</p>"+
                   "</div>"+
-                  "<img src=\'<?php echo base_url('upload/produk') ?>/"+json[i].foto+"\' alt=\'"+json[i].id_kategori+"\'>"+
+                  // "<img src=\'<?php echo base_url('upload/produk') ?>/"+json[i].foto+"\' alt=\'"+json[i].id_kategori+"\'>"+
+                  "<img src='<?php echo base_url('upload/produk')?>/"+json[i].foto+"'>"+
                 "</div>"+
               "</a>"+
              "</div>";
@@ -141,7 +149,7 @@
                   "<div class='panel panel-default product-details'>"+
                       "<div class='panel-body' style=''>"+
                           "<div class='col-xs-3 nopadding'>"+
-                              "<div class='col-xs-2 nopadding'>"+
+                              "<div class='col-xs-4 nopadding'>"+
                                   "<a href='javascript:void(0)' onclick=delete_order(\'"+json[i].rowid+"\')>"+
                                   "<span class='fa-stack fa-sm productD'>"+
                                     "<i class='fa fa-circle fa-stack-2x delete-product'></i>"+
@@ -149,31 +157,37 @@
                                   "</span>"+
                                   "</a>"+
                               "</div>"+
-                              "<div class='col-xs-10 nopadding'>"+
+                              "<div class='col-xs-8 nopadding'>"+
                                 "<span class='textPD'>"+json[i].produk+"</span>"+
                               "</div>"+
                           "</div>"+
                           "<div class='col-xs-3'>"+
-                            "<span class='TextPD'>"+
-                              "<select name=ukuran id=\'uk-"+json[i].rowid+"\' class=\'form-control\' onchange=updateOption(\'"+json[i].rowid+"\')>"+
+                            "<span class='textPD'>"+
+                              "<select name=ukuran id=\'uk-"+json[i].rowid+"\' class=\'form-control\' onchange=updateOption(\'"+json[i].rowid+"\') title='Pilih Ukuran'>"+
                                 "<option value=0 select disabled>Pilih Ukuran</option>"+
                               "</select>"+
                             "</span>"+
-                            "<span class='TextPD'>"+
-                              "<select name=warna id=\'wr-"+json[i].rowid+"\' class=\'form-control\' onchange=updateOption(\'"+json[i].rowid+"\')>"+
+                            "<span class='textPD'>"+
+                              "<select name=warna id=\'wr-"+json[i].rowid+"\' class=\'form-control\' onchange=updateOption(\'"+json[i].rowid+"\') title='Pilih Warna'>"+
                                 "<option value=0 select disabled>Pilih Warna</option>"+
                               "</select>"+
                             "</span>"+
                           "</div>"+
                           "<div class='col-xs-2'>"+
-                            "<input id=\'qt-"+json[i].rowid+"\' class='form-control' value='"+json[i].qty+"' placeholder='0' maxlength='2' type='text' onchange=updateQty(\'"+json[i].rowid+"\')>"+
+                            "<span class='textPD'>"+
+                              "<input id=\'qt-"+json[i].rowid+"\' class='form-control' value='"+json[i].qty+"' placeholder='0' maxlength='2' type='text' onchange=updateQty(\'"+json[i].rowid+"\')>"+
+                              "</span>"+
                           "</div>"+
-                          "<div class='col-xs-2 nopadding productNum text-center'>"+
-                            ""+json[i].harga_beli+
-                            "<input type=hidden id=\'hb-"+json[i].rowid+"\' class=\'form-control\' value='"+json[i].harga_beli+"'  onchange=updateHargaBeli(\'"+json[i].rowid+"\')>"+
+                          "<div class='col-xs-2 nopadding'>"+
+                            "<span class='textPD money' style='float:right;'>"+
+                              ""+json[i].harga_beli+
+                            "</span>"+
+                              "<input type=hidden id=\'hb-"+json[i].rowid+"\' class=\'form-control\' value='"+json[i].harga_beli+"'  onchange=updateHargaBeli(\'"+json[i].rowid+"\')>"+
                           "</div>"+
-                          "<div class='col-xs-2 nopadding productNum text-center'>"+
-                            ""+json[i].subtotal+
+                          "<div class='col-xs-2 nopadding'>"+
+                            "<span class='textPD money' style='float:right;'>"+
+                              ""+json[i].subtotal+
+                            "</span>"+
                             "<input type=hidden id=\'tb-"+json[i].rowid+"\' class=\'form-control\' value='"+json[i].total_berat+"' onchange=updateOption(\'"+json[i].rowid+"\')>"+
                           "</div>"+
                       "</div>"+
@@ -408,10 +422,12 @@
     });
   }
   function inits(etax, ediscount, etotal, etotal_items){
+    unmaskInputMoney();
     $("#eTax").val(etax);
     $("#eDiscount").val(ediscount);
     $("#eTotal").html(etotal);    
     $("#eTotalItem").html(etotal_items);    
+    maskInputMoney();
   }
   function fillInformation(){
     $.ajax({

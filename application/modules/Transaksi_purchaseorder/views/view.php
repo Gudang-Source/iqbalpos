@@ -12,10 +12,10 @@
                   <th class="text-center">Supplier</th>
                   <th class="text-center">Catatan</th>
                   <th class="text-center">Total Berat</th>
-                  <th class="text-center" class="hidden-xs">Total Qty</th>
-                  <th class="text-center" class="hidden-xs">Total Harga Beli</th>
-                  <th class="text-center" class="hidden-xs">Tanggal Order</th>
-                  <th class="text-center" class="hidden-xs">Aksi</th>
+                  <th class="text-center hidden-xs">Total Qty</th>
+                  <th class="text-center hidden-xs">Total Harga Beli</th>
+                  <th class="text-center hidden-xs">Tanggal Order</th>
+                  <th class="text-center hidden-xs no-sort">Aksi</th>
               </tr>
           </thead>
           <tbody id='bodytable'>
@@ -71,6 +71,7 @@
         var dataTable = $('#TableMain').DataTable( {
             "processing": true,
             "serverSide": true,
+            "order": [[6, 'DESC']],
             "ajax":{
                 url : "<?php echo base_url('Transaksi_purchaseorder/Transaksi/data'); ?>",
                 type: "post",
@@ -79,7 +80,11 @@
                     // $("#employee-grid_processing").css("display","none");
                     // dataTable.ajax.reload( null, false );
                 }
-            }
+            },
+            "columnDefs": [ {
+              "targets"  : 'no-sort',
+              "orderable": false,
+            }],
         });
         maskInputMoney();
     });

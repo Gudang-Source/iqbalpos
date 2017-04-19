@@ -8,15 +8,15 @@
       <table id="TableMain" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>         
               <tr>
-                  <th class="text-center" class="hidden-xs">ID Order</th>
-                  <th class="text-center" class="hidden-xs">Customer</th>
-                  <th class="text-center" class="hidden-xs">Catatan</th>
-                  <th class="text-center" class="hidden-xs">Total Berat (gr)</th>
-                  <th class="text-center" class="hidden-xs">Total Qty</th>
-                  <th class="text-center" class="hidden-xs">Biaya Kirim (IDR)</th>
-                  <th class="text-center" class="hidden-xs">Harga Barang (IDR)</th>
-                  <th class="text-center" class="hidden-xs">Tanggal Transaksi</th>
-                  <th class="text-center" class="hidden-xs">Aksi</th>
+                  <th class="text-center hidden-xs">ID Order</th>
+                  <th class="text-center hidden-xs">Customer</th>
+                  <th class="text-center hidden-xs">Catatan</th>
+                  <th class="text-center hidden-xs">Total Berat (gr)</th>
+                  <th class="text-center hidden-xs">Total Qty</th>
+                  <th class="text-center hidden-xs">Biaya Kirim (IDR)</th>
+                  <th class="text-center hidden-xs">Harga Barang (IDR)</th>
+                  <th class="text-center hidden-xs">Tanggal Transaksi</th>
+                  <th class="text-center hidden-xs no-sort">Aksi</th>
               </tr>
           </thead>
           <tbody id='bodytable'>            
@@ -73,6 +73,7 @@
         var dataTable = $('#TableMain').DataTable( {
             "processing": true,
             "serverSide": true,
+            "order": [[7, 'DESC']],
             "ajax":{
                 url : "<?php echo base_url('Transaksi_penjualan/Transaksi/data'); ?>",
                 type: "post",
@@ -81,7 +82,11 @@
                     // $("#employee-grid_processing").css("display","none");
                     // dataTable.ajax.reload( null, false );
                 }
-            }
+            },
+            "columnDefs": [ {
+              "targets"  : 'no-sort',
+              "orderable": false,
+            }],
         });
         maskInputMoney();
     });
