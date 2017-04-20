@@ -61,15 +61,15 @@ class Transaksi extends MX_Controller {
 		foreach ($query->result_array() as $row) {
 			$nestedData		=	array(); 
 
-			$nestedData[] 	= 	$row["id"];
+			$nestedData[] 	= 	"<span class='center-block text-center'>". $row["id"] ."</span>";
 			$nestedData[] 	= 	$row["namacus"];
 			$nestedData[] 	= 	$row["catatan"];
 			$nestedData[] 	= 	'<span class="money">'.$row["total_berat"]."</span>";
-			$nestedData[] 	= 	$row["total_qty"];
+			$nestedData[] 	= 	"<span class='center-block text-center'>". $row["total_qty"] ."</span>";
 			$nestedData[] 	= 	"<span class='pull-right'>".number_format($row["biaya_kirim"])."</span>";
 			$nestedData[] 	= 	"<span class='pull-right'>".number_format($row["total_harga_barang"])."</span>";
 			$nestedData[] 	= 	$row["date_add"];
-			$nestedData[] 	= 	"<button class='btn btn-success' onclick=detail('".$row["id"]."')>Detail</button>";			
+			$nestedData[] 	= 	"<button class='btn btn-default btn-sm' onclick=detail('".$row["id"]."') title='Detail Penjualan'><i class='fa fa-file-text-o'></i></button>";			
 			$data[] = $nestedData;
 		}
 		$json_data = array(
@@ -132,11 +132,11 @@ class Transaksi extends MX_Controller {
 		$i=1;
 		foreach ($query->result_array() as $row) {
 			$nestedData		=	array(); 
-			$nestedData[] 	= 	$i;
+			$nestedData[] 	= 	"<span class='center-block text-center'>". $i ."</span>";
 			$nestedData[] 	= 	$row['nama'];
 			$nestedData[] 	= 	$row['nama_ukuran'];
 			$nestedData[] 	= 	$row['nama_warna'];
-			$nestedData[] 	= 	$row['podjm'];
+			$nestedData[] 	= 	"<span class='center-block text-center'>".$row['podjm']."</span>";
 			$nestedData[] 	= 	'<span class="money">'.$row['podtb'].'</span>';
 			$nestedData[] 	= 	"<span class='pull-right'>".number_format($row['podhb'])."</span>";
 			$nestedData[] 	= 	"<span class='pull-right'>".number_format($row['podhj'])."</span>";

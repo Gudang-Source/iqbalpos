@@ -15,7 +15,9 @@ class Master extends MX_Controller {
         $params = $this->input->post();
         if(isset($params['email']) && !empty($params['password'])) {
             $user = $this->check_userpass($params['email'], $params['password']);
-            $user_level = $this->get_user_permission($user->id_pegawai_level);
+            $id_pegawai_level = !empty($user->id_pegawai_level) ? $user->id_pegawai_level : 0;
+            $user_level = $this->get_user_permission($id_pegawai_level);
+            
             if($user) {
                 $data_session = array(
                         "id_user" => $user->id,

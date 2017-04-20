@@ -15,7 +15,7 @@
                   <th class="text-center">Stok</th>
                   <th class="text-center">Terakhir Tambah Stok</th>
                   <th class="text-center">Terakhir Kurang Stok</th>
-                  <th class="text-center" class="hidden-xs">Aksi</th>
+                  <th class="text-center hidden-xs no-sort">Aksi</th>
               </tr>
           </thead>
 
@@ -74,6 +74,7 @@
         var dataTable = $('#TableMain').DataTable( {
             "processing": true,
             "serverSide": true,
+            "order": [[5, 'DESC']],
             "ajax":{
                 url : "<?php echo base_url('Transaksi_barangmasuk/Transaksi/data'); ?>",
                 type: "post",
@@ -82,7 +83,11 @@
                     // $("#employee-grid_processing").css("display","none");
                     // dataTable.ajax.reload( null, false );
                 }
-            }
+            },
+            "columnDefs": [ {
+                "targets"  : 'no-sort',
+                "orderable": false,
+              }]
         });
         $("#myform").on('submit', function(e){
           e.preventDefault();

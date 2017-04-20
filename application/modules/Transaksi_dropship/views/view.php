@@ -9,13 +9,13 @@
       <table id="TableMain" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>         
               <tr>
-                  <th class="text-center" class="hidden-xs">ID Order</th>
-                  <th class="text-center" class="hidden-xs">Customer</th>
-                  <th class="text-center" class="hidden-xs">Detail Dropship</th>
-                  <th class="text-center" class="hidden-xs">Biaya Kirim (IDR)</th>
-                  <th class="text-center" class="hidden-xs">Harga Barang (IDR)</th>
-                  <th class="text-center" class="hidden-xs">Tanggal Transaksi</th>
-                  <th class="text-center" class="hidden-xs">Aksi</th>
+                <th class="text-center hidden-xs">ID Order</th>
+                <th class="text-center hidden-xs">Customer</th>
+                <th class="text-center hidden-xs">Detail Dropship</th>
+                <th class="text-center hidden-xs">Biaya Kirim (IDR)</th>
+                <th class="text-center hidden-xs">Harga Barang (IDR)</th>
+                <th class="text-center hidden-xs">Tanggal Transaksi</th>
+                <th class="text-center hidden-xs no-sort">Aksi</th>
               </tr>
           </thead>
           <tbody id='bodytable'>            
@@ -54,16 +54,16 @@
                  <input type="text" name="nama_penerima" maxlength="50" Required class="form-control" id="nama_penerima" placeholder="Nama Penerima">
                </div>
              </div>
-             <div class="col-sm-6">
-               <div class="form-group">
-                 <label for="no_telp_penerima">No Telp Penerima</label>
-                 <input type="number" min="0" maxlength="50" name="no_telp_penerima" class="form-control" id="no_telp_penerima" placeholder="No Telp Penerima"  required="">
-               </div>
-             </div>
              <div class="col-sm-12">
                <div class="form-group">
                  <label for="alamat_penerima">Alamat Penerima</label>
                  <input type="text" name="alamat_penerima" maxlength="30" class="form-control" id="alamat_penerima" placeholder="Alamat Penerima" required="">
+               </div>
+             </div>
+             <div class="col-sm-12">
+               <div class="form-group">
+                 <label for="no_telp_penerima">No Telp Penerima</label>
+                 <input type="number" min="0" maxlength="50" name="no_telp_penerima" class="form-control" id="no_telp_penerima" placeholder="No Telp Penerima"  required="">
                </div>
              </div>
              <div class="col-sm-12">
@@ -129,13 +129,18 @@
         var dataTable = $('#TableMain').DataTable( {
             "processing": true,
             "serverSide": true,
+            "order": [[5, 'DESC']],
             "ajax":{
                 url : "<?php echo base_url('Transaksi_dropship/Transaksi/data'); ?>",
                 type: "post",
                 error: function(){
                     $("#TableMain").append('<tbody class="employee-grid-error"><tr><th colspan="10">No data found in the server</th></tr></tbody>');
                 }
-            }
+            },
+            "columnDefs": [ {
+                "targets"  : 'no-sort',
+                "orderable": false,
+              }]
         });
         $("#dropshipform").on('submit', function(e){
           e.preventDefault();

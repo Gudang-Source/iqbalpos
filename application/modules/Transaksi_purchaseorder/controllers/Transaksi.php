@@ -60,15 +60,17 @@ class Transaksi extends MX_Controller {
 		foreach ($query->result_array() as $row) {
 			$nestedData		=	array(); 
 
-            $nestedData[]   =   $row["id"];
+            $nestedData[]   =   "<span class='center-block text-center'>". $row["id"]. "</span>";
 			$nestedData[] 	= 	$row["namasup"];
 			$nestedData[] 	= 	$row["catatan"];
 			$nestedData[] 	= 	'<span class="money">'.$row["total_berat"].'</span>';
-			$nestedData[] 	= 	$row["total_qty"];
+			$nestedData[] 	= 	"<span class='center-block text-center'>". $row["total_qty"] ."</span>";
 			$nestedData[] 	= 	'<span class="money pull-right">'.$row["total_harga_beli"].'</span>';
 			$nestedData[] 	= 	$row["date_add"];
-			$nestedData[] 	= 	"<button onclick=detail('".$row['id']."') class='btn btn-success'> Detail </button>
-                                <a href='".base_url('Transaksi_purchaseorder/Transaksi/invoices/'.$row['id'])."') target='_blank' class='btn btn-success'> Print </a>";
+			$nestedData[] 	= 	"<div class='btn-group'>"
+                        ."<button onclick=detail('".$row['id']."') class='btn btn-default btn-sm' title='Detail Purchase Order'> <i class='fa fa-file-text-o'></i> </button>"
+                        ."<a href='".base_url('Transaksi_purchaseorder/Transaksi/invoices/'.$row['id'])."') target='_blank' class='btn btn-default btn-sm' title='Cetak'> <i class='fa fa-print'></i> </a>"
+                        ."</div>";
 			
 			$data[] = $nestedData;
 		}
@@ -127,11 +129,11 @@ class Transaksi extends MX_Controller {
 		foreach ($query->result_array() as $row) {
 			$nestedData		=	array(); 
 
-			$nestedData[] 	= 	$row['poid'];
+			$nestedData[] 	= 	"<span class='center-block text-center'>". $i ."</span>";
 			$nestedData[] 	= 	$row['nama'];
 			$nestedData[] 	= 	$row['ukuran']!=null||$row['ukuran']!=0?$row['ukuran']:"Tidak Ada Ukuran";
 			$nestedData[] 	= 	$row['warna']!=null||$row['warna']!=0?$row['warna']:"Tidak Ada Warna";
-			$nestedData[] 	= 	$row['podjm'];
+			$nestedData[] 	= 	"<span class='center-block text-center'>". $row['podjm'] ."</span>";
 			$nestedData[] 	= 	'<span class="money">'.$row['podtb'].'</span>';
 			$nestedData[] 	= 	'<span class="money pull-right">'.$row['podhb'].'</span>';
 			$nestedData[] 	= 	'<span class="money pull-right">'.$row['podth'].'</span>';

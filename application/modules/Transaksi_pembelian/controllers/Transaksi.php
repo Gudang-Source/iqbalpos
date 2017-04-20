@@ -60,15 +60,17 @@ class Transaksi extends MX_Controller {
 		foreach ($query->result_array() as $row) {
 			$nestedData		=	array(); 
 
-            $nestedData[]   =   $i;
+            $nestedData[]   =   "<span class='center-block text-center'>". $i."</span>";
 			$nestedData[] 	= 	$row["namasup"];
 			$nestedData[] 	= 	$row["catatan"];
 			$nestedData[] 	= 	"<span class='money' style='display:block;'>". $row["total_berat"] ."</span>";
-			$nestedData[] 	= 	$row["total_qty"];
+			$nestedData[] 	= 	"<span class='center-block text-center'>".$row["total_qty"] ."</span>";
 			$nestedData[] 	= 	"<span class='pull-right money'>". $row["total_harga_beli"] ."</span>";
 			$nestedData[] 	= 	$row["date_add"];
-			$nestedData[] 	= 	"<button onclick=detail('".$row['id']."') class='btn btn-success'> Detail </button>
-                                <a href='".base_url('Transaksi_pembelian/Transaksi/invoices/'.$row['id'])."') target='_blank' class='btn btn-success'> Print </a>";
+			$nestedData[] 	= 	"<div class='btn-group'>"
+                            ."<button onclick=detail('".$row['id']."') class='btn btn-default btn-sm' title='Detail Pembelian'> <i class='fa fa-file-text-o'></i> </button>"
+                            ."<a href='".base_url('Transaksi_pembelian/Transaksi/invoices/'.$row['id'])."') target='_blank' class='btn btn-default btn-sm' title='Cetak'> <i class='fa fa-print'></i> </a>"
+                            ."</span>";
 			
 			$data[] = $nestedData;
             $i++;
@@ -127,11 +129,11 @@ class Transaksi extends MX_Controller {
 		foreach ($query->result_array() as $row) {
 			$nestedData		=	array(); 
 
-			$nestedData[] 	= 	$i;
+			$nestedData[] 	= 	"<span class='center-block text-center'>".$i."</span>";
 			$nestedData[] 	= 	$row['nama'];
 			$nestedData[] 	= 	$row['ukuran']!=null||$row['ukuran']!=0?$row['ukuran']:"Tidak Ada Ukuran";
 			$nestedData[] 	= 	$row['warna']!=null||$row['warna']!=0?$row['warna']:"Tidak Ada Warna";
-			$nestedData[] 	= 	$row['podjm'];
+			$nestedData[] 	= 	"<span class='center-block text-center'>". $row['podjm'] ."</span>";
 			$nestedData[] 	= 	"<span class='money'>". $row['podtb'] ."</span>";
 			$nestedData[] 	= 	"<span class='pull-right money'>". $row['podhb'] ."</span>";
 			$nestedData[] 	= 	"<span class='pull-right money'>". $row['podth'] ."</span>";
@@ -560,12 +562,12 @@ class Transaksi extends MX_Controller {
         $totalFiltered = $totalData;
         $sql.=" WHERE t_purchase_order.deleted=1 ";
         if( !empty($requestData['search']['value']) ) {
-            $sql.=" AND ( id_supplier LIKE '".$requestData['search']['value']."%' ";    
-            $sql.=" OR catatan LIKE '".$requestData['search']['value']."%' ";
-            $sql.=" OR total_berat LIKE '".$requestData['search']['value']."%' ";
-            $sql.=" OR total_qty LIKE '".$requestData['search']['value']."%' ";
-            $sql.=" OR total_harga_beli LIKE '".$requestData['search']['value']."%' ";
-            $sql.=" OR date_add LIKE '".$requestData['search']['value']."%' )";
+            $sql.=" AND ( id_supplier LIKE '%".$requestData['search']['value']."%' ";    
+            $sql.=" OR catatan LIKE '%".$requestData['search']['value']."%' ";
+            $sql.=" OR total_berat LIKE '%".$requestData['search']['value']."%' ";
+            $sql.=" OR total_qty LIKE '%".$requestData['search']['value']."%' ";
+            $sql.=" OR total_harga_beli LIKE '%".$requestData['search']['value']."%' ";
+            $sql.=" OR date_add LIKE '%".$requestData['search']['value']."%' )";
         }
         $query=$this->Transaksipembelianmodel->rawQuery($sql);
         $totalFiltered = $query->num_rows();

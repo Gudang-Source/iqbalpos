@@ -44,12 +44,12 @@ class Transaksi extends MX_Controller {
 		// $sql = "SELECT * ";
 		$sql.=" WHERE m_produk.deleted=1 ";
 		if( !empty($requestData['search']['value']) ) {
-			$sql.=" AND ( m_supplier_produk.nama LIKE '".$requestData['search']['value']."%' ";    
-			$sql.=" OR m_produk.deskripsi LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR m_produk.nama LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR m_produk.harga_beli LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR m_produk.stok LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR m_produk.date_add LIKE '".$requestData['search']['value']."%' )";
+			$sql.=" AND ( m_supplier_produk.nama LIKE '%".$requestData['search']['value']."%' ";    
+			$sql.=" OR m_produk.deskripsi LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR m_produk.nama LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR m_produk.harga_beli LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR m_produk.stok LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR m_produk.date_add LIKE '%".$requestData['search']['value']."%' )";
 		}
 		$query=$this->Transaksibarangmasukmodel->rawQuery($sql);
 		$totalFiltered = $query->num_rows();
@@ -66,24 +66,24 @@ class Transaksi extends MX_Controller {
             }			
 			$nestedData		=	array(); 
 
-			$nestedData[] 	= 	$i;
-			$i++;
+			$nestedData[] 	= 	"<span class='center-block text-center'>". $i ."</span>";
             $nestedData[]   .=  "<a href='javascript:void(0)' data-toggle='popover' data-html='true' data-placement='right' onclick='showThumbnail(this)'>"
                             . "<img src='".$foto_url."' class='img-responsive img-rounded' width='70' alt='No Image' style='margin:0 auto;'> </a>";
-			$nestedData[] 	= 	$row["nama"];
-			$nestedData[] 	= 	$row["sku"];
-			$nestedData[] 	= 	$row["stok"];
-			$nestedData[] 	= 	$row["tanggal_tambah_stok"];
-			$nestedData[] 	= 	$row["tanggal_kurang_stok"];
-			$nestedData[] 	= 	"
-								<a class='divpopover btn btn-sm btn-default' href='javascript:void(0)' data-toggle='popover' data-placement='top' data-html='true' title='Tambah Stok' onclick=tambahStok('".$row['id']."')><i class='fa fa-plus'></i>
-								</a>
-								<a class='divpopover btn btn-sm btn-default' href='javascript:void(0)' data-toggle='popover' data-placement='top' data-html='true' title='Tambah Stok' onclick=kurangStok('".$row['id']."')><i class='fa fa-minus'></i>
-								</a>
-								";
-			
-			$data[] = $nestedData;
-		}
+            $nestedData[]   =   $row["nama"];
+            $nestedData[]   =   $row["sku"];
+            $nestedData[]   =   "<span class='center-block text-center'>". $row["stok"] ."</span>";
+            $nestedData[]   =   $row["tanggal_tambah_stok"];
+            $nestedData[]   =   $row["tanggal_kurang_stok"];
+            $nestedData[]   =   "
+                                <a class='divpopover btn btn-sm btn-default' href='javascript:void(0)' data-toggle='popover' data-placement='top' data-html='true' title='Tambah Stok' onclick=tambahStok('".$row['id']."')><i class='fa fa-plus'></i>
+                                </a>
+                                <a class='divpopover btn btn-sm btn-default' href='javascript:void(0)' data-toggle='popover' data-placement='top' data-html='true' title='Tambah Stok' onclick=kurangStok('".$row['id']."')><i class='fa fa-minus'></i>
+                                </a>
+                                ";
+            
+            $data[] = $nestedData;
+			$i++;
+        }
 		$json_data = array(
 					"draw"            => intval( $requestData['draw'] ),
 					"recordsTotal"    => intval( $totalData ),

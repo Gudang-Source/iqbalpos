@@ -8,14 +8,14 @@
       <table id="TableMain" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
               <tr>
-                  <th class="text-center">No</th>
+                  <th class="text-center">#</th>
                   <th class="text-center">Foto</th>
                   <th class="text-center">Nama Produk</th>
                   <th class="text-center">SKU</th>
                   <th class="text-center">Stok</th>
                   <th class="text-center">Terakhir Tambah Stok</th>
                   <th class="text-center">Terakhir Kurang Stok</th>
-                  <th class="text-center" class="hidden-xs">Aksi</th>
+                  <th class="text-center hidden-xs no-sort">Aksi</th>
               </tr>
           </thead>
 
@@ -73,6 +73,7 @@
         var dataTable = $('#TableMain').DataTable( {
             "processing": true,
             "serverSide": true,
+            "order": [[5, 'DESC']],
             "ajax":{
                 url : "<?php echo base_url('Transaksi_bahanmasuk/Transaksi/data'); ?>",
                 type: "post",
@@ -81,7 +82,11 @@
                     // $("#employee-grid_processing").css("display","none");
                     // dataTable.ajax.reload( null, false );
                 }
-            }
+            },
+            "columnDefs": [ {
+                "targets"  : 'no-sort',
+                "orderable": false,
+              }]
         });
         $("#myform").on('submit', function(e){
           e.preventDefault();

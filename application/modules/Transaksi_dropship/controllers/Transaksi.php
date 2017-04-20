@@ -45,12 +45,12 @@ class Transaksi extends MX_Controller {
 		$totalData = $query->num_rows();
 		$totalFiltered = $totalData;
 		if( !empty($requestData['search']['value']) ) {
-			$sql.=" AND ( m_customer.nama LIKE '".$requestData['search']['value']."%' ";    
-			$sql.=" OR t_order.catatan LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR t_order.total_berat LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR t_order.total_qty LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR t_order.biaya_kirim LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR t_order.total_harga_barang LIKE '".$requestData['search']['value']."%' )";
+			$sql.=" AND ( m_customer.nama LIKE '%".$requestData['search']['value']."%' ";    
+			$sql.=" OR t_order.catatan LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR t_order.total_berat LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR t_order.total_qty LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR t_order.biaya_kirim LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR t_order.total_harga_barang LIKE '%".$requestData['search']['value']."%' )";
 		}
 		$query=$this->Transaksidropshipmodel->rawQuery($sql);
 		$totalFiltered = $query->num_rows();
@@ -60,24 +60,26 @@ class Transaksi extends MX_Controller {
 		foreach ($query->result_array() as $row) {
 			$nestedData		=	array(); 
 
-			$nestedData[] 	= 	$row["id"];
+			$nestedData[] 	= 	"<span class='center-block text-center'>". $row["id"] ."</span>";
 			$nestedData[] 	= 	$row["namacus"];
             $realJson = str_replace("'", '"', $row['detail_dropship']);
             $getDataDropship = json_decode($realJson, true);
-            $detailDropship = "Nama Pengirim:".$getDataDropship['nama_pengirim']."</br>";
-            $detailDropship .= "Alamat Pengirim :".$getDataDropship['alamat_pengirim']."</br>";
-            $detailDropship .= "Nama Penerima :".$getDataDropship['nama_penerima']."</br>";
-            $detailDropship .= "Alamat Penerima :".$getDataDropship['alamat_penerima']."</br>";
-            $detailDropship .= "No Telp Penerima :".$getDataDropship['no_telp_penerima']."</br>";
+            $detailDropship = "Nama Pengirim: ".$getDataDropship['nama_pengirim']."</br>";
+            $detailDropship .= "Alamat Pengirim: ".$getDataDropship['alamat_pengirim']."</br>";
+            $detailDropship .= "Nama Penerima: ".$getDataDropship['nama_penerima']."</br>";
+            $detailDropship .= "Alamat Penerima: ".$getDataDropship['alamat_penerima']."</br>";
+            $detailDropship .= "No Telp Penerima: ".$getDataDropship['no_telp_penerima']."</br>";
 			$nestedData[] 	= 	$detailDropship;
-			$nestedData[] 	= 	"Rp. ".number_format($row["biaya_kirim"]);
-			$nestedData[] 	= 	"Rp. ".number_format($row["grand_total"]);
+			$nestedData[] 	= 	"<span class='pull-right'>". number_format($row["biaya_kirim"]) ."</span>";
+			$nestedData[] 	= 	"<span class='pull-right'>". number_format($row["grand_total"]) ."</span>";
 			$nestedData[] 	= 	$row["date_add"];
 
-            $button = "<button class='btn btn-success' onclick=showDropship('".$row["id"]."')>Detail</button> "
-                ."<a href='".base_url('Transaksi_dropship/Transaksi/invoices/'.$row['id'])."') target='_blank' class='btn btn-success'> Print </a>";
+            $button = "<div class='btn-group'>"
+                ."<button class='btn btn-default btn-sm' onclick=showDropship('".$row["id"]."') title='Update Detail'><i class='fa fa-pencil'></i></button> "
+                ."<a href='".base_url('Transaksi_dropship/Transaksi/invoices/'.$row['id'])."') target='_blank' class='btn btn-default btn-sm' title='Cetak'> <i class='fa fa-print'></i> </a>"
+                ."</div>";
             if($row['jenis_order']==2){
-                $button = "-";
+                $button = "<span class='center-block text-center'>-</span>";
             }
 
 			$nestedData[] 	= 	$button;	
@@ -174,10 +176,10 @@ class Transaksi extends MX_Controller {
 		$sql.=" WHERE t_order.deleted=1 ";
 		$sql.=" AND t_order_detail.id_order=".$id_po;
 		if( !empty($requestData['search']['value']) ) {
-			$sql.=" AND ( m_produk.nama LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR m_produk.sku LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR m_produk.kode_barang LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR m_produk.deskripsi LIKE '".$requestData['search']['value']."%' )";
+			$sql.=" AND ( m_produk.nama LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR m_produk.sku LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR m_produk.kode_barang LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR m_produk.deskripsi LIKE '%".$requestData['search']['value']."%' )";
 		}
 		$query=$this->Transaksidropshipmodel->rawQuery($sql);
 		$totalData = $query->num_rows();
