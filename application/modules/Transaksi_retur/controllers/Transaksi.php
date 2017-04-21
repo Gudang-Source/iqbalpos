@@ -50,9 +50,9 @@ class Transaksi extends MX_Controller {
 		$totalFiltered = $totalData;
 		$sql.=" WHERE t_retur.deleted=1 ";
 		if( !empty($requestData['search']['value']) ) {
-			$sql.=" AND ( id_order LIKE '".$requestData['search']['value']."%' ";    
-			$sql.=" OR m_customer.nama LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR t_retur.date_add LIKE '".$requestData['search']['value']."%' ";
+			$sql.=" AND ( id_order LIKE '%".$requestData['search']['value']."%' ";    
+			$sql.=" OR m_customer.nama LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR t_retur.date_add LIKE '%".$requestData['search']['value']."%' ";
 			$sql.=" OR catatan LIKE '".$requestData['search']['value']."%' )";
 		}
 		$query=$this->Transaksireturmodel->rawQuery($sql);
@@ -119,10 +119,10 @@ class Transaksi extends MX_Controller {
 		$sql.=" WHERE t_retur.deleted=1 ";
 		$sql.=" AND t_retur_detail.id_retur=".$id_po;
 		if( !empty($requestData['search']['value']) ) {
-			$sql.=" AND ( m_produk.nama LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR m_produk.sku LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR m_produk.kode_barang LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR m_produk.deskripsi LIKE '".$requestData['search']['value']."%' )";
+			$sql.=" AND ( m_produk.nama LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR m_produk.sku LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR m_produk.kode_barang LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR m_produk.deskripsi LIKE '%".$requestData['search']['value']."%' )";
 		}
 		$query=$this->Transaksireturmodel->rawQuery($sql);
 		$totalData = $query->num_rows();

@@ -309,9 +309,9 @@ class Transaksi extends MX_Controller {
     }
     function getKategori($supplier){
     	$selectData = $this->Transaksipomodel->rawQuery("SELECT m_produk_kategori.id, m_produk_kategori.nama FROM m_produk
-    															INNER JOIN m_produk_kategori ON m_produk.id_kategori = m_produk_kategori.id
-    															WHERE m_produk.id_supplier=".$supplier."
-    															GROUP BY m_produk.id_kategori");
+				INNER JOIN m_produk_kategori ON m_produk.id_kategori = m_produk_kategori.id
+				WHERE m_produk.id_supplier=".$supplier."
+				GROUP BY m_produk.id_kategori");
     	echo json_encode($selectData->result_array());
     }
     function filterProdukByName(){
@@ -336,10 +336,10 @@ class Transaksi extends MX_Controller {
     	// $dataSelect['deleted'] = 1;
     	// $selectData = $this->Transaksipomodel->select($dataSelect, 'm_produk_warna');
         $selectData = $this->Transaksipomodel->rawQuery("SELECT m_produk_warna.id, m_produk_warna.nama
-                                                        FROM m_produk_det_warna
-                                                        INNER JOIN m_produk ON m_produk_det_warna.id_produk = m_produk.id
-                                                        INNER JOIN m_produk_warna ON m_produk_det_warna.id_warna = m_produk_warna.id
-                                                        WHERE m_produk_det_warna.id_produk = ".$rid[0]);
+                FROM m_produk_det_warna
+                INNER JOIN m_produk ON m_produk_det_warna.id_produk = m_produk.id
+                INNER JOIN m_produk_warna ON m_produk_det_warna.id_warna = m_produk_warna.id
+                WHERE m_produk_det_warna.id_produk = ".$rid[0]);
     	echo json_encode($selectData->result_array());
     }
     function getUkuran($id){
