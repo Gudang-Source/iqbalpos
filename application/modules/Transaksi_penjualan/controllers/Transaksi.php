@@ -373,13 +373,13 @@ class Transaksi extends MX_Controller {
     	if($selectData->row()->stok > $qty){
 			$data = array(
 			        'rowid'  => $id,
-			        'qty'=> $qty
+			        'qty'=> isset($qty) ? $qty : 0
 			);
 			$this->cart->update($data);			
 			echo json_encode(array("status"=>2, "list"=>$this->getOrderArray()));
     	}else{
     		// stok tidak mencukupi
-    		echo json_encode(array("status"=>1, "list"=>$this->getOrderArray()));
+    		echo json_encode(array("status"=>1, "id"=>$id, "list"=>$this->getOrderArray()));
     	}
     }
     function updateTotalBerat($id,  $warna, $ukuran, $total_berat){

@@ -353,7 +353,7 @@
     });    
   }
   function updateQty(id){
-    var qty = $("#qt-"+id).val();
+    var qty = $("#qt-"+id).val() || 0;
     $.ajax({
       url :"<?php echo base_url('Transaksi_penjualan/Transaksi/updateQty')?>/"+id+"/"+qty,
       type : "GET",
@@ -364,11 +364,17 @@
           load_order(data.list);
           fillInformation();
         }else if(data.status == 1){
+          var list = data.list;
+          var elem = $("#qt-"+data.id);
+          var getRow = list.filter(function (index) { return index.rowid == data.id }) || 0;
+
           $.confirm({
               title: 'Stok',
-              content: 'Stok Tidak Mencukupi',
+              content: 'Stok Tidak Mencukupi <br>Max Qty: <b>' + getRow[0].qty + "</b>",
               buttons: {
                   ok: function () {
+                    $(elem).val(parseInt(getRow[0].qty)); 
+                    $(elem).trigger('change'); 
                   }
                 }
           }); 

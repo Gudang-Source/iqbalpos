@@ -1,7 +1,6 @@
 <!-- Page Content -->
 <div class="container">
-<div class="row" style='min-height:80px;'>
-</div>
+<div class="row" style='min-height:80px;'></div>
    <div class="row">
     <h3><strong>Transaksi</strong> - Dropship</h3>
    </div>

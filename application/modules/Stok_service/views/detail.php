@@ -4,13 +4,13 @@
         <table id="TableMains" class="table table-striped table-bordered" cellspacing="0" width="100%">
             <thead>
                 <tr>
-                    <th class="text-center">No</th>
+                    <th class="text-center no-sort">#</th>
                     <th class="text-center">Produk</th>
                     <th class="text-center">SKU</th>
-                    <th class="text-center" class="hidden-xs">Barang Diservis</th>
-                    <th class="text-center" class="hidden-xs">Barang Kembali</th>
-                    <th class="text-center" class="hidden-xs">Uang Kembali</th>
-                    <th class="text-center" class="hidden-xs">Status Kembali</th>
+                    <th class="text-center hidden-xs">Jumlah Diservis</th>
+                    <th class="text-center hidden-xs no-sort">Barang Kembali</th>
+                    <th class="text-center hidden-xs no-sort">Uang Kembali</th>
+                    <th class="text-center hidden-xs no-sort">Status Kembali</th>
                 </tr>
             </thead>
 
@@ -26,6 +26,7 @@
         "searching": false,
         "processing": true,
         "serverSide": true,
+        "order": [[2, 'DESC']],
         "ajax":{
             url : "<?php echo base_url('Stok_service/Transaksi/data_detail'); ?>/"+<?php echo $id; ?>,
             type: "get",
@@ -34,7 +35,11 @@
                 $("#TableMains").append('<tbody class="employee-grid-error"><tr><th colspan="7">No data found in the server</th></tr></tbody>');
                 // dataTable.ajax.reload( null, false );
             }
-        }
+        },
+        "columnDefs": [ {
+            "targets"  : 'no-sort',
+            "orderable": false,
+          }]
     });
     function confirm(id){
       var jbk = $('#jbk-'+id).val();

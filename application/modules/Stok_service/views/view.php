@@ -1,21 +1,23 @@
 <!-- Page Content -->
 <div class="container">
+  <div class="row" style='min-height:80px;'></div>
   <div class="row">
-    <h3><strong>List</strong> - Stok Service</h3>
+    <h3><strong>Stok</strong> - Service</h3>
   </div>
    <div class="row" style="margin-top:10px;">
       <table id="TableMain" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
               <tr>
-                  <th class="text-center">NAMA SUPPLIER</th>
-                  <th class="text-center">CATATAN</th>
-                  <th class="text-center">JUMLAH BARANG DISERVICE</th>
-                  <th class="text-center" class="hidden-xs">TOTAL HARGA</th>
-                  <th class="text-center" class="hidden-xs">JUMLAH BARANG KEMBALI</th>
-                  <th class="text-center" class="hidden-xs">JUMLAH UANG KEMBALI</th>
-                  <th class="text-center" class="hidden-xs">STATUS</th>
-                  <th class="text-center">TANGGAL BUAT</th>
-                  <th class="text-center">AKSI</th>
+                  <th class="text-center no-sort">#</th>
+                  <th class="text-center">Nama Supplier</th>
+                  <th class="text-center">Catatan</th>
+                  <th class="text-center">Jumlah Diservis</th>
+                  <th class="text-center hidden-xs">Total Harga (IDR)</th>
+                  <th class="text-center hidden-xs">Barang Kembali</th>
+                  <th class="text-center hidden-xs">Uang Kembali (IDR)</th>
+                  <th class="text-center hidden-xs">Status</th>
+                  <th class="text-center">Tanggal Service</th>
+                  <th class="text-center no-sort">Aksi</th>
               </tr>
           </thead>
 
@@ -47,11 +49,12 @@
       </div>
       <div class="modal-footer">
           <div class="row">
-           <div class="col-lg-10">
-           *Barang yang statusnya sudah diubah, tidak akan bisa diubah lagi, <br>mohon periksa kembali sebelum klik tombol confirm
+           <div class="col-lg-9">
+           <small>*Barang yang statusnya sudah diubah, tidak akan bisa diubah lagi. <br>Mohon periksa kembali sebelum klik tombol Simpan</small>
            </div>
-           <div class="col-lg-1">
-            <button type="submit" class="btn btn-success">Confirm</button>
+           <div class="col-lg-3">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-add">Simpan</button>
            </div>
           </div>
       </div>
@@ -71,6 +74,7 @@
     var dataTable = $('#TableMain').DataTable( {
         "processing": true,
         "serverSide": true,
+        "order": [[8, 'DESC']],
         "ajax":{
             url : "<?php echo base_url('Stok_service/Transaksi/data'); ?>",
             type: "post",
@@ -79,7 +83,11 @@
                 // $("#employee-grid_processing").css("display","none");
                 // dataTable.ajax.reload( null, false );
             }
-        }
+        },
+        "columnDefs": [ {
+          "targets"  : 'no-sort',
+          "orderable": false,
+        }]
     });
     function detail(id){
       $.ajax({

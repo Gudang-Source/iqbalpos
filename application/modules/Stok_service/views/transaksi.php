@@ -1,38 +1,43 @@
-
-
+<style type="text/css">
+  .product-details input[type="text"]{
+    width: 5em !important;
+  }
+</style>
 <div class="container-fluid">
   <div class="row">
-    <h3><strong>Transaksi</strong> - Stok Service</h3>
-  </div>
+    <div class="col-sm-12">
+      <h3><strong>Stok</strong> - Service</h3>
+    </div> 
+   </div>
    <div class="row">
     <div class="col-md-5 left-side">
       <form action="<?php echo base_url('Stok_service/Transaksi/doServices'); ?>" method="post" id="serviceOrder">
-         <div class="col-xs-8">
-            <h2>Pilih Supplier</h2>
-         </div>
+        <div class="col-xs-8"> &nbsp; </div>           
          <div class="col-sm-12">
+          <div class="form-group">
+            <label class="label-control">Supplier</label>
             <select class="js-select-options form-control" id="supplierSelect" onchange="filterProduk()" name="supplier" required="required">
               <option value="0">Pilih Supplier</option>
-
             </select>
+          </div>
          </div>
          <div class="col-sm-12">
-          &nbsp;
+          <div class="form-group">
+            <label class="label-control">Catatan</label>
+            <textarea name="catatan" class="form-control" placeholder="Catatan"></textarea>
+          </div>  
          </div>
-         <div class="col-sm-12">
-               <textarea name="catatan" class="form-control" placeholder="CATATAN"></textarea>
+         <div class="col-xs-4 table-header text-center">
+            <label>Produk</label>
          </div>
-         <div class="col-xs-4 table-header">
-            <h3>Product</h3>
+         <div class="col-xs-3 table-header nopadding text-center">
+            <label class="text-left">Quantity</label>
          </div>
-         <div class="col-xs-3 table-header nopadding">
-            <h3 class="text-left">Quantity</h3>
+         <div class="col-xs-2 table-header nopadding text-center">
+            <label class="text-left">Stok</label>
          </div>
-         <div class="col-xs-2 table-header nopadding">
-            <h3 class="text-left">Stok</h3>
-         </div>
-         <div class="col-xs-3 table-header nopadding">
-            <h3>Total</h3>
+         <div class="col-xs-3 table-header nopadding text-center">
+            <label>Total (IDR)</label>
          </div>
          <div id="productList">
             <!-- product List goes here  -->
@@ -44,12 +49,12 @@
                   <tr>
                      <td class="active" width="40%">Jumlah Barang</td>
                      <td class="whiteBg" width="60%"><span id="Subtot"></span>
-                        <span class="float-right"><b id="eTotalItem"><span></span> Item</b></span>
+                        <span class="float-right"><b><span id="eTotalItem"></span> Item</b></span>
                      </td>
                   </tr>
                   <tr>
-                     <td class="active">Total Harga</td>
-                     <td class="whiteBg light-blue text-bold"><span id="eTotal"></span></td>
+                     <td class="active">Total Harga (IDR)</td>
+                     <td class="whiteBg light-blue text-bold"><span id="eTotal" class="money"></span></td>
                   </tr>
                </table>
             </div>
@@ -83,6 +88,13 @@
 </div>
 <!-- /.container -->
 <script type="text/javascript">
+  function maskInputMoney(){
+    $('.money').mask('#.##0', {reverse: true});
+  }
+  function unmaskInputMoney(){
+    $('.money').unmask();
+  }
+
   var listProduct = <?php echo $list_produk; ?>;
   var listOrder = <?php echo $list_order; ?>;
   var listSupplier = <?php echo $list_supplier; ?>;
@@ -93,6 +105,7 @@
   inits(tax, discount, total, totalItems);
   load_supplier(listSupplier);
   load_order(listOrder);
+
   function search(){
     var keyword = $("#searchProd").val();
     var supplier = $("#supplierSelect").val();
@@ -125,17 +138,21 @@
   }
   function load_product(json){
     var html = "";
+    var color = 2; 
     $("#productList2").html('');
     for (var i=0;i<json.length;i++){
+      if(color == 7) { color = 1; }
+      var colorClass = 'color0' + color; color++;
       html = "<div class='col-sm-2 col-xs-4' style='display: block;'>"+
-              "<a href='javascript:void(0)' class='addPct' id=\'product-"+json[i].id+"\' onclick=\'addToCart("+json[i].id+")\'>"+
-                "<div class='product color03 flat-box waves-effect waves-block'>"+
+              "<a href='javascript:void(0)' class='addPct' id=\'product-"+json[i].id+"\' onclick=\'typeStok("+json[i].id +","+ json[i].rowid+")\'>"+
+                "<div class='product "+colorClass+" flat-box waves-effect waves-block'>"+
                   "<h3 id='proname'>"+json[i].nama+"</h3>"+
                   "<div class='mask'>"+
-                    "<h3>"+json[i].harga_beli+"</h3>"+
+                    "<h3>Rp <span class='money'>"+json[i].harga_beli+"</span></h3>"+
                     "<p>"+json[i].deskripsi+"</p>"+
                   "</div>"+
-                  "<img src=\'<?php echo base_url('upload/produk') ?>/"+json[i].foto+"\' alt=\'"+json[i].id_kategori+"\'>"+
+                  // "<img src=\'<?php echo base_url('upload/produk') ?>/"+json[i].foto+"\' alt=\'"+json[i].id_kategori+"\'>"+
+                  "<img src='<?php echo base_url('upload/produk')?>/"+json[i].foto+"'>"+
                 "</div>"+
               "</a>"+
              "</div>";
@@ -151,11 +168,12 @@
       for (var i=0;i<json.length;i++){
         option = json[i].options;
         select = "stok-"+json[i].rowid;
+        textSelect = "textStok-"+json[i].rowid;
         html = "<div class='col-xs-12'>"+
                   "<div class='panel panel-default product-details'>"+
                       "<div class='panel-body' style=''>"+
                           "<div class='col-xs-4 nopadding'>"+
-                              "<div class='col-xs-2 nopadding'>"+
+                              "<div class='col-xs-4 nopadding'>"+
                                   "<a href='javascript:void(0)' onclick=delete_order(\'"+json[i].rowid+"\')>"+
                                   "<span class='fa-stack fa-sm productD'>"+
                                     "<i class='fa fa-circle fa-stack-2x delete-product'></i>"+
@@ -163,37 +181,28 @@
                                   "</span>"+
                                   "</a>"+
                               "</div>"+
-                              "<div class='col-xs-10 nopadding'>"+
+                              "<div class='col-xs-8 nopadding'>"+
                                 "<span class='textPD'>"+json[i].produk+"</span>"+
                               "</div>"+
                           "</div>"+
-                          "<div class='col-xs-3 nopadding productNum'>"+
-                            "<a href='javascript:void(0)' onclick=reduce_qty(\'"+json[i].rowid+"\')>"+
-                              "<span class='fa-stack fa-sm decbutton'>"+
-                                "<i class='fa fa-square fa-stack-2x light-grey'></i>"+
-                                "<i class='fa fa-minus fa-stack-1x fa-inverse white'></i>"+
-                              "</span>"+
-                            "</a>"+
-                            "<input id=\'qt-"+json[i].rowid+"\' onchange=change_total(\'"+json[i].rowid+"\') class='form-control' value='"+json[i].qty+"' placeholder='0' maxlength='2' type='text'>"+
-                            "<a href='javascript:void(0)' onclick=add_qty(\'"+json[i].rowid+"\')>"+
-                            "<span class='fa-stack fa-sm incbutton'>"+
-                              "<i class='fa fa-square fa-stack-2x light-grey'></i>"+
-                              "<i class='fa fa-plus fa-stack-1x fa-inverse white'></i>"+
+                          "<div class='col-xs-3 nopadding'>"+
+                            "<span class='textPD'>"+
+                              "<input id=\'qt-"+json[i].rowid+"\' "
+                              +"onchange=\"addToCart("+ json[i].id[0] +", \'"+ json[i].rowid +"\');\""
+                              +"class='form-control' value='"+json[i].qty+"' placeholder='0' maxlength='2' type='text'>"+
                             "</span>"+
-                            "</a>"+
                           "</div>"+
-                          "<div class='col-xs-2 nopadding'>"+
-                              "<div class='col-xs-2 nopadding'>"+
-                                "<span class='textPD'>"+
-                                  "<select id=\'"+select+"\' onchange=changeOption(\'"+json[i].rowid+"\')>"+                                  
-                                    "<option value=\'2\'>TIDAK KURANGI</option>"+
-                                    "<option value=\'1\'>KURANGI</option>"+
-                                  "</select>"+
-                                "</span>"+
-                              "</div>"+
+                          "<div class='col-xs-3 nopadding'>"+
+                            "<span class='textPD'>"+
+                              "<p id=\'"+textSelect+"\'>?</p>"+
+                              "<select id=\'"+select+"\' class='form-control' onchange=changeOption(\'"+json[i].rowid+"\') style='display:none;'>"+                                  
+                                "<option value=\'2\'>Tidak Kurangi</option>"+
+                                "<option value=\'1\'>Kurangi</option>"+
+                              "</select>"+
+                            "</span>"+
                           "</div>"+
-                          "<div class='col-xs-3 nopadding '>"+
-                            "<span class='subtotal textPD'>"+json[i].subtotal+"</span>"+
+                          "<div class='col-xs-2 nopadding '>"+
+                            "<span class='subtotal textPD money'>"+json[i].subtotal+"</span>"+
                           "</div>"+
                       "</div>"+
                   "</div>"+
@@ -206,6 +215,7 @@
           // tidak kurangi stok
           $("#"+select).val(2);              
         }
+        $("#"+textSelect).text($("#"+select+" :selected").text())
       }
     }
   }
@@ -259,26 +269,43 @@
       });
     }
   }
-  function addToCart(id){
-    typeStok();    
+  function addToCart(id, rowid, jenisStok=''){
+    // alert(id +" - "+ rowid);
+    //set default value (if addToCart is called from product thumbnail onclick)
+    var qty = 1; 
+    var addEvent = 'click';
+    if(jenisStok == '') { //if addToCart is called from qty-input onchange
+      jenisStok = $("#stok-"+rowid).val();
+      qty = $("#qt-"+rowid).val();
+      addEvent = 'input';
+    }
     $.ajax({
       url :"<?php echo base_url('Stok_service/Transaksi/tambahCart')?>/"+id,
-      type : "GET",
-      data :"",
+      type : "POST",
+      data : {"jenis_stok": jenisStok, "qty": qty, "event": addEvent},
       dataType : "json",
       success : function(data){
-        if(data.status==0){
+        if(data.status == 0){
+          var list = data.list;
+          var elem = $("#qt-"+data.rowid);
           $.confirm({
               title: 'Stok',
-              content: 'Stok Tidak Mencukupi!',
+              content: 'Stok tidak mencukupi! <br>Max Qty: <b>'+list.stok+"</b>",
               buttons: {
                   ok: function () {
+                    $(elem).val(parseInt(list.stok)); 
+                    change_jenisStok(data.rowid, jenisStok);
+                    change_total(data.rowid);
+                    // $(elem).trigger('change'); 
                   }
               }
           });           
-        }else{        
+        } else {
+        // console.log(data);        
+          var getRow = data.filter(function (index) { return index.id[0] == id }) || 0;
           load_order(data);
-          fillInformation();
+          change_jenisStok(getRow[0].rowid, jenisStok);
+          // fillInformation();
         }
       }
     });
@@ -295,6 +322,12 @@
       }
     });    
   }
+  function change_jenisStok(rowid, jenisStok) {
+    // console.log(rowid); console.log(jenisStok);
+    $("#stok-"+rowid + " option[value='"+jenisStok+"']").attr("selected", "selected");
+    changeOption(rowid);
+    $("#textStok"+rowid).html($("stok-"+rowid+" :selected").text());
+  }
   function changeOption(id){
     var qty = $("#qt-"+id).val();
     var option = $("#stok-"+id).val();
@@ -309,13 +342,13 @@
       }
     });
   }
-  function add_qty(id){
+  function add_qty(id){ //tidak dipakai sementara ini
     var lastValue = $("#qt-"+id).val();
     lastValue = parseInt(lastValue) + 1;
     $("#qt-"+id).val(lastValue);
     change_total(id, 'tambah');
   }
-  function reduce_qty(id){
+  function reduce_qty(id){ //tidak dipakai sementara ini
     var lastValue = $("#qt-"+id).val();
     if(parseInt(lastValue) > 1){    
       lastValue = parseInt(lastValue) - 1;
@@ -327,13 +360,14 @@
   }
   function change_total(id, state){
     var qty = $("#qt-"+id).val();
+    var jenisStok = $("#stok-"+id).val();
     $.ajax({
-      url :"<?php echo base_url('Stok_service/Transaksi/updateCart')?>/"+id+"/"+qty+"/"+state,
+      url :"<?php echo base_url('Stok_service/Transaksi/updateCart')?>/"+id+"/"+qty+"/"+jenisStok+"/"+state,
       type : "GET",
       data :"",
       dataType : "json",
       success : function(data){
-        console.log(data);
+        // console.log(data);
         load_order(data);
         fillInformation();
       }
@@ -344,6 +378,8 @@
     $("#eDiscount").val(ediscount);
     $("#eTotal").html(etotal);    
     $("#eTotalItem").html(etotal_items);    
+    unmaskInputMoney();
+    maskInputMoney();
   }
   function fillInformation(){
     $.ajax({
@@ -412,30 +448,31 @@
       }
     });    
   }
-  function typeStok(){
+  function typeStok(id, rowid){
     $.confirm({
-        title: 'Prompt!',
+        title: 'Jenis Transaksi',
         content: '' +
-        '<form action="" class="formName">' +
+        '<form action="" class="formName" method="post">' +
         '<div class="form-group">' +
         '<label>Pilih Jenis Transaksi</label>' +
         '<select id=\'jenis-stok\' class=\'form-control\'>'+
-          '<option value=\'0\'>Kurangi Stok</option>'+
-          '<option value=\'1\'>Tidak Kurangi Stok</option>'+
+          '<option value=\'1\'>Kurangi Stok</option>'+
+          '<option value=\'2\'>Tidak Kurangi Stok</option>'+
         '</select>'+
         '</div>' +
         '</form>',
         buttons: {
             formSubmit: {
-                text: 'Submit',
+                text: 'Pilih',
                 btnClass: 'btn-blue',
                 action: function () {
-                    var name = this.$content.find('.name').val();
-                    if(!name){
-                        // $.alert('provide a valid name');
+                    var jenisStok = this.$content.find('#jenis-stok').val() || 0;
+                    if(!jenisStok){
+                        $.alert('Tidak ada opsi yang anda pilih!');
                         return false;
                     }
-                    $.alert('Your name is ' + name);
+                    // $.alert('Your name is ' + jenisStok);
+                    addToCart(id, rowid, jenisStok);
                 }
             },
             cancel: function () {
