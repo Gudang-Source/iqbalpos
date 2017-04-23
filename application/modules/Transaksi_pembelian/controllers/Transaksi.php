@@ -27,7 +27,7 @@ class Transaksi extends MX_Controller {
     function data(){
 		$requestData= $_REQUEST;
 		$columns = array( 
-            0   =>  '#', 
+            0   =>  'id', 
 			1 	=>	'id_supplier', 
 			2 	=> 	'catatan',
 			3	=> 	'total_berat',
@@ -60,7 +60,7 @@ class Transaksi extends MX_Controller {
 		foreach ($query->result_array() as $row) {
 			$nestedData		=	array(); 
 
-            $nestedData[]   =   "<span class='center-block text-center'>". $i."</span>";
+            $nestedData[]   =   "<span class='center-block text-center'>". $row['id']."</span>";
 			$nestedData[] 	= 	$row["namasup"];
 			$nestedData[] 	= 	$row["catatan"];
 			$nestedData[] 	= 	"<span class='money' style='display:block;'>". $row["total_berat"] ."</span>";
@@ -207,7 +207,7 @@ class Transaksi extends MX_Controller {
     }
     function getProdukByName($keyword = null, $supplier = null, $kategori = null){
         $list = null;
-        $dataSelect['deleted'] = 1;
+        $dataCondition['deleted'] = 1;
         $dataCondition = array();
         $dataLike = array();
         if($keyword != null){
@@ -222,9 +222,9 @@ class Transaksi extends MX_Controller {
     }  
     function getProdukByKategori($supplier = null, $kategori = 0, $keyword = null){
     	$list = null;
-    	$dataSelect['deleted'] = 1;
-    	$dataLike = array();
+        $dataLike = array();
         $dataCondition = array();
+    	$dataCondition['deleted'] = 1;
     	if($supplier != null && $kategori != 0){
     		$dataCondition['id_supplier'] = $supplier;
     		$dataCondition['id_kategori'] = $kategori;
@@ -247,9 +247,9 @@ class Transaksi extends MX_Controller {
     }
     function getKategori($supplier){
     	$selectData = $this->Transaksipembelianmodel->rawQuery("SELECT m_produk_kategori.id, m_produk_kategori.nama FROM m_produk
-    															INNER JOIN m_produk_kategori ON m_produk.id_kategori = m_produk_kategori.id
-    															WHERE m_produk.id_supplier=".$supplier."
-    															GROUP BY m_produk.id_kategori");
+				INNER JOIN m_produk_kategori ON m_produk.id_kategori = m_produk_kategori.id
+				WHERE m_produk.id_supplier=".$supplier."
+				GROUP BY m_produk.id_kategori");
     	echo json_encode($selectData->result_array());
     }
     function filterProdukByName(){
@@ -274,10 +274,10 @@ class Transaksi extends MX_Controller {
     	// $dataSelect['deleted'] = 1;
     	// $selectData = $this->Transaksipomodel->select($dataSelect, 'm_produk_warna');
         $selectData = $this->Transaksipomodel->rawQuery("SELECT m_produk_warna.id, m_produk_warna.nama
-                                                        FROM m_produk_det_warna
-                                                        INNER JOIN m_produk ON m_produk_det_warna.id_produk = m_produk.id
-                                                        INNER JOIN m_produk_warna ON m_produk_det_warna.id_warna = m_produk_warna.id
-                                                        WHERE m_produk_det_warna.id_produk = ".$rid[0]);
+            FROM m_produk_det_warna
+            INNER JOIN m_produk ON m_produk_det_warna.id_produk = m_produk.id
+            INNER JOIN m_produk_warna ON m_produk_det_warna.id_warna = m_produk_warna.id
+            WHERE m_produk_det_warna.id_produk = ".$rid[0]);
     	echo json_encode($selectData->result_array());
     }
     function getUkuran($id){
@@ -285,13 +285,14 @@ class Transaksi extends MX_Controller {
     	// $dataSelect['deleted'] = 1;
     	// $selectData = $this->Transaksipomodel->select($dataSelect, 'm_produk_ukuran');
         $selectData = $this->Transaksipomodel->rawQuery("SELECT m_produk_ukuran.id, m_produk_ukuran.nama
-                                                        FROM m_produk_det_ukuran
-                                                        INNER JOIN m_produk ON m_produk_det_ukuran.id_produk = m_produk.id
-                                                        INNER JOIN m_produk_ukuran ON m_produk_det_ukuran.id_ukuran =m_produk_ukuran.id
-                                                        WHERE m_produk_det_ukuran.id_produk = ".$rid[0]);
+                FROM m_produk_det_ukuran
+                INNER JOIN m_produk ON m_produk_det_ukuran.id_produk = m_produk.id
+                INNER JOIN m_produk_ukuran ON m_produk_det_ukuran.id_ukuran =m_produk_ukuran.id
+                WHERE m_produk_det_ukuran.id_produk = ".$rid[0]);
     	echo json_encode($selectData->result_array());
     }
     function transaksi(){
+        $getTotal = json_decode($this->_getTotal());
     	$dataSelect['deleted'] = 1;
     	$data['list_produk'] = $this->getProduk();
         $data['list_order'] = $this->getOrder();
@@ -299,9 +300,11 @@ class Transaksi extends MX_Controller {
         
         // $data['list_warna'] = $this->getWarna();
         // $data['list_ukuran'] = $this->getUkuran();
+        // $data['total'] = $this->cart->total();
+        // $data['total_items'] = $this->cart->total_items();
+        $data['total'] = $getTotal->total;
+        $data['total_items'] = $getTotal->total_items;
         
-        $data['total'] = $this->cart->total();
-        $data['total_items'] = $this->cart->total_items();
         $data['tax'] = 0;
         $data['discount'] = 0;
     	$this->load->view('Transaksi_pembelian/transaksi', $data);

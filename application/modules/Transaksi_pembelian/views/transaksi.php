@@ -74,8 +74,8 @@
                      </td>
                   </tr>
                   <tr>
-                     <td class="active">Total (IDR)</td>
-                     <td class="whiteBg light-blue text-bold"><span id="eTotal" class="money"></span></td>
+                     <td class="active">Total Harga (IDR)</td>
+                     <td class="whiteBg light-blue text-bold text-right"><span id="eTotal" class="money"></span></td>
                   </tr>
                </table>
             </div>
@@ -166,12 +166,13 @@
   function load_product(json){
     var html = "";
     $("#productList2").html('');
-    var rand = Math.floor(Math.random()*json.length) + 1;
+    var color = 2;
     for (var i=0;i<json.length;i++){
-      rand = Math.floor(Math.random()*json.length) + 1;
+      if(color == 7) { color = 1; }
+      var colorClass = 'color0' + color; color++;
       html = "<div class='col-sm-2 col-xs-3' style='display: block;'>"+
               "<a href='javascript:void(0)' class='addPct' id=\'product-"+json[i].id+"\' onclick=\'addToCart("+json[i].id+")\'>"+
-                "<div class='product color0"+(i+1)+" flat-box waves-effect waves-block'>"+
+                "<div class='product "+colorClass+" flat-box waves-effect waves-block'>"+
                   "<h3 id='proname'>"+json[i].nama+"</h3>"+
                   "<div class='mask'>"+
                     "<h3>Rp <span class='money'>"+json[i].harga_beli+"</span></h3>"+

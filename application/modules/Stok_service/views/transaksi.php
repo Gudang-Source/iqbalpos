@@ -28,16 +28,16 @@
           </div>  
          </div>
          <div class="col-xs-4 table-header text-center">
-            <label>Produk</label>
+            <label>PRODUK</label>
          </div>
          <div class="col-xs-3 table-header nopadding text-center">
-            <label class="text-left">Quantity</label>
+            <label class="text-left">QUANTITY</label>
          </div>
          <div class="col-xs-2 table-header nopadding text-center">
-            <label class="text-left">Stok</label>
+            <label class="text-left">STOK</label>
          </div>
          <div class="col-xs-3 table-header nopadding text-center">
-            <label>Total (IDR)</label>
+            <label>TOTAL (IDR)</label>
          </div>
          <div id="productList">
             <!-- product List goes here  -->
@@ -47,14 +47,14 @@
             <div class="table-responsive col-sm-12 totalTab">
                <table class="table">
                   <tr>
-                     <td class="active" width="40%">Jumlah Barang</td>
+                     <td class="active" width="40%">Total Qty</td>
                      <td class="whiteBg" width="60%"><span id="Subtot"></span>
                         <span class="float-right"><b><span id="eTotalItem"></span> Item</b></span>
                      </td>
                   </tr>
                   <tr>
                      <td class="active">Total Harga (IDR)</td>
-                     <td class="whiteBg light-blue text-bold"><span id="eTotal" class="money"></span></td>
+                     <td class="whiteBg light-blue text-bold text-right"><span id="eTotal" class="money"></span></td>
                   </tr>
                </table>
             </div>
@@ -245,7 +245,8 @@
   function load_kategori(json){
     var html = "";
     $("#kategoriGat").html('');
-    html = "<span class='categories'><i class='fa fa-home'></i></span>";
+    // html = "<span class='categories'><i class='fa fa-home'></i></span>";
+    html = "<span class='categories selectedGat' onclick=filterProdukByKategori(0) id=\'gat-0\'><i class='fa fa-home'></i></span>";
     $("#kategoriGat").append(html);
     for (var i=0;i<json.length;i++){
       html = "<span class='categories' onclick=filterProdukByKategori(\'"+json[i].id+"\') id=\'gat-"+json[i].id+"\'>"+json[i].nama+"</span>";
@@ -444,7 +445,8 @@
         fillInformation();        
         $('#btnDoOrder').html("<h5 class=\'text-bold\'>Servis Stok</h5>");
         $("#btnDoOrder").prop("disabled", false);
-        window.close();
+        // window.close();
+        window.location.reload(false);
       }
     });    
   }

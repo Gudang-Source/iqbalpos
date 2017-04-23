@@ -27,7 +27,7 @@ class Transaksi extends MX_Controller {
     function data(){
 		$requestData= $_REQUEST;
 		$columns = array( 
-			0 	=>	'#', 
+			0 	=>	'id', 
 			1 	=>	'id_supplier', 
 			2 	=> 	'catatan',
 			3	=> 	'jumlah_barang_service',
@@ -64,7 +64,7 @@ class Transaksi extends MX_Controller {
 		foreach ($query->result_array() as $row) {
 			$nestedData		=	array(); 
 
-			$nestedData[] 	= 	"<span class='center-block text-center'>".$i."</span>";
+			$nestedData[] 	= 	"<span class='center-block text-center'>".$row['id']."</span>";
 			$nestedData[] 	= 	$row["namasup"];
 			$nestedData[] 	= 	$row["catatan"];
 			$nestedData[] 	= 	"<span class='center-block text-center'>".$row["jumlah_barang_service"]."</span>";
@@ -160,10 +160,10 @@ class Transaksi extends MX_Controller {
 					break;
 				default:
 		            $status  = "<select class='form-control' name='sts-".$row['sdid']."' id='sts-".$row['sdid']."' style='width: 100%'>";
-					$status .= "<option value='1' selected>DALAM PROSES</option>";
-					$status .= "<option value='2'>BARANG</option>";
-					$status .= "<option value='3'>UANG</option>";
-					$status .= "<option value='4'>UANG DAN BARANG</option>";
+					$status .= "<option value='1' selected>Dalam Proses</option>";
+					$status .= "<option value='2'>Barang</option>";
+					$status .= "<option value='3'>Uang</option>";
+					$status .= "<option value='4'>Barang dan Uang</option>";
 					$enableButton = "";
 		            $status .= "</select>";
 					break;
@@ -468,14 +468,18 @@ class Transaksi extends MX_Controller {
     	$list = $this->Transaksiservicemodel->like($dataCondition, $dataLike, 'm_produk');
     	return json_encode($list->result_array());
     }   
-    function getProdukByKategori($supplier = null, $kategori = null, $keyword = null){
+    function getProdukByKategori($supplier = null, $kategori = 0, $keyword = null){
     	$list = null;
-    	$dataCondition['deleted'] = 1;
     	$dataLike = array();
-    	if($supplier != null && $kategori != null){
+    	$dataCondition = array();
+    	$dataCondition['deleted'] = 1;
+    	if($supplier != null && $kategori != 0){
     		$dataCondition['id_supplier'] = $supplier;
     		$dataCondition['id_kategori'] = $kategori;
     	}
+    	if($kategori == 0){
+            $dataCondition['id_supplier'] = $supplier;
+        }
     	if($keyword != null){
     		$dataLike['nama'] = $keyword;
     	}
@@ -673,11 +677,19 @@ class Transaksi extends MX_Controller {
 
 			if($jenis_stok == 1) { // jika kurangi stok
 				//check apakah stok available
-				if($selectData->row()->stok > 1) {
+				if($selectData->row()->stok >= 1) {
 					$this->cart->insert($datas);
 					echo $this->getOrder();
 				}else{
-	                echo json_encode(array("status"=>0));
+	                // echo json_encode(array("status"=>0));
+	                $cartContent = json_decode($this->getOrder());
+					$rowid = "";
+					foreach ($cartContent as $item) {
+						if(($item->id[0] == $id) && ($item->id[1] == 'STOKSERVICE')) {
+							$rowid = $item->rowid;
+						}
+					}
+	                echo json_encode(array("status" => 0, "list" => $selectData->row_array(), "rowid"=>$rowid)); 
 	            }
 			}
 			else if($jenis_stok == 2) {  //jika tidak kurangi stok
