@@ -428,9 +428,10 @@
         // console.log(data);        
         load_order(data);
         fillInformation();        
-        $('#btnDoOrder').html("<h5 class=\'text-bold\'>Servis Stok</h5>");
+        $('#btnDoOrder').html("<h5 class=\'text-bold\'>Proses Service</h5>");
         $("#btnDoOrder").prop("disabled", false);
-        window.close();
+        // window.close();
+        window.location.reload(false);
       }
     });    
   }

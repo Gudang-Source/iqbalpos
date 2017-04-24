@@ -49,20 +49,22 @@
                      </td>
                   </tr>
                   <tr>
-                     <td class="active">Total (IDR)</td>
-                     <td class="whiteBg light-blue text-bold"><span id="eTotal" class="money"></span></td>
+                     <td class="active">Total Harga (IDR)</td>
+                     <td class="whiteBg light-blue text-bold text-right"><span id="eTotal" class="money"></span></td>
                   </tr>
                </table>
             </div>
             <button type="button" onclick="cancelOrder()" class="btn btn-red col-md-6 flat-box-btn"><h5 class="text-bold">Cancel</h5></button>
-            <button type="button" class="btn btn-green col-md-6 flat-box-btn" onclick="payment()" id="btnDoOrder"><h5 class="text-bold">Proses Pembelian</h5></button>
+            <button type="button" class="btn btn-green col-md-6 flat-box-btn" onclick="payment()" id="btnDoOrder"><h5 class="text-bold">Proses Transaksi</h5></button>
          </div>
         </form>
 
       </div>
       <div class="col-md-7 right-side nopadding">
         <div class="row row-horizon" id="kategoriGat">
-            <span class="categories selectedGat" id=""><i class="fa fa-home"></i></span>
+            <span class="categories selectedGat" id="gat-0">
+              <i class="fa fa-home" onclick="filterProdukByKategori(0)"></i>
+            </span>
         </div>
         <div class="col-sm-12">
            <div id="searchContaner">
@@ -88,7 +90,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="Addpayament">Pembayaran</h4>
+          <h4 class="modal-title" id="Addpayament">Proses Pembayaran</h4>
         </div>
         <form method="POST" action="<?php echo base_url('Transaksi_penjualan/Transaksi/payment'); ?>" id="formpayment">
         <div class="modal-body">
@@ -96,8 +98,8 @@
                <h2 id="TotalModal"></h2>
             </div>
              <div class="form-group">
-               <label for="paymentMethod">Metode Pembayaran</label>
-               <select class="js-select-options form-control" id="paymentMethod" name="paymentMethod">
+               <label for="paymentMethod" class="label-control">Metode Pembayaran</label>
+               <select class="form-control" id="paymentMethod" name="paymentMethod">
                  <option value="0">Cash</option>
                  <option value="1">BNI</option>
                  <option value="2">Mandiri</option>
@@ -114,12 +116,15 @@
               </select>
              </div>
              <div class="form-group">
-               <label for="jenisOrder">Catatan</label>
-               <textarea name="catatan" class="form-control" placeholder="CATATAN" id="catatan"></textarea>
+               <label for="catatan">Catatan</label>
+               <textarea name="catatan" class="form-control" placeholder="Catatan" id="catatan"></textarea>
              </div>
              <div class="form-group Paid">
-               <label for="Paid">Nominal</label>
-               <input type="text" value="0" name="paid" class="form-control money" id="Paid" placeholder="Nominal">
+               <label for="Paid">Nominal (IDR)</label>
+               <div class="input-group">
+                <span class="input-group-addon">Rp</span> 
+                <input type="text" value="0" name="paid" class="form-control money" id="Paid" placeholder="Nominal">
+               </div>
              </div>
              <div class="form-group CreditCardNum">
                <i class="fa fa-cc-visa fa-2x" id="visa" aria-hidden="true"></i>
@@ -235,10 +240,13 @@
   function load_product(json){
     var html = "";
     $("#productList2").html('');
+    var color = 2;
     for (var i=0;i<json.length;i++){
+      if(color == 7) { color = 1; }
+      var colorClass = 'color0' + color; color++;
       html = "<div class='col-sm-2 col-xs-3' style='display: block;'>"+
               "<a href='javascript:void(0)' class='addPct' id=\'product-"+json[i].id+"\' onclick=\'addToCart("+json[i].id+")\'>"+
-                "<div class='product color03 flat-box waves-effect waves-block'>"+
+                "<div class='product "+colorClass+" flat-box waves-effect waves-block'>"+
                   "<h3 id='proname'>"+json[i].nama+"</h3>"+
                   "<div class='mask'>"+
                     "<h3>Rp <span class='money'>"+json[i].harga_beli+"</span></h3>"+
@@ -416,7 +424,7 @@
   function load_kategori(json){
     var html = "";
     $("#kategoriGat").html('');
-    html = "<span class='categories selectedGat'><i class='fa fa-home'></i></span>";
+    html = "<span class='categories selectedGat' onclick=filterProdukByKategori(0) id=\'gat-0\'><i class='fa fa-home'></i></span>";
     $("#kategoriGat").append(html);
     for (var i=0;i<json.length;i++){
       html = "<span class='categories' onclick=filterProdukByKategori(\'"+json[i].id+"\') id=\'gat-"+json[i].id+"\'>"+json[i].nama+"</span>";
@@ -582,14 +590,18 @@
     });    
   }
   function cancelOrder(){
+      var defaultHtml = $('#btnDoOrder').html();
       $.confirm({
-          title: 'Confirm!',
-          content: 'Simple confirm!',
+          title: 'Batal',
+          content: 'Batalkan Transaksi ?',
           buttons: {
               confirm: function () {
                   doClear();
               },
               cancel: function () {
+                  // $.alert('Canceled!');
+                  $('#btnDoOrder').html(defaultHtml);
+                  $("#btnDoOrder").prop("disabled", false);  
               }
           }
       });    
@@ -606,9 +618,10 @@
         // console.log(data);        
         load_order(data);
         fillInformation();        
-        $('#btnDoOrder').html("<h5 class=\'text-bold\'>Proses Pembelian</h5>");
+        $('#btnDoOrder').html("<h5 class=\'text-bold\'>Proses Transaksi</h5>");
         $("#btnDoOrder").prop("disabled", false);
-        window.close();
+        // window.close();
+        window.location.reload(false);
       }
     });    
   }
@@ -621,9 +634,10 @@
       success : function(data){        
         load_order(data);
         fillInformation();        
-        $('#btnDoOrder').html("<h5 class=\'text-bold\'>Proses Pembelian</h5>");
+        $('#btnDoOrder').html("<h5 class=\'text-bold\'>Proses Transaksi</h5>");
         $("#btnDoOrder").prop("disabled", false);
-        window.close();
+        // window.close();
+        window.location.reload(false);
       }
     });    
   }

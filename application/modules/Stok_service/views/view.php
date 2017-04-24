@@ -54,7 +54,7 @@
            </div>
            <div class="col-lg-3">
             <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
-            <button type="submit" class="btn btn-add">Simpan</button>
+            <button id="btnConfirm" type="submit" class="btn btn-add">Simpan</button>
            </div>
           </div>
       </div>
@@ -107,14 +107,21 @@
       $("#frm-detail").on('submit', function(e){
         e.preventDefault();
         unmaskInputMoney();
+        var defaultHtml = $("#btnConfirm").html();
         $.ajax({
           url : $('#frm-detail').attr('action'),
           type : $('#frm-detail').attr('method'),
           data : $("#frm-detail").serialize(),
           dataType : 'json',
+          beforeSend : function() {
+            $("#btnConfirm").text("Saving...");
+            $("#btnConfirm").prop("disabled", true);
+          },
           success : function(data){
+            alert("FFFuuuuu");
             if(data.status == 1){
-              $("#modaldetail").modal('hide');
+              $("#btnConfirm").html(defaultHtml);
+              // $("#modaldetail").modal("hide");
               dataTable.ajax.reload(null, false);
               maskInputMoney();
             }

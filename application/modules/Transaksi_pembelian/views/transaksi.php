@@ -56,10 +56,10 @@
             <label>QTY</label>
          </div>
          <div class="col-xs-2 table-header nopadding text-center">
-            <label>HARGA@ (IDR)</label>
+            <label>HARGA BELI@ (IDR)</label>
          </div>
          <div class="col-xs-2 table-header nopadding text-left">
-            <label>BERAT (gram)</label>
+            <label>SUBTOTAL</label>
          </div>
          <div id="productList">
             <!-- product List goes here  -->
@@ -80,7 +80,7 @@
                </table>
             </div>
             <button type="button" onclick="cancelOrder()" class="btn btn-red col-md-6 flat-box-btn"><h5 class="text-bold">Cancel</h5></button>
-            <button type="submit" class="btn btn-green col-md-6 flat-box-btn" data-toggle="modal" data-target="#AddSale" id="btnDoOrder"><h5 class="text-bold">Proses Pembelian</h5></button>
+            <button type="submit" class="btn btn-green col-md-6 flat-box-btn" data-toggle="modal" data-target="#AddSale" id="btnDoOrder"><h5 class="text-bold">Proses Transaksi</h5></button>
          </div>
         </form>
 
@@ -493,15 +493,18 @@
     });    
   }
   function cancelOrder(){
+      var defaultHtml = $('#btnDoOrder').html();
       $.confirm({
-          title: 'Cancel',
-          content: 'Cancel Pembelian Barang?',
+          title: 'Batal',
+          content: 'Batalkan Transaksi ?',
           buttons: {
               confirm: function () {
                   doClear();
               },
               cancel: function () {
                   // $.alert('Canceled!');
+                  $('#btnDoOrder').html(defaultHtml);
+                  $("#btnDoOrder").prop("disabled", false);  
               }
           }
       });    
@@ -518,13 +521,15 @@
         // console.log(data);        
         load_order(data);
         fillInformation();        
-        $('#btnDoOrder').html("<h5 class=\'text-bold\'>Proses Pembelian</h5>");
+        $('#btnDoOrder').html("<h5 class=\'text-bold\'>Proses Transaksi</h5>");
         $("#btnDoOrder").prop("disabled", false);
-        window.close();
+        // window.close();
+        window.location.reload(false);
       }
     });    
   }
   function doSubmit(){
+    var defaultHtml = $('#btnDoOrder').html();
     $.ajax({
       url :$('#pembelian').attr('action'),
       type : $('#pembelian').attr('method'),
@@ -533,9 +538,10 @@
       success : function(data){        
         load_order(data);
         fillInformation();        
-        $('#btnDoOrder').html("<h5 class=\'text-bold\'>Proses Pembelian</h5>");
+        $('#btnDoOrder').html(defaultHtml);
         $("#btnDoOrder").prop("disabled", false);
-        window.close();
+        // window.close();
+        window.location.reload(false);
       }
     });    
   }
@@ -618,6 +624,7 @@
   }
   $(document).ready(function(){
     $("#pembelian").on('submit', function(e){
+      var defaultHtml = $('#btnDoOrder').html();
       $('#btnDoOrder').html("<h5 class=\'text-bold\'>Saving...</h5>");
       $("#btnDoOrder").prop("disabled", true);
       e.preventDefault();
@@ -629,7 +636,7 @@
                   doSubmit();
               },
               cancel: function () {
-                $('#btnDoOrder').html("<h5 class=\'text-bold\'>Proses Pembelian</h5>");
+                $('#btnDoOrder').html(defaultHtml);
                 $("#btnDoOrder").prop("disabled", false);
                   
               }

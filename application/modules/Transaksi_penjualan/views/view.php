@@ -8,7 +8,7 @@
       <table id="TableMain" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>         
               <tr>
-                  <th class="text-center hidden-xs">ID Order</th>
+                  <th class="text-center hidden-xs">ID</th>
                   <th class="text-center hidden-xs">Customer</th>
                   <th class="text-center hidden-xs">Catatan</th>
                   <th class="text-center hidden-xs">Total Berat (gr)</th>

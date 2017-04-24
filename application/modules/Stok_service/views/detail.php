@@ -9,7 +9,7 @@
                     <th class="text-center">SKU</th>
                     <th class="text-center hidden-xs">Jumlah Diservis</th>
                     <th class="text-center hidden-xs no-sort">Barang Kembali</th>
-                    <th class="text-center hidden-xs no-sort">Uang Kembali</th>
+                    <th class="text-center hidden-xs no-sort">Uang Kembali (IDR)</th>
                     <th class="text-center hidden-xs no-sort">Status Kembali</th>
                 </tr>
             </thead>
@@ -21,7 +21,6 @@
         <!-- </form> -->
 <!-- /.container -->
 <script type="text/javascript" language="javascript" >
-  maskInputMoney();
     var dataTables = $('#TableMains').DataTable( {
         "searching": false,
         "processing": true,
@@ -41,6 +40,7 @@
             "orderable": false,
           }]
     });
+    maskInputMoney();
     function confirm(id){
       var jbk = $('#jbk-'+id).val();
       var juk = $('#juk-'+id).val();
