@@ -118,8 +118,8 @@
             $("#btnConfirm").prop("disabled", true);
           },
           success : function(data){
-            alert("FFFuuuuu");
             if(data.status == 1){
+              console.log("Masuk status 1");
               $("#btnConfirm").html(defaultHtml);
               // $("#modaldetail").modal("hide");
               dataTable.ajax.reload(null, false);

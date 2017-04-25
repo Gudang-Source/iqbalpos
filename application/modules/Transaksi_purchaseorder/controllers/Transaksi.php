@@ -271,35 +271,56 @@ class Transaksi extends MX_Controller {
     	$list = $this->Transaksipomodel->select($dataSelect, 'm_produk');
     	return json_encode($list->result_array());
     }
-    function getProdukByName($keyword = null, $supplier = null, $kategori = null){
-        $list = null;
-        $dataSelect['deleted'] = 1;
-        $dataCondition = array();
+    // function getProdukByName($keyword = null, $supplier = null, $kategori = null){
+    //     $list = null;
+    //     $dataSelect['deleted'] = 1;
+    //     $dataCondition = array();
+    //     $dataLike = array();
+    //     if($keyword != null){
+    //         $dataLike['nama'] = $keyword;
+    //     }
+    //     if($kategori != null || $kategori !=""){
+    //         $dataCondition['id_kategori'] = $kategori;
+    //     }        
+    //     $dataCondition['id_supplier'] = $supplier;
+    //     $list = $this->Transaksiservicemodel->like($dataCondition, $dataLike, 'm_produk');
+    //     return json_encode($list->result_array());
+    // }
+    function getProdukByName($keyword = '', $supplier = '', $kategori = ''){
+        $list = null; $where_supplier = ''; $where_kategori = '';
+        $keyword = strtolower($keyword);
+        if(!empty($supplier)) {
+            $where_supplier = " AND id_supplier = ".$supplier;
+        }
+        if(!empty($kategori)) {
+            $where_kategori = " AND id_kategori = ".$kategori;
+        }
+        $sql = "SELECT * FROM m_produk WHERE deleted = '1' ".$where_supplier.$where_kategori
+            ." AND ( LOWER(nama) LIKE '%".$keyword."%'"
+            ." OR LOWER(deskripsi) LIKE '%".$keyword."%'"
+            ." OR LOWER(harga_beli) LIKE '%".$keyword."%')";
         $dataLike = array();
+        $list = $this->Transaksipomodel->rawQuery($sql);
+        return json_encode($list->result_array());
+    }  
+    function getProdukByKategori($supplier = null, $kategori = 0, $keyword = null){
+        $list = null;
+        $dataLike = array();
+        $dataCondition = array();
+        $dataCondition['deleted'] = 1;
+        if($supplier != null && $kategori != 0){
+            $dataCondition['id_supplier'] = $supplier;
+            $dataCondition['id_kategori'] = $kategori;
+        }
+        if($kategori == 0){
+            $dataCondition['id_supplier'] = $supplier;
+        }
         if($keyword != null){
             $dataLike['nama'] = $keyword;
         }
-        if($kategori != null || $kategori !=""){
-            $dataCondition['id_kategori'] = $kategori;
-        }        
-        $dataCondition['id_supplier'] = $supplier;
-        $list = $this->Transaksiservicemodel->like($dataCondition, $dataLike, 'm_produk');
+        $list = $this->Transaksipomodel->like($dataCondition, $dataLike, 'm_produk');
         return json_encode($list->result_array());
-    }  
-    function getProdukByKategori($supplier = null, $kategori = null, $keyword = null){
-    	$list = null;
-    	$dataSelect['deleted'] = 1;
-    	$dataLike = array();
-    	if($supplier != null && $kategori != null){
-    		$dataCondition['id_supplier'] = $supplier;
-    		$dataCondition['id_kategori'] = $kategori;
-    	}
-    	if($keyword != null){
-    		$dataLike['nama'] = $keyword;
-    	}
-    	$list = $this->Transaksipomodel->like($dataCondition, $dataLike, 'm_produk');
-    	return json_encode($list->result_array());
-    }    
+    }
     function getSupplier(){
     	$dataSelect['deleted'] = 1;
     	return json_encode($this->Transaksipomodel->select($dataSelect, 'm_supplier_produk')->result_array());

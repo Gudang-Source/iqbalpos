@@ -23,7 +23,7 @@ class Transaksi extends MX_Controller {
     function data(){
 		$requestData= $_REQUEST;
 		$columns = array( 
-			0 	=>	'#',
+			0 	=>	'id',
 			1 	=>	'foto',
 			2 	=> 	'nama_bahan',
 			3 	=> 	'sku',
@@ -64,7 +64,7 @@ class Transaksi extends MX_Controller {
             }			
 			$nestedData		=	array(); 
 
-			$nestedData[] 	= 	"<span class='center-block text-center'>". $i ."</span>";
+			$nestedData[] 	= 	"<span class='center-block text-center'>". $row['id'] ."</span>";
             $nestedData[]   .=  "<a href='javascript:void(0)' data-toggle='popover' data-html='true' data-placement='right' onclick='showThumbnail(this)'>"
                             . "<img src='".$foto_url."' class='img-responsive img-rounded' width='70' alt='No Image' style='margin:0 auto;'> </a>";
             $nestedData[]   =   $row["nama"];

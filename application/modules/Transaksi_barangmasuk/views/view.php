@@ -8,7 +8,7 @@
       <table id="TableMain" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
               <tr>
-                  <th class="text-center">No</th>
+                  <th class="text-center">ID</th>
                   <th class="text-center">Foto</th>
                   <th class="text-center">Nama Produk</th>
                   <th class="text-center">SKU</th>

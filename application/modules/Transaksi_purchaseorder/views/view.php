@@ -8,12 +8,12 @@
       <table id="TableMain" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
               <tr>
-                  <th class="text-center">ID PO</th>
+                  <th class="text-center">ID</th>
                   <th class="text-center">Supplier</th>
                   <th class="text-center">Catatan</th>
-                  <th class="text-center">Total Berat</th>
+                  <th class="text-center">Total Berat (gr)</th>
                   <th class="text-center hidden-xs">Total Qty</th>
-                  <th class="text-center hidden-xs">Total Harga Beli</th>
+                  <th class="text-center hidden-xs">Total Harga Beli (IDR)</th>
                   <th class="text-center hidden-xs">Tanggal Order</th>
                   <th class="text-center hidden-xs no-sort">Aksi</th>
               </tr>

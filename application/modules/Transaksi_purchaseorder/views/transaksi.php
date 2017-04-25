@@ -55,8 +55,8 @@
                      </td>
                   </tr>
                   <tr>
-                     <td class="active">Total (IDR)</td>
-                     <td class="whiteBg light-blue text-bold"><span id="eTotal" class="money"></span></td>
+                     <td class="active">Total Harga (IDR)</td>
+                     <td class="whiteBg light-blue text-bold text-right"><span id="eTotal" class="money"></span></td>
                   </tr>
                </table>
             </div>
@@ -121,11 +121,14 @@
   }
   function load_product(json){
     var html = "";
+    var color = 2;
     $("#productList2").html('');
     for (var i=0;i<json.length;i++){
+      if(color == 7) { color = 1; }
+      var colorClass = 'color0' + color; color++;
       html = "<div class='col-sm-2 col-xs-3' style='display: block;'>"+
               "<a href='javascript:void(0)' class='addPct' id=\'product-"+json[i].id+"\' onclick=\'addToCart("+json[i].id+")\'>"+
-                "<div class='product color03 flat-box waves-effect waves-block'>"+
+                "<div class='product "+colorClass+" flat-box waves-effect waves-block'>"+
                   "<h3 id='proname'>"+json[i].nama+"</h3>"+
                   "<div class='mask'>"+
                     "<h3>Rp <span class='money'>"+json[i].harga_beli+"</span></h3>"+
@@ -309,7 +312,8 @@
   function load_kategori(json){
     var html = "";
     $("#kategoriGat").html('');
-    html = "<span class='categories'><i class='fa fa-home'></i></span>";
+    // html = "<span class='categories'><i class='fa fa-home'></i></span>";
+    html = "<span class='categories selectedGat' onclick=filterProdukByKategori(0) id=\'gat-0\'><i class='fa fa-home'></i></span>";
     $("#kategoriGat").append(html);
     for (var i=0;i<json.length;i++){
       html = "<span class='categories' onclick=filterProdukByKategori(\'"+json[i].id+"\') id=\'gat-"+json[i].id+"\'>"+json[i].nama+"</span>";
@@ -476,7 +480,8 @@
         fillInformation();        
         $('#btnDoOrder').html("<h5 class=\'text-bold\'>Servis Stok</h5>");
         $("#btnDoOrder").prop("disabled", false);
-        window.close();
+        // window.close();
+        window.location.reload(false);
       }
     });    
   }
@@ -491,7 +496,8 @@
         fillInformation();        
         $('#btnDoOrder').html("<h5 class=\'text-bold\'>Proses Purchase Order</h5>");
         $("#btnDoOrder").prop("disabled", false);
-        window.close();
+        // window.close();
+        window.location.reload(false);
       }
     });    
   }
