@@ -31,7 +31,7 @@ class Transaksi extends MX_Controller {
 			1 	=>	'id_customer', 
 			2	=> 	'detail_dropship',
 			3	=> 	'biaya_kirim',
-			4	=> 	'grand_total',
+			4	=> 	'total_harga_barang',
 			5	=> 	'date_add',
 			6	=> 	'aksi'
 		);
@@ -71,15 +71,15 @@ class Transaksi extends MX_Controller {
             $detailDropship .= "No Telp Penerima: ".$getDataDropship['no_telp_penerima']."</br>";
 			$nestedData[] 	= 	$detailDropship;
 			$nestedData[] 	= 	"<span class='pull-right'>". number_format($row["biaya_kirim"]) ."</span>";
-			$nestedData[] 	= 	"<span class='pull-right'>". number_format($row["grand_total"]) ."</span>";
+			$nestedData[] 	= 	"<span class='pull-right'>". number_format($row["total_harga_barang"]) ."</span>";
 			$nestedData[] 	= 	$row["date_add"];
 
             $button = "<div class='btn-group'>"
                 ."<button class='btn btn-default btn-sm' onclick=showDropship('".$row["id"]."') title='Update Detail'><i class='fa fa-pencil'></i></button> "
-                ."<a href='".base_url('Transaksi_dropship/Transaksi/invoices/'.$row['id'])."') target='_blank' class='btn btn-default btn-sm' title='Cetak'> <i class='fa fa-print'></i> </a>"
                 ."</div>";
             if($row['jenis_order']==2){
-                $button = "<span class='center-block text-center'>-</span>";
+                // $button = "<span class='center-block text-center'>-</span>";
+                $button = "<a href='".base_url('Transaksi_dropship/Transaksi/invoices/'.$row['id'])."') target='_blank' class='btn btn-default btn-sm' title='Cetak'> <i class='fa fa-print'></i> </a>";
             }
 
 			$nestedData[] 	= 	$button;	

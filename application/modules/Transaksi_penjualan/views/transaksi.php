@@ -107,12 +107,12 @@
                  <option value="4">TRANSFER</option>
               </select>
              </div>
-             <div class="form-group" style="visibility: hidden;">
+             <div class="form-group hidden" style="visibility: hidden;">
                <label for="jenisOrder">Jenis Order</label>
                <input type="hidden" name="id_customer" id="idCustomer">
-               <select class="js-select-options form-control" id="jenisOrder" name="jenisOrder">
+               <select class="form-control" id="jenisOrder" name="jenisOrder">
                  <option value="1">Take Away</option>
-                 <option value="2">DropShip</option>
+                 <option value="2">Dropship</option>
               </select>
              </div>
              <div class="form-group">

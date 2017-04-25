@@ -36,3 +36,13 @@ body .popover{
 .kv-file-remove {
     display: none;
 }
+
+select.select2 {
+  display: block;
+  visibility: visible;
+  position: absolute;
+  margin-top: 4px;
+  margin-left: 4px;
+  width: 190px;
+  height: 20px;
+ }
