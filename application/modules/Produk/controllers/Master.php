@@ -48,8 +48,9 @@ class Master extends MX_Controller {
             2   =>  'nama', 
             3   =>  'sku',
             4   =>  'stok',
-            5   =>  'date_add',
-            6   =>  'aksi'
+            5   =>  'harga_jual_normal',
+            6   =>  'date_add',
+            7   =>  'aksi'
         );
         $sql = "SELECT * FROM m_produk WHERE deleted = 1";
         $query=$this->Produkmodel->rawQuery($sql);
@@ -62,6 +63,7 @@ class Master extends MX_Controller {
             $sql.=" AND ( nama LIKE '%".$requestData['search']['value']."%' "; 
             $sql.=" OR sku LIKE '%".$requestData['search']['value']."%' ";
             $sql.=" OR stok LIKE '%".$requestData['search']['value']."%' ";
+            $sql.=" OR harga_jual_normal LIKE '%".$requestData['search']['value']."%' ";
             $sql.=" OR date_add LIKE '%".$requestData['search']['value']."%' )";
         }
         $query=$this->Produkmodel->rawQuery($sql);
@@ -85,6 +87,7 @@ class Master extends MX_Controller {
             $nestedData[]   =   $row["nama"];
             $nestedData[]   =   $row["sku"];
             $nestedData[]   =   "<span class='text-center' style='display:block;'>".$row["stok"]."</span>";
+            $nestedData[]   =   "<span class='pull-right money' style='display:block;'>".$row["harga_jual_normal"]."</span>";
             $nestedData[]   =   date("d-m-Y H:i", strtotime($row["date_add"]));
             $nestedData[]   .=   '<td class="text-center"><div class="btn-group" >'
                 .'<a id="group'.$row["id"].'" class="divpopover btn btn-sm btn-default" href="javascript:void(0)" data-toggle="popover" data-placement="top" onclick="confirmDelete(this)" data-html="true" title="Hapus Data?" ><i class="fa fa-times"></i></a>'
@@ -128,6 +131,7 @@ class Master extends MX_Controller {
         $dataInsert['kode_barang']      = $params['kode_barang'];
         $dataInsert['berat']            = $params['berat'];
         $dataInsert['harga_beli']       = $params['harga_beli'];
+        $dataInsert['harga_jual_normal'] = $params['harga_jual_normal'];
         // $dataInsert['versi_foto']       = $params['versi_foto'];
         $dataInsert['deskripsi']        = $params['deskripsi'];
         $dataInsert['foto']             = $this->proses_foto($id);
@@ -232,6 +236,7 @@ class Master extends MX_Controller {
         $dataUpdate['kode_barang']      = $params['kode_barang'];
         $dataUpdate['berat']            = $params['berat'];
         $dataUpdate['harga_beli']       = $params['harga_beli'];
+        $dataUpdate['harga_jual_normal'] = $params['harga_jual_normal'];
         // $dataUpdate['versi_foto']       = $params['versi_foto'];
         $dataUpdate['deskripsi']        = $params['deskripsi'];
         $dataUpdate['last_edited']      = date("Y-m-d H:i:s");

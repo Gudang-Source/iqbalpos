@@ -17,6 +17,7 @@
                   <th class="text-center">Nama Produk</th>
                   <th class="text-center">SKU</th>
                   <th class="text-center">Stok</th>
+                  <th class="text-center">Harga Jual Normal (IDR)</th>
                   <th class="text-center" class="hidden-xs">Tanggal Buat</th>
                   <th class="text-center no-sort">Aksi</th>
               </tr>
@@ -55,6 +56,7 @@
                       <p><b>SKU :</b> <span id="det_sku"></span></p>
                       <p><b>Kode Barang :</b> <span id="det_kode_barang"></span></p>
                       <p><b>Harga Beli :</b> Rp <span id="det_harga_beli" class="money"></span></p>
+                      <p><b>Harga Jual Normal :</b> Rp <span id="det_harga_jual_normal" class="money"></span></p>
                       <p><b>Stok :</b> <span id="det_stok"></span></p>
                       <p><b>Berat :</b> <span id="det_berat" class="money"></span> gram</p>
                       <p><b>Deskripsi :</b> <span id="det_deskripsi"></span></p>
@@ -233,6 +235,15 @@
                  </div>
                </div>
              </div>
+             <div class="col-sm-6">
+                <div class="form-group">
+                 <label for="harga_jual_normal">Harga Jual Normal (IDR)</label>
+                 <div class="input-group">
+                  <span class="input-group-addon">Rp</span> 
+                  <input type="text" name="harga_jual_normal" min="0" Required class="form-control money" id="harga_jual_normal" placeholder="Harga Jual Normal">
+                 </div>
+               </div>
+             </div>
              <div class="col-sm-12">
                 <div class="form-group">
                  <label for="deskripsi">Deskripsi</label>
@@ -303,7 +314,7 @@
   var initDataTable = $('#TableMainServer').DataTable({
       "bProcessing": true,
       "bServerSide": true,
-      "order": [[5, 'DESC']],
+      "order": [[6, 'DESC']],
       "ajax":{
             url :"<?php echo base_url()?>Produk/Master/data",
             type: "post",  // type of method  , by default would be get
@@ -368,6 +379,7 @@
     $("#kode_barang").val("");
     $("#berat").val("");
     $("#harga_beli").val("");
+    $("#harga_jual_normal").val("");
     $("#foto").attr("required", true);
     $("#foto").fileinput("clear");
     $("#deskripsi").val("");
@@ -404,6 +416,7 @@
     $("#kode_barang").val(dataUpdate[0].kode_barang);
     $("#berat").val(dataUpdate[0].berat);
     $("#harga_beli").val(dataUpdate[0].harga_beli);
+    $("#harga_jual_normal").val(dataUpdate[0].harga_jual_normal);
     $("#deskripsi").val(dataUpdate[0].deskripsi);
     $("#foto").attr("required", false);
     $("#foto").fileinput("clear");
@@ -455,6 +468,7 @@
     $("#det_sku").text(dataDetail[0].sku ? dataDetail[0].sku : '-');
     $("#det_kode_barang").text(dataDetail[0].kode_barang ? dataDetail[0].kode_barang : '-');
     $("#det_harga_beli").text(dataDetail[0].harga_beli);
+    $("#det_harga_jual_normal").text(dataDetail[0].harga_jual_normal);
     $("#det_stok").text(dataDetail[0].stok);
     $("#det_berat").text(dataDetail[0].berat);
     $("#det_deskripsi").text(dataDetail[0].deskripsi ? dataDetail[0].deskripsi : '-');
