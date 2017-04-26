@@ -6,16 +6,16 @@
       <table id="TableMain" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>         
               <tr>
-                  <th class="text-center" class="hidden-xs">ID</th>
-                  <th class="text-center" class="hidden-xs">ID ORDER</th>
-                  <th class="text-center" class="hidden-xs">CUSTOMER</th>
-                  <th class="text-center" class="hidden-xs">CATATAN</th>
-                  <th class="text-center" class="hidden-xs">JUMLAH</th>
-                  <th class="text-center" class="hidden-xs">HARGA</th>
-                  <th class="text-center" class="hidden-xs">TANGGAL TRANSAKSI</th>
-                  <th class="text-center" class="hidden-xs">STATUS RETUR</th>
-                  <th class="text-center" class="hidden-xs">PROSES</th>
-                  <th class="text-center" class="hidden-xs">AKSI</th>
+                  <th class="text-center hidden-xs">ID</th>
+                  <th class="text-center hidden-xs">ID Order</th>
+                  <th class="text-center hidden-xs">Customer</th>
+                  <th class="text-center hidden-xs">Catatan</th>
+                  <th class="text-center hidden-xs">Jumlah</th>
+                  <th class="text-center hidden-xs">Harga (IDR)</th>
+                  <th class="text-center hidden-xs">Tanggal Retur</th>
+                  <!-- <th class="text-center hidden-xs">Status Retur</th> -->
+                  <th class="text-center hidden-xs no-sort">Status Retur</th>
+                  <th class="text-center hidden-xs no-sort">Aksi</th>
               </tr>
           </thead>
           <tbody id='bodytable'>            
@@ -24,7 +24,7 @@
    </div>
    <!-- Button trigger modal -->
    <a type="button" class="btn btn-add btn-lg" href="<?php echo base_url('index/modul/Transaksi_retur-Transaksi-transaksi'); ?>" target="_blank">
-     Tambah Transaksi Retur
+     Tambah Retur
    </a>
 </div>
 <!-- /.container -->
@@ -43,13 +43,20 @@
          </div>
       </div>
       <div class="modal-footer">
-        <button type="submit" class="btn btn-success" data-dismiss="modal">Ok</button>
+        <button type="submit" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
  </div>
 </div>
 <!-- /.Modal Detail-->
 <script type="text/javascript" language="javascript" >
+     function maskInputMoney(){
+      $('.money').mask('#.##0', {reverse: true});
+    }
+    function unmaskInputMoney(){
+      $('.money').unmask();
+    }
+
     function detail(id){
       $.ajax({
         url :"<?php echo base_url('Transaksi_retur/Transaksi/detail')?>/"+id,
@@ -64,6 +71,7 @@
     var dataTable = $('#TableMain').DataTable( {
         "processing": true,
         "serverSide": true,
+        "order": [[6, 'DESC']],
         "ajax":{
             url : "<?php echo base_url('Transaksi_retur/Transaksi/data'); ?>",
             type: "post",
@@ -71,11 +79,16 @@
                 $("#TableMain").append('<tbody class="employee-grid-error"><tr><th colspan="10">No data found in the server</th></tr></tbody>');
             }
         },
+        "columnDefs": [ {
+          "targets"  : 'no-sort',
+          "orderable": false,
+        }],
         "drawCallback": function( settings ) {
+          maskInputMoney();
           $('.bootstrap-toggle').bootstrapToggle({
             size: 'small',
-            off: '<i class="fa fa-calendar-check-o"></i> Belum Di Proses',
-            on: '<i class="fa fa-check-square-o"></i> Proses',
+            off: '<i class="fa fa-calendar-check-o"></i> Belum Diproses',
+            on: '<i class="fa fa-check-square-o"></i> Telah Diproses',
             offstyle: 'default',
             onstyle: 'success'
           });

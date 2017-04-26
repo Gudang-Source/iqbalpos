@@ -460,8 +460,8 @@
                   doClear();
               },
               cancel: function () {
-                  $('#btnDoOrder').html("<h5 class=\'text-bold\'>Cancel</h5>");
-                  $("#btnDoOrder").prop("disabled", false);  
+                  // $('#btnDoOrder').html("<h5 class=\'text-bold\'>Cancel</h5>");
+                  // $("#btnDoOrder").prop("disabled", false);  
               }
           }
       });    

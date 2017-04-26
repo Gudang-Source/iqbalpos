@@ -28,7 +28,7 @@
    </div>
    <!-- Button trigger modal -->
    <a type="button" class="btn btn-add btn-lg" href="<?php echo base_url('index/modul/Stok_service-Transaksi-transaksi'); ?>" target="_blank">
-     Tambah Stok Services
+     Tambah Stok Service
    </a>
 </div>
 <!-- /.container -->

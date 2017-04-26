@@ -5,44 +5,47 @@
 </style>
 <div class="container-fluid">
    <div class="row">
+    <div class="col-sm-12">
+      <h3><strong>Transaksi</strong> - Retur</h3>
+    </div> 
+   </div>
+   <div class="row">
     <div class="col-md-5 left-side">
-      <form action="<?php echo base_url('Transaksi_retur/Transaksi/save'); ?>" method="post" id="formretur">          
-         <div class="col-xs-8">
-            <h2>Pilih Customer</h2>
-         </div>      
-         <div class="col-sm-12">
+      <form action="<?php echo base_url('Transaksi_retur/Transaksi/save'); ?>" method="post" id="formretur">         
+        <div class="col-xs-8"> &nbsp; </div>           
+         <div class="col-sm-8">
+          <div class="form-group">
+            <label class="label-control">Customer</label class="label-control">
             <select class="js-select-options form-control" id="customerSelect" name="idCustomer" required="required" onchange="filterAvaiableOrder()">
               <option value="0">Pilih Customer</option>
             </select>
+          </div>
          </div>
-         <div class="col-xs-8">
-            <h2>Pilih Id Order</h2>
-         </div>        
-         <div class="col-sm-12">
+         <div class="col-sm-4">
+          <div class="form-group">
+            <label class="label-control">ID Order</label class="label-control">
             <select class="js-select-options form-control" id="orderSelect" name="idOrder" required="required" onchange="filterProduk()">
-              <option value="0">Pilih Order</option>
+              <option value="0">Pilih ID Order</option>
             </select>
-         </div>
-         <div class="col-xs-8">
-            <h2>Catatan</h2>
-         </div>        
-         <div class="col-sm-12">
-            <textarea class="form-control" name="catatan"></textarea>
+          </div>
          </div>
          <div class="col-sm-12">
-         &nbsp;
-         </div>         
-         <div class="col-xs-3 table-header">
-            <h3>Product</h3>
+          <div class="form-group">
+            <label class="label-control">Catatan</label class="label-control">
+            <textarea class="form-control" name="catatan" placeholder="Catatan"></textarea>
+          </div>
          </div>
-         <div class="col-xs-2 table-header">
-            <h3>QTY</h3>
+         <div class="col-xs-3 table-header text-center">
+            <label>PRODUK</label>
          </div>
-         <div class="col-xs-3 table-header">
-            <h3>Harga Satuan</h3>
+         <div class="col-xs-3 table-header text-center">
+            <label>QTY</label>
          </div>
-         <div class="col-xs-4 table-header">
-            <h3>Total</h3>
+         <div class="col-xs-3 table-header text-center">
+            <label>HARGA JUAL@ (IDR) (REVISI QUERY)</label>
+         </div>
+         <div class="col-xs-3 table-header text-center">
+            <label>SUBTOTAL</label>
          </div>
          <div id="productList">
             <!-- product List goes here  -->
@@ -51,12 +54,12 @@
             <div class="table-responsive col-sm-12 totalTab">
                <table class="table">
                   <tr>
-                     <td class="active" width="40%">Subtotal</td>
+                     <td class="active" width="40%">Total Qty</td>
                      <td class="whiteBg" width="60%"><span id="Subtot"></span>
-                        <span class="float-right"><b id="eTotalItem"><span></span> Item</b></span>
+                        <span class="float-right"><b><span id="eTotalItem"></span> Item</b></span>
                      </td>
                   </tr>
-                  <tr>
+                  <!-- <tr>
                      <td class="active">TAX</td>
                      <td class="whiteBg"><input type="text" value="" id="eTax" class="total-input TAX" placeholder="N/A"  maxlength="5">
                         <span class="float-right"><b id="taxValue"></b></span>
@@ -68,10 +71,10 @@
                         <input type="text" value="" id="eDiscount" class="total-input Remise" placeholder="N/A"  maxlength="5">
                         <span class="float-right"><b id="RemiseValue"></b></span>
                      </td>
-                  </tr>
+                  </tr> -->
                   <tr>
-                     <td class="active">Total</td>
-                     <td class="whiteBg light-blue text-bold"><span id="eTotal"></span></td>
+                     <td class="active">Total Harga (IDR)</td>
+                     <td class="whiteBg light-blue text-bold text-right"><span id="eTotal"></span></td>
                   </tr>
                </table>
             </div>
@@ -159,17 +162,21 @@
   }
   function load_product(json){
     var html = "";
+    var color = 2; 
     $("#productList2").html('');
     for (var i=0;i<json.length;i++){
-      html = "<div class='col-sm-2 col-xs-3' style='display: block;'>"+
+      if(color == 7) { color = 1; }
+      var colorClass = 'color0' + color; color++;
+      html = "<div class='col-sm-2 col-xs-4' style='display: block;'>"+
               "<a href='javascript:void(0)' class='addPct' id=\'product-"+json[i].id+"\' onclick=\'addToCart("+json[i].id+")\'>"+
-                "<div class='product color03 flat-box waves-effect waves-block'>"+
+                "<div class='product "+colorClass+" flat-box waves-effect waves-block'>"+
                   "<h3 id='proname'>"+json[i].nama+"</h3>"+
                   "<div class='mask'>"+
-                    "<h3>"+json[i].harga_beli+"</h3>"+
+                    "<h3>Rp <span class='money'>"+json[i].harga_beli+"</span></h3>"+
                     "<p>"+json[i].deskripsi+"</p>"+
                   "</div>"+
-                  "<img src='#' alt=\'"+json[i].id_kategori+"\'>"+
+                  // "<img src=\'<?php echo base_url('upload/produk') ?>/"+json[i].foto+"\' alt=\'"+json[i].id_kategori+"\'>"+
+                  "<img src='<?php echo base_url('upload/produk')?>/"+json[i].foto+"'>"+
                 "</div>"+
               "</a>"+
              "</div>";
@@ -188,7 +195,7 @@
                   "<div class='panel panel-default product-details'>"+
                       "<div class='panel-body' style=''>"+
                           "<div class='col-xs-3 nopadding'>"+
-                              "<div class='col-xs-2 nopadding'>"+
+                              "<div class='col-xs-4 nopadding'>"+
                                   "<a href='javascript:void(0)' onclick=delete_order(\'"+json[i].rowid+"\')>"+
                                   "<span class='fa-stack fa-sm productD'>"+
                                     "<i class='fa fa-circle fa-stack-2x delete-product'></i>"+
@@ -196,15 +203,15 @@
                                   "</span>"+
                                   "</a>"+
                               "</div>"+
-                              "<div class='col-xs-10 nopadding'>"+
+                              "<div class='col-xs-8 nopadding'>"+
                                 "<span class='textPD'>"+json[i].produk+"</span>"+
                               "</div>"+
                           "</div>"+
                           "<div class='col-xs-2 text-center'>"+
                             "<input id=\'qt-"+json[i].rowid+"\' class='form-control' value='"+json[i].qty+"' placeholder='0' maxlength='2' type='text' onchange=updateQty(\'"+json[i].rowid+"\')>"+
                           "</div>"+
-                          "<div class='col-xs-3 text-center'>"+json[i].harga_beli+"</div>"+
-                          "<div class='col-xs-4 text-center'>"+json[i].subtotal+"</div>"+
+                          "<div class='col-xs-4 nopadding text-right'>"+json[i].harga_beli+"</div>"+
+                          "<div class='col-xs-3 nopadding text-right'>"+json[i].subtotal+"</div>"+
                       "</div>"+
                   "</div>"+
               "</div>";
@@ -431,20 +438,22 @@
   }
   function cancelOrder(){
       $.confirm({
-          title: 'Confirm!',
-          content: 'Simple confirm!',
+          title: 'Batal',
+          content: 'Batalkan Transaksi?',
           buttons: {
               confirm: function () {
                   doClear();
               },
               cancel: function () {
+                  // $.alert('Canceled!');
               }
           }
       });    
   }
   function doClear(){
-    $('#btnDoOrder').html("<h5 class=\'text-bold\'>Clearing...</h5>");
-    $("#btnDoOrder").prop("disabled", true);    
+    var defaultHtml = $('#btnRetur').html();
+    $('#btnRetur').text("Clearing...");
+    $("#btnRetur").prop("disabled", true);    
     $.ajax({
       url :'<?php echo base_url("Transaksi_retur/Transaksi/destroyCart"); ?>',
       type : $('#pembelian').attr('method'),
@@ -454,8 +463,8 @@
         // console.log(data);        
         load_order(data);
         fillInformation();        
-        $('#btnDoOrder').html("<h5 class=\'text-bold\'>Proses Pembelian</h5>");
-        $("#btnDoOrder").prop("disabled", false);
+        $('#btnRetur').html(defaultHtml);
+        $("#btnRetur").prop("disabled", false);
       }
     });    
   }
@@ -550,12 +559,8 @@
   function updateProses(id){
     alert(id);
   }
-  $(document).ready(function(){
-    $("#formretur").on('submit', function(e){
-      $('#btnRetur').html("<h5 class=\'text-bold\'>Returning...</h5>");
-      $("#btnRetur").prop("disabled", true);      
-      e.preventDefault();
-      $.ajax({
+  function doSubmit() {
+    $.ajax({
         url :$('#formretur').attr('action'),
         type : $('#formretur').attr('method'),
         data : $('#formretur').serialize(),
@@ -566,8 +571,29 @@
           var datas = <?php echo json_encode(array()); ?>;
           load_order(datas);
           fillInformation();
+          window.location.reload(false);
         }
       });    
+  }
+  $(document).ready(function(){
+    $("#formretur").on('submit', function(e){
+      var defaultHtml = $('#btnRetur').html();
+      $('#btnRetur').text("Saving...");
+      $("#btnRetur").prop("disabled", true);      
+      e.preventDefault();
+      $.confirm({
+          title: 'Konfirmasi Retur',
+          content: 'Yakin ingin retur produk?',
+          buttons: {
+              confirm: function () {
+                  doSubmit();
+              },
+              cancel: function () {
+                  $('#btnRetur').html(defaultHtml);
+                  $("#btnRetur").prop("disabled", false);
+              }
+          }
+      });      
     });
   });
 </script>

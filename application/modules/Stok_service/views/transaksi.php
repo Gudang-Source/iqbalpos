@@ -410,8 +410,8 @@
               },
               cancel: function () {
                   // $.alert('Canceled!');
-                  $('#btnDoOrder').html("<h5 class=\'text-bold\'>Cancel</h5>");
-                  $("#btnDoOrder").prop("disabled", false);  
+                  // $('#btnDoOrder').html("<h5 class=\'text-bold\'>Cancel</h5>");
+                  //$("#btnDoOrder").prop("disabled", false);  
               }
           }
       });    
@@ -495,18 +495,19 @@
   }
   $(document).ready(function(){
     $("#serviceOrder").on('submit', function(e){
-      $('#btnDoOrder').html("<h5 class=\'text-bold\'>Saving...</h5>");
+      var defaultHtml = $('#btnDoOrder').html();
+      $('#btnDoOrder').text("Saving...");
       $("#btnDoOrder").prop("disabled", true);
       e.preventDefault();
       $.confirm({
           title: 'Konfirmasi Service Stok',
-          content: 'Yakin ingin service stok ?',
+          content: 'Yakin ingin service stok?',
           buttons: {
               confirm: function () {
                   doSubmit();
               },
               cancel: function () {
-                  $('#btnDoOrder').html("<h5 class=\'text-bold\'>Service Stok</h5>");
+                  $('#btnDoOrder').html(defaultHtml);
                   $("#btnDoOrder").prop("disabled", false);
               }
           }

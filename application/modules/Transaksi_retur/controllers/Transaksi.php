@@ -33,14 +33,14 @@ class Transaksi extends MX_Controller {
 		$columns = array( 
 			0 	=>	'id', 
 			1 	=>	'id_order', 
-			2 	=> 	'customer',
+			2 	=> 	'namacus',
 			3	=> 	'catatan',
-			4	=> 	'jumlah',
-			5	=> 	'harga',
+			4	=> 	'total_qty',
+			5	=> 	'total_harga',
 			6	=> 	'date_add',
 			7	=> 	'status',
-			8	=> 	'proses',
-			9	=> 	'aksi'
+			// 8	=> 	'proses',
+			8	=> 	'aksi'
 		);
 		$sql = " SELECT t_retur.* , m_customer.nama as namacus";
 		$sql.= " FROM t_retur ";
@@ -63,16 +63,16 @@ class Transaksi extends MX_Controller {
 		foreach ($query->result_array() as $row) {
 			$nestedData		=	array(); 
 
-			$nestedData[] 	= 	$row["id"];
-			$nestedData[] 	= 	$row["id_order"];
+			$nestedData[] 	= 	"<span class='center-block text-center'>".$row["id"]."</span>";
+			$nestedData[] 	= 	"<span class='center-block text-center'>".$row["id_order"]."</span>";
 			$nestedData[] 	= 	$row["namacus"];
 			$nestedData[] 	= 	$row["catatan"];
-			$nestedData[] 	= 	$row["total_qty"];
-			$nestedData[] 	= 	$row["total_harga"];
+			$nestedData[] 	= 	"<span class='center-block text-center'>".$row["total_qty"]."</span>";
+			$nestedData[] 	= 	"<span class='pull-right money'>".$row["total_harga"]."</span>";
 			$nestedData[] 	= 	$row["date_add"];
-			$nestedData[] 	= 	$row["status"]==1?"BELUM DIPROSES":"SUDAH DIPROSES";
-            $nestedData[]   =  $row["status"]==1?'<input type="checkbox" id="toggle_'.$row["id"].'" class="bootstrap-toggle">':'TELAH DIPROSES';
-			$nestedData[] 	= 	"<button class='btn btn-success' onclick=detail('".$row["id"]."')>DETAIL</button>";			
+			// $nestedData[] 	= 	$row["status"]==1?"Belum Diproses":"Telah Diproses";
+            $nestedData[]   =  $row["status"]==1?'<input type="checkbox" id="toggle_'.$row["id"].'" class="bootstrap-toggle" title="Belum Diproses">':'Telah Diproses';
+			$nestedData[] 	= 	"<button class='btn btn-default btn-sm' onclick=detail('".$row["id"]."') title='Detail Retur'><i class='fa fa-file-text-o'></i></button>";			
 			$data[] = $nestedData;
 		}
 		$json_data = array(
@@ -98,11 +98,11 @@ class Transaksi extends MX_Controller {
 		$requestData= $_REQUEST;
 		$columns = array( 
 			0 	=>	'rid', 
-			1 	=> 	'produk',
-			2	=> 	'jumlah',
-			3	=> 	'harga_beli',
-			4	=> 	'harga_jual',
-			5	=> 	'total_harga'
+			1 	=> 	'nama',
+			2	=> 	'trjm',
+			3	=> 	'trhb',
+			4	=> 	'trhj',
+			5	=> 	'trth'
 		);
 		$sql = "SELECT 
 					t_retur.id as rid,
@@ -136,10 +136,10 @@ class Transaksi extends MX_Controller {
 			$nestedData		=	array(); 
 			$nestedData[] 	= 	$i;
 			$nestedData[] 	= 	$row['nama'];
-			$nestedData[] 	= 	$row['trjm'];
-			$nestedData[] 	= 	$row['trhb'];
-			$nestedData[] 	= 	$row['trhj'];
-			$nestedData[] 	= 	$row['trth'];
+			$nestedData[] 	= 	"<span class='center-block text-center'>".$row['trjm']."</span>";
+			$nestedData[] 	= 	"<span class='pull-right money'>".$row['trhb']."</span>";
+			$nestedData[] 	= 	"<span class='pull-right money'>".$row['trhj']."</span>";
+			$nestedData[] 	= 	"<span class='pull-right money'>".$row['trth']."</span>";
 			$data[] = $nestedData;
 			$i++;
 		}
@@ -177,10 +177,10 @@ class Transaksi extends MX_Controller {
 		    		$nestedData['rowid'] = $items['rowid'];
 		    		$nestedData['id'] = $items['id'];
 		    		$nestedData['qty'] = $items['qty'];
-		    		$nestedData['harga_beli'] = "Rp. ".number_format($items['price']);
+		    		$nestedData['harga_beli'] = number_format($items['price']);
 		    		$nestedData['produk'] = $items['name'];
 		    		$nestedData['rowid'] = $items['rowid'];
-		    		$nestedData['subtotal'] = "Rp. ".number_format($items['price']*$items['qty']);
+		    		$nestedData['subtotal'] = number_format($items['price']*$items['qty']);
 
 		    		$nestedData['ukuran'] = $items['options']['ukuran']!=null?$items['options']['ukuran']:0;
 		    		$nestedData['warna'] = $items['options']['warna']!=null?$items['options']['warna']:0;

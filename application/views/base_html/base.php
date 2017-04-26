@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta name="description" content="">
       <meta name="author" content="">
-      <title>POS - point of sale</title>
+      <title>POS - Point of Sale</title>
       <!-- jQuery -->
       <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/jquery-2.2.2.min.js"></script>
       <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/loading.js"></script>
