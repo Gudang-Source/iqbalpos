@@ -309,12 +309,19 @@ class Transaksi extends MX_Controller {
             WHERE m_produk_det_ukuran.id_produk = ".$rid[0]);
     	echo json_encode($selectData->result_array());
     }
+    function getMetodePembayaran(){
+        $list = null;
+        $dataSelect['deleted'] = 1;
+        $list = $this->Transaksipenjualanmodel->select($dataSelect, 'm_metode_pembayaran');
+        return json_encode($list->result_array());
+    }
     function transaksi(){
     	$dataSelect['deleted'] = 1;
     	$data['list_produk'] = $this->getProduk();
         $data['list_order'] = $this->getOrder();
         $data['list_customer'] = $this->getCustomer();
         $data['list_kategori'] = $this->getKategori();
+        $data['list_metode_pembayaran'] = $this->getMetodePembayaran();
         
         // $data['list_warna'] = $this->getWarna();
         // $data['list_ukuran'] = $this->getUkuran();
@@ -560,6 +567,7 @@ class Transaksi extends MX_Controller {
     	if($params != null){
     		$idOrder = 0;
     		$realIDORDER = 0;
+            $total_profit = 0;
     		$dateNow = date('Y-m-d H:i:s');
     		$getTotal = json_decode($this->_getTotal(), true);
     		$dataInsertTorder['id_customer'] 					= 	$params['id_customer'];
@@ -612,7 +620,8 @@ class Transaksi extends MX_Controller {
 					    		$selectDataUkuran = $this->Transaksipenjualanmodel->select($dataSelectUkuran, 'm_produk_ukuran');
 					    		$dataInsertDetail['nama_warna']				=	$selectDataWarna->num_rows()>0?$selectDataWarna->row()->nama:"Tidak Ada Warna";
 					    		$dataInsertDetail['nama_ukuran']			=	$selectDataUkuran->num_rows()>0?$selectDataUkuran->row()->nama:"Tidak Ada Ukuran";
-					    		$dataInsertDetail['profit']					=	$items['price'] - $getHargaBeli->row()->harga_beli;
+					    		$dataInsertDetail['profit']					=	($items['price'] - $getHargaBeli->row()->harga_beli) * $items['qty'];
+                                $total_profit = $total_profit + $dataInsertDetail['profit'];
 					    		$insertDetail = $this->Transaksipenjualanmodel->insert($dataInsertDetail, 't_order_detail');
 								if($insertDetail){
 									//update stok
@@ -630,7 +639,7 @@ class Transaksi extends MX_Controller {
 										$dataHstok['id_service']		= 0;
 										$dataHstok['jumlah']	 		= $items['qty'];
 										$dataHstok['stok_akhir'] 		= $getHargaBeli->row()->stok - $items['qty'];
-										$dataHstok['keterangan'] 		= $_SESSION['id_user']." Menjual Produk dengan id ".$idProduks[0];
+										$dataHstok['keterangan'] 		= "Stok berkurang ".$items['qty']." dari transaksi penjualan dengan ID ".$realIDORDER;
 										$dataHstok['status']			= 1;
 										$dataHstok['date_add']			= $dateNow;
 										$dataHstok['add_by']			= isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
@@ -641,6 +650,12 @@ class Transaksi extends MX_Controller {
 		    				}
 		    			}
 		    		}
+
+                    //updating t_order total profit
+                    $condition = array("id" => $realIDORDER);
+                    $dataUpdate = array('profit' => $total_profit);
+                    $updateOrderProfit = $this->Transaksipenjualanmodel->update($condition, $dataUpdate, 't_order');
+
 		    		if($insertHstok){
 				    	foreach ($this->cart->contents() as $items) {
 				    		$idProduks = explode("_", $items['id']);
@@ -652,8 +667,8 @@ class Transaksi extends MX_Controller {
 				    	}
 
 		    			echo json_encode(array('idOrder'=>$realIDORDER));
-		    		}else{
-		    			echo json_encode(array('status'=>0));
+                    }else{
+                        echo json_encode(array('status'=>0));
 		    		}
     			}else{
     				echo json_encode(array('status'=>0));

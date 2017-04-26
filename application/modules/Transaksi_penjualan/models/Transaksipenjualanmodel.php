@@ -34,6 +34,13 @@ class Transaksipenjualanmodel extends CI_Model {
 		$this->db->close();
 		return $result;
 	}
+	public function insert_id($data, $table){
+		$this->load->database();
+		$result = $this->db->insert($this->table_prefix."".$table, $data);
+		$insert_id = $this->db->insert_id();
+		$this->db->close();
+		return $insert_id;
+	}
 	public function update($condition, $data, $table){
 		$this->load->database();
 		$this->db->where($condition);

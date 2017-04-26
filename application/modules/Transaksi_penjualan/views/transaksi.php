@@ -13,13 +13,25 @@
     <div class="col-md-5 left-side">
       <form action="<?php echo base_url('Transaksi_penjualan/Transaksi/doSubmit'); ?>" method="post" id="pembelian">          
          <div class="col-xs-8"> &nbsp; </div>         
-         <div class="col-sm-12">
+         <div class="col-lg-7">
           <div class="form-group">
             <label class="label-control">Customer</label>
-            <select class="js-select-options form-control" id="customerSelect" name="customer" required="required" onchange="filterProduk()">
+            <select class="js-select-options form-control" id="customerSelect" name="customer" required="required">
               <option value="0">Pilih Customer</option>
             </select>
           </div>
+         </div>
+         <div class="col-lg-5">
+          <div class="form-group">
+             <label for="paymentMethod" class="label-control">Metode Pembayaran</label>
+             <select class="form-control" id="paymentMethod" name="paymentMethod" required="required"> </select>
+           </div>
+         </div>
+         <div class="col-sm-12">
+           <div class="form-group">
+             <label for="catatan">Catatan</label>
+             <textarea name="catatan" class="form-control" placeholder="Catatan" id="catatan"></textarea>
+           </div>
          </div>
          <div class="col-sm-12">
          &nbsp;
@@ -97,7 +109,7 @@
              <div class="form-group">
                <h2 id="TotalModal"></h2>
             </div>
-             <div class="form-group">
+             <!-- <div class="form-group">
                <label for="paymentMethod" class="label-control">Metode Pembayaran</label>
                <select class="form-control" id="paymentMethod" name="paymentMethod">
                  <option value="0">Cash</option>
@@ -106,7 +118,7 @@
                  <option value="3">BNI</option>
                  <option value="4">TRANSFER</option>
               </select>
-             </div>
+             </div> -->
              <div class="form-group hidden" style="visibility: hidden;">
                <label for="jenisOrder">Jenis Order</label>
                <input type="hidden" name="id_customer" id="idCustomer">
@@ -115,10 +127,10 @@
                  <option value="2">Dropship</option>
               </select>
              </div>
-             <div class="form-group">
+             <!-- <div class="form-group">
                <label for="catatan">Catatan</label>
                <textarea name="catatan" class="form-control" placeholder="Catatan" id="catatan"></textarea>
-             </div>
+             </div> -->
              <div class="form-group Paid">
                <label for="Paid">Nominal (IDR)</label>
                <div class="input-group">
@@ -149,7 +161,7 @@
              </div>
              <div class="form-group ChequeNum">
                <label for="ChequeNum">Nomor Referensi</label>
-               <input type="text" name="chequenum" class="form-control" id="ChequeNum" placeholder="Nomor Referensi">
+               <input type="text" name="chequenum" class="form-control" id="ChequeNum" placeholder="Nomor Referensi" value="0">
              </div>
             <div class="clearfix"></div>
         </div>
@@ -213,10 +225,12 @@
          }
       });
 
+  var currentCustomerId = 0;
   var listProduct = <?php echo $list_produk; ?>;
   var listOrder = <?php echo $list_order; ?>;
   var listCustomer = <?php echo $list_customer; ?>;
   var listKategori = <?php echo $list_kategori; ?>;
+  var listMetodePembayaran = <?php echo $list_metode_pembayaran; ?>;
   var listWarna = "";
   var listUkuran = "";
   var tax = '<?php echo $tax; ?>';
@@ -227,6 +241,8 @@
   inits(tax, discount, total, totalItems);
   load_customer(listCustomer);
   load_order(listOrder);
+  load_metode_pembayaran(listMetodePembayaran);
+
   function load_customer(json){
     var html = "";
     $("#customerSelect").html('');
@@ -382,7 +398,7 @@
               buttons: {
                   ok: function () {
                     $(elem).val(parseInt(getRow[0].qty)); 
-                    $(elem).trigger('change'); 
+                    // $(elem).trigger('change'); 
                   }
                 }
           }); 
@@ -429,6 +445,17 @@
     for (var i=0;i<json.length;i++){
       html = "<span class='categories' onclick=filterProdukByKategori(\'"+json[i].id+"\') id=\'gat-"+json[i].id+"\'>"+json[i].nama+"</span>";
       $("#kategoriGat").append(html);
+    }
+  }
+  function load_metode_pembayaran(json){
+    var html = "";
+    $("#paymentMethod").html('');
+    html = "<option value='' disabled selected>Pilih Metode Pembayaran</option>"
+          +"<option value='0'>Cash</option>";
+    $("#paymentMethod").append(html);
+    for (var i=0;i<json.length;i++){
+      html = "<option value=\'"+json[i].id+"\'>"+json[i].nama+"</option>";
+      $("#paymentMethod").append(html);
     }
   }
   function filterProdukByKategori(id){
@@ -523,6 +550,46 @@
       }
     });
   }
+
+  $("#customerSelect").on("select2:select", function (e) { 
+    changeCustomer();
+  });
+  $("#customerSelect").on("select2:open", function (e) { 
+    saveCurrentCustomer();
+  });
+  function saveCurrentCustomer() {
+    // if()
+    console.log("prev CustomerId: "+currentCustomerId);
+    currentCustomerId = $("#customerSelect :selected").val();
+    console.log("current CustomerId: "+currentCustomerId);
+  }
+  function changeCustomer(){
+    var productList = $("#productList");
+    var customerId = currentCustomerId;
+    if(productList.html().length > 0) {
+      $.confirm({
+            title: 'Konfirmasi',
+            content: 'Anda yakin ingin mengganti customer?',
+            buttons: {
+                ok: function () {
+                  //clear server cart first
+                  doClear(false); 
+                  //change customer  
+                  filterProduk();
+                },
+                cancel: function () {
+                  //returning to previous selected value
+                  $("#customerSelect").val(customerId);
+                  $("#customerSelect").trigger('change.select2'); // Notify only Select2 of changes
+                  saveCurrentCustomer();
+                }
+              }
+        }); 
+    }
+    else {
+      filterProduk();
+    }
+  }
   function add_qty(id){
     var lastValue = $("#qt-"+id).val();
     lastValue = parseInt(lastValue) + 1;
@@ -606,7 +673,11 @@
           }
       });    
   }
-  function doClear(){
+  function doClear(reload){
+    if(reload != false) {
+      reload = true;
+    }
+    // var productList = $("#productList");
     $('#btnDoOrder').html("<h5 class=\'text-bold\'>Clearing...</h5>");
     $("#btnDoOrder").prop("disabled", true);    
     $.ajax({
@@ -621,7 +692,9 @@
         $('#btnDoOrder').html("<h5 class=\'text-bold\'>Proses Transaksi</h5>");
         $("#btnDoOrder").prop("disabled", false);
         // window.close();
-        window.location.reload(false);
+        if (reload == true) {
+          window.location.reload(false);
+        }
       }
     });    
   }
@@ -643,21 +716,28 @@
   }
   $(document).ready(function(){
     $("#formpayment").on('submit', function(e){
-      $('#btnBayar').html("<h5 class=\'text-bold\'>Saving...</h5>");
-      $("#btnBayar").prop("disabled", true);      
       e.preventDefault();      
+      var defaultHtml = $('#btnBayar').html();
+      var paymentMethod = $("#paymentMethod").val();
+      var catatan = $("#catatan").val();
+      $('#btnBayar').text("Saving...");
+      $("#btnBayar").prop("disabled", true);      
       $.ajax({
         url :$('#formpayment').attr('action'),
         type : $('#formpayment').attr('method'),
-        data : $('#formpayment').serialize(),
+        data : $('#formpayment').serialize() 
+                + "&paymentMethod=" +paymentMethod
+                + "&catatan=" +catatan,
         dataType : "json",
         success : function(data){
-          $('#btnBayar').html("<h5 class=\'text-bold\'>Bayar</h5>");
+          $("#modalpayment").modal('hide');
+          $('#btnBayar').html(defaultHtml);
           $("#btnBayar").prop("disabled", false);
+          // window.location.reload(false);
+          
           var datas = <?php echo json_encode(array()); ?>;
           load_order(datas);
           fillInformation();
-          $("#modalpayment").modal('hide');
           window.open("<?php echo base_url('Transaksi_penjualan/Transaksi/invoices'); ?>/"+data.idOrder, "_blank");
         }
       });
