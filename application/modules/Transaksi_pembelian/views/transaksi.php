@@ -625,7 +625,7 @@
   $(document).ready(function(){
     $("#pembelian").on('submit', function(e){
       var defaultHtml = $('#btnDoOrder').html();
-      $('#btnDoOrder').html("<h5 class=\'text-bold\'>Saving...</h5>");
+      $('#btnDoOrder h5').text("Saving...");
       $("#btnDoOrder").prop("disabled", true);
       e.preventDefault();
       $.confirm({

@@ -496,7 +496,7 @@
   $(document).ready(function(){
     $("#serviceOrder").on('submit', function(e){
       var defaultHtml = $('#btnDoOrder').html();
-      $('#btnDoOrder').text("Saving...");
+      $('#btnDoOrder h5').text("Saving...");
       $("#btnDoOrder").prop("disabled", true);
       e.preventDefault();
       $.confirm({

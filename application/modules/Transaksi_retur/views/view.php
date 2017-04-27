@@ -1,6 +1,8 @@
 <!-- Page Content -->
 <div class="container">
-<div class="row" style='min-height:80px;'>
+<div class="row" style='min-height:80px;'></div>
+<div class="row">
+  <h3><strong>Transaksi</strong> - Retur</h3>
 </div>
    <div class="row" style="margin-top:10px;">
       <table id="TableMain" class="table table-striped table-bordered" cellspacing="0" width="100%">
@@ -8,7 +10,7 @@
               <tr>
                   <th class="text-center hidden-xs">ID</th>
                   <th class="text-center hidden-xs">ID Order</th>
-                  <th class="text-center hidden-xs">Customer</th>
+                  <th class="text-center hidden-xs">Nama Customer</th>
                   <th class="text-center hidden-xs">Catatan</th>
                   <th class="text-center hidden-xs">Jumlah</th>
                   <th class="text-center hidden-xs">Harga (IDR)</th>
@@ -87,8 +89,8 @@
           maskInputMoney();
           $('.bootstrap-toggle').bootstrapToggle({
             size: 'small',
-            off: '<i class="fa fa-calendar-check-o"></i> Belum Diproses',
-            on: '<i class="fa fa-check-square-o"></i> Telah Diproses',
+            off: '<i class="fa fa-square-o" title="Belum Diproses"></i> Belum Diproses',
+            on: '<i class="fa fa-check-square-o" title="Telah Diproses"></i> Telah Diproses',
             offstyle: 'default',
             onstyle: 'success'
           });
@@ -104,7 +106,7 @@
     var i = $(e.currentTarget).prop("id");
     $.confirm({
     title: 'Konfirmasi!',
-    content: 'Ubah status menjadi <i class="label label-success">Selesai</i>?',
+    content: 'Ubah status menjadi <i class="label label-success">Telah Diproses</i>?',
     type: 'green',
     buttons: {
         confirm: {

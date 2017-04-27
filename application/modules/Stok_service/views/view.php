@@ -64,6 +64,7 @@
 </div>
 <!-- /.Modal Detail-->
 <script type="text/javascript" language="javascript" >
+
     function maskInputMoney(){
       $('.money').mask('#.##0', {reverse: true});
     }
@@ -89,6 +90,8 @@
           "orderable": false,
         }]
     });
+    var dataTables = $('#TableMains').DataTable();
+
     function detail(id){
       $.ajax({
         url :"<?php echo base_url('Stok_service/Transaksi/detail')?>/"+id,
@@ -103,6 +106,7 @@
     function testClick(){
       $("#frm-detail").submit();
     }
+
     $(document).ready(function(){
       $("#frm-detail").on('submit', function(e){
         e.preventDefault();
@@ -119,10 +123,14 @@
           },
           success : function(data){
             if(data.status == 1){
+              $("#modaldetail").modal("hide");
               console.log("Masuk status 1");
-              $("#btnConfirm").html(defaultHtml);
+              $("#btnConfirm").text("Simpan");
+              $("#btnConfirm").prop("disabled", false);
+              // $("#btnConfirm").html(defaultHtml);
               // $("#modaldetail").modal("hide");
-              dataTable.ajax.reload(null, false);
+              reloadTable();
+              dataTables.ajax.reload(null, false);
               maskInputMoney();
             }
           }

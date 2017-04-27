@@ -184,6 +184,7 @@ class Transaksi extends MX_Controller {
     function confirm(){
     	$params = $this->input->post();
     	$data = array();
+    	$status = 0;
     	if($params['id_hidden'] != null){
     		// get data t_service_detail
     		$dataSelect['id_service'] = $params['id_hidden'];
@@ -261,17 +262,23 @@ class Transaksi extends MX_Controller {
 			    						$dataInsertTservice['status'] = $statusTService;
 			    						$updateTservice = $this->Transaksiservicemodel->update($dataConditionTservice, $dataInsertTservice, 't_service');
 			    						if($updateTservice){    						
-				    						echo json_encode(array("status"=>1));
+				    						// echo json_encode(array("status"=>"A"));
+				    						$status = 1;
+				    						// exit();
 			    						}else{
-			    							echo json_encode(array("status"=>0));
+			    							// echo json_encode(array("status"=>"B"));
+			    							$status = 0;
+			    							// exit();
 			    						}
 			    					}else{
-			    						echo json_encode(array("status"=>0));
+			    						// echo json_encode(array("status"=>"C"));
+			    						$status = 0;
+			    						// exit();
 			    					}
 			    				}
 			    			}
 			    		}else{
-							$dataConditionService['id'] = $dataSelect['id_service'];
+							$dataConditionService['id'] = $rowDetail['id'];
 							$dataUpdateService['uang_kembali']  		= $params['juk-'.$rowDetail['id']];
 							$dataUpdateService['status']				= $params['sts-'.$rowDetail['id']];
 							$dataUpdateService['jumlah_barang_kembali']	= $params['jbk-'.$rowDetail['id']];
@@ -288,23 +295,32 @@ class Transaksi extends MX_Controller {
 								$dataConditionTservice['id'] = $selectDataDetail->row()->id_service;
 								$dataInsertTservice['jumlah_barang_kembali'] = $lastBarang;
 								$dataInsertTservice['jumlah_uang_kembali'] = $lastUang;
-								$dataInsertTservice['status'] = 2;
+								$dataInsertTservice['status'] = 3;
 								$updateTservice = $this->Transaksiservicemodel->update($dataConditionTservice, $dataInsertTservice, 't_service');
 								if($updateTservice){    						
-									echo json_encode(array("status"=>1));
+									// echo json_encode(array("status"=>"D"));
+									$status = 1;
+									// exit();
 								}else{
-									echo json_encode(array("status"=>0));
+									// echo json_encode(array("status"=>"E"));
+									$status = 0;
+									// exit();
 								}
 							}else{
-								echo json_encode(array("status"=>0));
+								// echo json_encode(array("status"=>"F"));
+								$status = 0;
+								// exit();
 							}
 			    		}
     				}else{
-						echo json_encode(array("status"=>1));
+						// echo json_encode(array("status"=>"G"));
+						$status = 0;
+						// exit();
     				}
     			}
     		}
     	}
+    	echo json_encode(array("status"=>$status));
     }
     function confirms(){
     	$params = $this->input->post();

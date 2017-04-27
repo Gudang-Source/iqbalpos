@@ -551,17 +551,14 @@
     });
   }
 
-  $("#customerSelect").on("select2:select", function (e) { 
-    changeCustomer();
-  });
   $("#customerSelect").on("select2:open", function (e) { 
     saveCurrentCustomer();
   });
+  $("#customerSelect").on("select2:select", function (e) { 
+    changeCustomer();
+  });
   function saveCurrentCustomer() {
-    // if()
-    console.log("prev CustomerId: "+currentCustomerId);
     currentCustomerId = $("#customerSelect :selected").val();
-    console.log("current CustomerId: "+currentCustomerId);
   }
   function changeCustomer(){
     var productList = $("#productList");

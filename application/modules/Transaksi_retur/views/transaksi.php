@@ -3,6 +3,11 @@
     width: 5em !important;
   }
 </style>
+<?php 
+echo "<pre>";
+print_r($_SESSION);
+echo "</pre>";
+?>
 <div class="container-fluid">
    <div class="row">
     <div class="col-sm-12">
@@ -42,7 +47,7 @@
             <label>QTY</label>
          </div>
          <div class="col-xs-3 table-header text-center">
-            <label>HARGA JUAL@ (IDR) (REVISI QUERY)</label>
+            <label>HARGA JUAL@ (IDR)</label>
          </div>
          <div class="col-xs-3 table-header text-center">
             <label>SUBTOTAL</label>
@@ -114,6 +119,9 @@
     $('.money').unmask();
   }
 
+  var currentCustomer = 0;
+  var currentIdOrder = 0;
+  var currentQty = 0;
   var listOrder = <?php echo $list_order; ?>;
   var listCustomer = <?php echo $list_customer; ?>;
   var listKategori = <?php echo $list_kategori; ?>;
@@ -187,6 +195,8 @@
     var html = "";
     var option = "";
     var select = "";
+    console.log(json);
+    console.log(json.length);
     $("#productList").html("");
       for (var i=0;i<json.length;i++){
         // option = json[i].options;
@@ -208,7 +218,7 @@
                               "</div>"+
                           "</div>"+
                           "<div class='col-xs-2 text-center'>"+
-                            "<input id=\'qt-"+json[i].rowid+"\' class='form-control' value='"+json[i].qty+"' placeholder='0' maxlength='2' type='text' onchange=updateQty(\'"+json[i].rowid+"\')>"+
+                            "<input id=\'qt-"+json[i].rowid+"\' class='form-control' value='"+json[i].qty+"' placeholder='0' maxlength='2' type='text' onfocus=saveCurrentQty(\'"+json[i].rowid+"\') onchange=updateQty(\'"+json[i].rowid+"\')>"+
                           "</div>"+
                           "<div class='col-xs-4 nopadding text-right'>"+json[i].harga_beli+"</div>"+
                           "<div class='col-xs-3 nopadding text-right'>"+json[i].subtotal+"</div>"+
@@ -262,18 +272,59 @@
       }
     });    
   }
+
+  $("#customerSelect").on("select2:open", function() {
+    currentCustomer = $(this).val();
+    console.log("currentCustomer: "+currentCustomer);
+  });
+  $("#orderSelect").on("select2:open", function() {
+    currentIdOrder = $(this).val();
+    console.log("currentIdOrder: "+currentIdOrder);
+  });
+  function saveCurrentQty(id) {
+    currentQty = $("#qt-"+id).val() || 0;
+    console.log("currentQty: "+currentQty);
+  };
   function updateQty(id){
+    var idCustomer = $("#customerSelect").val() || '';
+    var idOrder = $("#orderSelect").val() || '';
     var qty = $("#qt-"+id).val();
-    $.ajax({
-      url :"<?php echo base_url('Transaksi_retur/Transaksi/updateQty')?>/"+id+"/"+qty,
-      type : "GET",
-      data :"",
-      dataType : "json",
-      success : function(data){
-        load_order(data);
-        fillInformation();
-      }
-    });
+    if((idCustomer != '') && (idOrder != '')) {
+      $.ajax({
+        url :"<?php echo base_url('Transaksi_retur/Transaksi/updateQty')?>/"+id+"/"+qty,
+        type : "POST",
+        data : {'id_customer': idCustomer, 'id_order': idOrder},
+        dataType : "json",
+        success : function(data){
+          if(data.status == 1) {
+            load_order(JSON.parse(data.getOrder));
+            fillInformation();
+          }
+          else if(data.status == 0){
+            var list = data.list;
+            $.confirm({
+                title: 'Produk',
+                content: 'Inputan melebihi Qty produk terjual!'
+                          +'<br>Qty produk terjual: <b>' + list.jumlah + '</b>',
+                buttons: {
+                    ok: function () {
+                      $("#qt-"+id).val(list.jumlah);
+                      saveCurrentQty();
+                    }
+                }
+            });
+          }
+        }
+      });
+    }
+    else {
+      $.alert({
+          title: 'Perhatian!',
+          content: 'Anda belum memilih Customer/ID Order!'
+      });
+      $("#qt-"+id).val(currentQty);
+      saveCurrentQty(id);
+    }
   }
   function loadWarna(id, json, pilih){
     var html = "";
@@ -297,7 +348,7 @@
     $.ajax({
       url :"<?php echo base_url('Transaksi_retur/Transaksi/getAvailableProduk')?>/"+idOrder,
       type : "GET",
-      data :"",
+      data : "",
       dataType : "json",
       success : function(data){
         load_product(data);
@@ -331,31 +382,77 @@
   }
   function search(){
     var keyword = $("#searchProd").val();
-    var supplier = $("#customerSelect").val();
-    if(supplier != 0){    
+    var customer = $("#customerSelect").val() || '';
+    var id_order = $("#orderSelect").val() || '';
+    if(customer != '' && id_order != '') {
       $.ajax({
         url :"<?php echo base_url('Transaksi_retur/Transaksi/filterProdukByName')?>",
         type : "POST",
-        data : "keyword="+keyword+"&supplier="+supplier,
+        data : "keyword="+keyword
+                +"&customer="+customer
+                +"&id_order="+id_order,
         dataType : "json",
         success : function(data){
           load_product(data);
         }
       });
     }
+    else {
+      $.alert({
+          title: 'Perhatian!',
+          content: 'Anda belum memilih Customer/ID Order!'
+      });
+    }
   }  
   function addToCart(id){
-    $.ajax({
-      url :"<?php echo base_url('Transaksi_retur/Transaksi/tambahCart')?>/"+id,
-      type : "POST",
-      data :"idCustomer="+$("#customerSelect").val(),
-      dataType : "json",
-      success : function(data){
-        load_order(data);
-        fillInformation();
-      }
-    });
+    var idCustomer = $("#customerSelect").val() || '';
+    var idOrder = $("#orderSelect").val() || '';
+    var qty = $("#qt-"+id).val() || 0;
+    if((idCustomer != '') && (idOrder != '')) {
+      $.ajax({
+        url :"<?php echo base_url('Transaksi_retur/Transaksi/tambahCart')?>/"+id,
+        type : "POST",
+        data : {'id_customer': idCustomer, 'id_order': idOrder, 'current_qty': qty},
+        dataType : "json",
+        success : function(data){
+          if(data.status == 1) {
+            console.log("Status 1 gan");
+            console.log(JSON.parse(data.getOrder));
+            load_order(JSON.parse(data.getOrder));
+            fillInformation();
+          }
+          else if(data.status == 0){
+            var list = data.list;
+            $.confirm({
+                title: 'Produk',
+                content: 'Inputan melebihi Qty produk terjual!'
+                          +'<br>Qty produk terjual: <b>' + list.jumlah + '</b>',
+                buttons: {
+                    ok: function () {
+                      $("#qt-"+data.rowid).val(list.jumlah);
+                      saveCurrentQty();
+                    }
+                }
+            });
+          }
+          else {
+            load_order(data);
+            fillInformation();
+          }
+        }
+      });
+    }
+    else {
+      $.alert({
+          title: 'Perhatian!',
+          content: 'Anda belum memilih Customer/ID Order!'
+      });
+      $("#qt-"+id).val(currentQty);
+      saveCurrentQty(id);
+    }
   }
+
+
   function delete_order(id){
     $.ajax({
       url :"<?php echo base_url('Transaksi_retur/Transaksi/deleteCart')?>/"+id,
@@ -578,7 +675,7 @@
   $(document).ready(function(){
     $("#formretur").on('submit', function(e){
       var defaultHtml = $('#btnRetur').html();
-      $('#btnRetur').text("Saving...");
+      $('#btnRetur h5').text("Saving...");
       $("#btnRetur").prop("disabled", true);      
       e.preventDefault();
       $.confirm({

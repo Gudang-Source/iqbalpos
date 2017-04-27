@@ -192,7 +192,7 @@ class Transaksi extends MX_Controller {
     	return json_encode($data);
     }
     function getAvailableProduk($idOrder){
-    	$sql = "SELECT m_produk.* FROM t_order
+    	$sql = "SELECT m_produk.*, t_order_detail.harga_jual FROM t_order
 				INNER JOIN t_order_detail ON t_order_detail.id_order = t_order.id
 				INNER JOIN m_produk ON m_produk.id = t_order_detail.id_produk
 				WHERE t_order.id = ".$idOrder;
@@ -208,9 +208,9 @@ class Transaksi extends MX_Controller {
     	$list = $this->Transaksireturmodel->select($dataSelect, 'm_produk');
     	return json_encode($list->result_array());
     }
-    function getProdukByName($keyword = null, $supplier = null){
+    /*function getProdukByName($keyword = null, $supplier = null){
     	$list = null;
-    	$dataSelect['deleted'] = 1;
+    	$dataCondition['deleted'] = 1;
 		$dataLike = array();
 		$dataCondition = array();
     	if($keyword != null || $keyword != ""){
@@ -219,10 +219,36 @@ class Transaksi extends MX_Controller {
     	}
     	$list = $this->Transaksireturmodel->like($dataCondition, $dataLike, 'm_produk');
     	return json_encode($list->result_array());
-    }   
+    }   */
+    function getProdukByName($keyword = '', $customer = '', $id_order = '', $kategori = ''){
+        $list = null; $where_customer = ''; $where_id_order = ''; $where_kategori = '';
+        $keyword = strtolower($keyword);
+        if(!empty($customer)) {
+            $where_customer = " AND C.id_customer = ".$customer;
+        }
+        if(!empty($id_order)) {
+            $where_id_order = " AND B.id_order = ".$id_order;
+        }
+        if(!empty($kategori)) {
+            $where_kategori = " AND A.id_kategori = ".$kategori;
+        }
+        $sql = "SELECT * FROM m_produk A"
+        	." INNER JOIN t_order_detail B ON A.id = B.id_produk"
+        	." INNER JOIN t_order C ON B.id_order = C.id"
+        	." WHERE A.deleted = '1'"
+        	.$where_id_order
+        	.$where_customer
+        	.$where_kategori
+            ." AND ( LOWER(A.nama) LIKE '%".$keyword."%'"
+            ." OR LOWER(A.deskripsi) LIKE '%".$keyword."%'"
+            ." OR LOWER(A.harga_beli) LIKE '%".$keyword."%')";
+        $dataLike = array();
+        $list = $this->Transaksireturmodel->rawQuery($sql);
+        return json_encode($list->result_array());
+    }
     function getProdukByKategori($kategori = null, $keyword = null){
     	$list = null;
-    	$dataSelect['deleted'] = 1;
+    	$dataCondition['deleted'] = 1;
     	$dataLike = array();
     	if($kategori != null){
     		$dataCondition['id_kategori'] = $kategori;
@@ -246,8 +272,9 @@ class Transaksi extends MX_Controller {
 		if($params['keyword'] != null || $params['keyword'] != "" ){
 			$keyword = $params['keyword'];
 		}
-    	$supplier = $params['supplier'];
-    	echo $this->getProdukByName($keyword, $supplier);
+    	$customer = $params['customer'];
+    	$id_order = $params['id_order'];
+    	echo $this->getProdukByName($keyword, $customer, $id_order);
     }
     function filterProdukByKategori($kategori, $keyword = null){
     	echo $this->getProdukByKategori($kategori, $keyword);
@@ -331,12 +358,41 @@ class Transaksi extends MX_Controller {
 		echo $this->getOrder();      	
     }
     function updateQty($id, $qty){
-		$data = array(
-		        'rowid'  => $id,
-		        'qty'=> $qty
-		);
-		$this->cart->update($data);
-		echo $this->getOrder();      	
+    	$params = $this->input->post();
+    	$id_produk = 0;
+    	//checking jumlah produk yang dibeli
+    	if(!empty($params['id_customer'] && $params['id_order'])) {
+    		$id_customer = $params['id_customer'];
+    		$id_order = $params['id_order'];
+    		
+    		//fetching id produk by rowid
+    		foreach ($this->cart->contents() as $items) {
+	    		$idProduks = explode("_", $items['id']);
+	    		if(count($idProduks) > 1){
+	    			if($idProduks[1] == "RETUR"){
+    					$id_produk = $idProduks[0];
+	    			}
+	    		}
+	    	}
+
+    		$condition = array(
+    					'id_order' => $id_order,
+    					'id_produk' => $id_produk
+    				);
+    		$data_db = $this->Transaksireturmodel->select($condition, 't_order_detail')->row();
+    		
+    		if($qty > $data_db->jumlah) { //jika melebihi qty terjual
+				echo json_encode(array('status' => 0, 'list' => $data_db));
+    		} 
+    		else { //jika tidak melebihi qty terjual
+				$data = array(
+				        'rowid'  => $id,
+				        'qty'=> $qty
+				);
+				$this->cart->update($data);
+				echo json_encode(array('status' => 1, 'getOrder' => $this->getOrder()));
+    		}
+    	}
     }
     function updateTotalBerat($id,  $warna, $ukuran, $total_berat){
 		$data = array(
@@ -380,38 +436,62 @@ class Transaksi extends MX_Controller {
 		$inCart = $this->in_cart($id."_RETUR");
 		// echo $inCart;
 		$params	= $this->input->post();
-		$idCustomer = $params['idCustomer'];
-		if($inCart == 'false'){
-			$dataSelect['deleted']=1;
-			$dataSelect['id']=$id;
-			$selectData = $this->Transaksireturmodel->select($dataSelect, 'm_produk');
-			$hargaCustomer = $this->getHargaCustomer($selectData->row()->id, $idCustomer);
-			// echo $hargaCustomer;
-			if($hargaCustomer != 0){
-				$datas = array(
-			                'id'      => $selectData->row()->id."_RETUR",
-			                'qty'     => 1,
-			                'price'   => $this->getHargaCustomer($selectData->row()->id, $idCustomer),
-			                'name'    => $selectData->row()->nama,
-					        'options' => array(
-					        				'ukuran'=>0,
-					        				'warna'=>0,
-					        				'total_berat'=>$selectData->row()->berat*1
-					        				)
+		$idCustomer = $params['id_customer'];
+		$idOrder = $params['id_order'];
+		$currentQty = $params['current_qty'] + 1;
+
+		//fetching data produk yang dibeli
+		$condition = array(
+					'id_order' => $idOrder,
+					'id_produk' => $id
 				);
-				$this->cart->insert($datas);
-			}
-			echo $this->getOrder();
-		}else{
+		$data_db = $this->Transaksireturmodel->select($condition, 't_order_detail')->row();
+
+		if($inCart == 'false') {
+			
+    		if($currentQty > $data_db->jumlah) { //jika melebihi qty terjual
+    			echo json_encode(array('status' => 0, 'list' => $data_db));
+    		}
+    		else { //jika tidak melebihi qty terjual
+    			$dataSelect['deleted'] = 1;
+				$dataSelect['id'] = $id;
+				$selectData = $this->Transaksireturmodel->select($dataSelect, 'm_produk');
+				$hargaCustomer = $this->getHargaCustomer($selectData->row()->id, $idCustomer);
+				// echo $hargaCustomer;
+				if($hargaCustomer != 0){
+					$datas = array(
+		                'id'      => $selectData->row()->id."_RETUR",
+		                'qty'     => 1,
+		                'price'   => $this->getHargaCustomer($selectData->row()->id, $idCustomer),
+		                'name'    => $selectData->row()->nama,
+				        'options' => array(
+			        				'ukuran'=>0,
+			        				'warna'=>0,
+			        				'total_berat'=>$selectData->row()->berat*1
+			        				)
+					);
+					$this->cart->insert($datas);
+				}
+				echo json_encode(array('status' => 1, 'getOrder' => $this->getOrder()));
+    		}
+			
+		}
+		else {
 			$qty = $this->in_cart($id."_RETUR", 'qty') + 1;
-			$this->updateCart($inCart, $qty);
+			$rowid = $this->in_cart($id."_RETUR", 'rowid');
+			if($qty > $data_db->jumlah) {
+    			echo json_encode(array('status' => 0,'rowid' => $rowid, 'list' => $data_db));
+			}
+			else {
+				$this->updateCart($inCart, $qty);
+			}
 		}
 	}
 	function getHargaCustomer($idProduk = null, $idCustomer = null){
 		$getData = $this->Transaksireturmodel->rawQuery("SELECT m_produk_det_harga.harga as harga FROM m_produk
-									INNER JOIN m_produk_det_harga ON m_produk_det_harga.id_produk = m_produk.id
-									INNER JOIN m_customer ON m_produk_det_harga.id_customer_level = m_customer.id_customer_level
-									WHERE m_produk.id = ".$idProduk." AND m_customer.id = ".$idCustomer);
+				INNER JOIN m_produk_det_harga ON m_produk_det_harga.id_produk = m_produk.id
+				INNER JOIN m_customer ON m_produk_det_harga.id_customer_level = m_customer.id_customer_level
+				WHERE m_produk.id = ".$idProduk." AND m_customer.id = ".$idCustomer);
 		return $getData->num_rows()>0?$getData->row()->harga:0;
 	}
 	function in_cart($product_id = null, $type = 'rowid', $filter = 'id') {
