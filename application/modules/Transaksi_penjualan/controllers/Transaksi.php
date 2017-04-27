@@ -458,16 +458,16 @@ class Transaksi extends MX_Controller {
 			if($hargaCustomer != 0){
 				if($selectData->row()->stok > 0){				
 					$datas = array(
-				                'id'      => $selectData->row()->id."_PENJUALAN",
-				                'qty'     => 1,
-				                'price'   => $this->getHargaCustomer($selectData->row()->id, $idCustomer),
-				                'name'    => $selectData->row()->nama,
-						        'options' => array(
-						        				'ukuran'=>0,
-						        				'warna'=>0,
-						        				'total_berat'=>$selectData->row()->berat
-						        				)
-						        );
+		                'id'      => $selectData->row()->id."_PENJUALAN",
+		                'qty'     => 1,
+		                'price'   => $this->getHargaCustomer($selectData->row()->id, $idCustomer),
+		                'name'    => $selectData->row()->nama,
+				        'options' => array(
+			        				'ukuran'=>0,
+			        				'warna'=>0,
+			        				'total_berat'=>$selectData->row()->berat
+			        				)
+					               );
 					$this->cart->insert($datas);
 					echo json_encode(array("status"=>2, "list"=>$this->getOrderArray()));
 				}else{

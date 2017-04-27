@@ -1,14 +1,17 @@
 <!-- Page Content -->
 <div class="container">
-<div class="row" style='min-height:80px;'>
+<div class="row" style='min-height:80px;'></div>
+<div class="row">
+  <h3><strong>Log</strong> - Aktivitas</h3>
 </div>
    <div class="row" style="margin-top:10px;">
       <table id="TableMain" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>         
               <tr>
-                  <th class="text-center" class="hidden-xs">USER</th>
-                  <th class="text-center" class="hidden-xs">MODUL</th>
-                  <th class="text-center" class="hidden-xs">FUNGSI</th>
+                  <th class="text-center" class="hidden-xs">User</th>
+                  <th class="text-center" class="hidden-xs">Modul</th>
+                  <th class="text-center" class="hidden-xs">Fungsi</th>
+                  <th class="text-center" class="hidden-xs">Tanggal Aktivitas</th>
               </tr>
           </thead>
           <tbody id='bodytable'>            
@@ -16,9 +19,9 @@
       </table>
    </div>
    <!-- Button trigger modal -->
-   <a type="button" class="btn btn-add btn-lg" href="<?php echo base_url('index/modul/Transaksi_retur-Transaksi-transaksi'); ?>" target="_blank">
+   <!-- <a type="button" class="btn btn-add btn-lg" href="<?php echo base_url('index/modul/Transaksi_retur-Transaksi-transaksi'); ?>" target="_blank">
      Tambah Transaksi Retur
-   </a>
+   </a> -->
 </div>
 <!-- /.container -->
 <!-- Modal Detail -->
@@ -46,6 +49,7 @@
     var dataTable = $('#TableMain').DataTable( {
         "processing": true,
         "serverSide": true,
+        "order": [[3, 'DESC']],
         "ajax":{
             url : "<?php echo base_url('Log_aktivitas/log/data'); ?>",
             type: "post",

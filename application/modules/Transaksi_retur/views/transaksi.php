@@ -3,11 +3,6 @@
     width: 5em !important;
   }
 </style>
-<?php 
-echo "<pre>";
-print_r($_SESSION);
-echo "</pre>";
-?>
 <div class="container-fluid">
    <div class="row">
     <div class="col-sm-12">

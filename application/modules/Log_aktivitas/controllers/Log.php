@@ -29,7 +29,8 @@ class Log extends MX_Controller {
 		$columns = array( 
 			0 	=>	'namauser', 
 			1 	=>	'modul', 
-			2 	=> 	'fungsi'
+			2 	=> 	'fungsi',
+			3 	=> 	'date_add'
 		);
 		$sql = " SELECT t_log.* , m_pegawai.nama as namauser";
 		$sql.= " FROM t_log ";
@@ -39,9 +40,10 @@ class Log extends MX_Controller {
 		$totalFiltered = $totalData;
 		$sql.=" WHERE m_pegawai.deleted=1 ";
 		if( !empty($requestData['search']['value']) ) {
-			$sql.=" AND ( m_pegawai.nama LIKE '".$requestData['search']['value']."%' ";    
-			$sql.=" OR t_log.modul LIKE '".$requestData['search']['value']."%' ";
-			$sql.=" OR t_log.fungsi LIKE '".$requestData['search']['value']."%' )";
+			$sql.=" AND ( m_pegawai.nama LIKE '%".$requestData['search']['value']."%' ";    
+			$sql.=" OR t_log.modul LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR t_log.date_add LIKE '%".$requestData['search']['value']."%' ";
+			$sql.=" OR t_log.fungsi LIKE '%".$requestData['search']['value']."%' )";
 		}
 		$query=$this->Logmodel->rawQuery($sql);
 		$totalFiltered = $query->num_rows();
@@ -54,6 +56,7 @@ class Log extends MX_Controller {
 			$nestedData[] 	= 	$row["namauser"];
 			$nestedData[] 	= 	$row["modul"];
 			$nestedData[] 	= 	$row["fungsi"];
+			$nestedData[] 	= 	$row["date_add"];
 			$data[] = $nestedData;
 		}
 		$json_data = array(
