@@ -92,7 +92,15 @@
                       });
           }
           else if(data.status == '1') {
-            window.location.replace("<?php echo base_url('index/modul/Master_pegawai-master-index')?>");
+            var defRedir = "<?php echo base_url('index/modul/Master_pegawai-master-index')?>";
+            var logRedir = "<?php echo base_url('index/login')?>";
+            var redir = "<?php echo urldecode($redir)?>";
+            if(redir != '') {
+              if(redir != logRedir) {
+                defRedir = redir;
+              }
+            }
+            window.location.replace(defRedir);
           }
         }
       });

@@ -4,11 +4,13 @@ class Index extends MX_Controller {
 	function __construct() {
         parent::__construct();
         $this->load->model("Gmodel");
+        $this->load->helper("url");
         $this->checkLogin();
     }
     function checkLogin(){
         if($this->session->userdata('is_logged_in')!=1){
-            header("location:".base_url('Login/master/index'));
+            $current_url = urlencode(base_url(uri_string()));
+            header("location:".base_url('Login/master/index')."?&redir=".$current_url);
             exit;
         }
     }
@@ -67,6 +69,9 @@ class Index extends MX_Controller {
         $this->load->view('base_html/access_restricted');
     }
     function login(){
-    	$this->load->view('Login/view');
+        $params = $this->input->get();
+        $data['redir'] = isset($params['redir']) ? $params['redir'] : '';
+
+    	$this->load->view('Login/view', $data);
     }
 }

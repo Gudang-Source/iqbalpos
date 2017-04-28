@@ -6,12 +6,14 @@ class Master extends MX_Controller {
         $this->load->model('Loginmodel');
     }
     function index(){
-    	$this->load->view('Login/view');
+        $params = $this->input->get();
+        $data['redir'] = isset($params['redir']) ? $params['redir'] : '';
+
+        $this->load->view('Login/view', $data);
     }
-	
+    
     function do_login(){
         $response['status'] = 0;
-
         $params = $this->input->post();
         if(isset($params['email']) && !empty($params['password'])) {
             $user = $this->check_userpass($params['email'], $params['password']);
@@ -30,7 +32,6 @@ class Master extends MX_Controller {
                 $response['status'] = 1;
             }
         } 
-        
         echo json_encode($response);
     }
     function do_logout(){
