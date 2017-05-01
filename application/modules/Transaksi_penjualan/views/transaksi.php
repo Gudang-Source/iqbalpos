@@ -1,8 +1,17 @@
 <style type="text/css">
-  .product-details input[type="text"]{
+  .product-details input[type="text"] {
     width: 5em !important;
   }
+  .product, .product img {
+    width: 100px;
+    height: 100px;
+  }
 </style>
+<?php
+  echo "<pre>";
+  print_r($_SESSION);
+  echo "</pre>";
+?>
 <div class="container-fluid">
    <div class="row">
     <div class="col-sm-12">
@@ -10,9 +19,9 @@
     </div>
    </div>
    <div class="row">
-    <div class="col-md-5 left-side">
+    <div class="col-md-6 left-side">
       <form action="<?php echo base_url('Transaksi_penjualan/Transaksi/doSubmit'); ?>" method="post" id="pembelian">          
-         <div class="col-xs-8"> &nbsp; </div>         
+         <div class="col-xs-12"> &nbsp; </div>         
          <div class="col-lg-7">
           <div class="form-group">
             <label class="label-control">Customer</label>
@@ -25,6 +34,17 @@
           <div class="form-group">
              <label for="paymentMethod" class="label-control">Metode Pembayaran</label>
              <select class="form-control" id="paymentMethod" name="paymentMethod" required="required"> </select>
+           </div>
+         </div>
+         <div class="col-sm-12">
+           <div class="form-group">
+             <label for="barcode">Barcode</label>
+             <div class="input-group">
+              <input type="text" name="barcode" class="form-control" placeholder="Barcode" id="barcode" title="Input Barcode: Tekan tombol Shift untuk fokus ke input ini">
+              <span class="input-group-btn">
+                <button type="button" id="btnBarcode" class="btn btn-default"><i class="fa fa-barcode" title="Cek Barcode"></i> Check</button> 
+              </span>
+             </div>
            </div>
          </div>
          <div class="col-sm-12">
@@ -42,7 +62,7 @@
          <div class="col-xs-3 table-header nopadding text-center">
             <label>OPSI</label>
          </div>
-         <div class="col-xs-3 table-header nopadding text-center">
+         <div class="col-xs-3 table-header text-center">
             <label class="text-left">QTY</label>
          </div>
          <div class="col-xs-3 table-header nopadding text-left">
@@ -72,7 +92,7 @@
         </form>
 
       </div>
-      <div class="col-md-7 right-side nopadding">
+      <div class="col-md-6 right-side nopadding">
         <div class="row row-horizon" id="kategoriGat">
             <span class="categories selectedGat" id="gat-0">
               <i class="fa fa-home" onclick="filterProdukByKategori(0)"></i>
@@ -311,7 +331,7 @@
                             "</span>"+
                           "</div>"+
                           "<div class='col-xs-3 productNum'>"+
-                            "<span class='textPD'>"+
+                            "<span class='center-block text-center' style='margin-top:5px'>"+
                             "<input id=\'qt-"+json[i].rowid+"\' class='form-control' value='"+json[i].qty+"' placeholder='0' maxlength='4' type='text' onchange=updateQty(\'"+json[i].rowid+"\')>"+
                             "</span>"+
                           "</div>"+
@@ -384,20 +404,21 @@
       data :"",
       dataType : "json",
       success : function(data){
-        if(data.status == 2){        
+        if(data.status == 2) {        
           load_order(data.list);
           fillInformation();
-        }else if(data.status == 1){
+        }
+        else if(data.status == 1) {
           var list = data.list;
-          var elem = $("#qt-"+data.id);
-          var getRow = list.filter(function (index) { return index.rowid == data.id }) || 0;
+          var elem = $("#qt-"+data.rowid);
+          // var getRow = list.filter(function (index) { return index.rowid == data.id }) || 0;
 
           $.confirm({
               title: 'Stok',
-              content: 'Stok Tidak Mencukupi <br>Max Qty: <b>' + getRow[0].qty + "</b>",
+              content: 'Stok Tidak Mencukupi <br>Max Qty: <b>' + list.stok + "</b>",
               buttons: {
                   ok: function () {
-                    $(elem).val(parseInt(getRow[0].qty)); 
+                    $(elem).val(parseInt(list.stok)); 
                     // $(elem).trigger('change'); 
                   }
                 }
@@ -493,36 +514,46 @@
     });
   }
   function addToCart(id){
-    $.ajax({
-      url :"<?php echo base_url('Transaksi_penjualan/Transaksi/tambahCart')?>/"+id,
-      type : "POST",
-      data :"idCustomer="+$("#customerSelect").val(),
-      dataType : "json",
-      success : function(data){
-        if(data.status==2){
-          load_order(data.list);
-          fillInformation();
-        }else if(data.status==1){
-          $.confirm({
-              title: 'Stok',
-              content: 'Stok Tidak Mencukupi',
-              buttons: {
-                  ok: function () {
+    var idCustomer = $("#customerSelect").val();
+    if(idCustomer == '' || idCustomer == null) {
+      $.alert({
+          title: 'Perhatian',
+          content: 'Anda belum memilih Customer!',
+      }); 
+    }
+    else {
+      $.ajax({
+        url :"<?php echo base_url('Transaksi_penjualan/Transaksi/tambahCart')?>/"+id,
+        type : "POST",
+        data :"idCustomer="+$("#customerSelect").val(),
+        dataType : "json",
+        success : function(data) {
+          if(data.status == 2){
+            load_order(data.list);
+            fillInformation();
+          }
+          else if(data.status == 1) {
+            console.log(data);
+            $.confirm({
+                title: 'Stok',
+                content: 'Stok Tidak Mencukupi',
+                buttons: {
+                    ok: function () { }
                   }
-                }
-          }); 
-        }else if(data.status == 0){
-          $.confirm({
-              title: 'Harga',
-              content: 'Harga Customer Belum Diset, Hubungi Admin!!',
-              buttons: {
-                  ok: function () {                    
+            }); 
+          }
+          else if(data.status == 0) {
+            $.confirm({
+                title: 'Harga',
+                content: 'Harga Customer Belum Diset, Hubungi Admin!!',
+                buttons: {
+                    ok: function () { }
                   }
-                }
-          }); 
+            }); 
+          }
         }
-      }
-    });
+      });
+    }
   }
   function delete_order(id){
     $.ajax({
@@ -757,4 +788,58 @@
       });      
     });
   });
+
+  //BARCODE Handler
+  $(document).on("keyup", function(ev) {
+    if(!$(ev.target).is("input:text, textarea")) {
+      var keycode = (ev.keyCode ? ev.keyCode : ev.which);
+      if(keycode == '16') {
+        $("input#barcode").focus();
+      }
+    }
+  });
+  $("input#barcode").on("keydown keypress", function(ev) {
+      var keycode = (ev.keyCode ? ev.keyCode : ev.which);
+      if(keycode == '13') {
+        ev.preventDefault();
+        ev.stopPropagation();
+        // return false;
+        // alert("submit");
+        checkBarcode();
+      }
+  }); 
+  $("#btnBarcode").on("click", function(ev){
+    ev.preventDefault();
+    checkBarcode();
+    console.log("clicked");
+  });
+
+  function checkBarcode() {
+    var barcode = $("#barcode").val() || '';
+    var defaultHtml = $('#btnBarcode').html();
+    if(barcode != '') {
+      addToCart(barcode);
+      /*$.ajax({
+        url : "<?php echo base_url('Transaksi_penjualan/Transaksi/barcode'); ?>",
+        type : "GET",
+        data : { "barcode": barcode },
+        dataType : "json",
+        beforeSend: function(){
+          $('#btnBarcode').text("Checking...");
+          $("#btnBarcode").prop("disabled", true);
+        },
+        success: function(data){
+          $('#btnBarcode').html(defaultHtml);
+          $("#btnBarcode").prop("disabled", false);
+          
+          load_order(datas);
+          fillInformation();
+        },
+        error: function() {
+          $('#btnBarcode').html(defaultHtml);
+          $("#btnBarcode").prop("disabled", false);
+        }
+      });*/
+    }
+  };
 </script>

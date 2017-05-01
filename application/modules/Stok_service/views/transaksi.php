@@ -302,7 +302,7 @@
               }
           });           
         } else {
-        // console.log(data);        
+          // console.log(data);        
           var getRow = data.filter(function (index) { return index.id[0] == id }) || 0;
           load_order(data);
           change_jenisStok(getRow[0].rowid, jenisStok);

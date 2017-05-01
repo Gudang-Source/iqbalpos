@@ -348,23 +348,26 @@ class Transaksi extends MX_Controller {
     }
     function updateCart($id, $qty, $state = 'tambah'){
     	$getid = $this->in_cart($id, 'id', 'rowid');
-    	$dataSelect['deleted'] = 1;
+
+        $dataSelect['deleted'] = 1;
     	$dataSelect['id'] = $getid;
     	$selectData = $this->Transaksipenjualanmodel->select($dataSelect, 'm_produk');
+
     	$lastQty = $this->in_cart($id, 'qty', 'rowid');
-    	if($state == 'tambah'){
-    		if($selectData->row()->stok > $lastQty+1){			
+    	if($state == 'tambah') {
+    		if($selectData->row()->stok >= ($lastQty + 1)){			
 				$data = array(
 				        'rowid'  => $id,
-				        'qty'    => $lastQty+1
+				        'qty'    => $lastQty + 1
 				);
 				$this->cart->update($data);
-				echo json_encode(array("status"=>2, "list"=>$this->getOrderArray()));
-    		}else{
+				echo json_encode(array("status" => 2, "list" => $this->getOrderArray()));
+    		} else {
     			//stok tidak mencukupi
-    			echo json_encode(array("status"=>1, "list"=>$this->getOrderArray()));
+                // echo json_encode(array("status"=>1, "list"=>$this->getOrderArray()));
+    			echo json_encode(array("lastQty" => $lastQty,"status" =>1, "list" => $selectData->row_array(), "rowid"=>$id));
     		}		
-    	}else{
+    	} else {
 			$data = array(
 			        'rowid'  => $id,
 			        'qty'    => $qty
@@ -403,7 +406,8 @@ class Transaksi extends MX_Controller {
 			echo json_encode(array("status"=>2, "list"=>$this->getOrderArray()));
     	}else{
     		// stok tidak mencukupi
-    		echo json_encode(array("status"=>1, "id"=>$id, "list"=>$this->getOrderArray()));
+    		// echo json_encode(array("status"=>1, "id"=>$id, "list"=>$this->getOrderArray()));
+            echo json_encode(array("status" => 1, "list" => $selectData->row_array(), "rowid"=>$id));
     	}
     }
     function updateTotalBerat($id,  $warna, $ukuran, $total_berat){
@@ -458,6 +462,7 @@ class Transaksi extends MX_Controller {
 			if($hargaCustomer != 0){
 				if($selectData->row()->stok > 0){				
 					$datas = array(
+                        // 'id'      => $selectData->row()->id."_PENJUALAN_".date('YmdHis'),
 		                'id'      => $selectData->row()->id."_PENJUALAN",
 		                'qty'     => 1,
 		                'price'   => $this->getHargaCustomer($selectData->row()->id, $idCustomer),
@@ -472,14 +477,15 @@ class Transaksi extends MX_Controller {
 					echo json_encode(array("status"=>2, "list"=>$this->getOrderArray()));
 				}else{
 					// stok kosong
-					echo json_encode(array("status"=>1, "list"=>$this->getOrderArray()));
+					// echo json_encode(array("status"=>1, "list"=>$this->getOrderArray()));
+                    echo json_encode(array("status" =>1, "list" => $selectData->row_array()));
 				}
 			}else{
 				// harga customer belum diset
 				echo json_encode(array("status"=>0, "list"=>$this->getOrderArray()));
 			}			
 		}else{
-			$qty = $this->in_cart($id."_PENJUALAN", 'qty') + 1;
+			$qty = $this->in_cart($id."_PENJUALAN", 'qty');
 			$this->updateCart($inCart, $qty);
 		}
 	}
@@ -731,5 +737,16 @@ class Transaksi extends MX_Controller {
     }
     function testInvoices(){
     	$this->load->view('Transaksi_penjualan/invoice');
+    }
+
+    function barcode() {
+        $result = array('status' => 0);
+        $params = $this->input->post();
+        $id = isset($params['barcode']) ? $params['barcode'] : '';
+
+        if(!empty($id)) {
+            // tambahCart($id)
+        }   
+        echo json_encode($result);
     }
 }
