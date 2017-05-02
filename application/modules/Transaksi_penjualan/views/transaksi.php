@@ -1,10 +1,16 @@
 <style type="text/css">
   .product-details input[type="text"] {
-    width: 5em !important;
+    width: 4em !important;
   }
   .product, .product img {
     width: 100px;
     height: 100px;
+  }
+  #ticket .modal-dialog {
+    width: 520px;
+  }
+  #ticketModal {
+    font-size: 90%;
   }
 </style>
 <?php
@@ -21,8 +27,11 @@
    <div class="row">
     <div class="col-md-6 left-side">
       <form action="<?php echo base_url('Transaksi_penjualan/Transaksi/doSubmit'); ?>" method="post" id="pembelian">          
-         <div class="col-xs-12"> &nbsp; </div>         
-         <div class="col-lg-7">
+         <!-- <div class="col-xs-12"> &nbsp; </div>          -->
+         <div class="col-sm-12"> 
+          <div class="btn btn-info" onclick="showInvoce('last');" title="Tampilkan Invoce Terakhir"><i class="fa fa-ticket"></i></div>
+         </div>         
+         <div class="col-sm-12 col-lg-7">
           <div class="form-group">
             <label class="label-control">Customer</label>
             <select class="js-select-options form-control" id="customerSelect" name="customer" required="required">
@@ -30,7 +39,7 @@
             </select>
           </div>
          </div>
-         <div class="col-lg-5">
+         <div class="col-sm-5 col-lg-5">
           <div class="form-group">
              <label for="paymentMethod" class="label-control">Metode Pembayaran</label>
              <select class="form-control" id="paymentMethod" name="paymentMethod" required="required"> </select>
@@ -56,17 +65,23 @@
          <div class="col-sm-12">
          &nbsp;
          </div>
-         <div class="col-xs-3 table-header text-center">
+         <div class="col-xs-2 table-header text-center">
             <label>PRODUK</label>
          </div>
-         <div class="col-xs-3 table-header nopadding text-center">
+         <div class="col-xs-2 table-header nopadding text-center">
             <label>OPSI</label>
          </div>
-         <div class="col-xs-3 table-header text-center">
+         <div class="col-xs-2 table-header text-center">
             <label class="text-left">QTY</label>
          </div>
-         <div class="col-xs-3 table-header nopadding text-left">
-            <label class="text-left">SUBTOTAL (IDR)</label>
+         <div class="col-xs-2 table-header text-center">
+            <label>HARGA NORMAL @ (IDR)</label>
+         </div>
+         <div class="col-xs-2 table-header text-center">
+            <label>POTONGAN @ (IDR)</label>
+         </div>
+         <div class="col-xs-2 table-header nopadding text-center">
+            <label>SUBTOTAL (IDR)</label>
          </div>
          <div id="productList">
             <!-- product List goes here  -->
@@ -116,7 +131,7 @@
    </div>
 </div>
 <!-- /.container -->
-  <!-- Modal -->
+  <!-- Modal Payment -->
   <div class="modal fade" id="modalpayment" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
    <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -151,6 +166,15 @@
                <label for="catatan">Catatan</label>
                <textarea name="catatan" class="form-control" placeholder="Catatan" id="catatan"></textarea>
              </div> -->
+             <div class="form-group row">
+               <label class="col-sm-5">Total Harga</label>
+               <h3 class="col-sm-7 text-right"><b>Rp <span id='textTotalHarga' class="money">0</span></b>-</h3>
+             </div>
+             <div class="form-group row">
+               <label class="col-sm-5">Kembalian</label>
+               <input type="hidden" name="kembalian" id="kembalian">
+               <h3 class="col-sm-7 text-right">Rp <span id='textKembalian' class="">0</span>-</h3>
+             </div>
              <div class="form-group Paid">
                <label for="Paid">Nominal (IDR)</label>
                <div class="input-group">
@@ -187,9 +211,80 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>          
-          <button type="submit" class="btn btn-add" id="btnBayar">Bayar</button>
+          <button type="submit" class="btn btn-add" id="btnBayar" disabled="disabled">Bayar</button>
         </div>
         </form>
+      </div>
+   </div>
+  </div>
+  <!-- /.Modal -->
+
+  <!-- Modal Invoice -->
+  <div class="modal fade" id="ticket" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+   <div class="modal-dialog" role="document" id="ticketModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Invoice</h4>
+        </div>
+        <div class="modal-body">
+          <div id="printSection">
+            <!-- <div class="row">
+              <div class="col-md-12">
+                <h5 class="text-center">Iqbal POS</h5>
+                <h4 class="text-center">Invoice #id</h4>
+                <hr>
+                <p>Tanggal: date_add
+                  <br>Customer: nama_customer
+                </p>
+
+                <table class="table table-condensed">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Produk</th>
+                      <th>Warna</th>
+                      <th>Ukuran</th>
+                      <th>Qty</th>
+                      <th>Subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>1</td>
+                      <td>nama</td>
+                      <td>nama_warna</td>
+                      <td>nama_ukuran</td>
+                      <td>qty</td>
+                      <td>subtotal</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <table class="table table-condensed">
+                  <tbody>
+                    <tr>
+                      <td style="width: 60%;"><b>Total Harga</b></td>
+                      <td style="width: 40%;">Rp <span class="pull-right">grandtotal</span></td>
+                    </tr>
+                    <tr>
+                      <td style="width: 60%;"><b>Cash</b></td>
+                      <td style="width: 40%;">Rp <span class="pull-right">cash</span></td>
+                    </tr>
+                    <tr>
+                      <td style="width: 60%;"><b>Kembali</b></td>
+                      <td style="width: 40%;">Rp <span class="pull-right">uang_kembali</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div> -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>          
+          <a href="#" class="btn btn-add" id="btnCetak">Cetak</a>
+        </div>
       </div>
    </div>
   </div>
@@ -257,6 +352,7 @@
   var discount = '<?php echo $discount; ?>';
   var total = '<?php echo $total; ?>';
   var totalItems = '<?php echo $total_items; ?>';
+  var transTotalHarga = 0;
   maskInputMoney();
   inits(tax, discount, total, totalItems);
   load_customer(listCustomer);
@@ -285,7 +381,7 @@
                 "<div class='product "+colorClass+" flat-box waves-effect waves-block'>"+
                   "<h3 id='proname'>"+json[i].nama+"</h3>"+
                   "<div class='mask'>"+
-                    "<h3>Rp <span class='money'>"+json[i].harga_beli+"</span></h3>"+
+                    "<h3>Rp <span class='money'>"+json[i].harga_jual_normal+"</span></h3>"+
                     "<p>"+json[i].deskripsi+"</p>"+
                   "</div>"+
                   // "<img src='#' alt=\'"+json[i].id_kategori+"\'>"+
@@ -305,8 +401,8 @@
         html = "<div class='col-xs-12'>"+
                   "<div class='panel panel-default product-details'>"+
                       "<div class='panel-body' style=''>"+
-                          "<div class='col-xs-3 nopadding'>"+
-                              "<div class='col-xs-4 nopadding'>"+
+                          "<div class='col-xs-2 nopadding'>"+
+                              "<div class='col-xs-3 nopadding'>"+
                                   "<a href='javascript:void(0)' onclick=delete_order(\'"+json[i].rowid+"\')>"+
                                   "<span class='fa-stack fa-sm productD'>"+
                                     "<i class='fa fa-circle fa-stack-2x delete-product'></i>"+
@@ -314,29 +410,35 @@
                                   "</span>"+
                                   "</a>"+
                               "</div>"+
-                              "<div class='col-xs-8 nopadding'>"+
+                              "<div class='col-xs-9 nopadding'>"+
                                 "<span class='textPD'>"+json[i].produk+"</span>"+
                               "</div>"+
                           "</div>"+
-                          "<div class='col-xs-3'>"+
+                          "<div class='col-xs-2'>"+
                             "<span class='textPD'>"+
-                              "<select name=ukuran id=\'uk-"+json[i].rowid+"\' class=\'form-control\' onchange=updateOption(\'"+json[i].rowid+"\') title='Pilih Ukuran'>"+
+                              "<select name=ukuran id=\'uk-"+json[i].rowid+"\' class=\'form-control input-sm\' onchange=updateOption(\'"+json[i].rowid+"\') title='Pilih Ukuran'>"+
                                 "<option value=0 select disabled>Pilih Ukuran</option>"+
                               "</select>"+
                             "</span>"+
                             "<span class='textPD'>"+
-                              "<select name=warna id=\'wr-"+json[i].rowid+"\' class=\'form-control\' onchange=updateOption(\'"+json[i].rowid+"\') title='Pilih Warna'>"+
+                              "<select name=warna id=\'wr-"+json[i].rowid+"\' class=\'form-control input-sm\' onchange=updateOption(\'"+json[i].rowid+"\') title='Pilih Warna'>"+
                                 "<option value=0 select disabled>Pilih Warna</option>"+
                               "</select>"+
                             "</span>"+
                           "</div>"+
-                          "<div class='col-xs-3 productNum'>"+
+                          "<div class='col-xs-2 productNum'>"+
                             "<span class='center-block text-center' style='margin-top:5px'>"+
                             "<input id=\'qt-"+json[i].rowid+"\' class='form-control' value='"+json[i].qty+"' placeholder='0' maxlength='4' type='text' onchange=updateQty(\'"+json[i].rowid+"\')>"+
                             "</span>"+
                           "</div>"+
-                          "<div class='col-xs-3 nopadding productNum'>"+
-                            "<span class='textPD pull-right'>"+json[i].subtotal+"</span>"+
+                          "<div class='col-xs-2 nopadding productNum'>"+
+                            "<span class='textPD pull-right money'>"+json[i].harga_jual_normal+"</span>"+
+                          "</div>"+
+                          "<div class='col-xs-2 nopadding productNum'>"+
+                            "<span class='textPD pull-right money'>"+(parseInt(json[i].harga_jual_normal) - parseInt(json[i].harga_beli))+"</span>"+
+                          "</div>"+
+                          "<div class='col-xs-2 nopadding productNum'>"+
+                            "<span class='textPD pull-right money'>"+json[i].subtotal+"</span>"+
                           "</div>"+
                       "</div>"+
                   "</div>"+
@@ -450,7 +552,21 @@
     });    
   }
   function payment(){
-    $("#modalpayment").modal("show");
+    var idCustomer = $("#customerSelect").val() || '';
+    var idMetodePembayaran = $("#paymentMethod").val() || '';
+
+    if((idCustomer!='') && (idMetodePembayaran!='')) {
+      $("#modalpayment").modal("show");
+      $("#modalpayment").on("shown.bs.modal", function() {
+        $("#Paid").focus();
+      }); 
+    }
+    else {
+      $.alert({
+          title: 'Perhatian',
+          content: 'Anda belum memilih Customer/Metode Pembayaran!',
+      });
+    }
   }
   function filterProduk(){
     // alert($("#customerSelect").find(":selected").text());
@@ -545,7 +661,7 @@
           else if(data.status == 0) {
             $.confirm({
                 title: 'Harga',
-                content: 'Harga Customer Belum Diset, Hubungi Admin!!',
+                content: 'Harga Belum Diset, Hubungi Admin!!',
                 buttons: {
                     ok: function () { }
                   }
@@ -664,6 +780,8 @@
     $("#eDiscount").val(ediscount);
     $("#eTotal").html(etotal);    
     $("#eTotalItem").html(etotal_items);   
+    $("#textTotalHarga").html(etotal);    
+    transTotalHarga = parseInt(etotal.split(',').join(''));
     maskInputMoney(); 
   }
   function fillInformation(){
@@ -720,7 +838,7 @@
         $('#btnDoOrder').html("<h5 class=\'text-bold\'>Proses Transaksi</h5>");
         $("#btnDoOrder").prop("disabled", false);
         // window.close();
-        if (reload == true) {
+        if(reload == true) {
           window.location.reload(false);
         }
       }
@@ -745,9 +863,11 @@
   $(document).ready(function(){
     $("#formpayment").on('submit', function(e){
       e.preventDefault();      
+      unmaskInputMoney();
       var defaultHtml = $('#btnBayar').html();
       var paymentMethod = $("#paymentMethod").val();
       var catatan = $("#catatan").val();
+      var kembalian = $("#kembalian").val();
       $('#btnBayar').text("Saving...");
       $("#btnBayar").prop("disabled", true);      
       $.ajax({
@@ -755,7 +875,8 @@
         type : $('#formpayment').attr('method'),
         data : $('#formpayment').serialize() 
                 + "&paymentMethod=" +paymentMethod
-                + "&catatan=" +catatan,
+                + "&catatan=" +catatan
+                + "&kembalian=" +kembalian,
         dataType : "json",
         success : function(data){
           $("#modalpayment").modal('hide');
@@ -766,7 +887,13 @@
           var datas = <?php echo json_encode(array()); ?>;
           load_order(datas);
           fillInformation();
-          window.open("<?php echo base_url('Transaksi_penjualan/Transaksi/invoices'); ?>/"+data.idOrder, "_blank");
+          showInvoce(data.idOrder);
+
+          // window.open("<?php echo base_url('Transaksi_penjualan/Transaksi/invoices'); ?>/"+data.idOrder, "_blank");
+        },
+        error: function(){
+          $('#btnBayar').html(defaultHtml);
+          $("#btnBayar").prop("disabled", false);
         }
       });
       maskInputMoney();
@@ -811,35 +938,55 @@
   $("#btnBarcode").on("click", function(ev){
     ev.preventDefault();
     checkBarcode();
-    console.log("clicked");
   });
-
   function checkBarcode() {
     var barcode = $("#barcode").val() || '';
     var defaultHtml = $('#btnBarcode').html();
     if(barcode != '') {
       addToCart(barcode);
-      /*$.ajax({
-        url : "<?php echo base_url('Transaksi_penjualan/Transaksi/barcode'); ?>",
-        type : "GET",
-        data : { "barcode": barcode },
-        dataType : "json",
-        beforeSend: function(){
-          $('#btnBarcode').text("Checking...");
-          $("#btnBarcode").prop("disabled", true);
-        },
-        success: function(data){
-          $('#btnBarcode').html(defaultHtml);
-          $("#btnBarcode").prop("disabled", false);
-          
-          load_order(datas);
-          fillInformation();
-        },
-        error: function() {
-          $('#btnBarcode').html(defaultHtml);
-          $("#btnBarcode").prop("disabled", false);
-        }
-      });*/
     }
   };
+
+  //KEMBALIAN Handler
+  $("#Paid").on("keyup", function() {
+    var totalHarga = transTotalHarga || 0;
+    var paid = $(this).val().split('.').join("") || 0;
+    // var paid = $(this).val().split('.').join("") || totalHarga;
+    // console.log(paid +' - '+ totalHarga +' = '+ kembalian);
+    var kembalian = parseInt(paid) - parseInt(totalHarga);
+    $("#textKembalian").text(kembalian);
+    $("#kembalian").val(kembalian);
+
+    $("#textKembalian").unmask();
+    $("#textKembalian").mask('#.##0', {reverse: true});
+    
+    if(kembalian < 0) {
+      $("#textKembalian").parent("h3").addClass("text-danger");
+      $("#btnBayar").prop("disabled", true);
+    } else {
+      $("#textKembalian").parent("h3").removeClass("text-danger");
+      $("#btnBayar").prop("disabled", false);
+    }
+  });
+
+  function showInvoce(id){
+    var idOrder = id || '';
+    var html = "<h3 class='text-center text-muted'>Tidak ada invoice<h3>";
+    if(idOrder != '') {
+      $.ajax({
+        url : '<?php echo base_url("Transaksi_penjualan/Transaksi/getInvoiceData"); ?>/'+idOrder,
+        type : "POST",
+        data : "",
+        // dataType : "json",
+        success : function(data){
+          console.log(data);
+          $("#printSection").html(data);
+        }
+      });
+    }
+    else {
+      $("#printSection").html(html);
+    }
+    $("#ticket").modal("show");
+  }
 </script>
