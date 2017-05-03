@@ -10,6 +10,9 @@
                   <th class="text-center">Total Berat (gr)</th>
                   <th class="text-center">Harga Beli (IDR)</th>
                   <th class="text-center">Harga Jual (IDR)</th>
+                  <th class="text-center">Harga Jual Normal (IDR)</th>
+                  <th class="text-center">Potongan (IDR)</th>
+                  <th class="text-center">Total Potongan (IDR)</th>
                   <th class="text-center">Total Harga (IDR)</th>
                   <th class="text-center">Profit (IDR)</th>
               </tr>

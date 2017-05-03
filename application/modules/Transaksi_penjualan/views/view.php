@@ -1,4 +1,11 @@
 <!-- Page Content -->
+<style type="text/css">
+#modaldetail 
+{
+    /*max-width: 1140px; */
+}
+</style>
+
 <div class="container">
 <div class="row" style='min-height:80px;'></div>
 <div class="row">
@@ -13,8 +20,8 @@
                   <th class="text-center hidden-xs">Catatan</th>
                   <th class="text-center hidden-xs">Total Berat (gr)</th>
                   <th class="text-center hidden-xs">Total Qty</th>
-                  <th class="text-center hidden-xs">Biaya Kirim (IDR)</th>
-                  <th class="text-center hidden-xs">Harga Barang (IDR)</th>
+                  <!-- <th class="text-center hidden-xs">Biaya Kirim (IDR)</th> -->
+                  <th class="text-center hidden-xs">Grand Total (IDR)</th>
                   <th class="text-center hidden-xs">Tanggal Transaksi</th>
                   <th class="text-center hidden-xs no-sort">Aksi</th>
               </tr>
@@ -31,7 +38,7 @@
 <!-- /.container -->
 <!-- Modal Detail -->
 <div class="modal fade" id="modaldetail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
- <div class="modal-dialog modal-lg" role="document">
+ <div class="modal-dialog modal-lg modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -73,7 +80,7 @@
         var dataTable = $('#TableMain').DataTable( {
             "processing": true,
             "serverSide": true,
-            "order": [[7, 'DESC']],
+            "order": [[6, 'DESC']],
             "ajax":{
                 url : "<?php echo base_url('Transaksi_penjualan/Transaksi/data'); ?>",
                 type: "post",

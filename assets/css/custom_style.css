@@ -46,3 +46,9 @@ select.select2 {
   width: 190px;
   height: 20px;
  }
+
+ @media (min-width: 992px) {
+  .modal-xl {
+    width: 1140px;
+  }
+}

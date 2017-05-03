@@ -32,10 +32,10 @@ class Transaksi extends MX_Controller {
 			2 	=> 	'catatan',
 			3	=> 	'total_berat',
 			4	=> 	'total_qty',
-			5	=> 	'biaya_kirim',
-			6	=> 	'grand_total',
-			7	=> 	'date_add',
-			8	=> 	'aksi'
+			// 5	=> 	'biaya_kirim',
+			5	=> 	'grand_total',
+			6	=> 	'date_add',
+			7	=> 	'aksi'
 		);
 		$sql = " SELECT t_order.* , m_customer.nama as namacus, m_metode_pembayaran.nama as namamet";
 		$sql.= " FROM t_order ";
@@ -50,7 +50,7 @@ class Transaksi extends MX_Controller {
 			$sql.=" OR t_order.catatan LIKE '%".$requestData['search']['value']."%' ";
 			$sql.=" OR t_order.total_berat LIKE '%".$requestData['search']['value']."%' ";
 			$sql.=" OR t_order.total_qty LIKE '%".$requestData['search']['value']."%' ";
-			$sql.=" OR t_order.biaya_kirim LIKE '%".$requestData['search']['value']."%' ";
+			// $sql.=" OR t_order.biaya_kirim LIKE '%".$requestData['search']['value']."%' ";
 			$sql.=" OR t_order.total_harga_barang LIKE '%".$requestData['search']['value']."%' )";
 		}
 		$query=$this->Transaksipenjualanmodel->rawQuery($sql);
@@ -66,10 +66,13 @@ class Transaksi extends MX_Controller {
 			$nestedData[] 	= 	$row["catatan"];
 			$nestedData[] 	= 	'<span class="money">'.$row["total_berat"]."</span>";
 			$nestedData[] 	= 	"<span class='center-block text-center'>". $row["total_qty"] ."</span>";
-			$nestedData[] 	= 	"<span class='pull-right'>".number_format($row["biaya_kirim"])."</span>";
+			// $nestedData[] 	= 	"<span class='pull-right'>".number_format($row["biaya_kirim"])."</span>";
 			$nestedData[] 	= 	"<span class='pull-right'>".number_format($row["total_harga_barang"])."</span>";
 			$nestedData[] 	= 	$row["date_add"];
-			$nestedData[] 	= 	"<button class='btn btn-default btn-sm' onclick=detail('".$row["id"]."') title='Detail Penjualan'><i class='fa fa-file-text-o'></i></button>";			
+			$nestedData[] 	= 	"<div class='btn-group'>"
+                        ."<button class='btn btn-default btn-sm' onclick=detail('".$row["id"]."') title='Detail Penjualan'><i class='fa fa-file-text-o'></i></button>"      
+                        ."<button class='btn btn-default btn-sm' onclick=cetakInvoice('".$row["id"]."') title='Cetak Invoice'><i class='fa fa-print'></i></button>"
+                        ."</div>";			
 			$data[] = $nestedData;
 		}
 		$json_data = array(
@@ -90,9 +93,12 @@ class Transaksi extends MX_Controller {
 			4	=> 	'jumlah',
 			5	=> 	'total_berat',
 			6	=> 	'harga_beli',
-			7	=> 	'harga_jual',
-			8	=> 	'total_harga',
-			9	=> 	'profit'
+            7   =>  'harga_jual',
+            8   =>  'harga_jual_normal',
+            9   =>  'potongan',
+			10	=> 	'total_potongan',
+			11	=> 	'total_harga',
+			12	=> 	'profit'
 		);
 		$sql = "SELECT
                     t_order_detail.nama_warna as nama_warna,
@@ -102,7 +108,10 @@ class Transaksi extends MX_Controller {
 					t_order_detail.jumlah as podjm,
 					t_order_detail.total_berat as podtb, 
 					t_order_detail.harga_beli as podhb, 
-					t_order_detail.harga_jual as podhj, 
+                    t_order_detail.harga_jual as podhj, 
+                    t_order_detail.harga_jual_normal as podhjn, 
+                    t_order_detail.potongan as podpot, 
+					t_order_detail.total_potongan as podtpot, 
 					t_order_detail.total_harga as podth, 
 					t_order_detail.profit as podp, 
 					m_produk_ukuran.nama as ukuran,
@@ -139,7 +148,10 @@ class Transaksi extends MX_Controller {
 			$nestedData[] 	= 	"<span class='center-block text-center'>".$row['podjm']."</span>";
 			$nestedData[] 	= 	'<span class="money">'.$row['podtb'].'</span>';
 			$nestedData[] 	= 	"<span class='pull-right'>".number_format($row['podhb'])."</span>";
-			$nestedData[] 	= 	"<span class='pull-right'>".number_format($row['podhj'])."</span>";
+            $nestedData[]   =   "<span class='pull-right'>".number_format($row['podhj'])."</span>";
+            $nestedData[]   =   "<span class='pull-right'>".number_format($row['podhjn'])."</span>";
+            $nestedData[]   =   "<span class='pull-right'>".number_format($row['podpot'])."</span>";
+			$nestedData[] 	= 	"<span class='pull-right'>".number_format($row['podtpot'])."</span>";
 			$nestedData[] 	= 	"<span class='pull-right'>".number_format($row['podth'])."</span>";
 			$nestedData[] 	= 	"<span class='pull-right'>".number_format($row['podp'])."</span>";
 			$data[] = $nestedData;

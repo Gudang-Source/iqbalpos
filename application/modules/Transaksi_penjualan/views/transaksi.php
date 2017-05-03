@@ -14,9 +14,9 @@
   }
 </style>
 <?php
-  echo "<pre>";
-  print_r($_SESSION);
-  echo "</pre>";
+  // echo "<pre>";
+  // print_r($_SESSION);
+  // echo "</pre>";
 ?>
 <div class="container-fluid">
    <div class="row">
@@ -27,9 +27,9 @@
    <div class="row">
     <div class="col-md-6 left-side">
       <form action="<?php echo base_url('Transaksi_penjualan/Transaksi/doSubmit'); ?>" method="post" id="pembelian">          
-         <!-- <div class="col-xs-12"> &nbsp; </div>          -->
-         <div class="col-sm-12"> 
-          <div class="btn btn-info" onclick="showInvoce('last');" title="Tampilkan Invoce Terakhir"><i class="fa fa-ticket"></i></div>
+         <div class="col-sm-12">&nbsp;</div>
+         <div class="col-sm-12 text-right"> 
+          <div class="btn btn-default" onclick="showInvoce('last');" title="Tampilkan Invoce Terakhir"><i class="fa fa-ticket"></i></div>
          </div>         
          <div class="col-sm-12 col-lg-7">
           <div class="form-group">
@@ -166,14 +166,14 @@
                <label for="catatan">Catatan</label>
                <textarea name="catatan" class="form-control" placeholder="Catatan" id="catatan"></textarea>
              </div> -->
-             <div class="form-group row">
-               <label class="col-sm-5">Total Harga</label>
-               <h3 class="col-sm-7 text-right"><b>Rp <span id='textTotalHarga' class="money">0</span></b>-</h3>
+             <div class="form-group">
+               <label class="center-block text-right">Total Harga</label>
+               <h3 class="text-right" style="margin-top: 5px;"><b>Rp <span id='textTotalHarga' class="money">0</span></b>-</h3>
              </div>
-             <div class="form-group row">
-               <label class="col-sm-5">Kembalian</label>
+             <div class="form-group">
+               <label class="center-block text-right">Kembalian</label>
+               <h3 class="text-right" style="margin-top: 5px;">Rp <span id='textKembalian' class="">0</span>-</h3>
                <input type="hidden" name="kembalian" id="kembalian">
-               <h3 class="col-sm-7 text-right">Rp <span id='textKembalian' class="">0</span>-</h3>
              </div>
              <div class="form-group Paid">
                <label for="Paid">Nominal (IDR)</label>
@@ -211,7 +211,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>          
-          <button type="submit" class="btn btn-add" id="btnBayar" disabled="disabled">Bayar</button>
+          <button type="submit" class="btn btn-add" id="btnBayar" disabled="disabled"><i class="fa fa-check-square-o"></i> Bayar</button>
         </div>
         </form>
       </div>
@@ -283,7 +283,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>          
-          <a href="#" class="btn btn-add" id="btnCetak">Cetak</a>
+          <a href="javascript:void(0);" onclick="printTicket();" class="btn btn-add" id="btnCetak" title="Cetak Invoice"><i class="fa fa-print"></i> Cetak</a>
         </div>
       </div>
    </div>
@@ -988,5 +988,11 @@
       $("#printSection").html(html);
     }
     $("#ticket").modal("show");
+  }
+
+  function printTicket() {
+     $('.modal-body').removeAttr('id');
+     window.print();
+     $('.modal-body').attr('id', 'modal-body');
   }
 </script>
