@@ -191,10 +191,8 @@ class Transaksi extends MX_Controller {
 		    		$nestedData['rowid'] = $items['rowid'];
 		    		$nestedData['subtotal'] = number_format($items['price']*$items['qty']);
 
-                    $nestedData['ukuran'] = $items['options']['ukuran']!=null?$items['options']['ukuran']:0;
-		    		$nestedData['text_ukuran'] = $items['options']['text_ukuran'];
-                    $nestedData['warna'] = $items['options']['warna']!=null?$items['options']['warna']:0;
-                    $nestedData['text_warna'] = $items['options']['text_warna'];
+		    		$nestedData['ukuran'] = $items['options']['ukuran']!=null?$items['options']['ukuran']:0;
+		    		$nestedData['warna'] = $items['options']['warna']!=null?$items['options']['warna']:0;
                     // $nestedData['total_berat'] = $items['options']['total_berat']!=null?$items['options']['total_berat']:0;
 		    		$nestedData['total_berat'] = $items['total_berat']!=null?$items['total_berat']:0;
 		    		array_push($data, $nestedData);
@@ -220,9 +218,7 @@ class Transaksi extends MX_Controller {
 		    		$nestedData['subtotal'] = number_format($items['price']*$items['qty']);
 
 		    		$nestedData['ukuran'] = $items['options']['ukuran']!=null?$items['options']['ukuran']:0;
-                    $nestedData['text_ukuran'] = $items['options']['text_ukuran'];
-                    $nestedData['warna'] = $items['options']['warna']!=null?$items['options']['warna']:0;
-                    $nestedData['text_warna'] = $items['options']['text_warna'];
+		    		$nestedData['warna'] = $items['options']['warna']!=null?$items['options']['warna']:0;
                     // $nestedData['total_berat'] = $items['options']['total_berat']!=null?$items['options']['total_berat']:0;
 		    		$nestedData['total_berat'] = $items['total_berat']!=null?$items['total_berat']:0;
 		    		array_push($data, $nestedData);
@@ -319,8 +315,7 @@ class Transaksi extends MX_Controller {
     	echo json_encode($selectData->result_array());
     }
     function getUkuran($id){
-        // $rid = explode("_", $id);
-        $rid = $id;
+        $rid = explode("_", $id);
     	// $dataSelect['deleted'] = 1;
     	// $selectData = $this->Transaksipomodel->select($dataSelect, 'm_produk_ukuran');
         $selectData = $this->Transaksipenjualanmodel->rawQuery("SELECT m_produk_ukuran.id, m_produk_ukuran.nama
@@ -335,20 +330,6 @@ class Transaksi extends MX_Controller {
         $dataSelect['deleted'] = 1;
         $list = $this->Transaksipenjualanmodel->select($dataSelect, 'm_metode_pembayaran');
         return json_encode($list->result_array());
-    }
-    function getUkuranById($id){
-        $list = null;
-        $dataSelect['deleted'] = 1;
-        $dataSelect['id'] = $id;
-        $list = $this->Transaksipenjualanmodel->select($dataSelect, 'm_produk_ukuran');
-        return $list->row();
-    }
-    function getWarnaById($id){
-        $list = null;
-        $dataSelect['deleted'] = 1;
-        $dataSelect['id'] = $id;
-        $list = $this->Transaksipenjualanmodel->select($dataSelect, 'm_produk_warna');
-        return $list->row();
     }
     function transaksi(){
     	$dataSelect['deleted'] = 1;
@@ -383,25 +364,6 @@ class Transaksi extends MX_Controller {
     	}    	
     	echo json_encode(array("tax"=>0, "discount"=> 0, "total"=>number_format($total), "total_items"=>$total_item, "total_potongan"=>$total_potongan));
     }
-    function getCartQtyById($id) {
-        $sid = explode('_', $id);
-        $totalQty = 0;
-
-        if(!empty($id)) {
-            $filteredCart = array();
-            $dataCart = $this->cart->contents();
-            foreach ($dataCart as $itemCart) {
-                $splitCartId = explode('_' ,$itemCart['id']);
-                if($splitCartId[1] == "PENJUALAN") {
-                    if($splitCartId[0] == $sid[0]) {
-                        $totalQty = $totalQty + $itemCart['qty'];
-                        array_push($filteredCart, $itemCart);
-                    }
-                }
-            }
-        }
-        return $totalQty;
-    }
     function updateCart($id, $qty, $state = 'tambah'){
     	$getid = $this->in_cart($id, 'id', 'rowid');
 
@@ -409,11 +371,9 @@ class Transaksi extends MX_Controller {
     	$dataSelect['id'] = $getid;
     	$selectData = $this->Transaksipenjualanmodel->select($dataSelect, 'm_produk');
 
-        // $lastQty = $this->in_cart($id, 'qty', 'rowid');
-    	$lastQty = $this->getCartQtyById($getid);
+    	$lastQty = $this->in_cart($id, 'qty', 'rowid');
     	if($state == 'tambah') {
-            $stokProduk = $selectData->row()->stok;
-    		if($stokProduk >= ($lastQty + 1)){			
+    		if($selectData->row()->stok >= ($lastQty + 1)){			
 				$data = array(
 				        'rowid'  => $id,
 				        'qty'    => $lastQty + 1
@@ -421,10 +381,9 @@ class Transaksi extends MX_Controller {
 				$this->cart->update($data);
 				echo json_encode(array("status" => 2, "list" => $this->getOrderArray()));
     		} else {
-                //stok tidak mencukupi
-                $stokAvailable = array("stok" => ($stokProduk - $lastQty)+1);
+    			//stok tidak mencukupi
                 // echo json_encode(array("status"=>1, "list"=>$this->getOrderArray()));
-    			echo json_encode(array("lastQty" => $lastQty,"status" =>1, "list" => $stokAvailable, "rowid"=>$id));
+    			echo json_encode(array("lastQty" => $lastQty,"status" =>1, "list" => $selectData->row_array(), "rowid"=>$id));
     		}		
     	} else {
 			$data = array(
@@ -458,9 +417,7 @@ class Transaksi extends MX_Controller {
     	$dataSelect['deleted'] = 1;
     	$dataSelect['id'] = $getid;
     	$selectData = $this->Transaksipenjualanmodel->select($dataSelect, 'm_produk');
-        $stokProduk = $selectData->row()->stok;
-        $lastQty = $this->getCartQtyById($getid);
-    	if($stokProduk >= $qty){
+    	if($selectData->row()->stok > $qty){
 			$data = array(
 			        'rowid'  => $id,
 			        'qty'=> isset($qty) ? $qty : 0
@@ -469,14 +426,8 @@ class Transaksi extends MX_Controller {
 			echo json_encode(array("status"=>2, "list"=>$this->getOrderArray()));
     	}else{
     		// stok tidak mencukupi
-            $stokAvailable = array(
-                                "stok" => ((int)$stokProduk - ((int)$lastQty - (int)$qty)),
-                                "stokProduk" => $stokProduk,
-                                "lastQty" => $lastQty,
-                                "qty" => $qty,
-                                );
     		// echo json_encode(array("status"=>1, "id"=>$id, "list"=>$this->getOrderArray()));
-            echo json_encode(array("status" => 1, "list" => $stokAvailable, "rowid"=>$id));
+            echo json_encode(array("status" => 1, "list" => $selectData->row_array(), "rowid"=>$id));
     	}
     }
     function updateTotalBerat($id,  $warna, $ukuran, $total_berat){
@@ -518,20 +469,13 @@ class Transaksi extends MX_Controller {
     	echo $this->getOrder();	
     }
 	function tambahCart($id){
+		$inCart = $this->in_cart($id."_PENJUALAN");
+		// echo $inCart;
 		$params	= $this->input->post();
-        $idCustomer = $params['idCustomer'];
-        $idUkuran = !empty($params['idUkuran']) ? $params['idUkuran'] : 0;
-		$idWarna = !empty($params['idWarna']) ? $params['idWarna'] : 0;
-        $textUkuran = $this->getUkuranById($idUkuran);
-        $textWarna = $this->getWarnaById($idWarna);
-        // $inCart = $this->in_cart($id."_PENJUALAN");
-        
-        $cart_id = $id."_PENJUALAN"."_".$idUkuran."_".$idWarna; //idProduk_PENJUALAN_idUkuran_idWarna
-        $inCart = $this->in_cart($cart_id);
-        
+		$idCustomer = $params['idCustomer'];
 		if($inCart == 'false'){
 			$dataSelect['deleted']=1;
-			$dataSelect['id'] = $id;
+			$dataSelect['id']=$id;
 			$selectData = $this->Transaksipenjualanmodel->select($dataSelect, 'm_produk');
 
             $select_id = !empty($selectData->row()) ? $selectData->row()->id : 'null';
@@ -539,16 +483,13 @@ class Transaksi extends MX_Controller {
 
             $condition = array('id' => $select_id, 'deleted' => 1);
             $dataProduk = $this->Transaksipenjualanmodel->select($condition, 'm_produk')->row();
-            $lastQty = $this->getCartQtyById($cart_id);
-
+			// echo $hargaCustomer;
 			if($hargaCustomer != 0){
-                // if($selectData->row()->stok > 0){   
-				if($selectData->row()->stok > $lastQty){	
+				if($selectData->row()->stok > 0){	
                     $price_customer = $this->getHargaCustomer($selectData->row()->id, $idCustomer);			
 					$datas = array(
                         // 'id'      => $selectData->row()->id."_PENJUALAN_".date('YmdHis'),
-                        // 'id'      => $selectData->row()->id."_PENJUALAN",
-                        'id'      => $cart_id,
+		                'id'      => $selectData->row()->id."_PENJUALAN",
                         'name'    => $selectData->row()->nama,
                         'qty'     => 1,
                         'price'   => $price_customer,
@@ -556,10 +497,8 @@ class Transaksi extends MX_Controller {
                         'potongan' => $dataProduk->harga_jual_normal - $price_customer,
                         'total_berat' => $selectData->row()->berat,
 				        'options' => array(
-                                    'ukuran' => $idUkuran,
-                                    'text_ukuran' => !empty($textUkuran) ? $textUkuran->nama : 'Tidak ada',
-                                    'warna' => $idWarna,
-                                    'text_warna' => !empty($textWarna) ? $textWarna->nama : 'Tidak ada',
+			        				'ukuran' => 0,
+			        				'warna' => 0,
 			        				// 'total_berat' => $selectData->row()->berat
 			        				)
 					               );
@@ -574,14 +513,11 @@ class Transaksi extends MX_Controller {
 				// harga customer belum diset
 				echo json_encode(array("status"=>0, "list"=>$this->getOrderArray()));
 			}			
-		}
-        else {
-            // $qty = $this->in_cart($id."_PENJUALAN", 'qty');
-			$qty = $this->in_cart($cart_id, 'qty');
+		}else{
+			$qty = $this->in_cart($id."_PENJUALAN", 'qty');
 			$this->updateCart($inCart, $qty);
 		}
 	}
-
 	function getHargaCustomer($idProduk = null, $idCustomer = null){
 		$getData = $this->Transaksipenjualanmodel->rawQuery("SELECT m_produk_det_harga.harga AS harga, m_produk.harga_jual_normal AS harga_jual_normal FROM m_produk
 									INNER JOIN m_produk_det_harga ON m_produk_det_harga.id_produk = m_produk.id
@@ -601,64 +537,24 @@ class Transaksi extends MX_Controller {
 		return $harga;
 	}
 	function in_cart($product_id = null, $type = 'rowid', $filter = 'id') {
-        if($this->cart->total_items() > 0){
-            $in_cart = array();
-            foreach ($this->cart->contents() AS $item){
-                $in_cart[$item[$filter]] = $item[$type];
-            }
-            if($product_id){
-                if (array_key_exists($product_id, $in_cart)){
-                    return $in_cart[$product_id];
-                }else{              
-                    return "false";
-                }
-            }else{
-                return $in_cart;
-            }
-        }else{      
-            return "false";
-        }
-    }   
-    /*function in_cart($product_id = null, $type = 'rowid', $filter = 'id') {
-        $options = array('warna' => 0, 'ukuran' => 0);
-        if($this->cart->total_items() > 0){
-            $in_cart = array();
-            foreach ($this->cart->contents() AS $item){
-                $in_cart[$item[$filter]] = $item[$type];
-            }
-            if($product_id){
-                $returnItem = array();
-                $filtered_cart = $this->getCartItemById($product_id, $filter);
-                    foreach ($filtered_cart as $fitem) {
-                        $itemOptions = $fitem['options'];
-                        $optDiff = array_diff($options, $itemOptions);
-                        
-                        if(empty($optDiff)) { //data dengan option yang sama sudah ada
-                            $returnItem = $fitem;
-                        }
-                    }
-
-                if (!empty($returnItem)){
-                    return $returnItem[$type];
-                }else{              
-                    return "false";
-                }
-            }else{
-                return $in_cart;
-            }
-        }else{      
-            return "false";
-        }
-    }   */
-    function getCartItemById($id, $filter) {
-        $filtered_cart = array();
-        foreach ($this->cart->contents() as $item) {
-            if($id == $item[$filter]) {
-                $filtered_cart[] = $item;
-            }
-        }
-        return $filtered_cart;
-    }
+	    if($this->cart->total_items() > 0){
+	        $in_cart = array();
+	        foreach ($this->cart->contents() AS $item){
+	            $in_cart[$item[$filter]] = $item[$type];
+	        }
+	        if($product_id){
+	            if (array_key_exists($product_id, $in_cart)){
+	                return $in_cart[$product_id];
+	            }else{            	
+		            return "false";
+	            }
+	        }else{
+	            return $in_cart;
+	        }
+	    }else{    	
+		    return "false";
+	    }
+	}	
     function _getTotal(){
     	$total = 0;
         $total_item = 0;

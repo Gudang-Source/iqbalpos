@@ -17,9 +17,9 @@
   }
 </style>
 <?php
-  echo "<pre>";
-  print_r(isset($_SESSION['cart_contents']) ? $_SESSION['cart_contents'] : '');
-  echo "</pre>";
+  // echo "<pre>";
+  // print_r($_SESSION);
+  // echo "</pre>";
 ?>
 <div class="container-fluid">
    <div class="row">
@@ -42,7 +42,7 @@
             </select>
           </div>
          </div>
-         <div class="col-sm-12 col-lg-5">
+         <div class="col-sm-5 col-lg-5">
           <div class="form-group">
              <label for="paymentMethod" class="label-control">Metode Pembayaran</label>
              <select class="form-control" id="paymentMethod" name="paymentMethod" required="required"> </select>
@@ -380,9 +380,7 @@
       if(color == 7) { color = 1; }
       var colorClass = 'color0' + color; color++;
       html = "<div class='col-sm-2 col-xs-3' style='display: block;'>"+
-              "<a href='javascript:void(0)' class='addPct' id=\'product-"
-              // +json[i].id+"\' onclick=\'addToCart("+json[i].id+")\'>"+
-              +json[i].id+"\' onclick=\'selectProdukOptions("+json[i].id+")\'>"+
+              "<a href='javascript:void(0)' class='addPct' id=\'product-"+json[i].id+"\' onclick=\'addToCart("+json[i].id+")\'>"+
                 "<div class='product "+colorClass+" flat-box waves-effect waves-block'>"+
                   "<h3 id='proname'>"+json[i].nama+"</h3>"+
                   "<div class='mask'>"+
@@ -420,17 +418,15 @@
                               "</div>"+
                           "</div>"+
                           "<div class='col-xs-2'>"+
-                            "<span class='textPD'>"
-                              +"<span><b>Ukuran:</b> "+json[i].text_ukuran+"</span>"+
-                            // +"<select name=ukuran id=\'uk-"+json[i].rowid+"\' class=\'form-control input-sm\' onchange=updateOption(\'"+json[i].rowid+"\') title='Pilih Ukuran'>"+
-                            //     "<option value=0 select disabled>Pilih Ukuran</option>"+
-                            //   "</select>"+
+                            "<span class='textPD'>"+
+                              "<select name=ukuran id=\'uk-"+json[i].rowid+"\' class=\'form-control input-sm\' onchange=updateOption(\'"+json[i].rowid+"\') title='Pilih Ukuran'>"+
+                                "<option value=0 select disabled>Pilih Ukuran</option>"+
+                              "</select>"+
                             "</span>"+
-                            "<span class='textPD'>"
-                              +"<span><b>Warna:</b> "+json[i].text_warna+"</span>"+
-                              // +"<select name=warna id=\'wr-"+json[i].rowid+"\' class=\'form-control input-sm\' onchange=updateOption(\'"+json[i].rowid+"\') title='Pilih Warna'>"+
-                              //   "<option value=0 select disabled>Pilih Warna</option>"+
-                              // "</select>"+
+                            "<span class='textPD'>"+
+                              "<select name=warna id=\'wr-"+json[i].rowid+"\' class=\'form-control input-sm\' onchange=updateOption(\'"+json[i].rowid+"\') title='Pilih Warna'>"+
+                                "<option value=0 select disabled>Pilih Warna</option>"+
+                              "</select>"+
                             "</span>"+
                           "</div>"+
                           "<div class='col-xs-2 productNum'>"+
@@ -451,8 +447,8 @@
                   "</div>"+
               "</div>";
         $("#productList").append(html);
-        // loadUkuran(json[i].id, json[i].rowid, listUkuran, json[i].ukuran);
-        // loadWarna(json[i].id, json[i].rowid, listWarna, json[i].warna);
+        loadUkuran(json[i].id, json[i].rowid, listUkuran, json[i].ukuran);
+        loadWarna(json[i].id, json[i].rowid, listWarna, json[i].warna);
       }
   }
   function loadUkuran(rid, id, json, pilih){
@@ -463,19 +459,16 @@
       dataType : "json",
       success : function(data){
         var html = "";
-        // $("#uk-"+id).html('');
-        $("#selectUkuran").html('');
+        $("#uk-"+id).html('');
         html = "<option value='0' selected>Tidak Ada Ukuran</option>";
-        $("#selectUkuran").append(html);
-        // $("#uk-"+id).append(html);
-        for(var i=0; i<data.length; i++) {
+        $("#uk-"+id).append(html);
+        for (var i=0;i<data.length;i++){
           var pilihs = "";
-          /*if(data[i].id == pilih){
+          if(data[i].id == pilih){
             pilihs = "selected";
-          }*/
+          }
           html = "<option value=\'"+data[i].id+"\' "+pilihs+">"+data[i].nama+"</option>";
-          // $("#uk-"+id).append(html);
-          $("#selectUkuran").append(html);
+          $("#uk-"+id).append(html);
         }
       }
     });     
@@ -525,7 +518,6 @@
           var elem = $("#qt-"+data.rowid);
           // var getRow = list.filter(function (index) { return index.rowid == data.id }) || 0;
 
-          console.log(list);
           $.confirm({
               title: 'Stok',
               content: 'Stok Tidak Mencukupi <br>Max Qty: <b>' + list.stok + "</b>",
@@ -548,19 +540,16 @@
       dataType : "json",
       success : function(data){
         var html = "";
-        // $("#wr-"+id).html('');
-        $("#selectWarna").html('');
+        $("#wr-"+id).html('');
         html = "<option value='0' selected>Tidak Ada Warna</option>";
-        // $("#wr-"+id).append(html);
-        $("#selectWarna").append(html);
+        $("#wr-"+id).append(html);
         for (var i=0;i<data.length;i++){
           var pilihs = "";
-          /*if(data[i].id == pilih){
+          if(data[i].id == pilih){
             pilihs = "selected";
-          }      */
+          }      
           html = "<option value=\'"+data[i].id+"\' "+pilihs+">"+data[i].nama+"</option>";
-          $("#selectWarna").append(html);
-          // $("#wr-"+id).append(html);
+          $("#wr-"+id).append(html);
         }
       }
     });    
@@ -643,50 +632,8 @@
       }
     });
   }
-  function selectProdukOptions(id){
-    if(id != '') {
-      $.confirm({
-        title: 'Opsi Produk',
-        content: '' +
-        '<form action="" class="" method="post">' +
-        '<div class="form-group">' +
-        '<label>Pilih Ukuran Produk</label>' +
-        '<select id=\'selectUkuran\' class=\'form-control\'>'+'</select>'
-        + '</div>' +
-        '<div class="form-group">' +
-        '<label>Pilih Warna Produk</label>' +
-        '<select id=\'selectWarna\' class=\'form-control\'>'+'</select>'
-        + '</div>' +
-        '</form>',
-        buttons: {
-            formSubmit: {
-                text: 'Pilih',
-                btnClass: 'btn-blue',
-                action: function () {
-                    var selectUkuran = this.$content.find('#selectUkuran').val() || 0;
-                    addToCart(id);
-                }
-            },
-            cancel: function () { },
-        },
-        onContentReady: function () {
-            loadUkuran(id);
-            loadWarna(id);
-            // bind to events
-            var jc = this;
-            this.$content.find('form').on('submit', function (e) {
-                // if the user submits the form by pressing enter in the field.
-                e.preventDefault();
-                jc.$$formSubmit.trigger('click'); // reference the button and click it
-            });
-        }
-    });
-    }
-  }
   function addToCart(id){
     var idCustomer = $("#customerSelect").val();
-    var idUkuran = $("#selectUkuran").val();
-    var idWarna = $("#selectWarna").val();
     if(idCustomer == '' || idCustomer == null) {
       $.alert({
           title: 'Perhatian',
@@ -697,8 +644,7 @@
       $.ajax({
         url :"<?php echo base_url('Transaksi_penjualan/Transaksi/tambahCart')?>/"+id,
         type : "POST",
-        // data :"idCustomer="+$("#customerSelect").val(),
-        data : {'idCustomer': idCustomer, 'idUkuran': idUkuran, 'idWarna': idWarna},
+        data :"idCustomer="+$("#customerSelect").val(),
         dataType : "json",
         success : function(data) {
           if(data.status == 2){
@@ -997,11 +943,10 @@
     checkBarcode();
   });
   function checkBarcode() {
-    var barcode = $("#barcode").val() || ''; //Barcode == IDproduk
+    var barcode = $("#barcode").val() || '';
     var defaultHtml = $('#btnBarcode').html();
     if(barcode != '') {
-      // addToCart(barcode);
-      selectProdukOptions(barcode);
+      addToCart(barcode);
     }
   };
 
