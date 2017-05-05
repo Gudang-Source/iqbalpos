@@ -17,9 +17,9 @@
   }
 </style>
 <?php
-  echo "<pre>";
+  /*echo "<pre>";
   print_r(isset($_SESSION['cart_contents']) ? $_SESSION['cart_contents'] : '');
-  echo "</pre>";
+  echo "</pre>";*/
 ?>
 <div class="container-fluid">
    <div class="row">

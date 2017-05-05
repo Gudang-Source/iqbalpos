@@ -393,6 +393,7 @@ class Transaksi extends MX_Controller {
             foreach ($dataCart as $itemCart) {
                 $splitCartId = explode('_' ,$itemCart['id']);
                 if($splitCartId[1] == "PENJUALAN") {
+                    //Menghitung total qty produk yang memiliki id yang sama dengan id produk ini
                     if($splitCartId[0] == $sid[0]) {
                         $totalQty = $totalQty + $itemCart['qty'];
                         array_push($filteredCart, $itemCart);
@@ -402,6 +403,28 @@ class Transaksi extends MX_Controller {
         }
         return $totalQty;
     }
+    function getCartQtyByIdNotThis($id) {
+        $sid = explode('_', $id);
+        $totalQty = 0;
+
+        if(!empty($id)) {
+            $filteredCart = array();
+            $dataCart = $this->cart->contents();
+            foreach ($dataCart as $itemCart) {
+                $splitCartId = explode('_' ,$itemCart['id']);
+                if($splitCartId[1] == "PENJUALAN") {
+                    //Menghitung total qty produk dengan mengecualikan jumlah produk dengan ID ini (berdasarkan idukuran & idwarna)
+                    $splitCartId23 = $splitCartId[2]."_".$splitCartId[3];
+                    $sid23 = $sid[2]."_".$sid[3];
+                    if(($splitCartId[0] == $sid[0]) && ($splitCartId23 != $sid23)) {
+                        $totalQty = $totalQty + $itemCart['qty'];
+                        array_push($filteredCart, $itemCart);
+                    }
+                }
+            }
+        }
+        return $totalQty; //reserved qty
+    }
     function updateCart($id, $qty, $state = 'tambah'){
     	$getid = $this->in_cart($id, 'id', 'rowid');
 
@@ -409,20 +432,21 @@ class Transaksi extends MX_Controller {
     	$dataSelect['id'] = $getid;
     	$selectData = $this->Transaksipenjualanmodel->select($dataSelect, 'm_produk');
 
-        // $lastQty = $this->in_cart($id, 'qty', 'rowid');
+        $itemQty = $this->in_cart($id, 'qty', 'rowid');
     	$lastQty = $this->getCartQtyById($getid);
+        $reservedQty = $this->getCartQtyByIdNotThis($getid);
     	if($state == 'tambah') {
             $stokProduk = $selectData->row()->stok;
     		if($stokProduk >= ($lastQty + 1)){			
 				$data = array(
 				        'rowid'  => $id,
-				        'qty'    => $lastQty + 1
+				        'qty'    => $itemQty + 1
 				);
 				$this->cart->update($data);
 				echo json_encode(array("status" => 2, "list" => $this->getOrderArray()));
     		} else {
                 //stok tidak mencukupi
-                $stokAvailable = array("stok" => ($stokProduk - $lastQty)+1);
+                $stokAvailable = array("stok" => ($stokProduk - $reservedQty));
                 // echo json_encode(array("status"=>1, "list"=>$this->getOrderArray()));
     			echo json_encode(array("lastQty" => $lastQty,"status" =>1, "list" => $stokAvailable, "rowid"=>$id));
     		}		
@@ -460,7 +484,9 @@ class Transaksi extends MX_Controller {
     	$selectData = $this->Transaksipenjualanmodel->select($dataSelect, 'm_produk');
         $stokProduk = $selectData->row()->stok;
         $lastQty = $this->getCartQtyById($getid);
-    	if($stokProduk >= $qty){
+        $reservedQty = $this->getCartQtyByIdNotThis($getid);
+
+    	if(($stokProduk - $reservedQty) >= $qty){
 			$data = array(
 			        'rowid'  => $id,
 			        'qty'=> isset($qty) ? $qty : 0
@@ -470,9 +496,10 @@ class Transaksi extends MX_Controller {
     	}else{
     		// stok tidak mencukupi
             $stokAvailable = array(
-                                "stok" => ((int)$stokProduk - ((int)$lastQty - (int)$qty)),
+                                "stok" => ((int)$stokProduk - (int)$reservedQty),
                                 "stokProduk" => $stokProduk,
                                 "lastQty" => $lastQty,
+                                "reservedQty" => $reservedQty,
                                 "qty" => $qty,
                                 );
     		// echo json_encode(array("status"=>1, "id"=>$id, "list"=>$this->getOrderArray()));
