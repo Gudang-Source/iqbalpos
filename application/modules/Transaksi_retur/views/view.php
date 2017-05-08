@@ -106,7 +106,7 @@
     var i = $(e.currentTarget).prop("id");
     $.confirm({
     title: 'Konfirmasi!',
-    content: 'Ubah status menjadi <i class="label label-success">Telah Diproses</i>?',
+    content: 'Ubah status retur menjadi <i class="label label-success">Telah Diproses</i>?',
     type: 'green',
     buttons: {
         confirm: {

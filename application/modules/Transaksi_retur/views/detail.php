@@ -4,6 +4,8 @@
               <tr>
                   <th class="text-center no-sort">#</th>
                   <th class="text-center">Produk</th>
+                  <th class="text-center">Ukuran</th>
+                  <th class="text-center">Warna</th>
                   <th class="text-center">Jumlah</th>
                   <th class="text-center">Harga Beli (IDR)</th>
                   <th class="text-center">Harga Jual (IDR)</th>

@@ -1,8 +1,16 @@
 <style type="text/css">
   .product-details input[type="text"]{
-    width: 5em !important;
+    width: 4em !important;
+  }
+  #productList {
+    font-size: 90%;
   }
 </style>
+<?php
+  echo "<pre>";
+  print_r(isset($_SESSION['cart_contents']) ? $_SESSION['cart_contents'] : '');
+  echo "</pre>";
+?>
 <div class="container-fluid">
    <div class="row">
     <div class="col-sm-12">
@@ -16,7 +24,7 @@
          <div class="col-sm-8">
           <div class="form-group">
             <label class="label-control">Customer</label class="label-control">
-            <select class="js-select-options form-control" id="customerSelect" name="idCustomer" required="required" onchange="filterAvaiableOrder()">
+            <select class="js-select-options form-control" id="customerSelect" name="idCustomer" required="required">
               <option value="0">Pilih Customer</option>
             </select>
           </div>
@@ -39,12 +47,15 @@
             <label>PRODUK</label>
          </div>
          <div class="col-xs-3 table-header text-center">
+            <label>OPSI</label>
+         </div>
+         <div class="col-xs-2 table-header text-center">
             <label>QTY</label>
          </div>
-         <div class="col-xs-3 table-header text-center">
+         <div class="col-xs-2 table-header text-center">
             <label>HARGA JUAL@ (IDR)</label>
          </div>
-         <div class="col-xs-3 table-header text-center">
+         <div class="col-xs-2 table-header text-center nopadding">
             <label>SUBTOTAL</label>
          </div>
          <div id="productList">
@@ -74,7 +85,7 @@
                   </tr> -->
                   <tr>
                      <td class="active">Total Harga (IDR)</td>
-                     <td class="whiteBg light-blue text-bold text-right"><span id="eTotal"></span></td>
+                     <td class="whiteBg light-blue text-bold text-right"><span id="eTotal" class="money"></span></td>
                   </tr>
                </table>
             </div>
@@ -117,9 +128,10 @@
   var currentCustomer = 0;
   var currentIdOrder = 0;
   var currentQty = 0;
+  var currentCustomerId = 0;
   var listOrder = <?php echo $list_order; ?>;
   var listCustomer = <?php echo $list_customer; ?>;
-  var listKategori = <?php echo $list_kategori; ?>;
+  //var listKategori = <?php /*echo $list_kategori;*/ ?>;
   var listWarna = <?php echo $list_warna; ?>;
   var listUkuran = <?php echo $list_ukuran; ?>;
   var tax = '<?php echo $tax; ?>';
@@ -140,6 +152,43 @@
       $("#customerSelect").append(html);
     }
   }
+  $("#customerSelect").on("select2:open", function (e) { 
+    saveCurrentCustomer();
+  });
+  $("#customerSelect").on("select2:select", function (e) { 
+    changeCustomer();
+  });
+  function saveCurrentCustomer() {
+    currentCustomerId = $("#customerSelect :selected").val();
+  }
+  function changeCustomer() {
+    var idCustomer = $("#customerSelect").val();
+    var productList = $("#productList");
+    if(productList.html().length > 0) {
+      $.confirm({
+          title: 'Konfirmasi',
+          content: 'Anda yakin ingin mengganti customer?',
+          buttons: {
+              ok: function () {
+                //clear server cart first
+                doClear(false); 
+                //change customer  
+                filterAvaiableOrder();
+              },
+              cancel: function () {
+                //returning to previous selected value
+                $("#customerSelect").val(idCustomer);
+                $("#customerSelect").trigger('change.select2'); // Notify only Select2 of changes
+                saveCurrentCustomer();
+              }
+            }
+      }); 
+    }
+    else {
+      filterAvaiableOrder();
+      //what?
+    }
+  }
   function filterAvaiableOrder(){
     var idCustomer = $("#customerSelect").val();
     $.ajax({
@@ -152,6 +201,7 @@
         load_available_order(data);
       }
     });
+    load_kategori('');
   }
   function load_available_order(json){
     var html = "";
@@ -171,12 +221,14 @@
       if(color == 7) { color = 1; }
       var colorClass = 'color0' + color; color++;
       html = "<div class='col-sm-2 col-xs-4' style='display: block;'>"+
-              "<a href='javascript:void(0)' class='addPct' id=\'product-"+json[i].id+"\' onclick=\'addToCart("+json[i].id+")\'>"+
+              "<a href='javascript:void(0)' class='addPct' id=\'product-"+json[i].id+"\' onclick=\'addToCart("+json[i].id+","+json[i].id_ukuran+","+json[i].id_warna+")\'>"+
                 "<div class='product "+colorClass+" flat-box waves-effect waves-block'>"+
-                  "<h3 id='proname'>"+json[i].nama+"</h3>"+
+                  "<h3 id='proname'>"+json[i].nama+
+                  "<br><small style='color:white;'>"+json[i].nama_ukuran+"</small>"+
+                  "<br><small style='color:white;'>"+json[i].nama_warna+"</small></h3>"+
                   "<div class='mask'>"+
                     "<h3>Rp <span class='money'>"+json[i].harga_beli+"</span></h3>"+
-                    "<p>"+json[i].deskripsi+"</p>"+
+                    // "<p>"+json[i].deskripsi+"</p>"+
                   "</div>"+
                   // "<img src=\'<?php echo base_url('upload/produk') ?>/"+json[i].foto+"\' alt=\'"+json[i].id_kategori+"\'>"+
                   "<img src='<?php echo base_url('upload/produk')?>/"+json[i].foto+"'>"+
@@ -190,8 +242,8 @@
     var html = "";
     var option = "";
     var select = "";
-    console.log(json);
-    console.log(json.length);
+    // console.log(json);
+    // console.log(json.length);
     $("#productList").html("");
       for (var i=0;i<json.length;i++){
         // option = json[i].options;
@@ -212,11 +264,19 @@
                                 "<span class='textPD'>"+json[i].produk+"</span>"+
                               "</div>"+
                           "</div>"+
+                          "<div class='col-xs-3'>"+
+                            "<span class='textPD'>"
+                              +"<span><b>Ukuran:</b> "+json[i].text_ukuran+"</span>"+
+                            "</span>"+
+                            "<span class='textPD'>"
+                              +"<span><b>Warna:</b> "+json[i].text_warna+"</span>"+
+                            "</span>"+
+                          "</div>"+
                           "<div class='col-xs-2 text-center'>"+
                             "<input id=\'qt-"+json[i].rowid+"\' class='form-control' value='"+json[i].qty+"' placeholder='0' maxlength='2' type='text' onfocus=saveCurrentQty(\'"+json[i].rowid+"\') onchange=updateQty(\'"+json[i].rowid+"\')>"+
                           "</div>"+
-                          "<div class='col-xs-4 nopadding text-right'>"+json[i].harga_beli+"</div>"+
-                          "<div class='col-xs-3 nopadding text-right'>"+json[i].subtotal+"</div>"+
+                          "<div class='col-xs-2 nopadding text-right'>"+json[i].harga_beli+"</div>"+
+                          "<div class='col-xs-2 nopadding text-right'>"+json[i].subtotal+"</div>"+
                       "</div>"+
                   "</div>"+
               "</div>";
@@ -270,15 +330,15 @@
 
   $("#customerSelect").on("select2:open", function() {
     currentCustomer = $(this).val();
-    console.log("currentCustomer: "+currentCustomer);
+    // console.log("currentCustomer: "+currentCustomer);
   });
   $("#orderSelect").on("select2:open", function() {
     currentIdOrder = $(this).val();
-    console.log("currentIdOrder: "+currentIdOrder);
+    // console.log("currentIdOrder: "+currentIdOrder);
   });
   function saveCurrentQty(id) {
     currentQty = $("#qt-"+id).val() || 0;
-    console.log("currentQty: "+currentQty);
+    // console.log("currentQty: "+currentQty);
   };
   function updateQty(id){
     var idCustomer = $("#customerSelect").val() || '';
@@ -347,25 +407,41 @@
       dataType : "json",
       success : function(data){
         load_product(data);
+        filterKategori();
       }
     });
+  }
+  function filterKategori(){
+    var idOrder = $("#orderSelect").val() || '';
+    $.ajax({
+      url :"<?php echo base_url('Transaksi_retur/Transaksi/getKategori')?>/"+idOrder,
+      type : "GET",
+      data :"",
+      dataType : "json",
+      success : function(data){
+        load_kategori(data);
+      }
+    });    
   }
   function load_kategori(json){
     var html = "";
     $("#kategoriGat").html('');
-    html = "<span class='categories selectedGat'><i class='fa fa-home'></i></span>";
+    html = "<span class='categories selectedGat' onclick=filterProdukByKategori(0) id=\'gat-0\'><i class='fa fa-home'></i></span>";
     $("#kategoriGat").append(html);
     for (var i=0;i<json.length;i++){
-      html = "<span class='categories selectedGat' onclick=filterProdukByKategori(\'"+json[i].id+"\') >"+json[i].nama+"</span>";
+      html = "<span class='categories' onclick=filterProdukByKategori(\'"+json[i].id+"\') id=\'gat-"+json[i].id+"\'>"+json[i].nama+"</span>";
       $("#kategoriGat").append(html);
     }
   }
   function filterProdukByKategori(id){
-    var keyword = $("#searchProd").val();
-    var supplier = $("#supplierSelect").val();
-    if(supplier != 0){    
+    var keyword = $("#searchProd").val() || '';
+    var order = $("#orderSelect").val() || '';
+    $( ".categories" ).removeClass('selectedGat');
+    $( "#gat-"+id ).addClass( "selectedGat" );
+
+    if(order != 0){    
       $.ajax({
-        url :"<?php echo base_url('Transaksi_retur/Transaksi/filterProdukByKategori')?>/"+id+"/"+keyword,
+        url :"<?php echo base_url('Transaksi_retur/Transaksi/filterProdukByKategori')?>/"+order+"/"+id+"/"+keyword,
         type : "GET",
         data :"",
         dataType : "json",
@@ -399,7 +475,7 @@
       });
     }
   }  
-  function addToCart(id){
+  function addToCart(id, idUkuran=0, idWarna=0){
     var idCustomer = $("#customerSelect").val() || '';
     var idOrder = $("#orderSelect").val() || '';
     var qty = $("#qt-"+id).val() || 0;
@@ -407,7 +483,10 @@
       $.ajax({
         url :"<?php echo base_url('Transaksi_retur/Transaksi/tambahCart')?>/"+id,
         type : "POST",
-        data : {'id_customer': idCustomer, 'id_order': idOrder, 'current_qty': qty},
+        data : {'id_customer': idCustomer, 'id_order': idOrder
+                , 'current_qty': qty, 'id_warna': idWarna
+                , 'id_ukuran': idUkuran
+              },
         dataType : "json",
         success : function(data){
           if(data.status == 1) {
@@ -505,10 +584,12 @@
     });
   }
   function inits(etax, ediscount, etotal, etotal_items){
+    unmaskInputMoney(); 
     $("#eTax").val(etax);
     $("#eDiscount").val(ediscount);
     $("#eTotal").html(etotal);    
     $("#eTotalItem").html(etotal_items);    
+    maskInputMoney(); 
   }
   function fillInformation(){
     $.ajax({
@@ -544,7 +625,7 @@
   }
   function doClear(){
     var defaultHtml = $('#btnRetur').html();
-    $('#btnRetur').text("Clearing...");
+    $('#btnRetur h5').text("Clearing...");
     $("#btnRetur").prop("disabled", true);    
     $.ajax({
       url :'<?php echo base_url("Transaksi_retur/Transaksi/destroyCart"); ?>',
@@ -663,12 +744,14 @@
           var datas = <?php echo json_encode(array()); ?>;
           load_order(datas);
           fillInformation();
-          window.location.reload(false);
+          // window.location.reload(false);
         }
-      });    
+    });
   }
   $(document).ready(function(){
     $("#formretur").on('submit', function(e){
+      var idCustomer = $("#customerSelect").val() || '';
+      var idOrder = $("#orderSelect").val() || '';
       var defaultHtml = $('#btnRetur').html();
       $('#btnRetur h5').text("Saving...");
       $("#btnRetur").prop("disabled", true);      
@@ -678,7 +761,17 @@
           content: 'Yakin ingin retur produk?',
           buttons: {
               confirm: function () {
+                if(idCustomer != '' && idOrder != '') {
                   doSubmit();
+                }
+                else {
+                  $.alert({
+                      title: 'Perhatian!',
+                      content: 'Anda belum memilih Customer/ID Order!'
+                  });
+                  $('#btnRetur').html(defaultHtml);
+                  $("#btnRetur").prop("disabled", false);
+                }
               },
               cancel: function () {
                   $('#btnRetur').html(defaultHtml);
