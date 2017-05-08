@@ -71,8 +71,11 @@ class Transaksi extends MX_Controller {
 			$nestedData[] 	= 	"<span class='pull-right money'>".$row["total_harga"]."</span>";
 			$nestedData[] 	= 	$row["date_add"];
 			// $nestedData[] 	= 	$row["status"]==1?"Belum Diproses":"Telah Diproses";
-            $nestedData[]   =  $row["status"]==1?'<input type="checkbox" id="toggle_'.$row["id"].'" class="bootstrap-toggle" title="Belum Diproses">':'Telah Diproses';
-			$nestedData[] 	= 	"<button class='btn btn-default btn-sm' onclick=detail('".$row["id"]."') title='Detail Retur'><i class='fa fa-file-text-o'></i></button>";			
+            $nestedData[]   =  $row["status"]==1?'<input type="checkbox" id="toggle_'.$row["id"].'" class="bootstrap-toggle" data-width="130" title="Belum Diproses">':'Telah Diproses';
+			$nestedData[] 	= "<div class='btn-group'>"	
+						."<button class='btn btn-default btn-sm' onclick=detail('".$row["id"]."') title='Detail Retur'><i class='fa fa-file-text-o'></i></button>"
+						."<a href='".base_url('Transaksi_retur/Transaksi/invoices/'.$row['id'])."') target='_blank' class='btn btn-default btn-sm' title='Cetak Invoice'> <i class='fa fa-print'></i> </a>"
+						."</div>";			
 			$data[] = $nestedData;
 		}
 		$json_data = array(
@@ -829,26 +832,32 @@ class Transaksi extends MX_Controller {
     	}
     	return $options;
     }
-    function invoices($idORder){
+    function invoices($idRetur){
     	$sql = " SELECT 
 					m_customer.nama as namacus,
 					m_customer.alamat as alamatcus,
 					m_customer.no_telp as notelpcus,
-					t_order.id as orderinvoice,
-					t_order.date_add as orderdate,
-					t_order.grand_total as ordertotal,
+					t_retur.id as orderinvoice,
+					t_retur.date_add as orderdate,
+					t_retur.total_harga as ordertotal,
+					t_retur.total_potongan as totalpotongan,
+					m_produk.sku as skuprod,
 					m_produk.nama as namaprod,
 					m_produk.deskripsi as deskprod,
-					t_order_detail.harga_jual as detailjual,
-					t_order_detail.jumlah as jumlahjual,
-					t_order_detail.total_harga as totaljual";
-		$sql.= " FROM t_order";
-		$sql.= " LEFT JOIN t_order_detail ON t_order.id = t_order_detail.id_order";
-		$sql.= " LEFT JOIN m_produk on t_order_detail.id_produk = m_produk.id";
-		$sql.= " LEFT JOIN m_customer ON t_order.id_customer = m_customer.id";
-		$sql.= " LEFT JOIN m_produk_ukuran on t_order_detail.id_ukuran = m_produk_ukuran.id";
-		$sql.= " LEFT JOIN m_produk_warna on t_order_detail.id_warna = m_produk_warna.id";
-		$sql.= " WHERE t_order.id=".$idORder;
+					m_produk_ukuran.nama as nama_ukuran,
+					m_produk_warna.nama as nama_warna,
+					t_retur_detail.harga_jual_normal as detailjualnormal,
+					t_retur_detail.harga_jual as detailjual,
+					t_retur_detail.jumlah as jumlahjual,
+					t_retur_detail.potongan as potongan,
+					t_retur_detail.total_harga as totaljual";
+		$sql.= " FROM t_retur";
+		$sql.= " LEFT JOIN t_retur_detail ON t_retur.id = t_retur_detail.id_retur";
+		$sql.= " LEFT JOIN m_produk on t_retur_detail.id_produk = m_produk.id";
+		$sql.= " LEFT JOIN m_customer ON t_retur.id_customer = m_customer.id";
+		$sql.= " LEFT JOIN m_produk_ukuran on t_retur_detail.id_ukuran = m_produk_ukuran.id";
+		$sql.= " LEFT JOIN m_produk_warna on t_retur_detail.id_warna = m_produk_warna.id";
+		$sql.= " WHERE t_retur.deleted = '1' AND t_retur.id=".$idRetur;
 		$exeQuery = $this->Transaksireturmodel->rawQuery($sql);
 		$data['data'] = $exeQuery;
 		$this->load->view('Transaksi_retur/invoice', $data);
