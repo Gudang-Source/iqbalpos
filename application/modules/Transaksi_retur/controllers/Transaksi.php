@@ -246,7 +246,8 @@ class Transaksi extends MX_Controller {
     	return json_encode($list->result_array());
     }   */
     function getProdukByName($keyword = '', $customer = '', $id_order = '', $kategori = ''){
-        $list = null; $where_customer = ''; $where_id_order = ''; $where_kategori = '';
+        $list = null; 
+        $where_customer = $where_id_order = $where_kategori = '';
         $keyword = strtolower($keyword);
         if(!empty($customer)) {
             $where_customer = " AND C.id_customer = ".$customer;
@@ -266,13 +267,16 @@ class Transaksi extends MX_Controller {
         	.$where_kategori
             ." AND ( LOWER(A.nama) LIKE '%".$keyword."%'"
             ." OR LOWER(A.deskripsi) LIKE '%".$keyword."%'"
-            ." OR LOWER(A.harga_beli) LIKE '%".$keyword."%')";
+            ." OR LOWER(A.harga_beli) LIKE '%".$keyword."%'"
+            ." OR LOWER(B.nama_ukuran) LIKE '%".$keyword."%'"
+            ." OR LOWER(B.nama_warna) LIKE '%".$keyword."%')";
         $dataLike = array();
         $list = $this->Transaksireturmodel->rawQuery($sql);
         return json_encode($list->result_array());
     }
     function getProdukByKategori($order=null, $kategori=0, $keyword=''){
         $keyword = strtolower($keyword);
+        $where_order = $where_kategori = '';
         if(!empty($order)) {
 	        if(!empty($order)) {
 	            $where_order = " AND B.id_order = ".$order;
