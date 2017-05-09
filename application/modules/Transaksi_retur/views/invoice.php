@@ -101,7 +101,7 @@
 		  $pot_persen = 0;
 		  $total_harga_normal = 0;
 		  foreach ($data->result_array() as $row) { 
-		  	$pot_persen = ($row['potongan']/$row['detailjual']) * 100;
+		  	$pot_persen = ($row['potongan']/$row['detailjualnormal']) * 100;
 		  	// $pot_persen = (16863/134900) * 100;
 		  	$total_harga_normal += $row['detailjualnormal'];
 		  	?>

@@ -71,7 +71,7 @@ class Transaksi extends MX_Controller {
 			$nestedData[] 	= 	$row["date_add"];
 			$nestedData[] 	= 	"<div class='btn-group'>"
                         ."<button class='btn btn-default btn-sm' onclick=detail('".$row["id"]."') title='Detail Penjualan'><i class='fa fa-file-text-o'></i></button>"      
-                        ."<button class='btn btn-default btn-sm' onclick=cetakInvoice('".$row["id"]."') title='Cetak Invoice'><i class='fa fa-print'></i></button>"
+                        ."<a href='".base_url('Transaksi_penjualan/Transaksi/invoices/'.$row['id'])."') target='_blank' class='btn btn-default btn-sm' title='Cetak Invoice'> <i class='fa fa-print'></i> </a>"
                         ."</div>";			
 			$data[] = $nestedData;
 		}
@@ -907,7 +907,10 @@ class Transaksi extends MX_Controller {
 					t_order.date_add as orderdate,
                     t_order.grand_total as ordertotal,
                     t_order.cash as ordercash,
-					t_order.uang_kembali as order_uang_kembali,
+                    t_order.uang_kembali as order_uang_kembali,
+                    t_order.total_potongan as totalpotongan,
+                    t_order.cash as bayar,
+					t_order.uang_kembali as kembalian,
                     m_produk.sku as skuprod,
                     m_produk.nama as namaprod,
                     m_produk.deskripsi as deskprod,
@@ -915,7 +918,11 @@ class Transaksi extends MX_Controller {
                     t_order_detail.jumlah as jumlahjual,
                     t_order_detail.nama_warna as nama_warna,
 					t_order_detail.nama_ukuran as nama_ukuran,
-					t_order_detail.total_harga as totaljual";
+                    t_order_detail.total_harga as totaljual,
+                    t_order_detail.harga_jual_normal as detailjualnormal,
+                    t_order_detail.potongan as potongan,
+                    t_order_detail.total_harga as totaljual";
+
 		$sql.= " FROM t_order";
 		$sql.= " LEFT JOIN t_order_detail ON t_order.id = t_order_detail.id_order";
 		$sql.= " LEFT JOIN m_produk on t_order_detail.id_produk = m_produk.id";
