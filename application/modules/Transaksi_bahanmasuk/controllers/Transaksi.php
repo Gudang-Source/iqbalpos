@@ -56,10 +56,10 @@ class Transaksi extends MX_Controller {
 		$data = array();
 		$i = 1;
 		foreach ($query->result_array() as $row) {
-            $foto_url = base_url()."/upload/produk/placeholder.png";
+            $foto_url = base_url()."/upload/bahan_baku/placeholder.png";
             if(!empty($row["foto"])) {
-                if(file_exists(URL_UPLOAD."/produk/".$row["foto"])) {
-                    $foto_url = base_url()."/upload/produk/".$row["foto"];
+                if(file_exists(URL_UPLOAD."/bahan_baku/".$row["foto"])) {
+                    $foto_url = base_url()."/upload/bahan_baku/".$row["foto"];
                 }
             }			
 			$nestedData		=	array(); 

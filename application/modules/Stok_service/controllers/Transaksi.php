@@ -142,7 +142,7 @@ class Transaksi extends MX_Controller {
 			$nestedData[] 	= 	$row["nama"];
 			$nestedData[] 	= 	$row["sku"];
 			$nestedData[] 	= 	"<span class='center-block text-center'>".$row["sdjm"]."</span>";
-			$nestedData[] 	= 	$row['sdst']==1?"<input type='text' id='jbk-".$row['sdid']."' name='jbk-".$row['sdid']."' onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength='2' value='".$row["sdjbk"]."' class='form-control nopadding productNum input-sm pull-right' style='width: 50%' title='Jumlah Barang Kembali'/>": "<span class='center-block text-center'>".$row["sdjbk"]."</span>";
+			$nestedData[] 	= 	$row['sdst']==1?"<input type='text' id='jbk-".$row['sdid']."' name='jbk-".$row['sdid']."' value='".$row["sdjbk"]."' class='form-control nopadding productNum input-sm pull-right hundreds' title='Jumlah Barang Kembali'/>": "<span class='center-block text-center'>".$row["sdjbk"]."</span>";
 			$nestedData[] 	= 	$row['sdst']==1?"<input class='form-control nopadding productNum money input-sm' type='text' id='juk-".$row['sdid']."' name='juk-".$row['sdid']."' value='".$row["sdjuk"]."' title='Nominal Uang Kembali'/>": "<span class='money pull-right'>".$row["sdjuk"]."</span>";
 			$enableButton	=	"";
 			switch ($row['sdst']) {

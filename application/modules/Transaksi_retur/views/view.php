@@ -52,7 +52,7 @@
 </div>
 <!-- /.Modal Detail-->
 <script type="text/javascript" language="javascript" >
-     function maskInputMoney(){
+    function maskInputMoney(){
       $('.money').mask('#.##0', {reverse: true});
     }
     function unmaskInputMoney(){

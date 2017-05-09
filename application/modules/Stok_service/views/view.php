@@ -64,7 +64,13 @@
 </div>
 <!-- /.Modal Detail-->
 <script type="text/javascript" language="javascript" >
-
+    function maskInputHundreds(){
+      console.log("Run Hundreds");
+      $('.hundreds').mask('000', {reverse: true});
+    }
+    function unmaskInputHundreds(){
+      $('.hundreds').unmask();
+    }
     function maskInputMoney(){
       $('.money').mask('#.##0', {reverse: true});
     }
@@ -101,6 +107,7 @@
           $("#body-detail").html(data);
         }
       });       
+      maskInputHundreds();
       $("#modaldetail").modal("show");
     }
     function testClick(){

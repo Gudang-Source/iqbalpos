@@ -90,7 +90,7 @@
                </table>
             </div>
             <button type="button" onclick="cancelOrder()" class="btn btn-red col-md-6 flat-box-btn"><h5 class="text-bold">Cancel</h5></button>
-            <button type="submit" class="btn btn-green col-md-6 flat-box-btn" onclick="retur()" id="btnRetur"><h5 class="text-bold">Proses Retur</h5></button>
+            <button type="submit" class="btn btn-green col-md-6 flat-box-btn" id="btnRetur"><h5 class="text-bold">Proses Retur</h5></button>
          </div>
         </form>
 

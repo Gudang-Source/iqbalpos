@@ -41,7 +41,7 @@
                     <th class="text-center no-sort">#</th>
                     <th class="text-center">Nama Produk</th>
                     <th class="text-center">Jumlah Terjual</th>
-                    <th class="text-center">Total Harga</th>
+                    <th class="text-center">Total Harga (IDR)</th>
                     <!-- <th class="text-center no-sort">Aksi</th> -->
                   </tr>
               </thead>

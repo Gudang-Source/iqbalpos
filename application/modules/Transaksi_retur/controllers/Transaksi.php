@@ -841,6 +841,7 @@ class Transaksi extends MX_Controller {
 					t_retur.date_add as orderdate,
 					t_retur.total_harga as ordertotal,
 					t_retur.total_potongan as totalpotongan,
+                    m_produk.kode_barang as kodeprod,
 					m_produk.sku as skuprod,
 					m_produk.nama as namaprod,
 					m_produk.deskripsi as deskprod,

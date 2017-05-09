@@ -106,7 +106,7 @@
 		  	$total_harga_normal += $row['detailjualnormal'];
 		  	?>
 			  <tr class="item-row">
-			      <td class><?php echo $row['skuprod'];?></td>
+			      <td class><?php echo !empty($row['kodeprod']) ? $row['kodeprod'] : '-';?></td>
 			      <td class><?php echo $row['namaprod'];?></td>
 			      <td class>
 			      	<?php echo !empty($row['nama_ukuran']) ? $row['nama_ukuran'] : 'Tidak ada';?>

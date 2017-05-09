@@ -109,7 +109,7 @@
 		  	?>
 			  <tr class="item-row">
 			    <td class="text-right"><?php echo $i++;?></td>
-			    <td><?php echo $row['skuprod'];?></td>
+			    <td class><?php echo !empty($row['kodeprod']) ? $row['kodeprod'] : '-';?></td>
 		        <td><?php echo $row['namaprod'];?></td>
 		      	<td><?php echo !empty($row['nama_ukuran']) ? $row['nama_ukuran'] : 'Tidak ada';?></td>
 			    <td><?php echo !empty($row['nama_warna']) ? $row['nama_warna'] : 'Tidak ada';?></td>
@@ -139,7 +139,7 @@
 		  <tr>
 	      <td colspan="5" class="blank"> </td>
 	      <td colspan="3" class="total-line">Saldo Retur</td>
-	      <td colspan="2" class="total-value text-right">?</td>
+	      <td colspan="2" class="total-value text-right">0</td>
 		  </tr>		
 		  <tr>
 	      <td colspan="5" class="blank"> </td>
