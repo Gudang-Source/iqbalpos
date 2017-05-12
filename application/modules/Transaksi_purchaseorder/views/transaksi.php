@@ -28,7 +28,7 @@
            </div>
          </div>
          <div class="col-xs-3 table-header text-center">
-            <label>PRODUCT</label>
+            <label>PRODUK</label>
          </div>
          <div class="col-xs-3 table-header text-center">
             <label>OPSI</label>

@@ -18,7 +18,6 @@
                   <th class="text-center no-sort">Aksi</th>
               </tr>
           </thead>
-
           <tbody id='bodytable'>
             
           </tbody>

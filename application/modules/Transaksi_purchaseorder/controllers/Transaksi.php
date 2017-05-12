@@ -150,12 +150,13 @@ class Transaksi extends MX_Controller {
     }
     function invoices($idORder){
         $sql = " SELECT 
-                    m_supplier_produk.nama as namacus,
-                    m_supplier_produk.alamat as alamatcus,
-                    m_supplier_produk.no_telp as notelpcus,
+                    m_supplier_produk.nama as nama_supplier,
+                    m_supplier_produk.alamat as alamat_supplier,
+                    m_supplier_produk.no_telp as notel_supplier,
                     t_purchase_order.id as orderinvoice,
                     t_purchase_order.date_add as orderdate,
                     t_purchase_order.total_harga_beli as ordertotal,
+                    m_produk.kode_barang as kodeprod,
                     m_produk.nama as namaprod,
                     m_produk.deskripsi as deskprod,
                     t_purchase_order_detail.harga_beli as detailjual,
