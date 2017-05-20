@@ -1,4 +1,9 @@
 <!-- Page Content -->
+<style type="text/css">
+  .awesomplete {
+    display: block;
+  }  
+</style>
 <div class="container">
 <div class="row" style='min-height:80px;'>
   <div id='notif-top' style="margin-top:50px;display:none;" class="col-md-4 alert alert-success pull-right">
@@ -16,8 +21,11 @@
                   <th class="text-center">Nama Customer</th>
                   <th class="text-center">Alamat</th>
                   <th class="text-center">No. Telp</th>
-                  <th class="text-center" class="hidden-xs">Customer Email</th>
-                  <th class="text-center" class="hidden-xs">Tanggal Buat</th>
+                  <th class="text-center">Email</th>
+                  <th class="text-center">KTP</th>
+                  <th class="text-center">NPWP</th>
+                  <th class="text-center">Bank</th>
+                  <th class="text-center">Tanggal Buat</th>
                   <th class="text-center no-sort">Aksi</th>
               </tr>
           </thead>
@@ -54,19 +62,19 @@
              </div>
              <div class="col-sm-12">
                <div class="form-group">
-                 <label for="alamat">Alamat Customer</label>
+                 <label for="alamat">Alamat</label>
                  <input type="text" name="alamat" maxlength="30" class="form-control" id="alamat" placeholder="Alamat Customer" required="">
                </div>
              </div>
              <div class="col-sm-6">
                <div class="form-group">
-                 <label for="no_telp">No Telp Customer</label>
+                 <label for="no_telp">No. Telp</label>
                  <input type="number" min="0" maxlength="50" name="no_telp" class="form-control" id="no_telp" placeholder="No Telp Customer" required="">
                </div>
              </div>
              <div class="col-sm-6">
                <div class="form-group">
-                 <label for="email">Email Customer</label>
+                 <label for="email">Email</label>
                  <input type="email" maxlength="50" name="email" class="form-control" id="email" placeholder="Email Customer" required="">
                </div>
              </div>
@@ -93,9 +101,58 @@
              </div>
              <div class="col-sm-6">
                <div class="form-group">
-                 <label for="id_customer_level">Level</label>
+                 <label for="id_customer_level">Customer Level</label>
                  <select name="id_customer_level" class="form-control" id="id_customer_level" required="">
                  </select>
+               </div>
+             </div>
+             <div class="col-sm-6">
+               <div class="form-group">
+                 <label for="ktp">No. KTP</label>
+                 <input type="number" name="ktp" class="form-control" id="ktp" placeholder="Nomor KTP">
+               </div>
+             </div>
+             <div class="col-sm-6">
+               <div class="form-group">
+                 <label for="npwp">NPWP</label>
+                 <input type="text" name="npwp" class="form-control" id="npwp" placeholder="NPWP">
+               </div>
+             </div>
+             <div class="col-sm-6">
+               <div class="form-group">
+                 <label for="nama_bank">Nama Bank</label>
+                 <input type="text" name="nama_bank" class="form-control" id="nama_bank" placeholder="Nama Bank">
+               </div>
+             </div>
+             <div class="col-sm-6">
+               <div class="form-group">
+                 <label for="no_rekening">No. Rekening</label>
+                 <input type="text" name="no_rekening" class="form-control" id="no_rekening" placeholder="Nomor Rekening">
+               </div>
+             </div>
+             <div class="col-sm-6">
+               <div class="form-group">
+                 <label for="rekening_an">Rekening Atas Nama</label>
+                 <input type="text" name="rekening_an" class="form-control" id="rekening_an" placeholder="Rekening Atas Nama">
+               </div>
+             </div>
+             <div class="col-sm-6">
+               <div class="form-group">
+                 <label for="sales">Nama Sales</label>
+                 <input type="text" name="sales" class="form-control awesomplete" list="salesList" id="sales" placeholder="Nama Sales">
+                 <datalist id="salesList">
+                   <?php 
+                    foreach (json_decode($list_pegawai) as $pegawai) { ?>
+                      <option><?php echo $pegawai->nama;?></option>  
+                    <?php }
+                   ?>
+                 </datalist>
+               </div>
+             </div>
+             <div class="col-sm-12">
+               <div class="form-group">
+                 <label for="keterangan">Keterangan</label>
+                 <textarea name="keterangan" class="form-control" id="keterangan" placeholder="Keterangan"></textarea>
                </div>
              </div>
            </div>
@@ -206,6 +263,9 @@
             json[i].alamat,
             json[i].no_telp,
             json[i].email,
+            json[i].ktp,
+            json[i].npwp,
+            json[i].nama_bank,
             DateFormat.format.date(json[i].date_add, "dd-MM-yyyy HH:mm"),
             '<td class="text-center"><div class="btn-group" >'+
                 '<a id="group'+i+'" class="divpopover btn btn-sm btn-default" href="javascript:void(0)" data-toggle="popover" data-placement="top" onclick="confirmDelete(this)" data-html="true" title="Hapus Data?" ><i class="fa fa-times"></i></a>'+
@@ -231,6 +291,13 @@
     $("#alamat").val("");
     $("#no_telp").val("");
     $("#email").val("");
+    $("#ktp").val("");
+    $("#npwp").val("");
+    $("#nama_bank").val("");
+    $("#no_rekening").val("");
+    $("#rekening_an").val("");
+    $("#keterangan").val("");
+    $("#sales").val("");
     $("#kodepos").val("");
     $("#id_customer_level").val("");
     load_prov(jsonProv);
@@ -249,6 +316,13 @@
     $("#alamat").val(jsonList[i].alamat);
     $("#no_telp").val(jsonList[i].no_telp);
     $("#email").val(jsonList[i].email);
+    $("#ktp").val(jsonList[i].ktp);
+    $("#npwp").val(jsonList[i].npwp);
+    $("#nama_bank").val(jsonList[i].nama_bank);
+    $("#no_rekening").val(jsonList[i].no_rekening);
+    $("#rekening_an").val(jsonList[i].rekening_an);
+    $("#keterangan").val(jsonList[i].keterangan);
+    $("#sales").val(jsonList[i].sales);
     $("#kodepos").val(jsonList[i].kode_pos);
   	$("#id_provinsi").val(jsonList[i].id_provinsi);
   	$("#id_kota").val(jsonList[i].id_kota);

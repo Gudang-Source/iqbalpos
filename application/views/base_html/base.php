@@ -34,6 +34,8 @@
       <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/bootstrap-multiselect.css" />
       <!-- Bootstrap Toggle -->
       <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/bootstrap-toggle.min.css" />
+      <!-- Awesomplete -->
+      <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/awesomplete.css" />
       <!-- highcharts -->
       <!--<link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/highcharts.css" />-->
       <!-- css for the preview keyset extension -->
@@ -49,7 +51,8 @@
       <!-- fileinput css -->
       <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/fileinput.min.css">
       <!-- Custom CSS -->
-      <link href="<?php echo base_url(); ?>assets/css/Style-Dark.css" rel="stylesheet">
+      <!-- <link href="<?php echo base_url(); ?>assets/css/Style-Dark.css" rel="stylesheet"> -->
+      <link href="<?php echo base_url(); ?>assets/css/Style-Light.css" rel="stylesheet">
       <link href="<?php echo base_url(); ?>assets/css/custom_style.css" rel="stylesheet">
 
       <link href="<?php echo base_url(); ?>assets/js/notify/pnotify.custom.min.css" rel="stylesheet">
@@ -109,6 +112,8 @@
       <script src="<?php echo base_url(); ?>assets/js/jquery.form-validator.min.js"></script>
       <!-- jquery mask plugin-->
       <script src="<?php echo base_url(); ?>assets/js/jquery.mask.min.js"></script>
+      <!-- awesomplete plugin-->
+      <script src="<?php echo base_url(); ?>assets/js/awesomplete.min.js" async></script>
       <!-- custom script -->
       <script src="<?php echo base_url(); ?>assets/js/app.js"></script>
       <script src="<?php echo base_url(); ?>assets/js/app.js"></script>
@@ -116,7 +121,6 @@
       <script src="<?php echo base_url(); ?>assets/js/notify/pnotify.custom.min.js"></script>
       <script src="<?php echo base_url(); ?>assets/js/jquery-confirm.min.js"></script>      
    </head>
-   <body>
       <!-- TESTER -->
       <?php
         // echo "<pre>";
@@ -124,7 +128,19 @@
         // echo "</pre>";
       ?>
       <!-- Navigation -->
-      <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <?php 
+        //Hide navbar menu untuk halaman yang tertera pada array $segmen_hide
+        $hide_class = $body_style = '';
+        if(isset($segmen_hide) && isset($segmen_0) && isset($segmen_2)) {
+          if(in_array($segmen_0, $segmen_hide) && ($segmen_2) == 'transaksi') {
+            $hide_class = 'hidden';
+            $body_style = 'padding-top: 5px;';
+            echo "<script>console.log('HIDDEN KOK');</script>";
+          }
+        }
+      ?>
+   <body style="<?php echo $body_style?>">
+      <nav class="navbar navbar-default navbar-fixed-top <?php echo $hide_class?>" role="navigation">
          <div class="container-fluid">
             <div class="navbar-header">
                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">

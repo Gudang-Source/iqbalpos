@@ -41,6 +41,7 @@ class Master extends MX_Controller {
 		$dataInsert['nama'] 			= $params['nama'];
 		$dataInsert['id_menu'] 		    = $params['id_kategori'];
         $dataInsert['url']              = $params['url'];
+        $dataInsert['urutan']              = $params['urutan'];
         $dataInsert['icon_class']       = $params['icon_class'];
 		$dataInsert['deleted'] 			= 1;
         
@@ -88,6 +89,7 @@ class Master extends MX_Controller {
 		$dataUpdate['nama'] 			= $params['nama'];
         $dataUpdate['id_menu']          = $params['id_kategori'];
         $dataUpdate['url']              = $params['url'];
+        $dataUpdate['urutan']              = $params['urutan'];
 		$dataUpdate['icon_class'] 		= $params['icon_class'];
 
 		$checkData = $this->Devmenumodel->select($dataCondition, 'm_pegawai_permission');

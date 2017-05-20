@@ -171,8 +171,13 @@ class Transaksi extends MX_Controller {
     	return json_encode($selectData->result_array());
     }
     function getKategori(){
+        $dataSelect['deleted'] = 1;
+        $selectData = $this->Transaksipenjualanmodel->select($dataSelect, 'm_produk_kategori');
+        return json_encode($selectData->result_array());
+    }
+    function getBank(){
     	$dataSelect['deleted'] = 1;
-    	$selectData = $this->Transaksipenjualanmodel->select($dataSelect, 'm_produk_kategori');
+    	$selectData = $this->Transaksipenjualanmodel->select($dataSelect, 'm_bank');
     	return json_encode($selectData->result_array());
     }
     function getOrder(){
@@ -356,6 +361,7 @@ class Transaksi extends MX_Controller {
         $data['list_order'] = $this->getOrder();
         $data['list_customer'] = $this->getCustomer();
         $data['list_kategori'] = $this->getKategori();
+        $data['list_bank'] = $this->getBank();
         $data['list_metode_pembayaran'] = $this->getMetodePembayaran();
         
         // $data['list_warna'] = $this->getWarna();
@@ -764,6 +770,8 @@ class Transaksi extends MX_Controller {
             $dataInsertTorder['add_by']                         =   isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
             $dataInsertTorder['deleted']                        =   1;
             $dataInsertTorder['id_metode_pembayaran']           =   $params['paymentMethod'];
+            $dataInsertTorder['id_bank']                        =   $params['id_bank'];
+            $dataInsertTorder['nomor_kartu']                        =   $params['nomor_kartu'];
             $dataInsertTorder['cash']                           =   $params['paid'];
             $dataInsertTorder['uang_kembali']                   =   $params['kembalian'];
             $dataInsertTorder['total_potongan']                 =   $getTotal['total_potongan'];
@@ -772,7 +780,7 @@ class Transaksi extends MX_Controller {
     		if($insertTorder){
     			// insert ke h_transaksi
     			$dataHtransaksi['jenis_transaksi'] 	= 4;
-    			$dataHtransaksi['id_referensi']		= $params['chequenum'];
+    			// $dataHtransaksi['id_referensi']		= $params['chequenum'];
     			$dataHtransaksi['keterangan']		= $params['catatan'];
     			$dataHtransaksi['date_add']			= $dateNow;
     			$dataHtransaksi['add_by']			= isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
@@ -940,9 +948,10 @@ class Transaksi extends MX_Controller {
     }
 
     function getInvoiceData($id) {//Handling modal Invoice
-        if($id = 'last') {
+        if($id == 'last') {
             $condition = array('deleted' => 1);
-            $id = $this->Transaksipenjualanmodel->select($condition, 't_order', 'id', 'DESC')->row()->id;
+            $data = $this->Transaksipenjualanmodel->select($condition, 't_order', 'id', 'DESC')->row();
+            $id = !empty($data) ? $data->id : 0;
         }
         if(!empty($id)) {
             $sql = "SELECT A.*, B.nama AS nama_customer FROM t_order A "
@@ -985,6 +994,137 @@ class Transaksi extends MX_Controller {
         
             echo $html.$html2;
         }
+    }
+
+    //HOLD
+    public function checkHold($tipe="PENJUALAN") {
+        $result = FALSE;
+        if(isset($_SESSION['cart_holds'][$tipe])) {
+            //check if 'cart holds Penjualan' is empty
+            if(!empty($_SESSION['cart_holds'][$tipe])) {    
+                $result = end($_SESSION['cart_holds'][$tipe]);
+            }
+        }
+        else {
+            //Create empty session cart_holds Penjualan if not exist
+            $_SESSION['cart_holds'][$tipe] = array();
+        }
+        return $result;
+    }
+
+    public function selectHold($number) {
+        /*Posale::update_all(array(
+            'set' => array(
+                'status' => 0
+            ),
+            'conditions' => array(
+                'status = ? AND register_id = ?',
+                1,
+                $this->register
+            )
+        ));
+        Posale::update_all(array(
+            'set' => array(
+                'status' => 1
+            ),
+            'conditions' => array(
+                'number = ? AND register_id = ?',
+                $number,
+                $this->register
+            )
+        ));*/
+        $cart_holds = $_SESSION['cart_holds']['PENJUALAN'];
+        echo json_encode(array(
+            "status" => TRUE,
+            "hold" => $cart_holds
+        ));
+    }
+    
+    public function addHold($registerid=0) {
+        // $hold = Hold::find('last', array(
+        //     'conditions' => array(
+        //         'register_id = ?',
+        //         $registerid
+        //     )
+        // ));
+        // $number = ! empty($hold) ? intval($hold->number) + 1 : 1;
+        // Posale::update_all(array(
+        //     'set' => array(
+        //         'status' => 0
+        //     ),
+        //     'conditions' => array(
+        //         'status = ? AND register_id = ?',
+        //         1,
+        //         $this->register
+        //     )
+        // ));
+        // $attributes = array(
+        //     'number' => $number,
+        //     'time' => date("H:i"),
+        //     'register_id' => $registerid
+        // );
+        // Hold::create($attributes);
+        $status = FALSE;
+        $lastHold = $this->checkHold();
+
+        $number = !empty($lastHold) ? (intval($lastHold['id'])+1) : 1;
+        $hold = array(
+                'id' => $number,
+                'nama' => date("H:i")
+            );
+        array_push($_SESSION['cart_holds']['PENJUALAN'], $hold);
+        $status = TRUE;
+
+        $cart_holds = $_SESSION['cart_holds']['PENJUALAN'];
+        echo json_encode(array(
+            "status" => $status,
+            "hold" => $cart_holds
+        ));
+    }
+
+    public function removeHold($number) {
+       /* $hold = Hold::find('first', array(
+            'conditions' => array(
+                'number = ? AND register_id = ?',
+                $number,
+                $registerid
+            )
+        ));
+        $hold->delete();
+        Posale::delete_all(array(
+            'conditions' => array(
+                'number = ? AND register_id = ?',
+                $number,
+                $registerid
+            )
+        ));
+        $hold = Hold::find('last', array(
+            'conditions' => array(
+                'register_id = ?',
+                $registerid
+            )
+        ));
+        Posale::update_all(array(
+            'set' => array(
+                'status' => 1
+            ),
+            'conditions' => array(
+                'number = ? AND register_id = ?',
+                $hold->number,
+                $registerid
+            )
+        ));*/
+        foreach ($_SESSION['cart_holds']['PENJUALAN'] as $key => $value) {
+            if($value['id'] == $number) {
+                unset($_SESSION['cart_holds']['PENJUALAN'][$key]);
+            }
+        }
+
+        $cart_holds = $_SESSION['cart_holds']['PENJUALAN'];
+        echo json_encode(array(
+            "status" => TRUE,
+            "hold" => $cart_holds
+        ));
     }
 
 }

@@ -178,7 +178,7 @@
                           "</div>"+
                           "<div class='col-xs-2'>"+
                             "<span class='textPD'>"+
-                              "<input id=\'qt-"+json[i].rowid+"\' class='form-control' value='"+json[i].qty+"' placeholder='0' maxlength='2' type='text' onchange=updateQty(\'"+json[i].rowid+"\')>"+
+                              "<input id=\'qt-"+json[i].rowid+"\' class='form-control' value='"+json[i].qty+"' placeholder='0' maxlength='4' type='text' onchange=updateQty(\'"+json[i].rowid+"\')>"+
                               "</span>"+
                           "</div>"+
                           "<div class='col-xs-2 nopadding'>"+

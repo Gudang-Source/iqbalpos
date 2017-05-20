@@ -16,8 +16,10 @@
                   <th class="text-center">Nama Supplier Bahan</th>
                   <th class="text-center">Alamat</th>
                   <th class="text-center">No. Telp</th>
-                  <th class="text-center" class="hidden-xs">Email</th>
-                  <th class="text-center" class="hidden-xs">Tanggal Buat</th>
+                  <th class="text-center">Email</th>
+                  <th class="text-center">NPWP</th>
+                  <th class="text-center">Bank</th>
+                  <th class="text-center">Tanggal Buat</th>
                   <th class="text-center no-sort">Aksi</th>
               </tr>
           </thead>
@@ -83,6 +85,36 @@
                  <select name="id_kota" class="form-control" id="id_kota" required="">
                  </select>
                 
+               </div>
+             </div>
+             <div class="col-sm-6">
+               <div class="form-group">
+                 <label for="npwp">NPWP</label>
+                 <input type="text" name="npwp" class="form-control" id="npwp" placeholder="NPWP">
+               </div>
+             </div>
+             <div class="col-sm-6">
+               <div class="form-group">
+                 <label for="nama_bank">Nama Bank</label>
+                 <input type="text" name="nama_bank" class="form-control" id="nama_bank" placeholder="Nama Bank">
+               </div>
+             </div>
+             <div class="col-sm-6">
+               <div class="form-group">
+                 <label for="no_rekening">No. Rekening</label>
+                 <input type="text" name="no_rekening" class="form-control" id="no_rekening" placeholder="Nomor Rekening">
+               </div>
+             </div>
+             <div class="col-sm-6">
+               <div class="form-group">
+                 <label for="rekening_an">Rekening Atas Nama</label>
+                 <input type="text" name="rekening_an" class="form-control" id="rekening_an" placeholder="Rekening Atas Nama">
+               </div>
+             </div>
+             <div class="col-sm-12">
+               <div class="form-group">
+                 <label for="keterangan">Keterangan</label>
+                 <textarea name="keterangan" class="form-control" id="keterangan" placeholder="Keterangan"></textarea>
                </div>
              </div>
            </div>
@@ -181,6 +213,8 @@
             json[i].alamat,
             json[i].no_telp,
             json[i].email,
+            json[i].npwp,
+            json[i].nama_bank,
             DateFormat.format.date(json[i].date_add, "dd-MM-yyyy HH:mm"),
             '<td class="text-center"><div class="btn-group" >'+
                 '<a id="group'+i+'" class="divpopover btn btn-sm btn-default" href="javascript:void(0)" data-toggle="popover" data-placement="top" onclick="confirmDelete(this)" data-html="true" title="Hapus Data?" ><i class="fa fa-times"></i></a>'+
@@ -206,6 +240,11 @@
     $("#alamat").val("");
     $("#no_telp").val("");
     $("#email").val("");
+    $("#npwp").val("");
+    $("#nama_bank").val("");
+    $("#no_rekening").val("");
+    $("#rekening_an").val("");
+    $("#keterangan").val("");
     load_prov(jsonProv);
     $("#modalform").modal("show");    
   }
@@ -220,9 +259,14 @@
     $("#alamat").val(jsonList[i].alamat);
     $("#no_telp").val(jsonList[i].no_telp);
     $("#email").val(jsonList[i].email);
-  	$("#id_provinsi").val(jsonList[i].id_provinsi);
-  	$("#id_kota").val(jsonList[i].id_kota);
-	  $("#modalform").modal("show");
+    $("#id_provinsi").val(jsonList[i].id_provinsi);
+    $("#id_kota").val(jsonList[i].id_kota);
+    $("#npwp").val(jsonList[i].npwp);
+    $("#nama_bank").val(jsonList[i].nama_bank);
+    $("#no_rekening").val(jsonList[i].no_rekening);
+    $("#rekening_an").val(jsonList[i].rekening_an);
+    $("#keterangan").val(jsonList[i].keterangan);
+    $("#modalform").modal("show");
   }
   
   $("#myform").on('submit', function(e){

@@ -25,6 +25,7 @@ class Master extends MX_Controller {
         $data['list_kategori'] = json_encode($this->Produkmodel->select($dataSelect, 'm_produk_kategori', 'nama')->result());
         $data['list_bahan'] = json_encode($this->Produkmodel->select($dataSelect, 'm_produk_bahan', 'nama')->result());
         $data['list_katalog'] = json_encode($this->Produkmodel->select($dataSelect, 'm_produk_katalog', 'nama')->result());
+        $data['list_merk'] = json_encode($this->Produkmodel->select($dataSelect, 'm_produk_merk', 'nama')->result());
         $data['list_customer_level'] = json_encode($this->Produkmodel->select($dataSelect, 'm_customer_level', 'nama')->result());
         
         $data['list_ukuran'] = json_encode($this->Produkmodel->select($dataSelect, 'm_produk_ukuran', 'nama')->result());
@@ -46,25 +47,27 @@ class Master extends MX_Controller {
             0   =>  '#', 
             1   =>  'foto', 
             2   =>  'nama', 
-            3   =>  'sku',
-            4   =>  'stok',
-            5   =>  'harga_jual_normal',
-            6   =>  'date_add',
-            7   =>  'aksi'
+            3   =>  'merk', 
+            4   =>  'sku',
+            5   =>  'stok',
+            6   =>  'harga_jual_normal',
+            7   =>  'date_add',
+            8   =>  'aksi'
         );
-        $sql = "SELECT * FROM m_produk WHERE deleted = 1";
+        $sql = "SELECT A.*, B.nama AS merk FROM m_produk A LEFT JOIN m_produk_merk B ON B.id = A.id_merk WHERE A.deleted = 1";
         $query=$this->Produkmodel->rawQuery($sql);
         $totalData = $query->num_rows();
         // $totalFiltered = $totalData;
         
-        $sql = "SELECT * ";
-        $sql.=" FROM m_produk WHERE deleted = 1";
+        $sql = "SELECT A.*, B.nama AS merk";
+        $sql.=" FROM m_produk A LEFT JOIN m_produk_merk B ON B.id = A.id_merk WHERE A.deleted = 1";
         if( !empty($requestData['search']['value']) ) {
-            $sql.=" AND ( nama LIKE '%".$requestData['search']['value']."%' "; 
-            $sql.=" OR sku LIKE '%".$requestData['search']['value']."%' ";
-            $sql.=" OR stok LIKE '%".$requestData['search']['value']."%' ";
-            $sql.=" OR harga_jual_normal LIKE '%".$requestData['search']['value']."%' ";
-            $sql.=" OR date_add LIKE '%".$requestData['search']['value']."%' )";
+            $sql.=" AND ( A.nama LIKE '%".$requestData['search']['value']."%' "; 
+            $sql.=" OR B.nama LIKE '%".$requestData['search']['value']."%' ";
+            $sql.=" OR A.sku LIKE '%".$requestData['search']['value']."%' ";
+            $sql.=" OR A.stok LIKE '%".$requestData['search']['value']."%' ";
+            $sql.=" OR A.harga_jual_normal LIKE '%".$requestData['search']['value']."%' ";
+            $sql.=" OR A.date_add LIKE '%".$requestData['search']['value']."%' )";
         }
         $query=$this->Produkmodel->rawQuery($sql);
         $totalFiltered = $query->num_rows();
@@ -85,6 +88,7 @@ class Master extends MX_Controller {
             $nestedData[]   .=  "<a href='javascript:void(0)' data-toggle='popover' data-html='true' data-placement='right' onclick='showThumbnail(this)'>"
                             . "<img src='".$foto_url."' class='img-responsive img-rounded' width='70' alt='No Image' style='margin:0 auto;'> </a>";
             $nestedData[]   =   $row["nama"];
+            $nestedData[]   =   $row["merk"];
             $nestedData[]   =   $row["sku"];
             $nestedData[]   =   "<span class='text-center' style='display:block;'>".$row["stok"]."</span>";
             $nestedData[]   =   "<span class='pull-right money' style='display:block;'>".$row["harga_jual_normal"]."</span>";
@@ -127,6 +131,7 @@ class Master extends MX_Controller {
         $dataInsert['id_kategori']      = $params['id_kategori'];
         $dataInsert['id_bahan']         = $params['id_bahan'];
         $dataInsert['id_katalog']       = $params['id_katalog'];
+        $dataInsert['id_merk']          = $params['id_merk'];
         $dataInsert['sku']              = $params['sku'];
         $dataInsert['kode_barang']      = $params['kode_barang'];
         $dataInsert['berat']            = $params['berat'];
@@ -232,6 +237,7 @@ class Master extends MX_Controller {
         $dataUpdate['id_kategori']      = $params['id_kategori'];
         $dataUpdate['id_bahan']         = $params['id_bahan'];
         $dataUpdate['id_katalog']       = $params['id_katalog'];
+        $dataUpdate['id_merk']          = $params['id_merk'];
         $dataUpdate['sku']              = $params['sku'];
         $dataUpdate['kode_barang']      = $params['kode_barang'];
         $dataUpdate['berat']            = $params['berat'];

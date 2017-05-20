@@ -42,6 +42,11 @@ class Master extends MX_Controller {
 		$dataInsert['email'] 			= $params['email'];
 		$dataInsert['id_provinsi'] 		= $params['id_provinsi'];
 		$dataInsert['id_kota'] 			= $params['id_kota'];
+        $dataInsert['npwp']             = $params['npwp'];
+        $dataInsert['nama_bank']        = $params['nama_bank'];
+        $dataInsert['no_rekening']      = $params['no_rekening'];
+        $dataInsert['rekening_an']      = $params['rekening_an'];
+        $dataInsert['keterangan']       = $params['keterangan'];
         $dataInsert['last_edited']      = date("Y-m-d H:i:s");
         $dataInsert['add_by']           = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
         $dataInsert['edited_by']        = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
@@ -79,6 +84,11 @@ class Master extends MX_Controller {
     					'email'				=> $selectData->row()->email,
     					'id_provinsi'		=> $selectData->row()->id_provinsi,
     					'id_kota'			=> $selectData->row()->id_kota,
+                        'npwp'              => $selectData->row()->npwp,
+                        'nama_bank'         => $selectData->row()->nama_bank,
+                        'no_rekening'       => $selectData->row()->no_rekening,
+                        'rekening_an'       => $selectData->row()->rekening_an,
+                        'keterangan'        => $selectData->row()->keterangan,
     				));
     		}else{
     			echo json_encode(array('status' => 1));
@@ -97,6 +107,11 @@ class Master extends MX_Controller {
 		$dataUpdate['email'] 			= $params['email'];
 		$dataUpdate['id_provinsi'] 		= $params['id_provinsi'];
 		$dataUpdate['id_kota'] 			= $params['id_kota'];
+        $dataUpdate['npwp']             = $params['npwp'];
+        $dataUpdate['nama_bank']        = $params['nama_bank'];
+        $dataUpdate['no_rekening']      = $params['no_rekening'];
+        $dataUpdate['rekening_an']      = $params['rekening_an'];
+        $dataUpdate['keterangan']       = $params['keterangan'];
         $dataUpdate['last_edited']      = date("Y-m-d H:i:s");
         $dataUpdate['edited_by']        = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
         

@@ -2,6 +2,24 @@
   .product-details input[type="text"]{
     width: 5em !important;
   }
+  #ticket .modal-dialog {
+    width: 520px;
+  }
+  #ticketModal {
+    font-size: 90%;
+  }
+  #productList {
+    font-size: 90%;
+  }
+  .group-select {
+    width: 100%;
+  }
+  .group-select select.form-control{
+    width: 35%;
+  }
+  .group-select input.form-control{
+    width: 65%;
+  }
 </style>
 <div class="container-fluid">
    <div class="row">
@@ -12,8 +30,11 @@
    <div class="row">
     <div class="col-md-5 left-side">
       <form action="<?php echo base_url('Transaksi_pembelian/Transaksi/doSubmit'); ?>" method="post" id="pembelian">
-        <div class="col-xs-8"> &nbsp; </div>           
-<!--          <div class="col-xs-4 client-add">
+        <div class="col-sm-12 text-right" style="margin-top: 10px;"> 
+            <div class="btn btn-default" onclick="showInvoce('last');" title="Tampilkan Invoce Terakhir"><i class="fa fa-ticket"></i></div>
+         </div>
+          <!--          
+          <div class="col-xs-4 client-add">
             <a href="javascript:void(0)" data-toggle="modal" data-target="#ticket" onclick="showPO()">
                <span class="fa-stack fa-lg" data-toggle="tooltip" data-placement="top" title="Choose From Purchase Order">
                   <i class="fa fa-square fa-stack-2x grey"></i>
@@ -79,8 +100,15 @@
                   </tr>
                </table>
             </div>
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label for="paymentMethod" class="label-control">Metode Pembayaran</label>
+                 <select class="form-control" id="paymentMethod" name="paymentMethod" required="required"> </select>
+              </div>
+            </div>
             <button type="button" onclick="cancelOrder()" class="btn btn-red col-md-6 flat-box-btn"><h5 class="text-bold">Cancel</h5></button>
-            <button type="submit" class="btn btn-green col-md-6 flat-box-btn" data-toggle="modal" data-target="#AddSale" id="btnDoOrder"><h5 class="text-bold">Proses Transaksi</h5></button>
+            <button type="button" class="btn btn-green col-md-6 flat-box-btn" onclick="payment()" id="btnDoOrder"><h5 class="text-bold">Proses Transaksi</h5></button>
+            <!-- <button type="submit" class="btn btn-green col-md-6 flat-box-btn" data-toggle="modal" data-target="#AddSale" id="btnDoOrder"><h5 class="text-bold">Proses Transaksi</h5></button> -->
          </div>
         </form>
 
@@ -131,6 +159,103 @@
 </div>
 <!-- /.Modal PO-->
 
+<!-- Modal Payment -->
+  <div class="modal fade" id="modalpayment" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+   <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="Addpayament">Proses Pembelian</h4>
+        </div>
+        <form method="POST" action="<?php echo base_url('Transaksi_pembelian/Transaksi/doSubmit'); ?>" id="formpayment">
+        <div class="modal-body">
+             <div class="form-group">
+               <h2 id="textMetodePembayaran">Tunai</h2>
+             </div>
+            
+             <div class="row">
+                <div class="col-xs-3">
+                  <label class="center-block text-right">Total Harga</label>
+                </div>
+                <div class="col-xs-9">
+                  <h2 class="text-right bg-warning" style="margin-top: 5px; padding:10px;"><b>Rp <span id='textTotalHarga' class="money">0</span></b>-</h2>
+                </div>
+             </div>
+
+             <div class="form-horizontal">
+               <div class="form-group">
+                 <label class="col-sm-3 control-label" for="Paid">Nominal (IDR)</label>
+                 <div class="col-sm-9">
+                   <div class="input-group">
+                    <span class="input-group-addon">Rp</span> 
+                    <input type="text" value="0" name="paid" class="form-control money" id="Paid" placeholder="Nominal">
+                   </div>
+                 </div>
+               </div>
+               <div class="form-group pembayaran_bank">
+                 <label class="col-sm-3 control-label" for="id_bank">Bank</label>
+                 <div class="col-sm-9">
+                   <div class="input-group group-select">
+                     <select class="form-control" id="id_bank" name="id_bank">
+                     <!-- Load option bank -->
+                     </select>
+                     <input type="number" name="nomor_kartu" id="nomor_kartu" class="form-control" placeholder="Nomor Kartu">
+                   </div>
+                 </div> 
+               </div>
+             </div>
+
+             <div class="row">
+                <div class="col-xs-3">
+                  <label class="center-block text-right">Total Bayar</label>
+                </div>
+                <div class="col-xs-6">
+                  <h3 class="text-right bg-success" style="margin-top: 5px; padding:10px;">Rp <span id='textTotalBayar' class="money">0</span>-</h3>
+                </div>
+             </div>
+             <div class="row">
+               <div class="col-xs-3">
+                 <label class="center-block text-right">Kembalian</label>
+               </div>
+               <div class="col-xs-6">
+                 <h3 class="text-right bg-danger" style="margin-top: 5px; padding:10px;">Rp <span id='textKembalian' class="">0</span>-</h3>
+                 <input type="hidden" name="kembalian" id="kembalian">
+               </div>
+             </div>
+             <div class="clearfix"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>          
+          <button type="submit" class="btn btn-add" id="btnBayar" disabled="disabled"><i class="fa fa-check-square-o"></i> Bayar</button>
+        </div>
+        </form>
+      </div>
+   </div>
+  </div>
+  <!-- /.Modal -->
+
+<!-- Modal Invoice -->
+  <div class="modal fade" id="ticket" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+   <div class="modal-dialog" role="document" id="ticketModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Invoice</h4>
+        </div>
+        <div class="modal-body">
+          <div id="printSection">
+            <!-- load content here -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>          
+          <a href="javascript:void(0);" onclick="printTicket();" class="btn btn-add" id="btnCetak" title="Cetak Invoice"><i class="fa fa-print"></i> Cetak</a>
+        </div>
+      </div>
+   </div>
+  </div>
+  <!-- /.Modal -->
+
 <script type="text/javascript">
   function maskInputMoney(){
     $('.money').mask('#.##0', {reverse: true});
@@ -138,20 +263,41 @@
   function unmaskInputMoney(){
     $('.money').unmask();
   }
+
+  $("#paymentMethod").change(function(){
+     var p_met = $(this).find('option:selected').val();
+     var lower_p_met = $(this).find('option:selected').html().toLowerCase();
+
+     if (lower_p_met === 'tunai' || lower_p_met === 'kredit') {
+        $(".pembayaran_bank").find("input, select").prop("disabled", true);
+        $(".pembayaran_bank").hide();
+        $('.Paid').show();
+     } else {
+        $(".pembayaran_bank").find("input, select").prop("disabled", false);
+        $(".pembayaran_bank").show();
+        $('.Paid').show();
+     }
+  });
+
   var listProduct = <?php echo $list_produk; ?>;
   var listOrder = <?php echo $list_order; ?>;
   var listSupplier = <?php echo $list_supplier; ?>;
+  var listBank = <?php echo $list_bank; ?>;
+  var listMetodePembayaran = <?php echo $list_metode_pembayaran; ?>;
   var listWarna = "";
   var listUkuran = "";
   var tax = '<?php echo $tax; ?>';
   var discount = '<?php echo $discount; ?>';
   var total = '<?php echo $total; ?>';
   var totalItems = '<?php echo $total_items; ?>';
+  var transTotalHarga = 0;
   maskInputMoney();
   inits(tax, discount, total, totalItems);
   load_supplier(listSupplier);
   // load_product(listProduct);
   load_order(listOrder);
+  load_metode_pembayaran(listMetodePembayaran);
+  load_bank(listBank);
 
   function load_supplier(json){
     var html = "";
@@ -222,7 +368,7 @@
                           "</div>"+
                           "<div class='col-xs-2'>"+
                             "<span class='textPD'>"+
-                              "<input id=\'qt-"+json[i].rowid+"\' class='form-control' value='"+json[i].qty+"' placeholder='0' maxlength='2' type='text' onchange=updateQty(\'"+json[i].rowid+"\')>"+
+                              "<input id=\'qt-"+json[i].rowid+"\' class='form-control' value='"+json[i].qty+"' placeholder='0' maxlength='4' type='text' onchange=updateQty(\'"+json[i].rowid+"\')>"+
                             "</span>"+
                           "</div>"+
                           "<div class='col-xs-2 nopadding'>"+
@@ -360,6 +506,26 @@
       $("#kategoriGat").append(html);
     }
   }
+  function load_metode_pembayaran(json){
+    var html = "";
+    $("#paymentMethod").html('');
+    html = "<option value='' disabled selected>Pilih Metode Pembayaran</option>";
+    $("#paymentMethod").append(html);
+    for (var i=0;i<json.length;i++){
+      html = "<option value=\'"+json[i].id+"\'>"+json[i].nama+"</option>";
+      $("#paymentMethod").append(html);
+    }
+  }
+  function load_bank(json){
+    var html = "";
+    $("#id_bank").html('');
+    html = "<option value='' disabled selected>Pilih Bank</option>";
+    $("#id_bank").append(html);
+    for (var i=0;i<json.length;i++){
+      html = "<option value=\'"+json[i].id+"\'>"+json[i].nama+"</option>";
+      $("#id_bank").append(html);
+    }
+  }
   function filterProdukByKategori(id){
     var keyword = $("#searchProd").val();
     var supplier = $("#supplierSelect").val();
@@ -472,6 +638,10 @@
     $("#eDiscount").val(ediscount);
     $("#eTotal").html(etotal);    
     $("#eTotalItem").html(etotal_items);    
+    $("#textTotalHarga").html(etotal);
+    console.log("etotal " + etotal);
+    etotal = etotal + '';
+    transTotalHarga = parseInt(etotal.split(',').join(''));
     maskInputMoney();
   }
   function fillInformation(){
@@ -530,6 +700,7 @@
   }
   function doSubmit(){
     var defaultHtml = $('#btnDoOrder').html();
+
     $.ajax({
       url :$('#pembelian').attr('action'),
       type : $('#pembelian').attr('method'),
@@ -622,7 +793,78 @@
       }
     });
   }
+
+  function payment(){
+    var idSupplier = $("#supplierSelect").val() || '';
+    var idMetodePembayaran = $("#paymentMethod").val() || '';
+    var textMetodePembayaran = $("#paymentMethod :selected").html() || '';
+
+    $("#Paid").val("");
+    $(".pembayaran_bank").find("input, select").val("");
+    $("#textTotalBayar").html('0');
+    $("#textKembalian").html('0');
+
+    if((idSupplier!='') && (idMetodePembayaran!='')) {
+      $("#textMetodePembayaran").html(textMetodePembayaran);
+      $("#modalpayment").modal("show");
+      $("#modalpayment").on("shown.bs.modal", function() {
+        $("#Paid").focus();
+      }); 
+    }
+    else {
+      $.alert({
+          title: 'Perhatian',
+          content: 'Anda belum memilih Supplier/Metode Pembayaran!',
+      });
+    }
+  }
   $(document).ready(function(){
+    $("#formpayment").on('submit', function(e){
+      e.preventDefault();      
+      unmaskInputMoney();
+      
+      var defaultHtml = $('#btnBayar').html();
+      // var paymentMethod = $("#paymentMethod").val();
+      var paid = $("#Paid").val() || '';
+      var id_bank = $("#id_bank").val() || '';
+      var nomor_kartu = $("#nomor_kartu").val() || '';
+      var kembalian = $("#kembalian").val();
+      $('#btnBayar').text("Saving...");
+      $("#btnBayar").prop("disabled", true);      
+
+      $.ajax({
+        url :$('#formpayment').attr('action'),
+        type : $('#formpayment').attr('method'),
+        // data : $('#formpayment').serialize() 
+        data : $('#pembelian').serialize()
+                + "&paid=" +paid
+                + "&id_bank=" +id_bank
+                + "&nomor_kartu=" +nomor_kartu
+                + "&kembalian=" +kembalian,
+        dataType : "json",
+        success : function(data){
+          $("#modalpayment").modal('hide');
+          $('#btnBayar').html(defaultHtml);
+          $("#btnBayar").prop("disabled", false);
+          // window.location.reload(false);
+          var datas = <?php echo json_encode(array()); ?>;
+          load_order(datas);
+          fillInformation();
+          showInvoce(data.idOrder);
+
+          //empty the fields
+          $("#pembelian").find("input, textarea").val('');
+
+          // window.open("<?php echo base_url('Transaksi_pembelian/Transaksi/invoices'); ?>/"+data.idOrder, "_blank");
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+          console.log("Error!?????: "+textStatus);
+          $('#btnBayar').html(defaultHtml);
+          $("#btnBayar").prop("disabled", false);
+        }
+      });
+      maskInputMoney();
+    });
     $("#pembelian").on('submit', function(e){
       var defaultHtml = $('#btnDoOrder').html();
       $('#btnDoOrder h5').text("Saving...");
@@ -644,4 +886,57 @@
       });      
     });
   });
+
+  //KEMBALIAN Handler
+  $("#Paid").on("keyup", function() {
+    var totalHarga = transTotalHarga || 0;
+    var paid = $(this).val().split('.').join("") || 0;
+    // var paid = $(this).val().split('.').join("") || totalHarga;
+    var kembalian = parseInt(paid) - parseInt(totalHarga);
+    $("#textTotalBayar").text(paid);
+    $("#textKembalian").text(kembalian);
+    $("#kembalian").val(kembalian);
+
+    $("#textTotalBayar").unmask();
+    $("#textTotalBayar").mask('#.##0', {reverse: true});
+    $("#textKembalian").unmask();
+    $("#textKembalian").mask('#.##0', {reverse: true});
+    
+    if(kembalian < 0) {
+      $("#textKembalian").parent("h3").addClass("text-danger");
+      $("#btnBayar").prop("disabled", true);
+    } else {
+      $("#textKembalian").parent("h3").removeClass("text-danger");
+      $("#btnBayar").prop("disabled", false);
+    }
+  });
+
+  function showInvoce(id){
+    var idOrder = id || '';
+    var html = "<h3 class='text-center text-muted'>Tidak ada invoice<h3>";
+    if(idOrder != '') {
+      $.ajax({
+        url : '<?php echo base_url("Transaksi_pembelian/Transaksi/getInvoiceData"); ?>/'+idOrder,
+        type : "POST",
+        data : "",
+        // dataType : "json",
+        success : function(data){
+          if(data == '') {
+            $("#printSection").html(html);
+          } else {
+            $("#printSection").html(data);
+          }
+        }
+      });
+    }
+    else {
+      $("#printSection").html(html);
+    }
+    $("#ticket").modal("show");
+  }
+  function printTicket() {
+     $('.modal-body').removeAttr('id');
+     window.print();
+     $('.modal-body').attr('id', 'modal-body');
+  }
 </script>

@@ -15,6 +15,7 @@
                   <th class="text-center no-sort">#</th>
                   <th class="text-center no-sort">Foto</th>
                   <th class="text-center">Nama Produk</th>
+                  <th class="text-center">Merk</th>
                   <th class="text-center">SKU</th>
                   <th class="text-center">Stok</th>
                   <th class="text-center">Harga Jual Normal (IDR)</th>
@@ -53,6 +54,7 @@
                   <h1 class="media-heading" id="det_nama">sfsdg</h1>
                   <div class="row">
                     <div class="col-sm-6">
+                      <p><b>Merk :</b> <span id="det_merk"></span></p>
                       <p><b>SKU :</b> <span id="det_sku"></span></p>
                       <p><b>Kode Barang :</b> <span id="det_kode_barang"></span></p>
                       <p><b>Harga Beli :</b> Rp <span id="det_harga_beli" class="money"></span></p>
@@ -150,6 +152,13 @@
                  <label for="nama">Nama Produk</label>
                  <input type="text" name="nama" maxlength="50" Required class="form-control" id="nama" placeholder="Nama Produk">
                  <input type="hidden" name="id" maxlength="50" Required class="form-control" id="id" placeholder="ID Produk">
+               </div>
+             </div>
+             <div class="col-sm-6">
+               <div class="form-group">
+                 <label for="id_merk">Merk Produk</label>
+                 <select name="id_merk" class="form-control" id="id_merk" required="">
+                 </select>
                </div>
              </div>
              <div class="col-sm-6">
@@ -303,6 +312,7 @@
   var jsonKategori = <?php echo $list_kategori; ?>;
   var jsonBahan = <?php echo $list_bahan; ?>;
   var jsonKatalog = <?php echo $list_katalog; ?>;
+  var jsonMerk = <?php echo $list_merk; ?>;
   
   var jsonUkuran = <?php echo $list_ukuran; ?>;
   var jsonWarna = <?php echo $list_warna; ?>;
@@ -314,7 +324,7 @@
   var initDataTable = $('#TableMainServer').DataTable({
       "bProcessing": true,
       "bServerSide": true,
-      "order": [[6, 'DESC']],
+      "order": [[7, 'DESC']],
       "ajax":{
             url :"<?php echo base_url()?>Produk/Master/data",
             type: "post",  // type of method  , by default would be get
@@ -344,6 +354,7 @@
     load_select_option(jsonKategori, "#id_kategori", "Kategori");
     load_select_option(jsonBahan, "#id_bahan", "Bahan");
     load_select_option(jsonKatalog, "#id_katalog", "Katalog");
+    load_select_option(jsonMerk, "#id_merk", "Merk");
     load_select_option(jsonUkuran, "#id_ukuran", "");
     load_select_option(jsonWarna, "#id_warna","");
     $("#id_ukuran").multiselect({
@@ -373,6 +384,7 @@
     $("#id_kategori").val("");
     $("#id_bahan").val("");
     $("#id_katalog").val("");
+    $("#id_merk").val("");
     $("#id_ukuran").multiselect('refresh');
     $("#id_warna").multiselect('refresh');
     $("#sku").val("");
@@ -412,6 +424,7 @@
     $("#id_kategori").val((dataUpdate[0].id_kategori==0) ? "" : dataUpdate[0].id_kategori);
     $("#id_bahan").val((dataUpdate[0].id_bahan==0) ? "" : dataUpdate[0].id_bahan);
     $("#id_katalog").val((dataUpdate[0].id_katalog==0) ? "" : dataUpdate[0].id_katalog);
+    $("#id_merk").val((dataUpdate[0].id_merk==0) ? "" : dataUpdate[0].id_merk);
     $("#sku").val(dataUpdate[0].sku);
     $("#kode_barang").val(dataUpdate[0].kode_barang);
     $("#berat").val(dataUpdate[0].berat);
@@ -479,6 +492,7 @@
     $("#det_kategori").text(getMasterById(jsonKategori, dataDetail[0].id_kategori));
     $("#det_bahan").text(getMasterById(jsonBahan, dataDetail[0].id_bahan));
     $("#det_katalog").text(getMasterById(jsonKatalog, dataDetail[0].id_katalog));
+    $("#det_merk").text(getMasterById(jsonMerk, dataDetail[0].id_merk));
     $("#det_ukuran").text((list_ukuran.length>0) ? list_ukuran.join() : '-');
     $("#det_warna").text((list_warna.length>0) ? list_warna.join() : '-');
     $("#det_foto").attr("src", "<?php echo base_url('upload/produk')?>/"+dataDetail[0].foto);

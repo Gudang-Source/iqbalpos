@@ -308,22 +308,35 @@ class Transaksi extends MX_Controller {
                 WHERE m_produk_det_ukuran.id_produk = ".$rid[0]);
     	echo json_encode($selectData->result_array());
     }
+    function getMetodePembayaran(){
+        $list = null;
+        $dataSelect['deleted'] = 1;
+        $list = $this->Transaksipembelianmodel->select($dataSelect, 'm_metode_pembayaran');
+        return json_encode($list->result_array());
+    }
+    function getBank(){
+      $dataSelect['deleted'] = 1;
+      $selectData = $this->Transaksipembelianmodel->select($dataSelect, 'm_bank');
+      return json_encode($selectData->result_array());
+    }
     function transaksi(){
-        $getTotal = json_decode($this->_getTotal());
+      $getTotal = json_decode($this->_getTotal());
     	$dataSelect['deleted'] = 1;
     	$data['list_produk'] = $this->getProduk();
-        $data['list_order'] = $this->getOrder();
-        $data['list_supplier'] = $this->getSupplier();
-        
-        // $data['list_warna'] = $this->getWarna();
-        // $data['list_ukuran'] = $this->getUkuran();
-        // $data['total'] = $this->cart->total();
-        // $data['total_items'] = $this->cart->total_items();
-        $data['total'] = $getTotal->total;
-        $data['total_items'] = $getTotal->total_items;
-        
-        $data['tax'] = 0;
-        $data['discount'] = 0;
+      $data['list_order'] = $this->getOrder();
+      $data['list_supplier'] = $this->getSupplier();
+      $data['list_bank'] = $this->getBank();
+      $data['list_metode_pembayaran'] = $this->getMetodePembayaran();
+      
+      // $data['list_warna'] = $this->getWarna();
+      // $data['list_ukuran'] = $this->getUkuran();
+      // $data['total'] = $this->cart->total();
+      // $data['total_items'] = $this->cart->total_items();
+      $data['total'] = $getTotal->total;
+      $data['total_items'] = $getTotal->total_items;
+      
+      $data['tax'] = 0;
+      $data['discount'] = 0;
     	$this->load->view('Transaksi_pembelian/transaksi', $data);
     }
     function getTotal(){
@@ -422,7 +435,7 @@ class Transaksi extends MX_Controller {
     			}
     		}
     	}
-    	echo $this->getOrder();	
+    	// echo $this->getOrder();	
     }
 	function tambahCart($id){
 		$inCart = $this->in_cart($id."_PEMBELIAN");
@@ -484,9 +497,18 @@ class Transaksi extends MX_Controller {
     }    
     function doSubmit(){
     	$params = $this->input->post();
+      $lastInsertId = 0;
     	if($params != null){
     		$getTotal = json_decode($this->_getTotal(), true);
-            $dataInsert['id_purchase_order'] = $params['idpo'];
+        //Newly added ---
+        $dataInsert['id_metode_pembayaran'] = $params['paymentMethod'];
+        $dataInsert['id_bank'] = $params['id_bank'];
+        $dataInsert['nomor_kartu'] = $params['nomor_kartu'];
+        $dataInsert['cash'] = $params['paid'];
+        $dataInsert['uang_kembali'] = $params['kembalian'];
+        //  ----
+
+        $dataInsert['id_purchase_order'] = $params['idpo'];
     		$dataInsert['id_supplier'] 	= $params['supplier'];
     		$dataInsert['catatan']		= $params['catatan'];
     		$dataInsert['total_berat'] = $this->getTotalBerat();
@@ -495,18 +517,27 @@ class Transaksi extends MX_Controller {
     		$dataInsert['add_by'] = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
     		$dataInsert['edited_by'] = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
     		$dataInsert['deleted'] = 1;
-    		$insertDataMaster = $this->Transaksipembelianmodel->insert($dataInsert, 't_beli');
+    		$insertDataMaster = $this->Transaksipembelianmodel->insert_id($dataInsert, 't_beli');
+
     		if($insertDataMaster){    		
+          $lastInsertId = $insertDataMaster;
 	    		$getDataID = $this->Transaksipembelianmodel->select($dataInsert, 't_beli');
 	    		foreach ($this->cart->contents() as $items){
 	    			$idProduks = explode("_", $items['id']);
 	    			if(count($idProduks) > 1){
 	    				if($idProduks[1]=="PEMBELIAN"){					
-				    		$dataInsertDetail['id_beli']		        =	$getDataID->row()->id;
+                $id_warna = $items['options']['warna'];
+                $id_ukuran = $items['options']['ukuran'];
+                $selectDataWarna = $this->Transaksipembelianmodel->select($id_warna, 'm_produk_warna')->row();
+                $selectDataUkuran = $this->Transaksipembelianmodel->select($id_ukuran, 'm_produk_ukuran')->row();
+
+				    		$dataInsertDetail['id_beli']		      =	$getDataID->row()->id;
 				    		$dataInsertDetail['id_produk']				=	$idProduks[0];	
-				    		$dataInsertDetail['id_ukuran']				=	$items['options']['ukuran'];
-				    		$dataInsertDetail['id_warna']				=	$items['options']['warna'];
-				    		$dataInsertDetail['jumlah']					=	$items['qty'];
+                $dataInsertDetail['id_ukuran']        = $id_ukuran;
+                $dataInsertDetail['id_warna']         = $id_warna;
+                $dataInsertDetail['nama_ukuran']      = !empty($selectDataUkuran->nama) ? $selectDataUkuran->nama : 'Tidak ada';
+				    		$dataInsertDetail['nama_warna']			=	!empty($selectDataWarna->nama) ? $selectDataWarna->nama : 'Tidak ada';
+				    		$dataInsertDetail['jumlah']					  =	$items['qty'];
 				    		$dataInsertDetail['total_berat']			=	$items['options']['total_berat'] * $items['qty'];
 				    		$dataInsertDetail['harga_beli']				=	$items['price'];
 				    		$dataInsertDetail['total_harga']			=	$items['price'] * $items['qty'];
@@ -514,9 +545,11 @@ class Transaksi extends MX_Controller {
 	    				}
 	    			}
 	    		}
-    		}
-    	}
-    	$this->destroyCart();
+        }
+      }
+      $this->destroyCart();
+      $response = array('idOrder' => $lastInsertId);
+      echo json_encode($response);
     }
     function getOption($option){
     	$total = 0;
@@ -637,10 +670,9 @@ class Transaksi extends MX_Controller {
         $dataSelect['id']       =   $idPO;
         $selectPOMaster = $this->Transaksipembelianmodel->select($dataSelect, 't_purchase_order');
         if($selectPOMaster->num_rows() > 0){
-            $selectDataDetail = $this->Transaksipembelianmodel->rawQuery("SELECT * 
-                                                                            FROM t_purchase_order_detail
-                                                                            INNER JOIN m_produk ON t_purchase_order_detail.id_produk = m_produk.id
-                                                                            WHERE t_purchase_order_detail.id_purchase_order =".$selectPOMaster->row()->id);
+            $selectDataDetail = $this->Transaksipembelianmodel->rawQuery("SELECT * FROM t_purchase_order_detail
+                INNER JOIN m_produk ON t_purchase_order_detail.id_produk = m_produk.id
+                WHERE t_purchase_order_detail.id_purchase_order =".$selectPOMaster->row()->id);
             if($selectDataDetail->num_rows() > 0){
                 foreach ($selectDataDetail->result_array() as $row) {
                     $datax = array(
@@ -662,5 +694,56 @@ class Transaksi extends MX_Controller {
     }
     function rand_color() {
         echo sprintf('#%06X', mt_rand(0, 0xFFFFFF));
+    }
+
+    function getInvoiceData($id) {//Handling modal Invoice
+        if($id == 'last') {
+            $condition = array('deleted' => 1);
+            $data = $this->Transaksipembelianmodel->select($condition, 't_beli', 'id', 'DESC')->row();
+            $id = !empty($data) ? $data->id : 0;
+        }
+        if(!empty($id)) {
+            $sql = "SELECT A.*, B.nama AS nama_customer FROM t_beli A "
+                    ." LEFT JOIN m_supplier_produk B ON A.id_supplier = B.id"
+                    ." WHERE A.id = ".$id;
+            $dataProduk = $this->Transaksipembelianmodel->rawQuery($sql)->row();
+         
+            $sql = "SELECT A.*, B.nama AS nama_produk, C.nama AS nama_warna, D.nama AS nama_ukuran FROM t_beli_detail A "
+                    ." LEFT JOIN m_produk B ON A.id_produk = B.id"
+                    ." LEFT JOIN m_produk_warna C ON A.id_warna = C.id"
+                    ." LEFT JOIN m_produk_ukuran D ON A.id_ukuran = D.id"
+                    ." WHERE A.id_beli = ".$id;
+            $dataDetailProduk = $this->Transaksipembelianmodel->rawQuery($sql)->result();
+
+            $html = '<div class="row">
+              <div class="col-md-12">
+                <h5 class="text-center">Iqbal POS</h5>
+                <h4 class="text-center">Invoice #'.$dataProduk->id.'</h4> <hr>
+                <p>Tanggal: '.date('d-m-Y H:i:s', strtotime($dataProduk->date_add)).' <br>Supplier: '.$dataProduk->nama_customer.' </p> <br>
+                <table class="table">
+                  <thead> <tr> <th>#</th> <th>Produk</th> <th>Warna</th> <th>Ukuran</th> <th>Qty</th> <th>Subtotal (IDR)</th> </tr> </thead>
+                  <tbody>';
+                $i = 1; 
+                foreach ($dataDetailProduk as $detail) {
+                  $warna = !empty($detail->nama_warna) ? $detail->nama_warna : 'Tidak ada';
+                  $ukuran = !empty($detail->nama_ukuran) ? $detail->nama_ukuran : 'Tidak ada';
+                  $html .= '<tr> <td>'.$i++.'</td> <td>'.$detail->nama_produk.'</td> <td>'.$warna.'</td> <td>'.$ukuran.'</td> <td class="text-center">'.$detail->jumlah.'</td> <td class="text-right">'.number_format($detail->total_harga, 0, ',', '.').'</td> </tr>'; 
+                }
+                $html .= '</tbody> </table> <br>';
+
+            $html2 = '<table class="table table-condensed"> <tbody>'
+                    .'<tr style="font-weight: bold;">
+                      <td style="width: 70%;">Total Harga</td>
+                      <td style="width: 30%;">Rp <span class="pull-right">'.number_format($dataProduk->total_harga_beli, 0, ',', '.').'</span></td> </tr>'
+                    .'<tr style="font-weight: bold;">
+                      <td style="width: 70%;">Cash</td>
+                      <td style="width: 30%;">Rp <span class="pull-right">'.number_format($dataProduk->cash, 0, ',', '.').'</span></td> </tr>'
+                    .'<tr style="font-weight: bold;">
+                      <td style="width: 70%;">Kembali</td>
+                      <td style="width: 30%;">Rp <span class="pull-right">'.number_format($dataProduk->uang_kembali, 0, ',', '.').'</span></td> </tr>'
+                    .'</tbody> </table> </div> </div>';
+        
+            echo $html.$html2;
+        }
     }    
 }

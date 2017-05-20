@@ -18,11 +18,15 @@ class Master extends MX_Controller {
         $insertLog = $this->Customermodel->insert($dataInsert, 't_log');        
     }  
     function index(){
-    	$dataSelect['deleted'] = 1;
+        $dataSelect['deleted'] = 1;
+
+        $sql = "SELECT nama FROM m_pegawai WHERE deleted = 1";
+        $data['list_pegawai'] = json_encode($this->Customermodel->rawQuery($sql)->result());
+        
         $data['list_prov'] = json_encode($this->Customermodel->select($dataSelect, 'm_provinsi', 'nama')->result());
         $data['list_kota'] = json_encode($this->Customermodel->select($dataSelect, 'm_kota', 'nama')->result());
         $data['list_level'] = json_encode($this->Customermodel->select($dataSelect, 'm_customer_level', 'nama')->result());
-    	$data['list'] = json_encode($this->Customermodel->select($dataSelect, 'm_customer', 'date_add', 'DESC')->result());
+        $data['list'] = json_encode($this->Customermodel->select($dataSelect, 'm_customer', 'date_add', 'DESC')->result());
 		//echo $data;
 		//print_r($data);
     	$this->load->view('Master_customer/view', $data);
@@ -41,6 +45,13 @@ class Master extends MX_Controller {
 		$dataInsert['alamat'] 			= $params['alamat'];
 		$dataInsert['no_telp'] 			= $params['no_telp'];
 		$dataInsert['email'] 			= $params['email'];
+        $dataInsert['ktp']              = $params['ktp'];
+        $dataInsert['npwp']             = $params['npwp'];
+        $dataInsert['nama_bank']        = $params['nama_bank'];
+        $dataInsert['no_rekening']      = $params['no_rekening'];
+        $dataInsert['rekening_an']      = $params['rekening_an'];
+        $dataInsert['keterangan']       = $params['keterangan'];
+        $dataInsert['sales']            = $params['sales'];
 		$dataInsert['kode_pos'] 		= $params['kodepos'];
 		$dataInsert['id_provinsi'] 		= $params['id_provinsi'];
 		$dataInsert['id_kota'] 			= $params['id_kota'];
@@ -80,6 +91,13 @@ class Master extends MX_Controller {
     					'alamat'			=> $selectData->row()->alamat,
     					'no_telp'			=> $selectData->row()->no_telp,
     					'email'				=> $selectData->row()->email,
+                        'ktp'               => $selectData->row()->ktp,
+                        'npwp'              => $selectData->row()->npwp,
+                        'nama_bank'         => $selectData->row()->nama_bank,
+                        'no_rekening'       => $selectData->row()->no_rekening,
+                        'rekening_an'       => $selectData->row()->rekening_an,
+                        'keterangan'        => $selectData->row()->keterangan,
+                        'sales'             => $selectData->row()->sales,
     					'kode_pos'			=> $selectData->row()->kode_pos,
     					'id_provinsi'		=> $selectData->row()->id_provinsi,
     					'id_kota'			=> $selectData->row()->id_kota,
@@ -100,6 +118,13 @@ class Master extends MX_Controller {
 		$dataUpdate['alamat'] 			= $params['alamat'];
 		$dataUpdate['no_telp'] 			= $params['no_telp'];
 		$dataUpdate['email'] 			= $params['email'];
+        $dataUpdate['ktp']              = $params['ktp'];
+        $dataUpdate['npwp']             = $params['npwp'];
+        $dataUpdate['nama_bank']        = $params['nama_bank'];
+        $dataUpdate['no_rekening']      = $params['no_rekening'];
+        $dataUpdate['rekening_an']      = $params['rekening_an'];
+        $dataUpdate['keterangan']       = $params['keterangan'];
+        $dataUpdate['sales']            = $params['sales'];
 		$dataUpdate['kode_pos'] 		= $params['kodepos'];
 		$dataUpdate['id_provinsi'] 		= $params['id_provinsi'];
 		$dataUpdate['id_kota'] 			= $params['id_kota'];

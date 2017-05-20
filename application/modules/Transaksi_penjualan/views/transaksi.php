@@ -15,10 +15,22 @@
   #productList {
     font-size: 90%;
   }
+  .group-select {
+    width: 100%;
+  }
+  .group-select select.form-control{
+    width: 35%;
+  }
+  .group-select input.form-control{
+    width: 65%;
+  }
 </style>
 <?php
+  // unset($_SESSION['cart_holds']);
   /*echo "<pre>";
-  print_r(isset($_SESSION['cart_contents']) ? $_SESSION['cart_contents'] : '');
+  print_r(isset($_SESSION['cart_holds']) ? $_SESSION['cart_holds'] : 'Cart Hold is Empty');
+  echo "<br>";
+  print_r(isset($_SESSION['cart_contents']) ? $_SESSION['cart_contents'] : 'Cart is Empty');
   echo "</pre>";*/
 ?>
 <div class="container-fluid">
@@ -29,12 +41,16 @@
    </div>
    <div class="row">
     <div class="col-md-6 left-side">
+      <!-- <div class="row row-horizon">
+        <span id="holdList"> </span>
+        <span class="Hold pl" onclick="addHold()"><i class="fa fa-plus"></i></span>
+        <span class="Hold pl" onclick="removeHold()"><i class="fa fa-minus"></i></span>
+      </div> -->
       <form action="<?php echo base_url('Transaksi_penjualan/Transaksi/doSubmit'); ?>" method="post" id="pembelian">          
-         <div class="col-sm-12">&nbsp;</div>
-         <div class="col-sm-12 text-right"> 
-          <div class="btn btn-default" onclick="showInvoce('last');" title="Tampilkan Invoce Terakhir"><i class="fa fa-ticket"></i></div>
-         </div>         
-         <div class="col-sm-12 col-lg-7">
+         <div class="col-sm-12 text-right" style="margin-top: 10px;"> 
+            <div class="btn btn-default" onclick="showInvoce('last');" title="Tampilkan Invoce Terakhir"><i class="fa fa-ticket"></i></div>
+         </div>
+         <div class="col-sm-12 col-lg-6">
           <div class="form-group">
             <label class="label-control">Customer</label>
             <select class="js-select-options form-control" id="customerSelect" name="customer" required="required">
@@ -42,13 +58,7 @@
             </select>
           </div>
          </div>
-         <div class="col-sm-12 col-lg-5">
-          <div class="form-group">
-             <label for="paymentMethod" class="label-control">Metode Pembayaran</label>
-             <select class="form-control" id="paymentMethod" name="paymentMethod" required="required"> </select>
-           </div>
-         </div>
-         <div class="col-sm-12">
+         <div class="col-sm-12 col-lg-6">
            <div class="form-group">
              <label for="barcode">Barcode</label>
              <div class="input-group">
@@ -104,6 +114,12 @@
                   </tr>
                </table>
             </div>
+            <div class="col-sm-12">
+              <div class="form-group">
+                <label for="paymentMethod" class="label-control">Metode Pembayaran</label>
+                 <select class="form-control" id="paymentMethod" name="paymentMethod" required="required"> </select>
+              </div>
+            </div>
             <button type="button" onclick="cancelOrder()" class="btn btn-red col-md-6 flat-box-btn"><h5 class="text-bold">Cancel</h5></button>
             <button type="button" class="btn btn-green col-md-6 flat-box-btn" onclick="payment()" id="btnDoOrder"><h5 class="text-bold">Proses Transaksi</h5></button>
          </div>
@@ -145,18 +161,9 @@
         <form method="POST" action="<?php echo base_url('Transaksi_penjualan/Transaksi/payment'); ?>" id="formpayment">
         <div class="modal-body">
              <div class="form-group">
-               <h2 id="TotalModal"></h2>
-            </div>
-             <!-- <div class="form-group">
-               <label for="paymentMethod" class="label-control">Metode Pembayaran</label>
-               <select class="form-control" id="paymentMethod" name="paymentMethod">
-                 <option value="0">Cash</option>
-                 <option value="1">BNI</option>
-                 <option value="2">Mandiri</option>
-                 <option value="3">BNI</option>
-                 <option value="4">TRANSFER</option>
-              </select>
-             </div> -->
+               <h2 id="textMetodePembayaran">Tunai</h2>
+             </div>
+
              <div class="form-group hidden" style="visibility: hidden;">
                <label for="jenisOrder">Jenis Order</label>
                <input type="hidden" name="id_customer" id="idCustomer">
@@ -165,26 +172,57 @@
                  <option value="2">Dropship</option>
               </select>
              </div>
-             <!-- <div class="form-group">
-               <label for="catatan">Catatan</label>
-               <textarea name="catatan" class="form-control" placeholder="Catatan" id="catatan"></textarea>
-             </div> -->
-             <div class="form-group">
-               <label class="center-block text-right">Total Harga</label>
-               <h3 class="text-right" style="margin-top: 5px;"><b>Rp <span id='textTotalHarga' class="money">0</span></b>-</h3>
+            
+             <div class="row">
+                <div class="col-xs-3">
+                  <label class="center-block text-right">Total Harga</label>
+                </div>
+                <div class="col-xs-9">
+                  <h2 class="text-right bg-warning" style="margin-top: 5px; padding:10px;"><b>Rp <span id='textTotalHarga' class="money">0</span></b>-</h2>
+                </div>
              </div>
-             <div class="form-group">
-               <label class="center-block text-right">Kembalian</label>
-               <h3 class="text-right" style="margin-top: 5px;">Rp <span id='textKembalian' class="">0</span>-</h3>
-               <input type="hidden" name="kembalian" id="kembalian">
-             </div>
-             <div class="form-group Paid">
-               <label for="Paid">Nominal (IDR)</label>
-               <div class="input-group">
-                <span class="input-group-addon">Rp</span> 
-                <input type="text" value="0" name="paid" class="form-control money" id="Paid" placeholder="Nominal">
+
+             <div class="form-horizontal">
+               <div class="form-group">
+                 <label class="col-sm-3 control-label" for="Paid">Nominal (IDR)</label>
+                 <div class="col-sm-9">
+                   <div class="input-group">
+                    <span class="input-group-addon">Rp</span> 
+                    <input type="text" value="0" name="paid" class="form-control money" id="Paid" placeholder="Nominal">
+                   </div>
+                 </div>
+               </div>
+               <div class="form-group pembayaran_bank">
+                 <label class="col-sm-3 control-label" for="id_bank">Bank</label>
+                 <div class="col-sm-9">
+                   <div class="input-group group-select">
+                     <select class="form-control" id="id_bank" name="id_bank">
+                     <!-- Load option bank -->
+                     </select>
+                     <input type="number" name="nomor_kartu" id="nomor_kartu" class="form-control" placeholder="Nomor Kartu">
+                   </div>
+                 </div> 
                </div>
              </div>
+
+             <div class="row">
+                <div class="col-xs-3">
+                  <label class="center-block text-right">Total Bayar</label>
+                </div>
+                <div class="col-xs-6">
+                  <h3 class="text-right bg-success" style="margin-top: 5px; padding:10px;">Rp <span id='textTotalBayar' class="money">0</span>-</h3>
+                </div>
+             </div>
+             <div class="row">
+               <div class="col-xs-3">
+                 <label class="center-block text-right">Kembalian</label>
+               </div>
+               <div class="col-xs-6">
+                 <h3 class="text-right bg-danger" style="margin-top: 5px; padding:10px;">Rp <span id='textKembalian' class="">0</span>-</h3>
+                 <input type="hidden" name="kembalian" id="kembalian">
+               </div>
+             </div>
+             
              <div class="form-group CreditCardNum">
                <i class="fa fa-cc-visa fa-2x" id="visa" aria-hidden="true"></i>
                <i class="fa fa-cc-mastercard fa-2x" id="mastercard" aria-hidden="true"></i>
@@ -205,10 +243,6 @@
              </div>
              <div class="form-group CreditCardHold col-md-4 padding-s">
                <input type="text" class="form-control" id="CreditCardCODECV" placeholder="VCC">
-             </div>
-             <div class="form-group ChequeNum">
-               <label for="ChequeNum">Nomor Referensi</label>
-               <input type="text" name="chequenum" class="form-control" id="ChequeNum" placeholder="Nomor Referensi" value="0">
              </div>
             <div class="clearfix"></div>
         </div>
@@ -301,53 +335,58 @@
     $('.money').unmask();
   }
 
-      $('.Paid').show();
-      $('.ReturnChange').show();
-      $('.CreditCardNum').hide();
-      $('.CreditCardHold').hide();
-      $('.ChequeNum').hide();
-      $('.stripe-btn').hide();
+  $('.ReturnChange').show();
+  $('.CreditCardNum').hide();
+  $('.CreditCardHold').hide();
+  $('.stripe-btn').hide();
+  $(".pembayaran_bank").find("input, select").prop("disabled", true);
+  $(".pembayaran_bank").hide();
 
-      $("#paymentMethod").change(function(){
-         var p_met = $(this).find('option:selected').val();
-         if (p_met === '0') {
-            $('.Paid').show();
-            $('.ReturnChange').show();
-            $('.CreditCardNum').hide();
-            $('.CreditCardHold').hide();
-            $('.CreditCardMonth').hide();
-            $('.CreditCardYear').hide();
-            $('.CreditCardCODECV').hide();
-            $('#CreditCardNum').val('');
-            $('#CreditCardHold').val('');
-            $('#CreditCardYear').val('');
-            $('#CreditCardMonth').val('');
-            $('#CreditCardCODECV').val('');
-            $('.stripe-btn').hide();
-            $('.ChequeNum').hide();
-         } else {
-            $('.Paid').show();
-            $('.ReturnChange').hide();
-            $('.CreditCardNum').hide();
-            $('.CreditCardHold').hide();
-            $('.CreditCardMonth').hide();
-            $('.CreditCardYear').hide();
-            $('.CreditCardCODECV').hide();
-            $('#CreditCardNum').val('');
-            $('#CreditCardHold').val('');
-            $('#CreditCardYear').val('');
-            $('#CreditCardMonth').val('');
-            $('#CreditCardCODECV').val('');
-            $('.stripe-btn').hide();
-            $('.ChequeNum').show();
-         }
-      });
+  $("#paymentMethod").change(function(){
+     var p_met = $(this).find('option:selected').val();
+     var lower_p_met = $(this).find('option:selected').html().toLowerCase();
+
+     if (lower_p_met === 'tunai' || lower_p_met === 'kredit') {
+        $(".pembayaran_bank").find("input, select").prop("disabled", true);
+        $(".pembayaran_bank").hide();
+        $('.Paid').show();
+        $('.ReturnChange').show();
+        $('.CreditCardNum').hide();
+        $('.CreditCardHold').hide();
+        $('.CreditCardMonth').hide();
+        $('.CreditCardYear').hide();
+        $('.CreditCardCODECV').hide();
+        $('#CreditCardNum').val('');
+        $('#CreditCardHold').val('');
+        $('#CreditCardYear').val('');
+        $('#CreditCardMonth').val('');
+        $('#CreditCardCODECV').val('');
+        $('.stripe-btn').hide();
+     } else {
+        $(".pembayaran_bank").find("input, select").prop("disabled", false);
+        $(".pembayaran_bank").show();
+        $('.Paid').show();
+        $('.ReturnChange').hide();
+        $('.CreditCardNum').hide();
+        $('.CreditCardHold').hide();
+        $('.CreditCardMonth').hide();
+        $('.CreditCardYear').hide();
+        $('.CreditCardCODECV').hide();
+        $('#CreditCardNum').val('');
+        $('#CreditCardHold').val('');
+        $('#CreditCardYear').val('');
+        $('#CreditCardMonth').val('');
+        $('#CreditCardCODECV').val('');
+        $('.stripe-btn').hide();
+     }
+  });
 
   var currentCustomerId = 0;
   var listProduct = <?php echo $list_produk; ?>;
   var listOrder = <?php echo $list_order; ?>;
   var listCustomer = <?php echo $list_customer; ?>;
   var listKategori = <?php echo $list_kategori; ?>;
+  var listBank = <?php echo $list_bank; ?>;
   var listMetodePembayaran = <?php echo $list_metode_pembayaran; ?>;
   var listWarna = "";
   var listUkuran = "";
@@ -361,6 +400,7 @@
   load_customer(listCustomer);
   load_order(listOrder);
   load_metode_pembayaran(listMetodePembayaran);
+  load_bank(listBank);
 
   function load_customer(json){
     var html = "";
@@ -525,7 +565,6 @@
           var elem = $("#qt-"+data.rowid);
           // var getRow = list.filter(function (index) { return index.rowid == data.id }) || 0;
 
-          console.log(list);
           $.confirm({
               title: 'Stok',
               content: 'Stok Tidak Mencukupi <br>Max Qty: <b>' + list.stok + "</b>",
@@ -568,8 +607,15 @@
   function payment(){
     var idCustomer = $("#customerSelect").val() || '';
     var idMetodePembayaran = $("#paymentMethod").val() || '';
+    var textMetodePembayaran = $("#paymentMethod :selected").html() || '';
+
+    $("#Paid").val("");
+    $(".pembayaran_bank").find("input, select").val("");
+    $("#textTotalBayar").html('0');
+    $("#textKembalian").html('0');
 
     if((idCustomer!='') && (idMetodePembayaran!='')) {
+      $("#textMetodePembayaran").html(textMetodePembayaran);
       $("#modalpayment").modal("show");
       $("#modalpayment").on("shown.bs.modal", function() {
         $("#Paid").focus();
@@ -601,12 +647,21 @@
   function load_metode_pembayaran(json){
     var html = "";
     $("#paymentMethod").html('');
-    html = "<option value='' disabled selected>Pilih Metode Pembayaran</option>"
-          +"<option value='0'>Cash</option>";
+    html = "<option value='' disabled selected>Pilih Metode Pembayaran</option>";
     $("#paymentMethod").append(html);
     for (var i=0;i<json.length;i++){
       html = "<option value=\'"+json[i].id+"\'>"+json[i].nama+"</option>";
       $("#paymentMethod").append(html);
+    }
+  }
+  function load_bank(json){
+    var html = "";
+    $("#id_bank").html('');
+    html = "<option value='' disabled selected>Pilih Bank</option>";
+    $("#id_bank").append(html);
+    for (var i=0;i<json.length;i++){
+      html = "<option value=\'"+json[i].id+"\'>"+json[i].nama+"</option>";
+      $("#id_bank").append(html);
     }
   }
   function filterProdukByKategori(id){
@@ -706,7 +761,6 @@
             fillInformation();
           }
           else if(data.status == 1) {
-            console.log(data);
             $.confirm({
                 title: 'Stok',
                 content: 'Stok Tidak Mencukupi',
@@ -837,7 +891,8 @@
     $("#eDiscount").val(ediscount);
     $("#eTotal").html(etotal);    
     $("#eTotalItem").html(etotal_items);   
-    $("#textTotalHarga").html(etotal);    
+    $("#textTotalHarga").html(etotal);
+    etotal = etotal + '';    
     transTotalHarga = parseInt(etotal.split(',').join(''));
     maskInputMoney(); 
   }
@@ -889,7 +944,6 @@
       data : $('#pembelian').serialize(),
       dataType : "json",
       success : function(data){
-        // console.log(data);        
         load_order(data);
         fillInformation();        
         $('#btnDoOrder').html("<h5 class=\'text-bold\'>Proses Transaksi</h5>");
@@ -921,30 +975,38 @@
     $("#formpayment").on('submit', function(e){
       e.preventDefault();      
       unmaskInputMoney();
+      
       var defaultHtml = $('#btnBayar').html();
       var paymentMethod = $("#paymentMethod").val();
+      var id_bank = $("#id_bank").val() || '';
+      var nomor_kartu = $("#nomor_kartu").val() || '';
       var catatan = $("#catatan").val();
       var kembalian = $("#kembalian").val();
       $('#btnBayar').text("Saving...");
       $("#btnBayar").prop("disabled", true);      
+
       $.ajax({
         url :$('#formpayment').attr('action'),
         type : $('#formpayment').attr('method'),
         data : $('#formpayment').serialize() 
                 + "&paymentMethod=" +paymentMethod
                 + "&catatan=" +catatan
-                + "&kembalian=" +kembalian,
+                + "&kembalian=" +kembalian
+                + "&id_bank=" +id_bank
+                + "&nomor_kartu=" +nomor_kartu,
         dataType : "json",
         success : function(data){
           $("#modalpayment").modal('hide');
           $('#btnBayar').html(defaultHtml);
           $("#btnBayar").prop("disabled", false);
           // window.location.reload(false);
-          
           var datas = <?php echo json_encode(array()); ?>;
           load_order(datas);
           fillInformation();
           showInvoce(data.idOrder);
+
+          //empty the fields
+          $("#pembelian").find("input, textarea").val('');
 
           // window.open("<?php echo base_url('Transaksi_penjualan/Transaksi/invoices'); ?>/"+data.idOrder, "_blank");
         },
@@ -1010,11 +1072,13 @@
     var totalHarga = transTotalHarga || 0;
     var paid = $(this).val().split('.').join("") || 0;
     // var paid = $(this).val().split('.').join("") || totalHarga;
-    // console.log(paid +' - '+ totalHarga +' = '+ kembalian);
     var kembalian = parseInt(paid) - parseInt(totalHarga);
+    $("#textTotalBayar").text(paid);
     $("#textKembalian").text(kembalian);
     $("#kembalian").val(kembalian);
 
+    $("#textTotalBayar").unmask();
+    $("#textTotalBayar").mask('#.##0', {reverse: true});
     $("#textKembalian").unmask();
     $("#textKembalian").mask('#.##0', {reverse: true});
     
@@ -1037,8 +1101,11 @@
         data : "",
         // dataType : "json",
         success : function(data){
-          console.log(data);
-          $("#printSection").html(data);
+          if(data == '') {
+            $("#printSection").html(html);
+          } else {
+            $("#printSection").html(data);
+          }
         }
       });
     }
@@ -1052,5 +1119,82 @@
      $('.modal-body').removeAttr('id');
      window.print();
      $('.modal-body').attr('id', 'modal-body');
+  }
+
+  //HOLD
+  function load_hold(json) {
+    var html = '<span class="Hold selectedHold">1<span id="Time"> <?php echo date("H:i") ?> </span></span>';
+    $("#holdList").html(html);
+
+    var jsonLength = Object.keys(json).length;
+    for (var i=0; i<jsonLength; i++) {
+      if(json[i] != undefined) {
+        html = "<span class='Hold' id=\'hold-" + json[i].id + "\'  onclick=selectHold(\'" + json[i].id + "\')>" + json[i].id + "<span id='Time'>" + json[i].nama + "</span></span>";
+        $("#holdList").append(html);
+      }
+    }
+  }
+  function selectHold(id) {
+    $.ajax({
+        url : "<?php echo site_url('Transaksi_penjualan/Transaksi/selectHold')?>/"+id,
+        type: "POST",
+        dataType: "JSON",
+        success: function(data)
+        {
+           $('#hold-'+id).parent().children().removeClass('selectedHold');
+           $('#hold-'+id).addClass('selectedHold');
+        },
+        error: function (jqXHR, textStatus, errorThrown)
+        {
+           alert("error");
+        }
+    });
+  }
+  function addHold() {
+    $.ajax({
+        url : "<?php echo site_url('Transaksi_penjualan/Transaksi/addHold')?>/",
+        type: "POST",
+        dataType: "JSON",
+        success: function(data)
+        {
+           load_hold(data.hold);
+        },
+        error: function (jqXHR, textStatus, errorThrown)
+        {
+           alert("error");
+        }
+    });
+  }
+  function removeHold() {
+     var number = $('.selectedHold').clone().children().remove().end().text();
+     if(number != 1) {
+        $.confirm({
+            title: 'Konfirmasi',
+            content: 'Yakin hapus sesi <b>' + number + "</b>?",
+            buttons: {
+                Yes: {
+                  btnClass: 'btn-blue',
+                  action: function () { doRemoveHold(number); } 
+                },
+                Cancel: function(){}
+              }
+        }); 
+
+     }
+  }
+  function doRemoveHold(number) {
+    $.ajax({
+      url : "<?php echo site_url('Transaksi_penjualan/Transaksi/removeHold')?>/"+number,
+      type: "POST", 
+      dataType: "JSON",
+      success: function(data)
+      {
+        load_hold(data.hold);
+      },
+      error: function (jqXHR, textStatus, errorThrown)
+      {
+         alert("error");
+      }
+    });
   }
 </script>
