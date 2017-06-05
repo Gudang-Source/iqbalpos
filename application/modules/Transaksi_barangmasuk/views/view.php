@@ -12,9 +12,10 @@
                   <th class="text-center">Foto</th>
                   <th class="text-center">Nama Produk</th>
                   <th class="text-center">SKU</th>
-                  <th class="text-center">Stok</th>
-                  <th class="text-center">Terakhir Tambah Stok</th>
-                  <th class="text-center">Terakhir Kurang Stok</th>
+                  <th class="text-center">Total Stok</th>
+                  <th class="text-center">Detail Stok</th>
+                  <th class="text-center">Terakhir Ditambah</th>
+                  <th class="text-center">Terakhir Dikurangi</th>
                   <th class="text-center hidden-xs no-sort">Aksi</th>
               </tr>
           </thead>
@@ -37,14 +38,29 @@
       <form action="<?php echo base_url('Transaksi_barangmasuk/Transaksi/ubahStok') ?>" method="POST" id="myform">      
         <div class="modal-body">
            <div class="row">
+             <div class="col-sm-6">
+               <div class="form-group">
+                 <label for="id_warna">Warna</label>
+                 <select name="id_warna" class="form-control" id="id_warna" required="required">
+                 </select>
+               </div>
+             </div>
+             <div class="col-sm-6">
+               <div class="form-group">
+                 <label for="id_ukuran">Ukuran</label>
+                 <select name="id_ukuran" class="form-control" id="id_ukuran" required="required">
+                 </select>
+               </div>
+             </div>
              <div class="col-sm-12">
                 <div class="form-group">
                  <label for="nama">Jumlah QTY</label>
-                 <input type="text" name="qty" maxlength="50" Required class="form-control" id="qty" placeholder="Stok Produk">
+                 <input type="number" name="qty" maxlength="50" Required class="form-control" id="qty" placeholder="Stok Produk">
                  <input type="hidden" name="state" maxlength="50" Required class="form-control" id="state">
                  <input type="hidden" name="idProduk" maxlength="50" Required class="form-control" id="idProduk">
                </div>
              </div>
+           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
@@ -56,11 +72,43 @@
 </div>
 <!-- /.Modal Ubah-->
 <script type="text/javascript" language="javascript" >
+    var jsonDetUkuran = <?php echo $list_det_ukuran; ?>;
+    var jsonDetWarna = <?php echo $list_det_warna; ?>;
+
+    function loadWarna(id){
+      var html = "<option selected disabled>Pilih Warna</option>";
+      if(id != '' || id != null) {
+        options = jsonDetWarna.filter(function (index) { return index.id_produk == id }); 
+
+        $.each(options, function(index, value) {
+          html += "<option value=\'"+options[index].id_warna+"\'>"
+                + options[index].nama
+                + "</option>";
+        });
+        $("#id_warna").html(html);
+      }
+    }
+    function loadUkuran(id){
+      var html = "<option selected disabled>Pilih Ukuran</option>";
+      if(id != '' || id != null) {
+        options = jsonDetUkuran.filter(function (index) { return index.id_produk == id }); 
+
+        $.each(options, function(index, value) {
+          html += "<option value=\'"+options[index].id_ukuran+"\'>"
+                + options[index].nama
+                + "</option>";
+        });
+        $("#id_ukuran").html(html);
+      }
+    }
+
     function tambahStok(id){
       $("#myModalLabel").html("Tambah Stok Produk");
       $("#state").val("tambah");
       $("#qty").val("");
       $("#idProduk").val(id);
+      loadWarna(id);
+      loadUkuran(id);
       $("#modalform").modal("show");
     }
     function kurangStok(id){
@@ -68,6 +116,8 @@
       $("#state").val("kurang");
       $("#qty").val("");
       $("#idProduk").val(id);
+      loadWarna(id);
+      loadUkuran(id);
       $("#modalform").modal("show");
     }
     $(document).ready(function() {
@@ -94,7 +144,9 @@
           $.ajax({
             url : $("#myform").attr('action'),
             type : $("#myform").attr('method'),
-            data : $("#myform").serialize(),
+            data : $("#myform").serialize()
+                    + "&nama_ukuran=" + $("#id_ukuran :selected").html()
+                    + "&nama_warna=" + $("#id_warna :selected").html(),
             dataType: 'json',
             beforeSend: function() { 
               $("#aSimpan").prop("disabled", true);
@@ -126,6 +178,19 @@
               $("#aSimpan").prop("disabled", false);              
               dataTable.ajax.reload( null, false );
               $("#modalform").modal("hide");
+            },
+            error: function(jqXHR, exception) {
+              console.log(exception);
+              new PNotify({
+                            title: 'Gagal',
+                            text: "Gagal Update Stok",
+                            type: 'danger',
+                            hide: true,
+                            delay: 5000,
+                            styling: 'bootstrap3'
+                          });          
+              $('#aSimpan').html('Simpan');
+              $("#aSimpan").prop("disabled", false);
             }
           });    
         });

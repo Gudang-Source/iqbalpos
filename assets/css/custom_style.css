@@ -18,7 +18,8 @@
 }
 
 .datepicker.dropdown-menu {
-  background-color:#435059;
+  /*background-color:#435059; DARK*/
+  background-color:#f8f8f8;
 }
 
 body .popover{

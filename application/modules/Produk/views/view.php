@@ -17,7 +17,8 @@
                   <th class="text-center">Nama Produk</th>
                   <th class="text-center">Merk</th>
                   <th class="text-center">SKU</th>
-                  <th class="text-center">Stok</th>
+                  <th class="text-center">Total Stok</th>
+                  <th class="text-center">Detail Stok</th>
                   <th class="text-center">Harga Jual Normal (IDR)</th>
                   <th class="text-center" class="hidden-xs">Tanggal Buat</th>
                   <th class="text-center no-sort">Aksi</th>
@@ -178,14 +179,14 @@
              <div class="col-sm-6">
                <div class="form-group">
                  <label for="id_ukuran">Ukuran</label>
-                 <select name="id_ukuran[]" class="form-control" id="id_ukuran" multiple="">
+                 <select name="id_ukuran[]" class="form-control" id="id_ukuran" multiple="" required="required">
                  </select>
                </div>
              </div>
              <div class="col-sm-6">
                <div class="form-group">
                  <label for="id_warna">Warna</label>
-                 <select name="id_warna[]" class="form-control" id="id_warna" multiple="">
+                 <select name="id_warna[]" class="form-control" id="id_warna" multiple="" required="required">
                  </select>
                </div>
              </div>

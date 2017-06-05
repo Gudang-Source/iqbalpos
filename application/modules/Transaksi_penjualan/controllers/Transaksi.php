@@ -770,8 +770,8 @@ class Transaksi extends MX_Controller {
             $dataInsertTorder['add_by']                         =   isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
             $dataInsertTorder['deleted']                        =   1;
             $dataInsertTorder['id_metode_pembayaran']           =   $params['paymentMethod'];
-            $dataInsertTorder['id_bank']                        =   $params['id_bank'];
-            $dataInsertTorder['nomor_kartu']                        =   $params['nomor_kartu'];
+            // $dataInsertTorder['id_bank']                        =   $params['id_bank'];
+            // $dataInsertTorder['nomor_kartu']                        =   $params['nomor_kartu'];
             $dataInsertTorder['cash']                           =   $params['paid'];
             $dataInsertTorder['uang_kembali']                   =   $params['kembalian'];
             $dataInsertTorder['total_potongan']                 =   $getTotal['total_potongan'];

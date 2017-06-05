@@ -50,9 +50,10 @@ class Master extends MX_Controller {
             3   =>  'merk', 
             4   =>  'sku',
             5   =>  'stok',
-            6   =>  'harga_jual_normal',
-            7   =>  'date_add',
-            8   =>  'aksi'
+            6   =>  'detail_stok',
+            7   =>  'harga_jual_normal',
+            8   =>  'date_add',
+            9   =>  'aksi'
         );
         $sql = "SELECT A.*, B.nama AS merk FROM m_produk A LEFT JOIN m_produk_merk B ON B.id = A.id_merk WHERE A.deleted = 1";
         $query=$this->Produkmodel->rawQuery($sql);
@@ -65,7 +66,7 @@ class Master extends MX_Controller {
             $sql.=" AND ( A.nama LIKE '%".$requestData['search']['value']."%' "; 
             $sql.=" OR B.nama LIKE '%".$requestData['search']['value']."%' ";
             $sql.=" OR A.sku LIKE '%".$requestData['search']['value']."%' ";
-            $sql.=" OR A.stok LIKE '%".$requestData['search']['value']."%' ";
+            $sql.=" OR A.detail_stok LIKE '%".$requestData['search']['value']."%' ";
             $sql.=" OR A.harga_jual_normal LIKE '%".$requestData['search']['value']."%' ";
             $sql.=" OR A.date_add LIKE '%".$requestData['search']['value']."%' )";
         }
@@ -83,6 +84,24 @@ class Master extends MX_Controller {
                     $foto_url = base_url()."/upload/produk/".$row["foto"];
                 }
             }
+            //Preparing detail stok
+            $html_detail = '';
+            $detail_stok = json_decode($row['detail_stok']);
+            if(!empty($detail_stok)) {
+                $html_detail .= "<ul>";
+                foreach ($detail_stok as $detail) {
+                    $html_detail .= "<li class='small'>"
+                                ."<div class='col-xs-7' style='padding:2px;'>"
+                                    ."<b>".$detail->nama_warna."</b>, "
+                                    ."<b>".$detail->nama_ukuran."</b> "
+                                ."</div>"
+                                ."<div class='col-xs-5' style='padding:2px;'>"
+                                    ."Stok: <b>".$detail->stok."</b></li>"
+                                ."</div>";
+                }
+                $html_detail .= "</ul>";
+            }
+
             $nestedData     =   array(); 
             $nestedData[]   =   "<span class='text-center' style='display:block;'>".($i+1)."</span>";
             $nestedData[]   .=  "<a href='javascript:void(0)' data-toggle='popover' data-html='true' data-placement='right' onclick='showThumbnail(this)'>"
@@ -91,6 +110,7 @@ class Master extends MX_Controller {
             $nestedData[]   =   $row["merk"];
             $nestedData[]   =   $row["sku"];
             $nestedData[]   =   "<span class='text-center' style='display:block;'>".$row["stok"]."</span>";
+            $nestedData[]   =   (!empty($row["detail_stok"]) ? $html_detail : "<span class='text-center' style='display:block;'>-</span>") ;
             $nestedData[]   =   "<span class='pull-right money' style='display:block;'>".$row["harga_jual_normal"]."</span>";
             $nestedData[]   =   date("d-m-Y H:i", strtotime($row["date_add"]));
             $nestedData[]   .=   '<td class="text-center"><div class="btn-group" >'
