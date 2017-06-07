@@ -187,9 +187,11 @@ class Transaksi extends MX_Controller {
 		    		$nestedData['rowid'] = $items['rowid'];
 		    		$nestedData['subtotal'] = $items['price']*$items['qty'];
 
-		    		$nestedData['ukuran'] = $items['options']['ukuran']!=null?$items['options']['ukuran']:0;
-		    		$nestedData['warna'] = $items['options']['warna']!=null?$items['options']['warna']:0;
-		    		$nestedData['total_berat'] = $items['options']['total_berat']!=null?$items['options']['total_berat']:0;
+		    		$nestedData['total_berat'] = $items['total_berat']!=null?$items['total_berat']:0;
+                    $nestedData['ukuran'] = $items['options']['ukuran']!=null?$items['options']['ukuran']:0;
+                    $nestedData['text_ukuran'] = $items['options']['text_ukuran']!=null?$items['options']['text_ukuran']:0;
+                    $nestedData['warna'] = $items['options']['warna']!=null?$items['options']['warna']:0;
+                    $nestedData['text_warna'] = $items['options']['text_warna']!=null?$items['options']['text_warna']:0;
 		    		array_push($data, $nestedData);
     			}
     		}
@@ -289,8 +291,8 @@ class Transaksi extends MX_Controller {
     function getWarna($id){
         $rid = explode("_", $id);
     	// $dataSelect['deleted'] = 1;
-    	// $selectData = $this->Transaksipomodel->select($dataSelect, 'm_produk_warna');
-        $selectData = $this->Transaksipomodel->rawQuery("SELECT m_produk_warna.id, m_produk_warna.nama
+    	// $selectData = $this->Transaksipembelianmodel->select($dataSelect, 'm_produk_warna');
+        $selectData = $this->Transaksipembelianmodel->rawQuery("SELECT m_produk_warna.id, m_produk_warna.nama
             FROM m_produk_det_warna
             INNER JOIN m_produk ON m_produk_det_warna.id_produk = m_produk.id
             INNER JOIN m_produk_warna ON m_produk_det_warna.id_warna = m_produk_warna.id
@@ -300,8 +302,8 @@ class Transaksi extends MX_Controller {
     function getUkuran($id){
         $rid = explode("_", $id);
     	// $dataSelect['deleted'] = 1;
-    	// $selectData = $this->Transaksipomodel->select($dataSelect, 'm_produk_ukuran');
-        $selectData = $this->Transaksipomodel->rawQuery("SELECT m_produk_ukuran.id, m_produk_ukuran.nama
+    	// $selectData = $this->Transaksipembelianmodel->select($dataSelect, 'm_produk_ukuran');
+        $selectData = $this->Transaksipembelianmodel->rawQuery("SELECT m_produk_ukuran.id, m_produk_ukuran.nama
                 FROM m_produk_det_ukuran
                 INNER JOIN m_produk ON m_produk_det_ukuran.id_produk = m_produk.id
                 INNER JOIN m_produk_ukuran ON m_produk_det_ukuran.id_ukuran =m_produk_ukuran.id
@@ -318,6 +320,20 @@ class Transaksi extends MX_Controller {
       $dataSelect['deleted'] = 1;
       $selectData = $this->Transaksipembelianmodel->select($dataSelect, 'm_bank');
       return json_encode($selectData->result_array());
+    }
+    function getUkuranById($id){
+        $list = null;
+        $dataSelect['deleted'] = 1;
+        $dataSelect['id'] = $id;
+        $list = $this->Transaksipembelianmodel->select($dataSelect, 'm_produk_ukuran');
+        return $list->row();
+    }
+    function getWarnaById($id){
+        $list = null;
+        $dataSelect['deleted'] = 1;
+        $dataSelect['id'] = $id;
+        $list = $this->Transaksipembelianmodel->select($dataSelect, 'm_produk_warna');
+        return $list->row();
     }
     function transaksi(){
       $getTotal = json_decode($this->_getTotal());
@@ -355,24 +371,28 @@ class Transaksi extends MX_Controller {
     }
     function updateCart($id, $qty, $state = 'tambah'){
     	$getid = $this->in_cart($id, 'id', 'rowid');
+
     	$dataSelect['deleted'] = 1;
     	$dataSelect['id'] = $getid;
     	$selectData = $this->Transaksipembelianmodel->select($dataSelect, 'm_produk');
-    	$lastQty = $this->in_cart($id, 'qty', 'rowid');
+    	$itemQty = $this->in_cart($id, 'qty', 'rowid');
+
     	if($state == 'tambah'){		
 			$data = array(
 			        'rowid'  => $id,
-			        'qty'    => $lastQty+1
+			        'qty'    => $itemQty + 1
 			);
 			$this->cart->update($data);
-			echo $this->getOrder();   	
+            echo json_encode(array("status" => 2, "list" => $this->getOrder()));
+			// echo $this->getOrder();   	
     	}else{
 			$data = array(
 			        'rowid'  => $id,
 			        'qty'    => $qty
 			);
 			$this->cart->update($data);
-			echo $this->getOrder();   	    		
+            echo json_encode(array("status" => 2, "list" => $this->getOrder()));
+			// echo $this->getOrder();   	    		
     	}
     }
     function updateOption($id, $warna, $ukuran, $total_berat){
@@ -437,29 +457,57 @@ class Transaksi extends MX_Controller {
     	}
     	// echo $this->getOrder();	
     }
+
 	function tambahCart($id){
-		$inCart = $this->in_cart($id."_PEMBELIAN");
-		$params	= $this->input->post();
-		if($inCart != 'false'){
+        $params = $this->input->post();
+        $idSupplier = $params['idSupplier'];
+        $idUkuran = !empty($params['idUkuran']) ? $params['idUkuran'] : 0;
+        $idWarna = !empty($params['idWarna']) ? $params['idWarna'] : 0;
+        $textUkuran = $this->getUkuranById($idUkuran);
+        $textWarna = $this->getWarnaById($idWarna);
+		// $inCart = $this->in_cart($id."_PEMBELIAN");
+
+        $cart_id = $id."_PEMBELIAN"."_".$idUkuran."_".$idWarna; //idProduk_PEMBELIAN_idUkuran_idWarna
+        $inCart = $this->in_cart($cart_id);
+
+		if($inCart != 'false') {
 			$qty = $this->in_cart($id."_PEMBELIAN", 'qty') + 1;
 			$this->updateCart($inCart, $qty);
-		}else if($inCart == 'false'){
+		}
+        else if($inCart == 'false'){
 			$dataSelect['deleted']=1;
 			$dataSelect['id']=$id;
 			$selectData = $this->Transaksipembelianmodel->select($dataSelect, 'm_produk');
-			$datas = array(
-		                'id'      => $selectData->row()->id."_PEMBELIAN",
-		                'qty'     => 1,
-		                'price'   => $selectData->row()->harga_beli,
-		                'name'    => $selectData->row()->nama,
-				        'options' => array(
-				        				'ukuran'=>0,
-				        				'warna'=>0,
-				        				'total_berat'=>$selectData->row()->berat
-				        				)
-			);
-			$this->cart->insert($datas);
-			echo $this->getOrder();
+            $select_id = !empty($selectData->row()) ? $selectData->row()->id : 'null';
+
+            $condition = array('id' => $select_id, 'deleted' => 1);
+            $dataProduk = $this->Transaksipembelianmodel->select($condition, 'm_produk')->row();
+            $lastQty = $this->getCartQtyById($cart_id);
+            $hargaBeli = $selectData->row()->harga_beli;
+
+            if($hargaBeli != 0){
+    			$datas = array(
+	                'id'      => $cart_id,
+	                'qty'     => 1,
+	                'price'   => $selectData->row()->harga_beli,
+	                'name'    => $selectData->row()->nama,
+                    'total_berat' => $selectData->row()->berat,
+			        'options' => array(
+                        'ukuran' => $idUkuran,
+                        'text_ukuran' => !empty($textUkuran) ? $textUkuran->nama : 'Tidak ada',
+                        'warna' => $idWarna,
+                        'text_warna' => !empty($textWarna) ? $textWarna->nama : 'Tidak ada',
+                        // 'total_berat' => $selectData->row()->berat
+                    )
+    			);
+    			$this->cart->insert($datas);
+                echo json_encode(array("status"=>2, "list"=>$this->getOrder()));
+                // echo $this->getOrder();
+            }
+            else{
+                // harga beli belum diset
+                echo json_encode(array("status"=>0, "list"=>$this->getOrder()));
+            }
 		}
 	}
 	function in_cart($product_id = null, $type = 'rowid', $filter = 'id') {
@@ -495,6 +543,26 @@ class Transaksi extends MX_Controller {
     	}
     	return json_encode(array("tax"=>0, "discount"=> 0, "total"=> $total, "total_items"=>$total_item));
     }    
+    function getCartQtyById($id) {
+        $sid = explode('_', $id);
+        $totalQty = 0;
+
+        if(!empty($id)) {
+            $filteredCart = array();
+            $dataCart = $this->cart->contents();
+            foreach ($dataCart as $itemCart) {
+                $splitCartId = explode('_' ,$itemCart['id']);
+                if($splitCartId[1] == "PEMBELIAN") {
+                    //Menghitung total qty produk yang memiliki id yang sama dengan id produk ini
+                    if(($splitCartId[0] == $sid[0]) && ($splitCartId[2] == $sid[2]) && ($splitCartId[3] == $sid[3]) ) {
+                        $totalQty = $itemCart['qty'];
+                        // array_push($filteredCart, $itemCart);
+                    }
+                }
+            }
+        }
+        return $totalQty;
+    }
     function doSubmit(){
     	$params = $this->input->post();
       $lastInsertId = 0;
@@ -538,7 +606,7 @@ class Transaksi extends MX_Controller {
                 $dataInsertDetail['nama_ukuran']      = !empty($selectDataUkuran->nama) ? $selectDataUkuran->nama : 'Tidak ada';
 				    		$dataInsertDetail['nama_warna']			=	!empty($selectDataWarna->nama) ? $selectDataWarna->nama : 'Tidak ada';
 				    		$dataInsertDetail['jumlah']					  =	$items['qty'];
-				    		$dataInsertDetail['total_berat']			=	$items['options']['total_berat'] * $items['qty'];
+				    		$dataInsertDetail['total_berat']			=	$items['total_berat'] * $items['qty'];
 				    		$dataInsertDetail['harga_beli']				=	$items['price'];
 				    		$dataInsertDetail['total_harga']			=	$items['price'] * $items['qty'];
 				    		$insertDetail = $this->Transaksipembelianmodel->insert($dataInsertDetail, 't_beli_detail');
@@ -569,7 +637,7 @@ class Transaksi extends MX_Controller {
             $idProduks = explode("_", $items['id']);
             if (count($idProduks) > 1) {
                 if ($idProduks[1] == "PEMBELIAN") {
-                    $total += $items['options']['total_berat'];
+                    $total += $items['total_berat'];
                     $total = $total * $items['qty'];
                 }
             }

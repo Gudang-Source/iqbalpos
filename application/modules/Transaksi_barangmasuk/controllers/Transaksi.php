@@ -79,7 +79,7 @@ class Transaksi extends MX_Controller {
                 foreach ($detail_stok as $detail) {
                     $html_detail .= "<li class='small'>"
                                 ."<b>Warna:</b> ".$detail->nama_warna.", "
-                                ."<b>Ukuran:</b> ".$detail->nama_ukuran.", "
+                                ."<b>Ukuran:</b> ".$detail->nama_ukuran." <br>"
                                 ."<b>Stok:</b> ".$detail->stok."</li>";
                 }
                 $html_detail .= "</ul>";
@@ -228,7 +228,6 @@ class Transaksi extends MX_Controller {
                 $lastStok = $item_stok;
                 $new_detail_stok = $this->build_detail_stok($detail_stok, $id_warna, $id_ukuran, $nama_warna, $nama_ukuran, $qty, $state);
                 $current_total_stok = $this->total_detail_stok($params['idProduk']);
-                $new_total_stok = $current_total_stok + $qty;
             }
             else {
                 //insert stok & detail_stok into m_produk
@@ -244,17 +243,18 @@ class Transaksi extends MX_Controller {
                 $new_detail_stok = json_encode($data);
             }
 
-    		if ($state == "kurang") {
-    			if ($lastStok < $qty) {
-    				echo json_encode(array("status"=>0));
-    				exit();
-    			}
+            if ($state == "kurang") {
+                if ($lastStok < $qty) {
+                    echo json_encode(array("status"=>0));
+                    exit();
+                }
                 else{
-    				$dataUpdate['tanggal_kurang_stok'] = $dateNow;
-    				$dataUpdate['last_edited'] = $dateNow;
+                    $new_total_stok = $current_total_stok - $qty;
+                    $dataUpdate['tanggal_kurang_stok'] = $dateNow;
+                    $dataUpdate['last_edited'] = $dateNow;
                     // $dataUpdate['stok'] = $lastStok - $qty;
-    				$dataUpdate['stok'] = $new_total_stok;
-				    $dataUpdate['detail_stok'] = $new_detail_stok;
+                    $dataUpdate['stok'] = $new_total_stok;
+                    $dataUpdate['detail_stok'] = $new_detail_stok;
 
                     $dataInsert['status'] = 3;
                     // $dataInsert['stok_akhir'] = $lastStok - $qty;
@@ -263,6 +263,7 @@ class Transaksi extends MX_Controller {
                 }
             }
             else if($state == "tambah"){
+                $new_total_stok = $current_total_stok + $qty;
                 $dataUpdate['tanggal_tambah_stok'] = $dateNow;
                 $dataUpdate['last_edited'] = $dateNow;
                 // $dataUpdate['stok'] = $lastStok + $qty;

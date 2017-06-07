@@ -77,6 +77,7 @@
 
     function loadWarna(id){
       var html = "<option selected disabled>Pilih Warna</option>";
+          html += "<option value='0'>Tidak Ada</option>";
       if(id != '' || id != null) {
         options = jsonDetWarna.filter(function (index) { return index.id_produk == id }); 
 
@@ -90,6 +91,7 @@
     }
     function loadUkuran(id){
       var html = "<option selected disabled>Pilih Ukuran</option>";
+          html += "<option value='0'>Tidak Ada</option>";
       if(id != '' || id != null) {
         options = jsonDetUkuran.filter(function (index) { return index.id_produk == id }); 
 

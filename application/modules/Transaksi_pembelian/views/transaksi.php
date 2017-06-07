@@ -21,6 +21,11 @@
     width: 65%;
   }
 </style>
+<?php 
+  /*echo "<pre>";
+  print_r (isset($_SESSION['cart_contents']) ? $_SESSION['cart_contents'] : '');
+  echo "</pre>";*/
+?>
 <div class="container-fluid">
    <div class="row">
     <div class="col-sm-12">
@@ -43,7 +48,7 @@
             </a>
          </div>    -->      
         
-         <div class="col-sm-12">
+         <div class="col-sm-6">
           <div class="form-group">
             <label class="label-control">Supplier</label>
             <select class="js-select-options form-control" id="supplierSelect" onchange="filterProduk()" name="supplier" required="required">
@@ -53,7 +58,7 @@
           </div>
          </div>
 
-         <div class="col-sm-12">
+         <div class="col-sm-6">
           <div class="form-group">
             <label class="label-control">Purchase Order</label>
             <select class="js-select-options form-control" id="poSelect" onchange="choosePO()" name="po" required="required">
@@ -61,12 +66,9 @@
             </select>
           </div>
          </div>
-         <div class="col-sm-12">
-          <div class="form-group">
-            <label class="label-control">Catatan</label>
-            <textarea name="catatan" class="form-control" placeholder="Catatan" id="catatan"></textarea>
-          </div>
-         </div>
+         <!-- catatan was here -->
+         <div class="col-sm-12">&nbsp;</div>
+
          <div class="col-xs-3 table-header text-center">
             <label>PRODUK</label>
          </div>
@@ -100,12 +102,7 @@
                   </tr>
                </table>
             </div>
-            <div class="col-sm-12">
-              <div class="form-group">
-                <label for="paymentMethod" class="label-control">Metode Pembayaran</label>
-                 <select class="form-control" id="paymentMethod" name="paymentMethod" required="required"> </select>
-              </div>
-            </div>
+            <!-- metode pembayaran was here -->
             <button type="button" onclick="cancelOrder()" class="btn btn-red col-md-6 flat-box-btn"><h5 class="text-bold">Cancel</h5></button>
             <button type="button" class="btn btn-green col-md-6 flat-box-btn" onclick="payment()" id="btnDoOrder"><h5 class="text-bold">Proses Transaksi</h5></button>
             <!-- <button type="submit" class="btn btn-green col-md-6 flat-box-btn" data-toggle="modal" data-target="#AddSale" id="btnDoOrder"><h5 class="text-bold">Proses Transaksi</h5></button> -->
@@ -172,7 +169,15 @@
              <div class="form-group">
                <h2 id="textMetodePembayaran">Tunai</h2>
              </div>
-            
+             
+             <div class="form-horizontal">
+               <div class="form-group">
+                 <label for="paymentMethod" class="col-sm-3 control-label">Metode Pembayaran</label>
+                 <div class="col-sm-9">
+                   <select class="form-control" id="paymentMethod" name="paymentMethod" required="required"> </select>
+                 </div>
+               </div>
+             </div>
              <div class="row">
                 <div class="col-xs-3">
                   <label class="center-block text-right">Total Harga</label>
@@ -192,17 +197,15 @@
                    </div>
                  </div>
                </div>
-               <div class="form-group pembayaran_bank">
+               <!-- <div class="form-group pembayaran_bank">
                  <label class="col-sm-3 control-label" for="id_bank">Bank</label>
                  <div class="col-sm-9">
                    <div class="input-group group-select">
-                     <select class="form-control" id="id_bank" name="id_bank">
-                     <!-- Load option bank -->
-                     </select>
+                     <select class="form-control" id="id_bank" name="id_bank"></select>
                      <input type="number" name="nomor_kartu" id="nomor_kartu" class="form-control" placeholder="Nomor Kartu">
                    </div>
                  </div> 
-               </div>
+               </div> -->
              </div>
 
              <div class="row">
@@ -220,6 +223,14 @@
                <div class="col-xs-6">
                  <h3 class="text-right bg-danger" style="margin-top: 5px; padding:10px;">Rp <span id='textKembalian' class="">0</span>-</h3>
                  <input type="hidden" name="kembalian" id="kembalian">
+               </div>
+             </div>
+             <div class="form-horizontal">
+               <div class="form-group">
+                 <label for="catatan" class="col-sm-3 control-label">Catatan</label>
+                 <div class="col-sm-9">
+                   <textarea name="catatan" class="form-control" placeholder="Catatan" id="catatan"></textarea>
+                 </div>
                </div>
              </div>
              <div class="clearfix"></div>
@@ -267,14 +278,17 @@
   $("#paymentMethod").change(function(){
      var p_met = $(this).find('option:selected').val();
      var lower_p_met = $(this).find('option:selected').html().toLowerCase();
+     var textMetodePembayaran = $(this).find('option:selected').html();
+
+     $("#textMetodePembayaran").html(textMetodePembayaran);
 
      if (lower_p_met === 'tunai' || lower_p_met === 'kredit') {
-        $(".pembayaran_bank").find("input, select").prop("disabled", true);
-        $(".pembayaran_bank").hide();
+        // $(".pembayaran_bank").find("input, select").prop("disabled", true);
+        // $(".pembayaran_bank").hide();
         $('.Paid').show();
      } else {
-        $(".pembayaran_bank").find("input, select").prop("disabled", false);
-        $(".pembayaran_bank").show();
+        // $(".pembayaran_bank").find("input, select").prop("disabled", false);
+        // $(".pembayaran_bank").show();
         $('.Paid').show();
      }
   });
@@ -317,7 +331,9 @@
       if(color == 7) { color = 1; }
       var colorClass = 'color0' + color; color++;
       html = "<div class='col-sm-2 col-xs-3' style='display: block;'>"+
-              "<a href='javascript:void(0)' class='addPct' id=\'product-"+json[i].id+"\' onclick=\'addToCart("+json[i].id+")\'>"+
+              "<a href='javascript:void(0)' class='addPct' id=\'product-"
+              // +json[i].id+"\' onclick=\'addToCart("+json[i].id+")\'>"+
+              +json[i].id+"\' onclick=\'selectProdukOptions("+json[i].id+")\'>"+
                 "<div class='product "+colorClass+" flat-box waves-effect waves-block'>"+
                   "<h3 id='proname'>"+json[i].nama+"</h3>"+
                   "<div class='mask'>"+
@@ -356,14 +372,16 @@
                           "</div>"+
                           "<div class='col-xs-3'>"+
                             "<span class='textPD'>"+
-                              "<select name=ukuran id=\'uk-"+json[i].rowid+"\' class=\'form-control\' onchange=updateOption(\'"+json[i].rowid+"\') title=\'Pilih Ukuran\'>"+
+                              "<span><b>Ukuran:</b> "+json[i].text_ukuran+"</span>"+
+                              /*"<select name=ukuran id=\'uk-"+json[i].rowid+"\' class=\'form-control\' onchange=updateOption(\'"+json[i].rowid+"\') title=\'Pilih Ukuran\'>"+
                                 "<option value=0 select disabled>Pilih Ukuran</option>"+
-                              "</select>"+
+                              "</select>"+*/
                             "</span>"+
                             "<span class='textPD'>"+
-                              "<select name=warna id=\'wr-"+json[i].rowid+"\' class=\'form-control\' onchange=updateOption(\'"+json[i].rowid+"\') title=\'Pilih Warna\'>"+
+                              "<span><b>Warna:</b> "+json[i].text_warna+"</span>"+
+                              /*"<select name=warna id=\'wr-"+json[i].rowid+"\' class=\'form-control\' onchange=updateOption(\'"+json[i].rowid+"\') title=\'Pilih Warna\'>"+
                                 "<option value=0 select disabled>Pilih Warna</option>"+
-                              "</select>"+
+                              "</select>"+*/
                             "</span>"+
                           "</div>"+
                           "<div class='col-xs-2'>"+
@@ -375,40 +393,44 @@
                             "<span class=\'textPD money\' style='float:right;'>"+json[i].harga_beli+"</span>"+
                             "<input type=hidden id=\'hb-"+json[i].rowid+"\' class=\'form-control\' value='"+json[i].harga_beli+"'  onchange=updateHargaBeli(\'"+json[i].rowid+"\')>"+
                           "</div>"+
-                          "<div class='col-xs-2'>"+
-                            "<span class=\'textPD money\'>"+json[i].subtotal+"</span>"+
+                          "<div class='col-xs-2 nopadding'>"+
+                            "<span class=\'textPD pull-right money\'>"+json[i].subtotal+"</span>"+
                             "<input type=hidden id=\'tb-"+json[i].rowid+"\' class=\'form-control\' value='"+json[i].total_berat+"' onchange=updateOption(\'"+json[i].rowid+"\')>"+
                           "</div>"+
                       "</div>"+
                   "</div>"+
               "</div>";
         $("#productList").append(html);
-        loadUkuran(json[i].id, json[i].rowid, listUkuran, json[i].ukuran);
-        loadWarna(json[i].id, json[i].rowid, listWarna, json[i].warna);
+        // loadUkuran(json[i].id, json[i].rowid, listUkuran, json[i].ukuran);
+        // loadWarna(json[i].id, json[i].rowid, listWarna, json[i].warna);
       }
   }
   function loadUkuran(rid, id, json, pilih){
     $.ajax({
-      url :"<?php echo base_url('Transaksi_purchaseorder/Transaksi/getUkuran')?>/"+rid,
+      url :"<?php echo base_url('Transaksi_pembelian/Transaksi/getUkuran')?>/"+rid,
       type : "GET",
       data :"",
       dataType : "json",
       success : function(data){
         var html = "";
-        $("#uk-"+id).html('');
+        // $("#uk-"+id).html('');
+        $("#selectUkuran").html('');
         html = "<option value='0' selected>Tidak Ada Ukuran</option>";
-        $("#uk-"+id).append(html);
-        for (var i=0;i<data.length;i++){
+        $("#selectUkuran").append(html);
+        // $("#uk-"+id).append(html);
+        for(var i=0; i<data.length; i++) {
           var pilihs = "";
-          if(data[i].id == pilih){
+          /*if(data[i].id == pilih){
             pilihs = "selected";
-          }
+          }*/
           html = "<option value=\'"+data[i].id+"\' "+pilihs+">"+data[i].nama+"</option>";
-          $("#uk-"+id).append(html);
+          // $("#uk-"+id).append(html);
+          $("#selectUkuran").append(html);
         }
       }
     });     
   }
+
   function updateOption(id){
     var ukuran = $("#uk-"+id).val();
     var warna = $("#wr-"+id).val();
@@ -452,22 +474,25 @@
   }
   function loadWarna(rid, id, json, pilih){
     $.ajax({
-      url :"<?php echo base_url('Transaksi_purchaseorder/Transaksi/getWarna')?>/"+rid,
+      url :"<?php echo base_url('Transaksi_pembelian/Transaksi/getWarna')?>/"+rid,
       type : "GET",
       data :"",
       dataType : "json",
       success : function(data){
         var html = "";
-        $("#wr-"+id).html('');
+        // $("#wr-"+id).html('');
+        $("#selectWarna").html('');
         html = "<option value='0' selected>Tidak Ada Warna</option>";
-        $("#wr-"+id).append(html);
+        // $("#wr-"+id).append(html);
+        $("#selectWarna").append(html);
         for (var i=0;i<data.length;i++){
           var pilihs = "";
-          if(data[i].id == pilih){
+          /*if(data[i].id == pilih){
             pilihs = "selected";
-          }      
+          }      */
           html = "<option value=\'"+data[i].id+"\' "+pilihs+">"+data[i].nama+"</option>";
-          $("#wr-"+id).append(html);
+          $("#selectWarna").append(html);
+          // $("#wr-"+id).append(html);
         }
       }
     });    
@@ -564,17 +589,79 @@
       });
     }
   }
-  function addToCart(id){
-    $.ajax({
-      url :"<?php echo base_url('Transaksi_pembelian/Transaksi/tambahCart')?>/"+id,
-      type : "GET",
-      data :"",
-      dataType : "json",
-      success : function(data){
-        load_order(data);
-        fillInformation();
-      }
+  function selectProdukOptions(id){
+    if(id != '') {
+      $.confirm({
+        title: 'Opsi Produk',
+        content: '' +
+        '<form action="" class="" method="post">' +
+        '<div class="form-group">' +
+        '<label>Pilih Ukuran Produk</label>' +
+        '<select id=\'selectUkuran\' class=\'form-control\'>'+'</select>'
+        + '</div>' +
+        '<div class="form-group">' +
+        '<label>Pilih Warna Produk</label>' +
+        '<select id=\'selectWarna\' class=\'form-control\'>'+'</select>'
+        + '</div>' +
+        '</form>',
+        buttons: {
+            formSubmit: {
+                text: 'Pilih',
+                btnClass: 'btn-blue',
+                action: function () {
+                    var selectUkuran = this.$content.find('#selectUkuran').val() || 0;
+                    addToCart(id);
+                }
+            },
+            cancel: function () { },
+        },
+        onContentReady: function () {
+            loadUkuran(id);
+            loadWarna(id);
+            // bind to events
+            var jc = this;
+            this.$content.find('form').on('submit', function (e) {
+                // if the user submits the form by pressing enter in the field.
+                e.preventDefault();
+                jc.$$formSubmit.trigger('click'); // reference the button and click it
+            });
+        }
     });
+    }
+  }
+  function addToCart(id){
+    var idSupplier = $("#supplierSelect").val();
+    var idUkuran = $("#selectUkuran").val();
+    var idWarna = $("#selectWarna").val();
+    if(idSupplier == '' || idSupplier == null) {
+      $.alert({
+          title: 'Perhatian',
+          content: 'Anda belum memilih Supplier!',
+      }); 
+    }
+    else {
+      $.ajax({
+        url :"<?php echo base_url('Transaksi_pembelian/Transaksi/tambahCart')?>/"+id,
+        type : "POST",
+        data : {'idSupplier': idSupplier, 'idUkuran': idUkuran, 'idWarna': idWarna},
+        dataType : "json",
+        success : function(data) {
+          if(data.status == 2){
+            load_order(JSON.parse(data.list));
+            fillInformation();
+          }
+          else if(data.status == 0) {
+            $.confirm({
+                title: 'Harga',
+                content: 'Harga Beli belum diset, Hubungi Admin!!',
+                buttons: {
+                    ok: function () { }
+                  }
+            }); 
+          }
+        }
+      });
+    }
   }
   function delete_order(id){
     $.ajax({
@@ -700,11 +787,13 @@
   }
   function doSubmit(){
     var defaultHtml = $('#btnDoOrder').html();
-
+    var paymentMethod = $("#paymentMethod").val() || '';
+    alert(paymentMethod);
     $.ajax({
       url :$('#pembelian').attr('action'),
       type : $('#pembelian').attr('method'),
-      data : $('#pembelian').serialize(),
+      data : $('#pembelian').serialize() 
+              + "&paymentMethod="+paymentMethod,
       dataType : "json",
       success : function(data){        
         load_order(data);
@@ -800,11 +889,12 @@
     var textMetodePembayaran = $("#paymentMethod :selected").html() || '';
 
     $("#Paid").val("");
-    $(".pembayaran_bank").find("input, select").val("");
+    // $(".pembayaran_bank").find("input, select").val("");
     $("#textTotalBayar").html('0');
     $("#textKembalian").html('0');
 
-    if((idSupplier!='') && (idMetodePembayaran!='')) {
+    console.log(idSupplier);
+    if(idSupplier != '') {
       $("#textMetodePembayaran").html(textMetodePembayaran);
       $("#modalpayment").modal("show");
       $("#modalpayment").on("shown.bs.modal", function() {
@@ -814,7 +904,7 @@
     else {
       $.alert({
           title: 'Perhatian',
-          content: 'Anda belum memilih Supplier/Metode Pembayaran!',
+          content: 'Anda belum memilih Supplier!',
       });
     }
   }
@@ -824,7 +914,8 @@
       unmaskInputMoney();
       
       var defaultHtml = $('#btnBayar').html();
-      // var paymentMethod = $("#paymentMethod").val();
+      var paymentMethod = $("#paymentMethod").val();
+      var catatan = $("#catatan").val();
       var paid = $("#Paid").val() || '';
       var id_bank = $("#id_bank").val() || '';
       var nomor_kartu = $("#nomor_kartu").val() || '';
@@ -840,7 +931,9 @@
                 + "&paid=" +paid
                 + "&id_bank=" +id_bank
                 + "&nomor_kartu=" +nomor_kartu
-                + "&kembalian=" +kembalian,
+                + "&kembalian=" +kembalian
+                + "&catatan=" +catatan
+                + "&paymentMethod=" +paymentMethod,
         dataType : "json",
         success : function(data){
           $("#modalpayment").modal('hide');

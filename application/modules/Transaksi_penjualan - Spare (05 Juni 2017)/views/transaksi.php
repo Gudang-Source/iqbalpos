@@ -32,9 +32,6 @@
   echo "<br>";
   print_r(isset($_SESSION['cart_contents']) ? $_SESSION['cart_contents'] : 'Cart is Empty');
   echo "</pre>";*/
-  /*echo "<pre>";
-  print_r (isset($_SESSION['cart_contents']) ? $_SESSION['cart_contents'] : '');
-  echo "</pre>";*/
 ?>
 <div class="container-fluid">
    <div class="row">
@@ -73,8 +70,9 @@
            </div>
          </div>
          <!-- catatan was here -->
-         <div class="col-sm-12">&nbsp;</div>
-
+         <div class="col-sm-12">
+         &nbsp;
+         </div>
          <div class="col-xs-2 table-header text-center">
             <label>PRODUK</label>
          </div>
@@ -507,7 +505,7 @@
   }
   function loadUkuran(rid, id, json, pilih){
     $.ajax({
-      url :"<?php echo base_url('Transaksi_penjualan/Transaksi/getUkuran')?>/"+rid,
+      url :"<?php echo base_url('Transaksi_purchaseorder/Transaksi/getUkuran')?>/"+rid,
       type : "GET",
       data :"",
       dataType : "json",
@@ -591,7 +589,7 @@
   }
   function loadWarna(rid, id, json, pilih){
     $.ajax({
-      url :"<?php echo base_url('Transaksi_penjualan/Transaksi/getWarna')?>/"+rid,
+      url :"<?php echo base_url('Transaksi_purchaseorder/Transaksi/getWarna')?>/"+rid,
       type : "GET",
       data :"",
       dataType : "json",
@@ -620,7 +618,6 @@
     var textMetodePembayaran = $("#paymentMethod :selected").html() || '';
 
     $("#Paid").val("");
-    $("#catatan").val("");
     // $(".pembayaran_bank").find("input, select").val("");
     $("#textTotalBayar").html('0');
     $("#textKembalian").html('0');

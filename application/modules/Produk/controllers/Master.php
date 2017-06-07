@@ -91,13 +91,9 @@ class Master extends MX_Controller {
                 $html_detail .= "<ul>";
                 foreach ($detail_stok as $detail) {
                     $html_detail .= "<li class='small'>"
-                                ."<div class='col-xs-7' style='padding:2px;'>"
-                                    ."<b>".$detail->nama_warna."</b>, "
-                                    ."<b>".$detail->nama_ukuran."</b> "
-                                ."</div>"
-                                ."<div class='col-xs-5' style='padding:2px;'>"
-                                    ."Stok: <b>".$detail->stok."</b></li>"
-                                ."</div>";
+                                ."<b>Warna:</b> ".$detail->nama_warna.", "
+                                ."<b>Ukuran:</b> ".$detail->nama_ukuran." <br>"
+                                ."<b>Stok:</b> ".$detail->stok."</li>";
                 }
                 $html_detail .= "</ul>";
             }

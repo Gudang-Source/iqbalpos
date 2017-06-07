@@ -400,9 +400,9 @@ class Transaksi extends MX_Controller {
                 $splitCartId = explode('_' ,$itemCart['id']);
                 if($splitCartId[1] == "PENJUALAN") {
                     //Menghitung total qty produk yang memiliki id yang sama dengan id produk ini
-                    if(($splitCartId[0] == $sid[0]) && ($splitCartId[2] == $sid[2]) && ($splitCartId[3] == $sid[3]) ) {
-                        $totalQty = $itemCart['qty'];
-                        // array_push($filteredCart, $itemCart);
+                    if($splitCartId[0] == $sid[0]) {
+                        $totalQty = $totalQty + $itemCart['qty'];
+                        array_push($filteredCart, $itemCart);
                     }
                 }
             }
@@ -439,20 +439,10 @@ class Transaksi extends MX_Controller {
     	$selectData = $this->Transaksipenjualanmodel->select($dataSelect, 'm_produk');
 
         $itemQty = $this->in_cart($id, 'qty', 'rowid');
-        // $lastQty = $this->getCartQtyById($getid);
-        // $reservedQty = $this->getCartQtyByIdNotThis($getid);
-        if($state == 'tambah') {
-            $split_id = explode('_', $getid);
-            $id_produk = $split_id[0];
-            $id_ukuran = $split_id[2];
-            $id_warna = $split_id[3];
-            $lastQty = $this->getCartQtyById($getid);
-
-            $detail_stok = $this->get_detail_stok($id_produk);
-            $item_stok = $this->find_detail_stok($detail_stok, $id_warna, $id_ukuran);
-            $stokProduk = $item_stok;
-
-            // $stokProduk = $selectData->row()->stok;
+    	$lastQty = $this->getCartQtyById($getid);
+        $reservedQty = $this->getCartQtyByIdNotThis($getid);
+    	if($state == 'tambah') {
+            $stokProduk = $selectData->row()->stok;
     		if($stokProduk >= ($lastQty + 1)){			
 				$data = array(
 				        'rowid'  => $id,
@@ -462,8 +452,7 @@ class Transaksi extends MX_Controller {
 				echo json_encode(array("status" => 2, "list" => $this->getOrderArray()));
     		} else {
                 //stok tidak mencukupi
-                // $stokAvailable = array("stok" => ($stokProduk - $reservedQty));
-                $stokAvailable = array("stok" => $stokProduk);
+                $stokAvailable = array("stok" => ($stokProduk - $reservedQty));
                 // echo json_encode(array("status"=>1, "list"=>$this->getOrderArray()));
     			echo json_encode(array("lastQty" => $lastQty,"status" =>1, "list" => $stokAvailable, "rowid"=>$id));
     		}		
@@ -499,21 +488,11 @@ class Transaksi extends MX_Controller {
     	$dataSelect['deleted'] = 1;
     	$dataSelect['id'] = $getid;
     	$selectData = $this->Transaksipenjualanmodel->select($dataSelect, 'm_produk');
-
-        $split_id = explode('_', $getid);
-        $id_produk = $split_id[0];
-        $id_ukuran = $split_id[2];
-        $id_warna = $split_id[3];
-        
-        $detail_stok = $this->get_detail_stok($id_produk);
-        $item_stok = $this->find_detail_stok($detail_stok, $id_warna, $id_ukuran);
-        $stokProduk = $item_stok;
-
-        // $stokProduk = $selectData->row()->stok;
+        $stokProduk = $selectData->row()->stok;
         $lastQty = $this->getCartQtyById($getid);
-        // $reservedQty = $this->getCartQtyByIdNotThis($getid);
+        $reservedQty = $this->getCartQtyByIdNotThis($getid);
 
-    	if($stokProduk >= $qty){
+    	if(($stokProduk - $reservedQty) >= $qty){
 			$data = array(
 			        'rowid'  => $id,
 			        'qty'=> isset($qty) ? $qty : 0
@@ -523,11 +502,10 @@ class Transaksi extends MX_Controller {
     	}else{
     		// stok tidak mencukupi
             $stokAvailable = array(
-                                // "stok" => ((int)$stokProduk - (int)$reservedQty),
-                                "stok" => (int)$stokProduk,
-                                // "stokProduk" => $stokProduk,
-                                // "lastQty" => $lastQty,
-                                // "reservedQty" => $reservedQty,
+                                "stok" => ((int)$stokProduk - (int)$reservedQty),
+                                "stokProduk" => $stokProduk,
+                                "lastQty" => $lastQty,
+                                "reservedQty" => $reservedQty,
                                 "qty" => $qty,
                                 );
     		// echo json_encode(array("status"=>1, "id"=>$id, "list"=>$this->getOrderArray()));
@@ -572,73 +550,6 @@ class Transaksi extends MX_Controller {
     	}
     	echo $this->getOrder();	
     }
-
-    //--------------------------------------------
-    private function get_detail_stok($id_produk) {
-        //fetch detail_stok from current product
-        $result = 0;
-        if(!empty($id_produk)) {
-            $condition = array('id' => $id_produk, 'deleted' => 1);
-            $data_produk = $this->Transaksipenjualanmodel->select($condition, 'm_produk')->row();
-
-            $result = isset($data_produk->detail_stok) ? $data_produk->detail_stok : 0;
-        }
-        return $result;
-    }
-    private function find_detail_stok($detail_stok, $id_warna=0, $id_ukuran=0) {
-        //find stok of current product with certain warna & ukuran
-        $result = 0;
-        if(!empty($detail_stok)) {
-            $obj_data = json_decode($detail_stok);
-            foreach ($obj_data as $item) {
-                if(($item->id_warna == $id_warna) && ($item->id_ukuran == $id_ukuran)) {
-                    $result = $item->stok;
-                }
-            }
-        }
-        return $result;
-    }
-    private function total_detail_stok($detail_stok) {
-        //find total stok of current product
-        $result = 0;
-        if(!empty($detail_stok)) {
-            $obj_data = json_decode($detail_stok);
-            $total_stok = 0;
-            foreach ($obj_data as $item) {
-                $total_stok = (int)$total_stok + (int)$item->stok;
-            }
-            $result = $total_stok;
-        }
-        return $result;
-    }
-    private function build_detail_stok($detail_stok, $id_warna=0, $id_ukuran=0, $nama_warna, $nama_ukuran, $qty) {
-        //build new detail_stok json data
-        $result = 0;
-        if(!empty($detail_stok)) {
-            $obj_data = json_decode($detail_stok);
-            $arr_data = json_decode($detail_stok, true);
-            $new_stok = 0;
-            end($arr_data); $index = (key($arr_data) + 1);
-            $new_detail_stok = array();
-
-            foreach ($obj_data as $key => $value) {
-                if(($value->id_warna == $id_warna) && ($value->id_ukuran == $id_ukuran)) {
-                    $new_stok = ($arr_data[$key]['stok'] - $qty);
-                    $index = $key;
-                }
-            }
-            $arr_data[$index] = array(
-                    'id_warna' => $id_warna,
-                    'id_ukuran' => $id_ukuran,
-                    'nama_warna' => $nama_warna,
-                    'nama_ukuran' => $nama_ukuran,
-                    'stok' => $new_stok
-                );
-            $result = json_encode($arr_data);
-        }
-        return $result;
-    }
-    //--------------------------------------------
 	function tambahCart($id){
 		$params	= $this->input->post();
         $idCustomer = $params['idCustomer'];
@@ -665,11 +576,7 @@ class Transaksi extends MX_Controller {
 
 			if($hargaCustomer != 0){
                 // if($selectData->row()->stok > 0){   
-                // if($selectData->row()->stok > $lastQty){    
-                $detail_stok = $this->get_detail_stok($id);
-                $item_stok = $this->find_detail_stok($detail_stok, $idWarna, $idUkuran);
-
-				if($item_stok > $lastQty){	
+				if($selectData->row()->stok > $lastQty){	
                     $price_customer = $this->getHargaCustomer($selectData->row()->id, $idCustomer);			
 					$datas = array(
                         // 'id'      => $selectData->row()->id."_PENJUALAN_".date('YmdHis'),
@@ -710,9 +617,9 @@ class Transaksi extends MX_Controller {
 
 	function getHargaCustomer($idProduk = null, $idCustomer = null){
 		$getData = $this->Transaksipenjualanmodel->rawQuery("SELECT m_produk_det_harga.harga AS harga, m_produk.harga_jual_normal AS harga_jual_normal FROM m_produk
-				INNER JOIN m_produk_det_harga ON m_produk_det_harga.id_produk = m_produk.id
-				INNER JOIN m_customer ON m_produk_det_harga.id_customer_level = m_customer.id_customer_level
-				WHERE m_produk.id = ".$idProduk." AND m_customer.id = ".$idCustomer);
+									INNER JOIN m_produk_det_harga ON m_produk_det_harga.id_produk = m_produk.id
+									INNER JOIN m_customer ON m_produk_det_harga.id_customer_level = m_customer.id_customer_level
+									WHERE m_produk.id = ".$idProduk." AND m_customer.id = ".$idCustomer);
         $harga = 0;
         $dataHarga = $getData->row();
         if(!empty($dataHarga)) {
@@ -885,8 +792,7 @@ class Transaksi extends MX_Controller {
 		    		$getDataID = $this->Transaksipenjualanmodel->select($dataInsertTorder, 't_order');
 		    		$realIDORDER = $getDataID->row()->id;
 		    		$insertDetail = false;
-
-		    		foreach ($this->cart->contents() as $items) {
+		    		foreach ($this->cart->contents() as $items){
 		    			$idProduks = explode("_", $items['id']);
 		    			if(count($idProduks) > 1){
 		    				if($idProduks[1]=="PENJUALAN"){
@@ -919,38 +825,31 @@ class Transaksi extends MX_Controller {
 								if($insertDetail){
 									//update stok
 									$getIdDetail = $this->Transaksipenjualanmodel->select($dataInsertDetail, 't_order_detail');
-									$dataConditionStok['id'] = $idProduks[0];
-                                    // $dataUpdateStok['stok'] = $getHargaBeli->row()->stok - $items['qty'];
-                                    $detail_stok = $this->get_detail_stok($idProduks[0]);
-                                    $dataUpdateStok['detail_stok'] = $this->build_detail_stok($detail_stok, $items['options']['warna'], $items['options']['ukuran'], $items['options']['text_ukuran'], $items['options']['text_warna'], $items['qty']);
-                                    $dataUpdateStok['stok'] = $this->total_detail_stok($dataUpdateStok['detail_stok']);
-
-									$dataUpdateStok['last_edited'] = $dateNow;
-									$dataUpdateStok['edited_by'] = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
-									$dataUpdateStok['tanggal_kurang_stok'] = $dateNow;
-                                    
-                                    $produk_stok = $dataUpdateStok['stok'];
+									$dataConditionStok['id'] 					= $idProduks[0];
+									$dataUpdateStok['stok']	 					= $getHargaBeli->row()->stok - $items['qty'];
+									$dataUpdateStok['last_edited']	 			= $dateNow;
+									$dataUpdateStok['edited_by']	 			= isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+									$dataUpdateStok['tanggal_kurang_stok']	 	= $dateNow;
 									$updateStokProduk = $this->Transaksipenjualanmodel->update($dataConditionStok, $dataUpdateStok, 'm_produk');
 
 									if($updateStokProduk){
 										// insert ke h_stok_produk
-										$dataHstok['id_produk'] = $idProduks[0];
-										$dataHstok['id_order_detail'] = $getIdDetail->row()->id;
-										$dataHstok['id_service'] = 0;
-										$dataHstok['jumlah'] = $items['qty'];
-                                        // $dataHstok['stok_akhir']        = $getHargaBeli->row()->stok - $items['qty'];
-										$dataHstok['stok_akhir'] = $produk_stok;
-										$dataHstok['keterangan'] = "Stok berkurang ".$items['qty']." dari transaksi penjualan dengan ID ".$realIDORDER;
-										$dataHstok['status'] = 1;
-										$dataHstok['date_add'] = $dateNow;
-										$dataHstok['add_by'] = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
-										$dataHstok['deleted'] = 1;
+										$dataHstok['id_produk'] 		= $idProduks[0];
+										$dataHstok['id_order_detail']	= $getIdDetail->row()->id;
+										$dataHstok['id_service']		= 0;
+										$dataHstok['jumlah']	 		= $items['qty'];
+										$dataHstok['stok_akhir'] 		= $getHargaBeli->row()->stok - $items['qty'];
+										$dataHstok['keterangan'] 		= "Stok berkurang ".$items['qty']." dari transaksi penjualan dengan ID ".$realIDORDER;
+										$dataHstok['status']			= 1;
+										$dataHstok['date_add']			= $dateNow;
+										$dataHstok['add_by']			= isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+										$dataHstok['deleted']			= 1;
 										$insertHstok = $this->Transaksipenjualanmodel->insert($dataHstok, 'h_stok_produk');
 									}
 								}
 		    				}
 		    			}
-		    		}// end foreach
+		    		}
 
                     //updating t_order total profit
                     $condition = array("id" => $realIDORDER);
