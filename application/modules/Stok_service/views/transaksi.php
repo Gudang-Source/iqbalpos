@@ -1,8 +1,17 @@
 <style type="text/css">
   .product-details input[type="text"]{
-    width: 5em !important;
+    width: 4em !important;
+  }
+  #productList {
+    font-size: 90%;
   }
 </style>
+<?php
+  echo "<pre>";
+  print_r (isset($_SESSION['cart_contents']) ? $_SESSION['cart_contents'] : '');
+  // unset($_SESSION['cart_contents']);
+  echo "</pre>";
+?>
 <div class="container-fluid">
   <div class="row">
     <div class="col-sm-12">
@@ -27,11 +36,16 @@
             <textarea name="catatan" class="form-control" placeholder="Catatan"></textarea>
           </div>  
          </div>
-         <div class="col-xs-4 table-header text-center">
+         <div class="col-sm-12">&nbsp;</div>
+
+         <div class="col-xs-3 table-header text-center">
             <label>PRODUK</label>
          </div>
-         <div class="col-xs-3 table-header nopadding text-center">
-            <label class="text-left">QUANTITY</label>
+         <div class="col-xs-2 table-header nopadding text-center">
+            <label>OPSI</label>
+         </div>
+         <div class="col-xs-2 table-header nopadding text-center">
+            <label class="text-left">QTY</label>
          </div>
          <div class="col-xs-2 table-header nopadding text-center">
             <label class="text-left">STOK</label>
@@ -172,7 +186,7 @@
         html = "<div class='col-xs-12'>"+
                   "<div class='panel panel-default product-details'>"+
                       "<div class='panel-body' style=''>"+
-                          "<div class='col-xs-4 nopadding'>"+
+                          "<div class='col-xs-3 nopadding'>"+
                               "<div class='col-xs-4 nopadding'>"+
                                   "<a href='javascript:void(0)' onclick=delete_order(\'"+json[i].rowid+"\')>"+
                                   "<span class='fa-stack fa-sm productD'>"+
@@ -185,14 +199,22 @@
                                 "<span class='textPD'>"+json[i].produk+"</span>"+
                               "</div>"+
                           "</div>"+
-                          "<div class='col-xs-3 nopadding'>"+
+                          "<div class='col-xs-2 nopadding'>"+
+                            "<span class='textPD'>"
+                              +"<span><b>Ukuran:</b> "+json[i].text_ukuran+"</span>"+
+                            "</span>"+
+                            "<span class='textPD'>"
+                              +"<span><b>Warna:</b> "+json[i].text_warna+"</span>"+
+                            "</span>"+
+                          "</div>"+
+                          "<div class='col-xs-2 '>"+
                             "<span class='textPD'>"+
                               "<input id=\'qt-"+json[i].rowid+"\' "
                               +"onchange=\"addToCart("+ json[i].id[0] +", \'"+ json[i].rowid +"\');\""
                               +"class='form-control' value='"+json[i].qty+"' placeholder='0' maxlength='2' type='text'>"+
                             "</span>"+
                           "</div>"+
-                          "<div class='col-xs-3 nopadding'>"+
+                          "<div class='col-xs-3 '>"+
                             "<span class='textPD'>"+
                               "<p id=\'"+textSelect+"\'>?</p>"+
                               "<select id=\'"+select+"\' class='form-control' onchange=changeOption(\'"+json[i].rowid+"\') style='display:none;'>"+                                  
@@ -218,6 +240,46 @@
         $("#"+textSelect).text($("#"+select+" :selected").text())
       }
     }
+  }
+  function loadUkuran(rid, id, json, pilih){
+    $.ajax({
+      url :"<?php echo base_url('Stok_service/Transaksi/getUkuran')?>/"+rid,
+      type : "GET",
+      data :"",
+      dataType : "json",
+      success : function(data){
+        var html = "";
+        $("#selectUkuran").html('');
+        html = "<option value='0' selected>Tidak Ada Ukuran</option>";
+        $("#selectUkuran").append(html);
+
+        for(var i=0; i<data.length; i++) {
+          var pilihs = "";
+          html = "<option value=\'"+data[i].id+"\' "+pilihs+">"+data[i].nama+"</option>";
+          $("#selectUkuran").append(html);
+        }
+      }
+    });     
+  }
+  function loadWarna(rid, id, json, pilih){
+    $.ajax({
+      url :"<?php echo base_url('Stok_service/Transaksi/getWarna')?>/"+rid,
+      type : "GET",
+      data :"",
+      dataType : "json",
+      success : function(data){
+        var html = "";
+        $("#selectWarna").html('');
+        html = "<option value='0' selected>Tidak Ada Warna</option>";
+        $("#selectWarna").append(html);
+
+        for (var i=0;i<data.length;i++){
+          var pilihs = "";
+          html = "<option value=\'"+data[i].id+"\' "+pilihs+">"+data[i].nama+"</option>";
+          $("#selectWarna").append(html);
+        }
+      }
+    });    
   }
   function filterProduk(){
     $.ajax({
@@ -271,7 +333,9 @@
     }
   }
   function addToCart(id, rowid, jenisStok=''){
-    // alert(id +" - "+ rowid);
+    var idSupplier = $("#supplierSelect").val();
+    var idUkuran = $("#selectUkuran").val();
+    var idWarna = $("#selectWarna").val();
     //set default value (if addToCart is called from product thumbnail onclick)
     var qty = 1; 
     var addEvent = 'click';
@@ -283,28 +347,38 @@
     $.ajax({
       url :"<?php echo base_url('Stok_service/Transaksi/tambahCart')?>/"+id,
       type : "POST",
-      data : {"jenis_stok": jenisStok, "qty": qty, "event": addEvent},
+      data : { "jenis_stok": jenisStok,
+               "rowid" : rowid,
+               "qty": qty, 
+               "event": addEvent,
+               "idSupplier": idSupplier,
+               "idUkuran": idUkuran,
+               "idWarna": idWarna
+             },
       dataType : "json",
       success : function(data){
-        if(data.status == 0){
-          var list = data.list;
+        if(data.status == 0) {
+          // alert(data.list);
+          var availableStok = data.available;
           var elem = $("#qt-"+data.rowid);
           $.confirm({
               title: 'Stok',
-              content: 'Stok tidak mencukupi! <br>Max Qty: <b>'+list.stok+"</b>",
+              content: 'Stok tidak mencukupi! <br>Max Qty: <b>'+availableStok+"</b>",
               buttons: {
                   ok: function () {
-                    $(elem).val(parseInt(list.stok)); 
+                    console.log(availableStok);
+                    $(elem).val(parseInt(availableStok)); 
+                    $(elem).trigger('change'); 
                     change_jenisStok(data.rowid, jenisStok);
                     change_total(data.rowid);
-                    // $(elem).trigger('change'); 
                   }
               }
           });           
         } else {
           // console.log(data);        
-          var getRow = data.filter(function (index) { return index.id[0] == id }) || 0;
-          load_order(data);
+          var dataList = JSON.parse(data.list);
+          var getRow = dataList.filter(function (index) { return index.id[0] == id }) || 0;
+          load_order(dataList);
           change_jenisStok(getRow[0].rowid, jenisStok);
           // fillInformation();
         }
@@ -329,7 +403,7 @@
     changeOption(rowid);
     $("#textStok"+rowid).html($("stok-"+rowid+" :selected").text());
   }
-  function changeOption(id){
+  function changeOption(id){ //hanya untuk ganti kurangi/tidak kurangi
     var qty = $("#qt-"+id).val();
     var option = $("#stok-"+id).val();
     $.ajax({
@@ -369,7 +443,8 @@
       dataType : "json",
       success : function(data){
         // console.log(data);
-        load_order(data);
+        var list = JSON.parse(data.list);
+        load_order(list);
         fillInformation();
       }
     });
@@ -431,11 +506,14 @@
         $('#btnDoOrder').html("<h5 class=\'text-bold\'>Proses Service</h5>");
         $("#btnDoOrder").prop("disabled", false);
         // window.close();
-        window.location.reload(false);
+        // window.location.reload(false);
       }
     });    
   }
   function doSubmit(){
+    var defaultHtml = $('#btnDoOrder').html();
+    $('#btnDoOrder h5').text("Saving...");
+    $("#btnDoOrder").prop("disabled", true);
     $.ajax({
       url :$('#serviceOrder').attr('action'),
       type : $('#serviceOrder').attr('method'),
@@ -447,13 +525,18 @@
         $('#btnDoOrder').html("<h5 class=\'text-bold\'>Servis Stok</h5>");
         $("#btnDoOrder").prop("disabled", false);
         // window.close();
-        window.location.reload(false);
+        // window.location.reload(false);
+      },
+      error : function(jqXhr, errorStatus){
+        console.log(errorStatus);
+        $('#btnDoOrder').html("<h5 class=\'text-bold\'>Servis Stok</h5>");
+        $("#btnDoOrder").prop("disabled", false);
       }
     });    
   }
   function typeStok(id, rowid){
     $.confirm({
-        title: 'Jenis Transaksi',
+        title: 'Opsi Produk',
         content: '' +
         '<form action="" class="formName" method="post">' +
         '<div class="form-group">' +
@@ -462,6 +545,14 @@
           '<option value=\'1\'>Kurangi Stok</option>'+
           '<option value=\'2\'>Tidak Kurangi Stok</option>'+
         '</select>'+
+        '</div>' +
+        '<div class="form-group">' +
+        '<label>Pilih Ukuran Produk</label>' +
+        '<select id=\'selectUkuran\' class=\'form-control\'>'+'</select>' + 
+        '</div>' +
+        '<div class="form-group">' +
+        '<label>Pilih Warna Produk</label>' +
+        '<select id=\'selectWarna\' class=\'form-control\'>'+'</select>'+ 
         '</div>' +
         '</form>',
         buttons: {
@@ -483,6 +574,8 @@
             },
         },
         onContentReady: function () {
+            loadUkuran(id);
+            loadWarna(id);
             // bind to events
             var jc = this;
             this.$content.find('form').on('submit', function (e) {
@@ -495,23 +588,28 @@
   }
   $(document).ready(function(){
     $("#serviceOrder").on('submit', function(e){
-      var defaultHtml = $('#btnDoOrder').html();
-      $('#btnDoOrder h5').text("Saving...");
-      $("#btnDoOrder").prop("disabled", true);
+      var idSupplier = $("#supplierSelect").val();
+      console.log(idSupplier);
       e.preventDefault();
-      $.confirm({
-          title: 'Konfirmasi Service Stok',
-          content: 'Yakin ingin service stok?',
-          buttons: {
-              confirm: function () {
-                  doSubmit();
-              },
-              cancel: function () {
-                  $('#btnDoOrder').html(defaultHtml);
-                  $("#btnDoOrder").prop("disabled", false);
-              }
-          }
-      });      
+
+      if(idSupplier == '' || idSupplier == null) {
+        $.alert({
+          title: 'Perhatian',
+          content: 'Anda belum memilih Supplier!',
+        });
+      }
+      else {
+        $.confirm({
+            title: 'Konfirmasi Service Stok',
+            content: 'Yakin ingin service stok?',
+            buttons: {
+                confirm: function () {
+                    doSubmit();
+                },
+                cancel: function () { }
+            }
+        });      
+      }
     });
   });
 </script>

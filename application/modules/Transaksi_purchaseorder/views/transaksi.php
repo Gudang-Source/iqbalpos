@@ -2,6 +2,9 @@
   .product-details input[type="text"]{
     width: 5em !important;
   }
+  #productList {
+    font-size: 90%;
+  }
 </style>
 <div class="container-fluid">
   <div class="row">
@@ -127,7 +130,9 @@
       if(color == 7) { color = 1; }
       var colorClass = 'color0' + color; color++;
       html = "<div class='col-sm-2 col-xs-3' style='display: block;'>"+
-              "<a href='javascript:void(0)' class='addPct' id=\'product-"+json[i].id+"\' onclick=\'addToCart("+json[i].id+")\'>"+
+              "<a href='javascript:void(0)' class='addPct' id=\'product-"
+              // +json[i].id+"\' onclick=\'addToCart("+json[i].id+")\'>"+
+              +json[i].id+"\' onclick=\'selectProdukOptions("+json[i].id+")\'>"+
                 "<div class='product "+colorClass+" flat-box waves-effect waves-block'>"+
                   "<h3 id='proname'>"+json[i].nama+"</h3>"+
                   "<div class='mask'>"+
@@ -166,14 +171,16 @@
                           "</div>"+
                           "<div class='col-xs-3'>"+
                             "<span class='textPD'>"+
-                              "<select name=ukuran id=\'uk-"+json[i].rowid+"\' class=\'form-control\' onchange=updateOption(\'"+json[i].rowid+"\') title='Pilih Ukuran'>"+
+                              "<span><b>Ukuran:</b> "+json[i].text_ukuran+"</span>"+
+                              /*"<select name=ukuran id=\'uk-"+json[i].rowid+"\' class=\'form-control\' onchange=updateOption(\'"+json[i].rowid+"\') title='Pilih Ukuran'>"+
                                 "<option value=0 select disabled>Pilih Ukuran</option>"+
-                              "</select>"+
+                              "</select>"+*/
                             "</span>"+
                             "<span class='textPD'>"+
-                              "<select name=warna id=\'wr-"+json[i].rowid+"\' class=\'form-control\' onchange=updateOption(\'"+json[i].rowid+"\') title='Pilih Warna'>"+
+                              "<span><b>Warna:</b> "+json[i].text_warna+"</span>"+
+                              /*"<select name=warna id=\'wr-"+json[i].rowid+"\' class=\'form-control\' onchange=updateOption(\'"+json[i].rowid+"\') title='Pilih Warna'>"+
                                 "<option value=0 select disabled>Pilih Warna</option>"+
-                              "</select>"+
+                              "</select>"+*/
                             "</span>"+
                           "</div>"+
                           "<div class='col-xs-2'>"+
@@ -197,8 +204,8 @@
                   "</div>"+
               "</div>";
         $("#productList").append(html);
-        loadUkuran(json[i].id, json[i].rowid, listUkuran, json[i].ukuran);
-        loadWarna(json[i].id, json[i].rowid, listWarna, json[i].warna);
+        // loadUkuran(json[i].id, json[i].rowid, listUkuran, json[i].ukuran);
+        // loadWarna(json[i].id, json[i].rowid, listWarna, json[i].warna);
       }
   }
   function loadUkuran(rid, id, json, pilih){
@@ -209,16 +216,14 @@
       dataType : "json",
       success : function(data){
         var html = "";
-        $("#uk-"+id).html('');
+        $("#selectUkuran").html('');
         html = "<option value='0' selected>Tidak Ada Ukuran</option>";
-        $("#uk-"+id).append(html);
+        $("#selectUkuran").append(html);
         for (var i=0;i<data.length;i++){
           var pilihs = "";
-          if(data[i].id == pilih){
-            pilihs = "selected";
-          }
           html = "<option value=\'"+data[i].id+"\' "+pilihs+">"+data[i].nama+"</option>";
-          $("#uk-"+id).append(html);
+          $("#selectUkuran").append(html);
+
         }
       }
     });     
@@ -272,16 +277,13 @@
       dataType : "json",
       success : function(data){
         var html = "";
-        $("#wr-"+id).html('');
+        $("#selectWarna").html('');
         html = "<option value='0' selected>Tidak Ada Warna</option>";
-        $("#wr-"+id).append(html);
+        $("#selectWarna").append(html);
         for (var i=0;i<data.length;i++){
           var pilihs = "";
-          if(data[i].id == pilih){
-            pilihs = "selected";
-          }      
           html = "<option value=\'"+data[i].id+"\' "+pilihs+">"+data[i].nama+"</option>";
-          $("#wr-"+id).append(html);
+          $("#selectWarna").append(html);
         }
       }
     });    
@@ -357,17 +359,68 @@
       });
     }
   }
-  function addToCart(id){
-    $.ajax({
-      url :"<?php echo base_url('Transaksi_purchaseorder/Transaksi/tambahCart')?>/"+id,
-      type : "GET",
-      data :"",
-      dataType : "json",
-      success : function(data){
-        load_order(data);
-        fillInformation();
-      }
+  function selectProdukOptions(id){
+    if(id != '') {
+      $.confirm({
+        title: 'Opsi Produk',
+        content: '' +
+        '<form action="" class="" method="post">' +
+        '<div class="form-group">' +
+        '<label>Pilih Ukuran Produk</label>' +
+        '<select id=\'selectUkuran\' class=\'form-control\'>'+'</select>'
+        + '</div>' +
+        '<div class="form-group">' +
+        '<label>Pilih Warna Produk</label>' +
+        '<select id=\'selectWarna\' class=\'form-control\'>'+'</select>'
+        + '</div>' +
+        '</form>',
+        buttons: {
+            formSubmit: {
+                text: 'Pilih',
+                btnClass: 'btn-blue',
+                action: function () {
+                    var selectUkuran = this.$content.find('#selectUkuran').val() || 0;
+                    addToCart(id);
+                }
+            },
+            cancel: function () { },
+        },
+        onContentReady: function () {
+            loadUkuran(id);
+            loadWarna(id);
+            // bind to events
+            var jc = this;
+            this.$content.find('form').on('submit', function (e) {
+                // if the user submits the form by pressing enter in the field.
+                e.preventDefault();
+                jc.$$formSubmit.trigger('click'); // reference the button and click it
+            });
+        }
     });
+    }
+  }
+  function addToCart(id){
+    var idSupplier = $("#supplierSelect").val();
+    var idUkuran = $("#selectUkuran").val();
+    var idWarna = $("#selectWarna").val();
+    if(idSupplier == '' || idSupplier == null) {
+      $.alert({
+          title: 'Perhatian',
+          content: 'Anda belum memilih Supplier!',
+      }); 
+    }
+    else {  
+      $.ajax({
+        url :"<?php echo base_url('Transaksi_purchaseorder/Transaksi/tambahCart')?>/"+id,
+        type : "POST",
+        data : {'idSupplier': idSupplier, 'idUkuran': idUkuran, 'idWarna': idWarna},
+        dataType : "json",
+        success : function(data){
+          load_order(data);
+          fillInformation();
+        }
+      });
+    }
   }
   function delete_order(id){
     $.ajax({

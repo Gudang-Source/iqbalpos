@@ -314,26 +314,21 @@ class Transaksi extends MX_Controller {
     }
     function getWarna($id){
         $rid = explode("_", $id);
-    	// $dataSelect['deleted'] = 1;
-    	// $selectData = $this->Transaksipomodel->select($dataSelect, 'm_produk_warna');
         $selectData = $this->Transaksipenjualanmodel->rawQuery("SELECT m_produk_warna.id, m_produk_warna.nama
             FROM m_produk_det_warna
             INNER JOIN m_produk ON m_produk_det_warna.id_produk = m_produk.id
             INNER JOIN m_produk_warna ON m_produk_det_warna.id_warna = m_produk_warna.id
             WHERE m_produk_det_warna.id_produk = ".$rid[0]);
-    	echo json_encode($selectData->result_array());
+        echo json_encode($selectData->result_array());
     }
     function getUkuran($id){
-        // $rid = explode("_", $id);
-        $rid = $id;
-    	// $dataSelect['deleted'] = 1;
-    	// $selectData = $this->Transaksipomodel->select($dataSelect, 'm_produk_ukuran');
+        $rid = explode("_", $id);
         $selectData = $this->Transaksipenjualanmodel->rawQuery("SELECT m_produk_ukuran.id, m_produk_ukuran.nama
-            FROM m_produk_det_ukuran
-            INNER JOIN m_produk ON m_produk_det_ukuran.id_produk = m_produk.id
-            INNER JOIN m_produk_ukuran ON m_produk_det_ukuran.id_ukuran =m_produk_ukuran.id
-            WHERE m_produk_det_ukuran.id_produk = ".$rid[0]);
-    	echo json_encode($selectData->result_array());
+                FROM m_produk_det_ukuran
+                INNER JOIN m_produk ON m_produk_det_ukuran.id_produk = m_produk.id
+                INNER JOIN m_produk_ukuran ON m_produk_det_ukuran.id_ukuran =m_produk_ukuran.id
+                WHERE m_produk_det_ukuran.id_produk = ".$rid[0]);
+        echo json_encode($selectData->result_array());
     }
     function getMetodePembayaran(){
         $list = null;

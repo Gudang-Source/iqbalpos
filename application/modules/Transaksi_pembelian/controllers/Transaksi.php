@@ -371,7 +371,6 @@ class Transaksi extends MX_Controller {
     }
     function updateCart($id, $qty, $state = 'tambah'){
     	$getid = $this->in_cart($id, 'id', 'rowid');
-
     	$dataSelect['deleted'] = 1;
     	$dataSelect['id'] = $getid;
     	$selectData = $this->Transaksipembelianmodel->select($dataSelect, 'm_produk');
@@ -479,10 +478,6 @@ class Transaksi extends MX_Controller {
 			$dataSelect['id']=$id;
 			$selectData = $this->Transaksipembelianmodel->select($dataSelect, 'm_produk');
             $select_id = !empty($selectData->row()) ? $selectData->row()->id : 'null';
-
-            $condition = array('id' => $select_id, 'deleted' => 1);
-            $dataProduk = $this->Transaksipembelianmodel->select($condition, 'm_produk')->row();
-            $lastQty = $this->getCartQtyById($cart_id);
             $hargaBeli = $selectData->row()->harga_beli;
 
             if($hargaBeli != 0){
