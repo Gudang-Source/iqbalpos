@@ -107,15 +107,19 @@ class Transaksi extends MX_Controller {
 		$columns = array( 
 			0 	=>	'#', 
 			1 	=> 	'produk',
-			2	=> 	'sku',
-			3	=> 	'barang_diservis',
-			4	=> 	'barang_kembali',
-			5	=> 	'uang_kembali',
-			6	=> 	'status'
+			2 	=> 	'nama_warna',
+			3 	=> 	'nama_ukuran',
+			4	=> 	'sku',
+			5	=> 	'barang_diservis',
+			6	=> 	'barang_kembali',
+			7	=> 	'uang_kembali',
+			8	=> 	'status'
 		);
 		$sql = "SELECT 
 					t_service.id as sid,
 					t_service_detail.id as sdid, 
+					t_service_detail.nama_warna as nama_warna, 
+					t_service_detail.nama_ukuran as nama_ukuran, 
 					t_service_detail.jumlah as sdjm,
 					t_service_detail.jumlah_barang_kembali as sdjbk, 
 					t_service_detail.uang_kembali as sdjuk, 
@@ -140,6 +144,8 @@ class Transaksi extends MX_Controller {
 
 			$nestedData[] 	= 	"<span class='center-block text-center'>".$i."</span>";
 			$nestedData[] 	= 	$row["nama"];
+			$nestedData[] 	= 	$row["nama_warna"];
+			$nestedData[] 	= 	$row["nama_ukuran"];
 			$nestedData[] 	= 	$row["sku"];
 			$nestedData[] 	= 	"<span class='center-block text-center'>".$row["sdjm"]."</span>";
 			$nestedData[] 	= 	$row['sdst']==1?"<input type='text' id='jbk-".$row['sdid']."' name='jbk-".$row['sdid']."' value='".$row["sdjbk"]."' class='form-control nopadding productNum input-sm pull-right hundreds' title='Jumlah Barang Kembali'/>": "<span class='center-block text-center'>".$row["sdjbk"]."</span>";
@@ -195,29 +201,33 @@ class Transaksi extends MX_Controller {
 
 			    		$statusStok = $rowDetail['kurangi_stok'];
 			    		if ($statusStok == 1) {
-
 			    			$idProduk = $rowDetail['id_produk'];
 			    			$dataSelectMaster['id'] = $idProduk;
 			    			$selectDataMaster = $this->Transaksiservicemodel->select($dataSelectMaster, 'm_produk');
 			    			
 			    			$inputStokTerakhir = $selectDataDetail->row()->jumlah_barang_kembali;
-
 			    			$stokKembali = $params['jbk-'.$rowDetail['id']];
 			    			$stokGudang = $selectDataMaster->row()->stok - $inputStokTerakhir;
-
 			    			$stokSekarang = $stokGudang + $stokKembali;
 
 			    			// update stok master
 			    			$dataConditionMaster['id'] = $idProduk;
-			    			$dataUpdateMaster['stok'] = $stokSekarang;
+			    			// $dataUpdateMaster['stok'] = $stokSekarang;
+			    			//NANTI TAMBAHKAN DISINI
+			    			$detail_stok = $this->get_detail_stok($idProduk);
+                            $dataUpdateMaster['detail_stok'] = $this->build_detail_stok($detail_stok, $rowDetail['id_warna'], $rowDetail['id_ukuran'], $rowDetail['nama_warna'], $rowDetail['nama_ukuran'], $stokKembali, 'tambahkan');
+                            $dataUpdateMaster['stok'] = $this->total_detail_stok($dataUpdateMaster['detail_stok']);
+                            $total_stok = $dataUpdateMaster['stok'];
 			    			$updateDataMaster = $this->Transaksiservicemodel->update($dataConditionMaster, $dataUpdateMaster, 'm_produk');
+
 			    			if($updateDataMaster){
 			    				// insert ke h stok produk
 			    				$dataInsertHistori['id_produk'] 		= $idProduk;
 			    				$dataInsertHistori['id_order_detail'] 	= 0;
 			    				$dataInsertHistori['id_service'] 		= $params['id_hidden'];
 			    				$dataInsertHistori['jumlah']			= $stokKembali;
-			    				$dataInsertHistori['stok_akhir']		= $stokSekarang;
+			    				// $dataInsertHistori['stok_akhir']		= $stokSekarang;
+			    				$dataInsertHistori['stok_akhir']		= $total_stok;
 			    				$dataInsertHistori['keterangan']		= "Barang Kembali";
 			    				$dataInsertHistori['status']			= 5;
 			    				$dataInsertHistori['add_by']			= isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
@@ -641,7 +651,8 @@ class Transaksi extends MX_Controller {
     	$detail_stok = $this->get_detail_stok($id_produk);
         $item_stok = $this->find_detail_stok($detail_stok, $idWarna, $idUkuran);
 
-        /*echo $lastQty ." <= ";
+        /*echo "Qty: ".$qty ."<br>";
+        echo $lastQty ." <= ";
         echo $item_stok;
         die();*/
     	
@@ -745,7 +756,7 @@ class Transaksi extends MX_Controller {
         }
         return $result;
     }
-    private function build_detail_stok($detail_stok, $id_warna=0, $id_ukuran=0, $nama_warna, $nama_ukuran, $qty) {
+    private function build_detail_stok($detail_stok, $id_warna=0, $id_ukuran=0, $nama_warna, $nama_ukuran, $qty, $operasi) {
         //build new detail_stok json data
         $result = 0;
         if(!empty($detail_stok)) {
@@ -757,7 +768,16 @@ class Transaksi extends MX_Controller {
 
             foreach ($obj_data as $key => $value) {
                 if(($value->id_warna == $id_warna) && ($value->id_ukuran == $id_ukuran)) {
-                    $new_stok = ($arr_data[$key]['stok'] - $qty);
+
+                	if($operasi == 'tambahkan') {
+                    	$new_stok = ($arr_data[$key]['stok'] + $qty);
+                	} 
+                	else if($operasi == 'kurangi') {
+                    	$new_stok = ($arr_data[$key]['stok'] - $qty);
+                	} 
+                	else {
+                    	$new_stok = $qty;
+                	}
                     $index = $key;
                 }
             }
@@ -808,23 +828,26 @@ class Transaksi extends MX_Controller {
 			if($jenis_stok == 1) { // jika kurangi stok
 				//check apakah permintaan melebihi stok
 				// $current_qty = $this->in_cart($id."_STOKSERVICE", 'qty');
-				$current_qty = $this->in_cart($cart_id, 'qty');
-				if($event == 'input') { $current_qty = $getqty; }
+				if($event == 'input') { 
+					$current_qty = $getqty; 
+				}
+				else if ($event == 'click') { 
+					$current_qty = $this->in_cart($cart_id, 'qty') + 1; 
+				}
+
 				// if($current_qty < $selectData->row()->stok){	
-        
-				if($current_qty < $item_stok){	
-					//membedakan qty tsb adalah inputan dari user ataukah dari klik thumbnail produk		
-					if($event == 'input') { //inputan dari user
-						$qty = $getqty;
-					}
-					else if($event == 'click') { //dari klik produk
-						// $qty = $this->in_cart($id."_STOKSERVICE", 'qty') + 1;
-						$qty = $this->in_cart($cart_id, 'qty') + 1;
-					}
+				if($current_qty <= $item_stok) {	
+					//membedakan qty tsb adalah inputan dari user ataukah dari klik thumbnail produk
+					$qty = $current_qty;		
 					$this->updateCart($inCart, $qty, $jenis_stok);
 				}
 				else{
 					//stok not available
+					/*echo "getqty: ".$getqty;
+					echo "<br>current_qty: ".$current_qty;
+					echo " < item_stok: ".$item_stok;
+					die();*/
+
 					//fetching rowid
 					$cartContent = json_decode($this->getOrder());
 					$rowid = "";
@@ -948,6 +971,7 @@ class Transaksi extends MX_Controller {
 		    		$idProduks = explode("_", $items['id']);
 		    		if (count($idProduks) > 1) {
 			    		if ($idProduks[1] == "STOKSERVICE") {
+			    			// echo "Updating service detail <br>";
 				    		$dataInsertSekunder['id_produk'] = $idProduks[0];
 				    		$dataInsertSekunder['harga_beli'] = $items['price'];
 				    		$dataInsertSekunder['jumlah'] = $items['qty'];
@@ -964,18 +988,19 @@ class Transaksi extends MX_Controller {
 				    		$insertDataSekunder = $this->Transaksiservicemodel->insert($dataInsertSekunder, 't_service_detail');
 
 				    		if($insertDataSekunder){
-				    			echo "Masuk to update produk";
+				    			// echo "Updating data produk <br>";
 				    			if($items['options']['stok'] == 1) {
 				    				$detail_stok = $this->get_detail_stok($idProduks[0]);
-				    				$dataUpdate['detail_stok'] = $this->build_detail_stok($detail_stok, $items['warna'], $items['ukuran'], $items['text_ukuran'], $items['text_warna'], $items['qty']);
+				    				$dataUpdate['detail_stok'] = $this->build_detail_stok($detail_stok, $items['warna'], $items['ukuran'], $items['text_warna'], $items['text_ukuran'], $items['qty'], 'kurangi');
 				    				$dataUpdate['stok'] = $this->total_detail_stok($dataUpdate['detail_stok']);
 				    				$dataUpdate['deskripsi'] = "ganti iki lho";
 				    				$produk_stok = $dataUpdate['stok'];
 				    				// $dataUpdate['stok']					=	$getDataLastStok->row()->stok - $items['qty'];
-				    				$updateStok	= $this->Transaksiservicemodel->update($idProduks[0], $dataUpdate, 'm_produk');
+				    				$condition = array('id' => $idProduks[0]);
+				    				$updateStok	= $this->Transaksiservicemodel->update($condition, $dataUpdate, 'm_produk');
 					    			
 					    			if($updateStok){
-					    				echo "Masuk to update stok";
+					    				// echo "Updating stok produk<br>";
 					    				$dataSelectLastStok['id'] = $items['id'];
 					    				$dataSelectLastStok['deleted'] = 1;
 						    			$dataInsertHistori['id_produk'] = $idProduks[0];

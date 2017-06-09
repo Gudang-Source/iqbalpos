@@ -917,7 +917,7 @@ class Transaksi extends MX_Controller {
 									$dataConditionStok['id'] = $idProduks[0];
                                     // $dataUpdateStok['stok'] = $getHargaBeli->row()->stok - $items['qty'];
                                     $detail_stok = $this->get_detail_stok($idProduks[0]);
-                                    $dataUpdateStok['detail_stok'] = $this->build_detail_stok($detail_stok, $items['options']['warna'], $items['options']['ukuran'], $items['options']['text_ukuran'], $items['options']['text_warna'], $items['qty']);
+                                    $dataUpdateStok['detail_stok'] = $this->build_detail_stok($detail_stok, $items['options']['warna'], $items['options']['ukuran'], $items['options']['text_warna'], $items['options']['text_ukuran'], $items['qty']);
                                     $dataUpdateStok['stok'] = $this->total_detail_stok($dataUpdateStok['detail_stok']);
 
 									$dataUpdateStok['last_edited'] = $dateNow;

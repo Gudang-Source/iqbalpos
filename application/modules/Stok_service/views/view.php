@@ -1,3 +1,10 @@
+<style type="text/css">
+  @media (min-width: 992px) {
+    .modal-lg.modal-xl {
+        width: 1080px;
+    }
+  }
+</style>
 <!-- Page Content -->
 <div class="container">
   <div class="row" style='min-height:80px;'></div>
@@ -34,7 +41,7 @@
 <!-- /.container -->
 <!-- Modal Detail -->
 <div class="modal fade" id="modaldetail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
- <div class="modal-dialog modal-lg" role="document">
+ <div class="modal-dialog modal-lg modal-xl" role="document">
     <div class="modal-content">
       <form action="<?php echo base_url('Stok_service/Transaksi/confirm')?>" method="POST" id="frm-detail">          
       <div class="modal-header">

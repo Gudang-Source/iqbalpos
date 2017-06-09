@@ -6,6 +6,8 @@
                 <tr>
                     <th class="text-center no-sort">#</th>
                     <th class="text-center">Produk</th>
+                    <th class="text-center">Warna</th>
+                    <th class="text-center">Ukuran</th>
                     <th class="text-center">SKU</th>
                     <th class="text-center hidden-xs">Jumlah Diservis</th>
                     <th class="text-center hidden-xs no-sort">Barang Kembali</th>

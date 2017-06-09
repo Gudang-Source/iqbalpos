@@ -368,7 +368,7 @@
                   ok: function () {
                     console.log(availableStok);
                     $(elem).val(parseInt(availableStok)); 
-                    $(elem).trigger('change'); 
+                    // $(elem).trigger('change'); 
                     change_jenisStok(data.rowid, jenisStok);
                     change_total(data.rowid);
                   }
@@ -506,7 +506,7 @@
         $('#btnDoOrder').html("<h5 class=\'text-bold\'>Proses Service</h5>");
         $("#btnDoOrder").prop("disabled", false);
         // window.close();
-        // window.location.reload(false);
+        window.location.reload(false);
       }
     });    
   }
@@ -520,12 +520,12 @@
       data : $('#serviceOrder').serialize(),
       dataType : "json",
       success : function(data){        
-        load_order(data);
-        fillInformation();        
         $('#btnDoOrder').html("<h5 class=\'text-bold\'>Servis Stok</h5>");
         $("#btnDoOrder").prop("disabled", false);
+        load_order(data);
+        fillInformation();        
         // window.close();
-        // window.location.reload(false);
+        window.location.reload(false);
       },
       error : function(jqXhr, errorStatus){
         console.log(errorStatus);
