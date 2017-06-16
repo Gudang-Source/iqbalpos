@@ -31,15 +31,15 @@ class Master extends MX_Controller {
             1   =>  'date_add', 
             2   =>  'nama',
             3   =>  'sku',
-            4   =>  'jumlah',
-            5   =>  'stok_akhir',
-            6   =>  'nama_warna',
-            7   =>  'nama_ukuran',
+            4   =>  'nama_warna',
+            5   =>  'nama_ukuran',
+            6   =>  'jumlah',
+            7   =>  'stok_akhir',
             8   =>  'id_order',
             9   =>  'status',
             // 6   =>  'aksi'
         );
-        $sql = "SELECT A.*, B.nama, B.sku, C.id_order, C.nama_warna, C.nama_ukuran FROM h_stok_produk A LEFT JOIN m_produk B ON A.id_produk = B.id LEFT JOIN t_order_detail C ON A.id_order_detail = C.id";
+        $sql = "SELECT A.*, B.nama, B.sku, C.id_order, D.nama AS nama_warna, E.nama AS nama_ukuran FROM h_stok_produk A LEFT JOIN m_produk B ON A.id_produk = B.id LEFT JOIN t_order_detail C ON A.id_order_detail = C.id LEFT JOIN m_produk_warna D ON A.id_warna = D.id LEFT JOIN m_produk_ukuran E ON A.id_ukuran = E.id";
         $query=$this->Stokmodel->rawQuery($sql);
         $totalData = $query->num_rows();
         $totalFiltered = $totalData;
@@ -49,8 +49,8 @@ class Master extends MX_Controller {
             $sql.=" OR B.sku LIKE '%".$requestData['search']['value']."%' ";
             $sql.=" OR A.jumlah LIKE '%".$requestData['search']['value']."%' ";
             $sql.=" OR A.stok_akhir LIKE '%".$requestData['search']['value']."%' ";
-            $sql.=" OR C.nama_warna LIKE '%".$requestData['search']['value']."%' ";
-            $sql.=" OR C.nama_ukuran LIKE '%".$requestData['search']['value']."%' ";
+            $sql.=" OR D.nama LIKE '%".$requestData['search']['value']."%' ";
+            $sql.=" OR E.nama LIKE '%".$requestData['search']['value']."%' ";
             $sql.=" OR C.id_order LIKE '%".$requestData['search']['value']."%' ";
             $sql.=" OR A.status LIKE '%".$requestData['search']['value']."%' )";
         }
@@ -87,10 +87,10 @@ class Master extends MX_Controller {
             $nestedData[]   =   date("d-m-Y H:i", strtotime($row["date_add"]));
             $nestedData[]   =   $row["nama"];
             $nestedData[]   =   $row["sku"];
+            $nestedData[]   =   !empty($row['nama_warna']) ? $row['nama_warna'] : "<span class='center-block text-center'>-</span>";
+            $nestedData[]   =   !empty($row['nama_ukuran']) ? $row['nama_ukuran'] : "<span class='center-block text-center'>-</span>";
             $nestedData[]   =   "<span style='display:block' class='text-center'>".$row["jumlah"]."</span>";
             $nestedData[]   =   "<span style='display:block' class='text-center'>".$row["stok_akhir"]."</span>";
-            $nestedData[]   =   $row['nama_warna'];
-            $nestedData[]   =   $row['nama_ukuran'];
             $nestedData[]   =   "<span style='display:block' class='text-center'>".$row["id_order"]."</span>";
             $nestedData[]   =   $status;
             // $nestedData[]   .=   '<td class="text-center"><div class="btn-group" >'

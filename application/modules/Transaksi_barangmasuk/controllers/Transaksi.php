@@ -75,14 +75,24 @@ class Transaksi extends MX_Controller {
             $html_detail = '';
             $detail_stok = json_decode($row['detail_stok']);
             if(!empty($detail_stok)) {
-                $html_detail .= "<ul>";
+                
+                //sorting array of objects by nama_warna
+                usort($detail_stok, function($a, $b) {
+                    return strcmp($a->nama_ukuran, $b->nama_ukuran);
+                });
+                $html_detail .= "<table class='table table-condensed table-striped small'>"
+                                    ."<thead><tr>"
+                                        ."<th>Ukuran</th>"
+                                        ."<th>Warna</th>"
+                                        ."<th>Stok</th>"
+                                    ."</tr></thead><tbody>";
                 foreach ($detail_stok as $detail) {
-                    $html_detail .= "<li class='small'>"
-                                ."<b>Warna:</b> ".$detail->nama_warna.", "
-                                ."<b>Ukuran:</b> ".$detail->nama_ukuran." <br>"
-                                ."<b>Stok:</b> ".$detail->stok."</li>";
+                    $html_detail .= "<tr>"
+                                ."<td>".$detail->nama_ukuran."</td>"
+                                ."<td>".$detail->nama_warna."</td>"
+                                ."<td>".$detail->stok."</td> </tr>";
                 }
-                $html_detail .= "</ul>";
+                $html_detail .= "</tbody></table>";
             }
 
 
@@ -99,7 +109,7 @@ class Transaksi extends MX_Controller {
             $nestedData[]   =   "
                                 <a class='divpopover btn btn-sm btn-default' href='javascript:void(0)' data-toggle='popover' data-placement='top' data-html='true' title='Tambah Stok' onclick=tambahStok('".$row['id']."')><i class='fa fa-plus'></i>
                                 </a>
-                                <a class='divpopover btn btn-sm btn-default' href='javascript:void(0)' data-toggle='popover' data-placement='top' data-html='true' title='Tambah Stok' onclick=kurangStok('".$row['id']."')><i class='fa fa-minus'></i>
+                                <a class='divpopover btn btn-sm btn-default' href='javascript:void(0)' data-toggle='popover' data-placement='top' data-html='true' title='Kurangi Stok' onclick=kurangStok('".$row['id']."')><i class='fa fa-minus'></i>
                                 </a>
                                 ";
             
@@ -126,7 +136,7 @@ class Transaksi extends MX_Controller {
         }
         return $result;
     }
-    private function build_detail_stok($detail_stok, $id_warna=0, $id_ukuran=0, $nama_warna, $nama_ukuran, $qty, $operasi) {
+    private function build_detail_stok($detail_stok, $id_warna=0, $id_ukuran=0, $nama_warna, $nama_ukuran, $qty, $operasi, $nama_produk) {
         //build new detail_stok json data
         $result = 0;
         if(!empty($detail_stok)) {
@@ -145,7 +155,7 @@ class Transaksi extends MX_Controller {
                     else if ($operasi == 'kurang') {
                         //cek apakah stok tidak bisa dikurangi
                         if($arr_data[$key]['stok'] < $qty) {
-                            echo json_encode(array('status'=>0));
+                            echo json_encode(array("status"=>2, "message"=>"Stok untuk produk ".$nama_produk." warna ".$nama_warna." ukuran ".$nama_ukuran." terlalu sedikit untuk dikurangi"));
                             exit();
                         }
                         else {
@@ -168,7 +178,7 @@ class Transaksi extends MX_Controller {
     }
     private function find_detail_stok($detail_stok, $id_warna=0, $id_ukuran=0) {
         //find stok of current product with certain warna & ukuran
-        $result = 0;
+        $result = 'null';
         if(!empty($detail_stok)) {
             $obj_data = json_decode($detail_stok);
             foreach ($obj_data as $item) {
@@ -197,28 +207,32 @@ class Transaksi extends MX_Controller {
     function ubahStok(){
     	$params = $this->input->post();
     	if($params != null){
-    		$dataUpdate = array();
-    		$dataInsert = array();
-    		$dataCondition['id'] = $params['idProduk'];
-    		$state = $params['state'];
+            $dataUpdate = array();
+            $dataInsert = array();
+            $state = $params['state'];
             $qty = $params['qty'];
             $id_ukuran = $params['id_ukuran'];
             $id_warna = $params['id_warna'];
             $nama_ukuran = $params['nama_ukuran'];
-    		$nama_warna = $params['nama_warna'];
+            $nama_warna = $params['nama_warna'];
             $new_detail_stok = array();
-    		
-            $dataStok = $this->Transaksibarangmasukmodel->select($dataCondition, 'm_produk');
-    		// $lastStok = $dataStok->row()->stok;
     		$dateNow = date('Y-m-d H:i:s');
+            
+            $dataCondition['id'] = $params['idProduk'];
+            $dataStok = $this->Transaksibarangmasukmodel->select($dataCondition, 'm_produk')->row();
+            // $lastStok = $dataStok->row()->stok;
 
     		$dataUpdate['edited_by'] = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+
     		$dataInsert['id_produk'] = $params['idProduk'];
     		$dataInsert['id_order_detail'] = 0;
     		$dataInsert['id_service'] = 0;
-    		$dataInsert['last_edited'] = $dateNow;
-    		$dataInsert['edited_by'] = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
-    		$dataInsert['jumlah'] =	$qty;
+            $dataInsert['last_edited'] = $dateNow;
+            $dataInsert['add_by'] = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+            $dataInsert['edited_by'] = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+            $dataInsert['id_warna'] = $id_warna;
+            $dataInsert['id_ukuran'] = $id_ukuran;
+            $dataInsert['jumlah'] = $qty;
     		$dataInsert['deleted'] = 1;
 
             $detail_stok = $this->get_detail_stok($params['idProduk']);
@@ -226,12 +240,19 @@ class Transaksi extends MX_Controller {
                 //update detail stok with new value based on warna & ukuran;
                 $item_stok = $this->find_detail_stok($detail_stok, $id_warna, $id_ukuran);
                 $lastStok = $item_stok;
-                $new_detail_stok = $this->build_detail_stok($detail_stok, $id_warna, $id_ukuran, $nama_warna, $nama_ukuran, $qty, $state);
+                if(($item_stok==='null') && ($state == 'kurang')) {
+                    echo json_encode(array("status"=>0, "message"=>"Stok untuk produk ".$dataStok->nama." warna ".$nama_warna." ukuran ".$nama_ukuran." tidak ditemukan"));
+                        exit();
+                }
+                
+                $new_detail_stok = $this->build_detail_stok($detail_stok, $id_warna, $id_ukuran, $nama_warna, $nama_ukuran, $qty, $state, $dataStok->nama);
                 $current_total_stok = $this->total_detail_stok($params['idProduk']);
             }
             else {
-                //insert stok & detail_stok into m_produk
-                $lastStok = 0;
+                echo json_encode(array("status"=>0, "message"=>"Stok untuk produk ".$dataStok->nama." warna ".$nama_warna." ukuran ".$nama_ukuran." tidak ditemukan"));
+                    exit();
+                //insert stok & detail_stok into m_produk (tidak jadi diinsert -> diganti alert barang tidak ada)
+                /*$lastStok = 0;
                 $new_total_stok = $qty;
                 $data[] = array(
                                 'id_ukuran' => $id_ukuran,
@@ -240,15 +261,15 @@ class Transaksi extends MX_Controller {
                                 'nama_warna' => $nama_warna,
                                 'stok' => $qty
                             );
-                $new_detail_stok = json_encode($data);
+                $new_detail_stok = json_encode($data);*/
             }
 
             if ($state == "kurang") {
                 if ($lastStok < $qty) {
-                    echo json_encode(array("status"=>0));
+                    echo json_encode(array("status"=>2, "message"=>"Stok untuk produk ".$dataStok->nama." warna ".$nama_warna." ukuran ".$nama_ukuran." terlalu sedikit untuk dikurangi"));
                     exit();
                 }
-                else{
+                else {
                     $new_total_stok = $current_total_stok - $qty;
                     $dataUpdate['tanggal_kurang_stok'] = $dateNow;
                     $dataUpdate['last_edited'] = $dateNow;
@@ -262,7 +283,7 @@ class Transaksi extends MX_Controller {
                     $dataInsert['keterangan'] = $this->session->userdata('nama_user')." mengurangi sebanyak ".$qty." stok ";
                 }
             }
-            else if($state == "tambah"){
+            else if($state == "tambah") {
                 $new_total_stok = $current_total_stok + $qty;
                 $dataUpdate['tanggal_tambah_stok'] = $dateNow;
                 $dataUpdate['last_edited'] = $dateNow;
@@ -270,21 +291,22 @@ class Transaksi extends MX_Controller {
                 $dataUpdate['stok'] = $new_total_stok;
                 $dataUpdate['detail_stok'] = $new_detail_stok;
 
-				$dataInsert['status'] = 4;
+                $dataInsert['status'] = 4;
                 // $dataInsert['stok_akhir'] = $lastStok + $qty;
 				$dataInsert['stok_akhir'] = $new_total_stok;
 				$dataInsert['keterangan'] = $this->session->userdata('nama_user')." menambahkan sebanyak ".$qty." stok ";
     		}
     		$updateProduk = $this->Transaksibarangmasukmodel->update($dataCondition, $dataUpdate, 'm_produk');
-    		if($updateProduk){
+
+    		if($updateProduk) {
     			$insertHistori = $this->Transaksibarangmasukmodel->insert($dataInsert, 'h_stok_produk');
     			if($insertHistori){
-    				echo json_encode(array("status"=>1));
-    			}else{
-    				echo json_encode(array("status"=>0));
+    				echo json_encode(array("status"=>1, "message"=>"Stok untuk produk ".$dataStok->nama." warna ".$nama_warna." ukuran ".$nama_ukuran." telah berhasil diupdate"));
+    			} else {
+    				echo json_encode(array("status"=>0, "message"=>"Stok untuk produk ".$dataStok->nama." warna ".$nama_warna." ukuran ".$nama_ukuran." gagal diupdate"));
     			}
-    		}else{
-    			echo json_encode(array("status"=>0));
+    		} else {
+    			echo json_encode(array("status"=>0, "message"=>"Stok untuk produk ".$dataStok->nama." warna ".$nama_warna." ukuran ".$nama_ukuran." gagal diupdate"));
     		}
     	}
     }

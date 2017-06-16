@@ -912,9 +912,13 @@ class Transaksi extends MX_Controller {
 					}
 	                $obj_list = json_decode($this->getOrder());
 					$arr_list = (array)$obj_list;
-					$arr_list[0]->stok = $item_stok;
+					
+					if(isset($arr_list[0]->stok)) {
+						$arr_list[0]->stok = $item_stok;
+					}
+					
 					$list = json_encode($arr_list);
-	                echo json_encode(array("status" => 0, "list" => $list, "rowid"=>$rowid)); 
+	                echo json_encode(array("status" => 0, "list" => $list, "rowid"=>$rowid, "available" => $item_stok)); 
 	            }
 			}
 			else if($jenis_stok == 2) {  //jika tidak kurangi stok
@@ -1013,6 +1017,9 @@ class Transaksi extends MX_Controller {
 						    			$dataInsertHistori['status'] =	2;
 						    			$dataInsertHistori['add_by'] =	isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
 						    			$dataInsertHistori['edited_by'] =	isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+						    			$dataInsertHistori['edited_by'] =	isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+						    			$dataInsertHistori['id_warna'] = $items['warna'];
+						    			$dataInsertHistori['id_ukuran'] = $items['ukuran'];
 						    			$dataInsertHistori['deleted'] =	1;
 						    			$insertHistori = $this->Transaksiservicemodel->insert($dataInsertHistori, 'h_stok_produk');
 

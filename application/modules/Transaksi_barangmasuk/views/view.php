@@ -77,7 +77,7 @@
 
     function loadWarna(id){
       var html = "<option selected disabled>Pilih Warna</option>";
-          html += "<option value='0'>Tidak Ada</option>";
+          // html += "<option value='0'>Tidak Ada</option>";
       if(id != '' || id != null) {
         options = jsonDetWarna.filter(function (index) { return index.id_produk == id }); 
 
@@ -91,7 +91,7 @@
     }
     function loadUkuran(id){
       var html = "<option selected disabled>Pilih Ukuran</option>";
-          html += "<option value='0'>Tidak Ada</option>";
+          // html += "<option value='0'>Tidak Ada</option>";
       if(id != '' || id != null) {
         options = jsonDetUkuran.filter(function (index) { return index.id_produk == id }); 
 
@@ -114,7 +114,7 @@
       $("#modalform").modal("show");
     }
     function kurangStok(id){
-      $("#myModalLabel").html("Kurang Stok Produk");
+      $("#myModalLabel").html("Kurangi Stok Produk");
       $("#state").val("kurang");
       $("#qty").val("");
       $("#idProduk").val(id);
@@ -156,25 +156,33 @@
             },            
             success : function(data){
               console.log(data);
-              if(data.status == 1){
+              if(data.status == 1) {
                 new PNotify({
                             title: 'Berhasil',
-                            text: "Berhasil Update Stok",
+                            text: data.message,
                             type: 'success',
                             hide: true,
                             delay: 5000,
                             styling: 'bootstrap3'
                           });          
-              }else{
+              } else if(data.status == 2) {
+                new PNotify({
+                            title: 'Perhatian',
+                            text: data.message,
+                            type: 'warning',
+                            hide: true,
+                            delay: 5000,
+                            styling: 'bootstrap3'
+                          });
+              } else {
                 new PNotify({
                             title: 'Gagal',
-                            text: "Gagal Update Stok",
-                            type: 'danger',
+                            text: data.message,
+                            type: 'error',
                             hide: true,
                             delay: 5000,
                             styling: 'bootstrap3'
                           });          
-
               }
               $('#aSimpan').html('Simpan');
               $("#aSimpan").prop("disabled", false);              
@@ -186,7 +194,7 @@
               new PNotify({
                             title: 'Gagal',
                             text: "Gagal Update Stok",
-                            type: 'danger',
+                            type: 'error',
                             hide: true,
                             delay: 5000,
                             styling: 'bootstrap3'

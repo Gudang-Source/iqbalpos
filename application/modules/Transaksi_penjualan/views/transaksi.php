@@ -515,7 +515,7 @@
         var html = "";
         // $("#uk-"+id).html('');
         $("#selectUkuran").html('');
-        html = "<option value='0' selected>Tidak Ada Ukuran</option>";
+        // html = "<option value='0' selected>Tidak Ada Ukuran</option>";
         $("#selectUkuran").append(html);
         // $("#uk-"+id).append(html);
         for(var i=0; i<data.length; i++) {
@@ -599,7 +599,7 @@
         var html = "";
         // $("#wr-"+id).html('');
         $("#selectWarna").html('');
-        html = "<option value='0' selected>Tidak Ada Warna</option>";
+        // html = "<option value='0' selected>Tidak Ada Warna</option>";
         // $("#wr-"+id).append(html);
         $("#selectWarna").append(html);
         for (var i=0;i<data.length;i++){
@@ -731,6 +731,12 @@
                 btnClass: 'btn-blue',
                 action: function () {
                     var selectUkuran = this.$content.find('#selectUkuran').val() || 0;
+                    var idUkuran = this.$content.find('#selectUkuran').val() || 0;
+                    var idWarna = this.$content.find('#selectWarna').val() || 0;
+                    if(idUkuran==0 || idWarna==0){
+                        $.alert('Anda belum memilih Ukuran/Warna!');
+                        return false;
+                    }
                     addToCart(id);
                 }
             },
@@ -765,6 +771,46 @@
         url :"<?php echo base_url('Transaksi_penjualan/Transaksi/tambahCart')?>/"+id,
         type : "POST",
         // data :"idCustomer="+$("#customerSelect").val(),
+        data : {'idCustomer': idCustomer, 'idUkuran': idUkuran, 'idWarna': idWarna},
+        dataType : "json",
+        success : function(data) {
+          if(data.status == 2){
+            load_order(data.list);
+            fillInformation();
+          }
+          else if(data.status == 1) {
+            $.confirm({
+                title: 'Stok',
+                content: 'Stok Tidak Mencukupi',
+                buttons: {
+                    ok: function () { }
+                  }
+            }); 
+          }
+          else if(data.status == 0) {
+            $.confirm({
+                title: 'Harga',
+                content: 'Harga Belum Diset, Hubungi Admin!!',
+                buttons: {
+                    ok: function () { }
+                  }
+            }); 
+          }
+        }
+      });
+    }
+  }
+  function addToCartBarcode(id='', idCustomer='', idWarna='', idUkuran=''){
+    if(idCustomer == '' || idCustomer == null) {
+      $.alert({
+          title: 'Perhatian',
+          content: 'Anda belum memilih Customer!',
+      }); 
+    }
+    else {
+      $.ajax({
+        url :"<?php echo base_url('Transaksi_penjualan/Transaksi/tambahCart')?>/"+id,
+        type : "POST",
         data : {'idCustomer': idCustomer, 'idUkuran': idUkuran, 'idWarna': idWarna},
         dataType : "json",
         success : function(data) {
@@ -1082,10 +1128,42 @@
   function checkBarcode() {
     var barcode = $("#barcode").val() || ''; //Barcode == IDproduk
     var defaultHtml = $('#btnBarcode').html();
+
     if(barcode != '') {
-      // addToCart(barcode);
-      selectProdukOptions(barcode);
+      $.ajax({
+        url: '<?php echo base_url("Transaksi_penjualan/Transaksi/getBarcode")?>'+'/'+barcode,
+        type: 'GET',
+        dataType: 'json',
+        beforeSend: function() {
+          $('#btnBarcode').html("Checking...");
+          $('#btnBarcode').prop('disabled', true);
+        },
+        success: function(response, status) {
+          var data = response.data;
+          $('#btnBarcode').html(defaultHtml);
+          $('#btnBarcode').prop('disabled', false);
+
+          if(response.status == 1) {
+            var idCustomer = $("#customerSelect").val() || '';
+            addToCartBarcode(data.id_produk, idCustomer, data.id_warna, data.id_ukuran);
+          }
+          else if(response.status == 2){
+            $.alert("Produk tidak ditemukan!");
+          }
+          else {
+            $.alert("Stok tidak mencukupi!");
+          }
+        },
+        error(jqXhr, status, errorThrown) {
+          console.log(status);
+          $('#btnBarcode').html(defaultHtml);
+          $('#btnBarcode').prop('disabled', false);
+          $.alert("Terjadi kesalahan dalam proses pengecekan!");
+        }
+      });
     }
+      // addToCart(barcode);
+      // selectProdukOptions(barcode);
   };
 
   //KEMBALIAN Handler

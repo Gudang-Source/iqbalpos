@@ -88,14 +88,24 @@ class Master extends MX_Controller {
             $html_detail = '';
             $detail_stok = json_decode($row['detail_stok']);
             if(!empty($detail_stok)) {
-                $html_detail .= "<ul>";
+
+                //sorting array of objects by nama_warna
+                usort($detail_stok, function($a, $b) {
+                    return strcmp($a->nama_ukuran, $b->nama_ukuran);
+                });
+                $html_detail .= "<table class='table table-condensed table-striped small'>"
+                                    ."<thead><tr>"
+                                        ."<th>Ukuran</th>"
+                                        ."<th>Warna</th>"
+                                        ."<th>Stok</th>"
+                                    ."</tr></thead><tbody>";
                 foreach ($detail_stok as $detail) {
-                    $html_detail .= "<li class='small'>"
-                                ."<b>Warna:</b> ".$detail->nama_warna.", "
-                                ."<b>Ukuran:</b> ".$detail->nama_ukuran." <br>"
-                                ."<b>Stok:</b> ".$detail->stok."</li>";
+                    $html_detail .= "<tr>"
+                                ."<td>".$detail->nama_ukuran."</td>"
+                                ."<td>".$detail->nama_warna."</td>"
+                                ."<td>".$detail->stok."</td> </tr>";
                 }
-                $html_detail .= "</ul>";
+                $html_detail .= "</tbody></table>";
             }
 
             $nestedData     =   array(); 
@@ -109,13 +119,15 @@ class Master extends MX_Controller {
             $nestedData[]   =   (!empty($row["detail_stok"]) ? $html_detail : "<span class='text-center' style='display:block;'>-</span>") ;
             $nestedData[]   =   "<span class='pull-right money' style='display:block;'>".$row["harga_jual_normal"]."</span>";
             $nestedData[]   =   date("d-m-Y H:i", strtotime($row["date_add"]));
-            $nestedData[]   .=   '<td class="text-center"><div class="btn-group" >'
+            $nestedData[]   .=   '<div class="center-block text-center"><div class="btn-group">'
                 .'<a id="group'.$row["id"].'" class="divpopover btn btn-sm btn-default" href="javascript:void(0)" data-toggle="popover" data-placement="top" onclick="confirmDelete(this)" data-html="true" title="Hapus Data?" ><i class="fa fa-times"></i></a>'
                 .'<a class="btn btn-sm btn-default" data-toggle="tooltip" data-placement="top" title="Ubah Data" onclick="showUpdate('.$row["id"].')"><i class="fa fa-pencil"></i></a>'
                 .'<a class="btn btn-sm btn-default" data-toggle="tooltip" data-placement="top" title="Lihat Detail" onclick="showDetail('.$row["id"].')"><i class="fa fa-file-text-o"></i></a>'
+                .'</div><div class="btn-group" style="margin-top:5px;">'
+                .'<a class="btn btn-sm btn-default" title="Lihat Barcode" onclick="showBarcode('.$row["id"].')"><i class="fa fa-barcode"></i></a>'
                 .'<a class="btn btn-sm btn-default" data-toggle="tooltip" data-placement="top" title="Harga Jual" onclick="showHarga('.$row["id"].')"><i class="fa fa-dollar"></i></a>'
                .'</div>'
-            .'</td>';
+            .'</div>';
             
             $data[] = $nestedData; $i++;
         }
@@ -128,7 +140,30 @@ class Master extends MX_Controller {
                     );
         echo json_encode($json_data);
     }
-	
+
+    function show_barcode($id = '') {
+        $result = array();
+        if(!empty($id)) {
+            $detail_stok = json_decode($this->get_detail_stok($id), true);
+
+            if(!empty($detail_stok)) {
+                $result = $detail_stok;
+            }
+        }
+        echo json_encode($result);
+    }
+    private function get_detail_stok($id_produk) {
+        //fetch detail_stok from current product
+        $result = 0;
+        if(!empty($id_produk)) {
+            $condition = array('id' => $id_produk, 'deleted' => 1);
+            $data_produk = $this->Produkmodel->select($condition, 'm_produk')->row();
+
+            $result = isset($data_produk->detail_stok) ? $data_produk->detail_stok : 0;
+        }
+        return $result;
+    }
+
 	function test(){
 		header('Content-Type: application/json; charset=utf-8');
 		$dataSelect['deleted'] = 1;

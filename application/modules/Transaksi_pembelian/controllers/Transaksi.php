@@ -743,10 +743,12 @@ class Transaksi extends MX_Controller {
                                 'qty'     => $row['jumlah'],
                                 'price'   => $row['harga_beli'],
                                 'name'    => $row['nama'],
+                                'total_berat'=>$row['total_berat'],
                                 'options' => array(
                                                 'ukuran'=>$row['id_ukuran'],
                                                 'warna'=>$row['id_warna'],
-                                                'total_berat'=>$row['total_berat']
+                                                'text_ukuran'=>$row['nama_ukuran'],
+                                                'text_warna'=>$row['nama_warna']
                                                 )
                     );
                     $this->cart->insert($datax);

@@ -250,7 +250,7 @@
       success : function(data){
         var html = "";
         $("#selectUkuran").html('');
-        html = "<option value='0' selected>Tidak Ada Ukuran</option>";
+        // html = "<option value='0' selected>Tidak Ada Ukuran</option>";
         $("#selectUkuran").append(html);
 
         for(var i=0; i<data.length; i++) {
@@ -270,7 +270,7 @@
       success : function(data){
         var html = "";
         $("#selectWarna").html('');
-        html = "<option value='0' selected>Tidak Ada Warna</option>";
+        // html = "<option value='0' selected>Tidak Ada Warna</option>";
         $("#selectWarna").append(html);
 
         for (var i=0;i<data.length;i++){
@@ -561,8 +561,14 @@
                 btnClass: 'btn-blue',
                 action: function () {
                     var jenisStok = this.$content.find('#jenis-stok').val() || 0;
+                    var idUkuran = this.$content.find('#selectUkuran').val() || 0;
+                    var idWarna = this.$content.find('#selectWarna').val() || 0;
                     if(!jenisStok){
                         $.alert('Tidak ada opsi yang anda pilih!');
+                        return false;
+                    }
+                    if(idUkuran==0 || idWarna==0){
+                        $.alert('Anda belum memilih Ukuran/Warna!');
                         return false;
                     }
                     // $.alert('Your name is ' + jenisStok);

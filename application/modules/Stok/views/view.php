@@ -41,10 +41,10 @@
                 <th class="text-center">Update</th>
                 <th class="text-center">Nama Produk</th>
                 <th class="text-center">SKU</th>
-                <th class="text-center">Qty</th>
-                <th class="text-center">Stok Akhir</th>
                 <th class="text-center">Warna</th>
                 <th class="text-center">Ukuran</th>
+                <th class="text-center">Qty</th>
+                <th class="text-center">Total Stok Akhir</th>
                 <th class="text-center">ID Order</th>
                 <th class="text-center">Status</th>
                 <!-- <th class="text-center no-sort">Aksi</th> -->

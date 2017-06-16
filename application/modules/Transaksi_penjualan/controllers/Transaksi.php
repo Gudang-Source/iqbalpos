@@ -312,6 +312,38 @@ class Transaksi extends MX_Controller {
     function filterProdukByKategori($kategori, $keyword = null){
     	echo $this->getProdukByKategori($kategori, $keyword);
     }
+    function getBarcode($barcode) {
+        $result = array('status' => 2); //tidak ditemukan
+        if(!empty($barcode)) {
+            /* pattern P[id_produk]U[id_ukuran]W[id_warna] */
+            $split_id = preg_split("/[\sPUW]+/", $barcode);
+            $id_produk = $split_id['1'];
+            $id_ukuran = $split_id['2'];
+            $id_warna = $split_id['3'];
+
+            $detail_stok = $this->get_detail_stok($id_produk);
+            
+            if(!empty($detail_stok)) {
+                $item_stok = $this->find_detail_stok($detail_stok, $id_warna, $id_ukuran);
+
+                $arr_data = json_decode($detail_stok, true);
+                $data = array(
+                        "id_produk" => $id_produk,
+                        "id_warna" => $id_warna,
+                        "id_ukuran" => $id_ukuran,
+                        "stok" => $item_stok
+                    );
+                
+                if($item_stok > 0) {
+                    $result = array('status' => 1, 'data' => $data);
+                }
+                else {
+                    $result = array('status' => 0);
+                }
+            }
+        }
+        echo json_encode($result);
+    }
     function getWarna($id){
         $rid = explode("_", $id);
         $selectData = $this->Transaksipenjualanmodel->rawQuery("SELECT m_produk_warna.id, m_produk_warna.nama
@@ -932,13 +964,16 @@ class Transaksi extends MX_Controller {
 										$dataHstok['id_produk'] = $idProduks[0];
 										$dataHstok['id_order_detail'] = $getIdDetail->row()->id;
 										$dataHstok['id_service'] = 0;
-										$dataHstok['jumlah'] = $items['qty'];
+                                        $dataHstok['jumlah'] = $items['qty'];
+                                        $dataHstok['id_warna'] = $items['options']['warna'];
+										$dataHstok['id_ukuran'] = $items['options']['ukuran'];
                                         // $dataHstok['stok_akhir']        = $getHargaBeli->row()->stok - $items['qty'];
 										$dataHstok['stok_akhir'] = $produk_stok;
 										$dataHstok['keterangan'] = "Stok berkurang ".$items['qty']." dari transaksi penjualan dengan ID ".$realIDORDER;
 										$dataHstok['status'] = 1;
 										$dataHstok['date_add'] = $dateNow;
-										$dataHstok['add_by'] = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+                                        $dataHstok['add_by'] = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+										$dataHstok['edited_by'] = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
 										$dataHstok['deleted'] = 1;
 										$insertHstok = $this->Transaksipenjualanmodel->insert($dataHstok, 'h_stok_produk');
 									}
