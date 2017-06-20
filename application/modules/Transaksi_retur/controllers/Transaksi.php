@@ -779,7 +779,8 @@ class Transaksi extends MX_Controller {
 										$dataHstok['keterangan'] 		= "TRANSAKSI RETUR OLEH ".$this->session->userdata('nama_user');
 										$dataHstok['status']			= 1;
 										$dataHstok['date_add']			= $dateNow;
-										$dataHstok['add_by']			= isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+                                        $dataHstok['add_by']            = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+										$dataHstok['edited_by']			= isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
 										$dataHstok['deleted']			= 1;
 										$insertHstok = $this->Transaksireturmodel->insert($dataHstok, 'h_stok_produk');
 									}

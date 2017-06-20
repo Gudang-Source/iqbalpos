@@ -217,7 +217,7 @@
       success : function(data){
         var html = "";
         $("#selectUkuran").html('');
-        html = "<option value='0' selected>Tidak Ada Ukuran</option>";
+        /*html = "<option value='0' selected>Tidak Ada Ukuran</option>";*/
         $("#selectUkuran").append(html);
         for (var i=0;i<data.length;i++){
           var pilihs = "";
@@ -278,7 +278,7 @@
       success : function(data){
         var html = "";
         $("#selectWarna").html('');
-        html = "<option value='0' selected>Tidak Ada Warna</option>";
+        /*html = "<option value='0' selected>Tidak Ada Warna</option>";*/
         $("#selectWarna").append(html);
         for (var i=0;i<data.length;i++){
           var pilihs = "";
@@ -380,7 +380,14 @@
                 btnClass: 'btn-blue',
                 action: function () {
                     var selectUkuran = this.$content.find('#selectUkuran').val() || 0;
-                    addToCart(id);
+                    var selectWarna = this.$content.find('#selectWarna').val() || 0;
+
+                    if(selectUkuran == 0 || selectWarna == 0) {
+                      $.alert('Anda belum memilih ukuran/warna!');
+                    }
+                    else {
+                      addToCart(id);
+                    }
                 }
             },
             cancel: function () { },

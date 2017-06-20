@@ -1017,7 +1017,6 @@ class Transaksi extends MX_Controller {
 						    			$dataInsertHistori['status'] =	2;
 						    			$dataInsertHistori['add_by'] =	isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
 						    			$dataInsertHistori['edited_by'] =	isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
-						    			$dataInsertHistori['edited_by'] =	isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
 						    			$dataInsertHistori['id_warna'] = $items['warna'];
 						    			$dataInsertHistori['id_ukuran'] = $items['ukuran'];
 						    			$dataInsertHistori['deleted'] =	1;

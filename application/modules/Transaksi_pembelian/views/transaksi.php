@@ -22,9 +22,9 @@
   }
 </style>
 <?php 
-  echo "<pre>";
+  /*echo "<pre>";
   print_r (isset($_SESSION['cart_contents']) ? $_SESSION['cart_contents'] : '');
-  echo "</pre>";
+  echo "</pre>";*/
 ?>
 <div class="container-fluid">
    <div class="row">
@@ -415,7 +415,7 @@
         var html = "";
         // $("#uk-"+id).html('');
         $("#selectUkuran").html('');
-        html = "<option value='0' selected>Tidak Ada Ukuran</option>";
+        /*html = "<option value='0' selected>Tidak Ada Ukuran</option>";*/
         $("#selectUkuran").append(html);
         // $("#uk-"+id).append(html);
         for(var i=0; i<data.length; i++) {
@@ -482,7 +482,7 @@
         var html = "";
         // $("#wr-"+id).html('');
         $("#selectWarna").html('');
-        html = "<option value='0' selected>Tidak Ada Warna</option>";
+        /*html = "<option value='0' selected>Tidak Ada Warna</option>";*/
         // $("#wr-"+id).append(html);
         $("#selectWarna").append(html);
         for (var i=0;i<data.length;i++){
@@ -610,7 +610,13 @@
                 btnClass: 'btn-blue',
                 action: function () {
                     var selectUkuran = this.$content.find('#selectUkuran').val() || 0;
-                    addToCart(id);
+                    var selectWarna = this.$content.find('#selectWarna').val() || 0;
+                    if(selectUkuran == 0 || selectWarna == 0) {
+                      $.alert('Anda belum memilih ukuran/warna!');
+                    }
+                    else {
+                      addToCart(id);
+                    }
                 }
             },
             cancel: function () { },
