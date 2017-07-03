@@ -60,7 +60,7 @@ class Index extends MX_Controller {
 
         //exception for Dev_menu & Dev_kategori
         $segment = strtolower($realmodul[0]);
-        if(($segment == 'dev_kategori') || ($segment == 'dev_menu')){
+        if(($segment == 'dev_kategori') || ($segment == 'dev_menu') || ($segment == 'api')){
             $data['view'] = $modul;
         } 
 

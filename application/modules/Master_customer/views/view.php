@@ -3,7 +3,12 @@
   .awesomplete {
     display: block;
   }  
+  input[type='password'].form-control {
+    height: 34px;
+    font-size: 14px;
+  }
 </style>
+
 <div class="container">
 <div class="row" style='min-height:80px;'>
   <div id='notif-top' style="margin-top:50px;display:none;" class="col-md-4 alert alert-success pull-right">
@@ -22,9 +27,7 @@
                   <th class="text-center">Alamat</th>
                   <th class="text-center">No. Telp</th>
                   <th class="text-center">Email</th>
-                  <th class="text-center">KTP</th>
-                  <th class="text-center">NPWP</th>
-                  <th class="text-center">Bank</th>
+                  <th class="text-center">Status Aktif</th>
                   <th class="text-center">Tanggal Buat</th>
                   <th class="text-center no-sort">Aksi</th>
               </tr>
@@ -68,14 +71,20 @@
              </div>
              <div class="col-sm-6">
                <div class="form-group">
-                 <label for="no_telp">No. Telp</label>
-                 <input type="number" min="0" maxlength="50" name="no_telp" class="form-control" id="no_telp" placeholder="No Telp Customer" required="">
+                 <label for="email">Email</label>
+                 <input type="email" maxlength="50" name="email" class="form-control" id="email" placeholder="Email Customer" required="">
                </div>
              </div>
              <div class="col-sm-6">
                <div class="form-group">
-                 <label for="email">Email</label>
-                 <input type="email" maxlength="50" name="email" class="form-control" id="email" placeholder="Email Customer" required="">
+                 <label for="npwp">Password</label>
+                 <input type="password" name="password" class="form-control" id="password" placeholder="Password" title="Kosongi kolom ini jika tidak ingin mengganti password">
+               </div>
+             </div>
+             <div class="col-sm-6">
+               <div class="form-group">
+                 <label for="no_telp">No. Telp</label>
+                 <input type="number" min="0" maxlength="50" name="no_telp" class="form-control" id="no_telp" placeholder="No Telp Customer" required="">
                </div>
              </div>
              <div class="col-sm-6">
@@ -176,6 +185,15 @@
             "orderable": false,
             "targets": "no-sort"
         } ],
+    "drawCallback": function() {
+      $('.bootstrap-toggle').bootstrapToggle({
+        size: 'small',
+        on: '<i class="fa fa-check-square-o" title="Aktif"></i> Aktif',
+        off: '<i class="fa fa-square-o" title="Tidak Aktif"></i> Tidak Aktif',
+        onstyle: 'primary',
+        offstyle: 'default',
+      });
+    }
         // "order": [[ 1, 'asc' ]]    
   });
   table.on( 'order.dt search.dt', function () {
@@ -214,7 +232,7 @@
     $("#id_kota").html(html);
   }
   function load_level(json){
-    console.log(json);
+    // console.log(json);
   	var html = "<option value='' selected disabled>Pilih Customer Level</option>";
   	for (var i=0;i<json.length;i++){
   	     html = html+ "<option value='"+json[i].id+"'>"+json[i].nama+"</option>";
@@ -256,16 +274,17 @@
   function loadData(json){
 	  //clear table
     table.clear().draw();
-	  for(var i=0;i<json.length;i++){
+    var statusCheck = '';
+	  for(var i=0; i<json.length; i++){
+      if(json[i].deleted == 1) { statusCheck = "checked"; }
+      else if(json[i].deleted == 2) { statusCheck = ""; }
 		  table.row.add( [
             "",
             json[i].nama,
             json[i].alamat,
             json[i].no_telp,
             json[i].email,
-            json[i].ktp,
-            json[i].npwp,
-            json[i].nama_bank,
+            '<span class="center-block text-center"> <input type = "checkbox" id="toggle_'+ json[i].id + '" class="bootstrap-toggle" onchange="confirmStatus(this);" '+ statusCheck +'> </span>',
             DateFormat.format.date(json[i].date_add, "dd-MM-yyyy HH:mm"),
             '<td class="text-center"><div class="btn-group" >'+
                 '<a id="group'+i+'" class="divpopover btn btn-sm btn-default" href="javascript:void(0)" data-toggle="popover" data-placement="top" onclick="confirmDelete(this)" data-html="true" title="Hapus Data?" ><i class="fa fa-times"></i></a>'+
@@ -291,6 +310,8 @@
     $("#alamat").val("");
     $("#no_telp").val("");
     $("#email").val("");
+    $("#password").val("");
+    $("#password").prop('required', true);
     $("#ktp").val("");
     $("#npwp").val("");
     $("#nama_bank").val("");
@@ -316,6 +337,8 @@
     $("#alamat").val(jsonList[i].alamat);
     $("#no_telp").val(jsonList[i].no_telp);
     $("#email").val(jsonList[i].email);
+    $("#password").val('');
+    $("#password").prop('required', false);
     $("#ktp").val(jsonList[i].ktp);
     $("#npwp").val(jsonList[i].npwp);
     $("#nama_bank").val(jsonList[i].nama_bank);
@@ -355,7 +378,6 @@
       },
       success: function (data) {
   			if (data.status == '3'){
-  				console.log("ojueojueokl"+data.status);
   				jsonList = data.list;
   				loadData(jsonList);
           $('#aSimpan').html('Simpan');
@@ -364,21 +386,83 @@
   				// $("#notif-top").fadeIn(500);
   				// $("#notif-top").fadeOut(2500);
           new PNotify({
-                              title: 'Sukses',
-                              text: notifText,
-                              type: 'success',
-                              hide: true,
-                              delay: 5000,
-                              styling: 'bootstrap3'
-                            });
+                  title: 'Sukses',
+                  text: notifText,
+                  type: 'success',
+                  hide: true,
+                  delay: 5000,
+                  styling: 'bootstrap3'
+                });
   			}
+        else if(data.status == 1) {
+          $('#aSimpan').html('Simpan');
+          $("#aSimpan").prop("disabled", false);
+          new PNotify({
+                  title: 'Perhatian',
+                  text: 'Email telah terdaftar!',
+                  hide: true,
+                  delay: 5000,
+                  styling: 'bootstrap3'
+                }); 
+        }
       }
     });
   });
+
+  var allowChange = true;
+  function confirmStatus(elem){
+    var isChecked = $(elem).is(':checked');
+    var targetId = $(elem).attr('id');
+    if(isChecked) {
+      textConfirm = 'Ubah status customer menjadi <i class="label label-primary">Aktif</i>?';
+      setStatus = 1;
+      resetToggle = 'off';
+    }
+    else {
+      textConfirm = 'Ubah status customer menjadi <i class="label label-default">Tidak aktif</i>?';
+      setStatus = 2;
+      resetToggle = 'on';
+    }
+
+    if(allowChange == true) {
+      $.confirm({
+        title: 'Konfirmasi',
+        content: textConfirm,
+        buttons: {
+            confirm: {
+              text: 'Ya',
+              btnClass: 'btn-primary',
+              action: function() {
+                allowChange = true;
+                var id  = parseInt(targetId.replace('toggle_',''));
+                updateStatus(id, setStatus);
+              }
+            },
+            cancel: {
+              text: 'Batal',
+              action: function() {
+                allowChange = false;
+                $('#'+targetId).bootstrapToggle(resetToggle); 
+              }
+            }
+          }
+      });
+    }
+    allowChange = true;
+  }
+  function updateStatus(id, status){
+      $.ajax({
+        url :"<?php echo base_url('Master_customer/Master/update_status')?>",
+        type : "POST",
+        dataType: 'json',
+        data : { 'id':id,  'status': status},
+        success : function(data){ }
+      });   
+  }
 	
 	function deleteData(element){
 		var el = $(element).attr("id");
-		console.log(el);
+		// console.log(el);
 		var id  = el.replace("aConfirm","");
 		var i = parseInt(id);
 		//console.log(jsonList[i]);
@@ -414,7 +498,7 @@
 	
 	function confirmDelete(el){
 		var element = $(el).attr("id");
-		console.log(element);
+		// console.log(element);
 		var id  = element.replace("group","");
 		var i = parseInt(id);
     $(el).attr("data-content","<button class=\'btn btn-danger myconfirm\'  href=\'#\' onclick=\'deleteData(this)\' id=\'aConfirm"+i+"\' style=\'min-width:85px\'><i class=\'fa fa-trash\'></i> Ya</button>");

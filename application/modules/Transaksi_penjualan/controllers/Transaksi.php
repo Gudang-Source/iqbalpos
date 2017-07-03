@@ -18,7 +18,8 @@ class Transaksi extends MX_Controller {
         $insertLog = $this->Transaksipenjualanmodel->insert($dataInsert, 't_log');        
     }  
     function index(){
-    	$this->load->view('Transaksi_penjualan/view');
+        $data['list_metode_pembayaran'] = $this->getMetodePembayaran();
+    	$this->load->view('Transaksi_penjualan/view', $data);
     }
     function detail($id = 0){
     	$data['id'] = $id;
@@ -44,7 +45,7 @@ class Transaksi extends MX_Controller {
 		$query=$this->Transaksipenjualanmodel->rawQuery($sql);
 		$totalData = $query->num_rows();
 		$totalFiltered = $totalData;
-		$sql.=" WHERE t_order.deleted=1 ";
+		$sql.=" WHERE t_order.deleted = 1 ";
 		if( !empty($requestData['search']['value']) ) {
 			$sql.=" AND ( m_customer.nama LIKE '%".$requestData['search']['value']."%' ";    
 			$sql.=" OR t_order.catatan LIKE '%".$requestData['search']['value']."%' ";
@@ -55,12 +56,18 @@ class Transaksi extends MX_Controller {
 		}
 		$query=$this->Transaksipenjualanmodel->rawQuery($sql);
 		$totalFiltered = $query->num_rows();
-		$sql.=" ORDER BY ". $columns[$requestData['order'][0]['column']]."   ".$requestData['order'][0]['dir']."   LIMIT ".$requestData['start']." ,".$requestData['length']."   "; 
-		$query=$this->Transaksipenjualanmodel->rawQuery($sql);
-		$data = array();
-		foreach ($query->result_array() as $row) {
-			$nestedData		=	array(); 
+        $sql.=" ORDER BY ". $columns[$requestData['order'][0]['column']]."   ".$requestData['order'][0]['dir']."   LIMIT ".$requestData['start']." ,".$requestData['length']."   "; 
+        $query=$this->Transaksipenjualanmodel->rawQuery($sql);
+        
+        $data = array();
+        foreach ($query->result_array() as $row) {
+            $btnpayment_html = "<button class='btn btn-default btn-sm disabled' title='Pembayaran' disabled style='background-color:#f1f1f1'><i class='fa fa-money'></i></button>";
 
+            if($row['status'] == 1) {
+                $btnpayment_html = "<button class='btn btn-default btn-sm' onclick=payment('".$row["id"]."') title='Pembayaran'><i class='fa fa-money'></i></button>";
+            }
+
+			$nestedData		=	array(); 
 			$nestedData[] 	= 	"<span class='center-block text-center'>". $row["id"] ."</span>";
 			$nestedData[] 	= 	$row["namacus"];
 			$nestedData[] 	= 	$row["catatan"];
@@ -71,6 +78,7 @@ class Transaksi extends MX_Controller {
 			$nestedData[] 	= 	$row["date_add"];
 			$nestedData[] 	= 	"<div class='btn-group'>"
                         ."<button class='btn btn-default btn-sm' onclick=detail('".$row["id"]."') title='Detail Penjualan'><i class='fa fa-file-text-o'></i></button>"      
+                        .$btnpayment_html
                         ."<a href='".base_url('Transaksi_penjualan/Transaksi/invoices/'.$row['id'])."') target='_blank' class='btn btn-default btn-sm' title='Cetak Invoice'> <i class='fa fa-print'></i> </a>"
                         ."</div>";			
 			$data[] = $nestedData;
@@ -382,6 +390,19 @@ class Transaksi extends MX_Controller {
         $list = $this->Transaksipenjualanmodel->select($dataSelect, 'm_produk_warna');
         return $list->row();
     }
+    function getOrderById($id){
+        $response = array('status' => 0);
+        if(!empty($id)) {
+            $condition = array(
+                    'deleted' => 1,
+                    'status' => 1, //booking
+                    'id' => $id
+                );
+            $result = $this->Transaksipenjualanmodel->select($condition, 't_order')->row_array();
+            $response = array('status' => (boolean)$result, 'data' => $result);
+        }
+        echo json_encode($response);
+    }
     function transaksi(){
     	$dataSelect['deleted'] = 1;
     	$data['list_produk'] = $this->getProduk();
@@ -457,6 +478,29 @@ class Transaksi extends MX_Controller {
             }
         }
         return $totalQty; //reserved qty
+    }
+    function updateOrder(){
+        $response = array('status' => 0);
+        $params = $this->input->post();
+        if(!empty($params['id_order'])) {
+            $condition = array(
+                    'deleted' => 1,
+                    'id' => $params['id_order']
+                );
+            $data = array(
+                        'status' => 3, //selesai
+                        'edited_by' => isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0,
+                        'last_edited' => date('Y-m-d H:i:s'),
+                        'id_metode_pembayaran' => $params['paymentMethod'],
+                        'jenis_order' => $params['jenisOrder'],
+                        'cash' => $params['paid'],
+                        'uang_kembali' => $params['kembalian'],
+                        'catatan' => $params['catatan']
+                    );
+            $result = $this->Transaksipenjualanmodel->update($condition, $data, 't_order');
+            $response = array('status' => (boolean)$result, 'data' => $result);
+        }
+        echo json_encode($response);
     }
     function updateCart($id, $qty, $state = 'tambah'){
     	$getid = $this->in_cart($id, 'id', 'rowid');
@@ -834,8 +878,8 @@ class Transaksi extends MX_Controller {
     		$getTotal = json_decode($this->_getTotal(), true);
             $dataInsert['id_purchase_order'] = $params['idpo'];
     		$dataInsert['id_supplier'] 	= $params['supplier'];
-    		$dataInsert['catatan']		= $params['catatan'];
             // $dataInsert['total_berat'] = $this->getOption('total_berat');
+    		$dataInsert['catatan']		= $params['catatan'];
     		$dataInsert['total_berat'] = $getTotal['total_berat'];
     		$dataInsert['total_qty'] = $getTotal['total_items'];
     		$dataInsert['total_harga_beli'] = $getTotal['total'];

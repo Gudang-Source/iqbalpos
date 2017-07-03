@@ -18,7 +18,7 @@ class Master extends MX_Controller {
         $insertLog = $this->Customermodel->insert($dataInsert, 't_log');        
     }  
     function index(){
-        $dataSelect['deleted'] = 1;
+        $dataSelect['deleted !='] = 0;
 
         $sql = "SELECT nama FROM m_pegawai WHERE deleted = 1";
         $data['list_pegawai'] = json_encode($this->Customermodel->rawQuery($sql)->result());
@@ -44,7 +44,8 @@ class Master extends MX_Controller {
 		$dataInsert['nama'] 			= $params['nama'];
 		$dataInsert['alamat'] 			= $params['alamat'];
 		$dataInsert['no_telp'] 			= $params['no_telp'];
-		$dataInsert['email'] 			= $params['email'];
+        $dataInsert['email']            = $params['email'];
+		$dataInsert['password'] 	    = hash("sha512", $params['password']);
         $dataInsert['ktp']              = $params['ktp'];
         $dataInsert['npwp']             = $params['npwp'];
         $dataInsert['nama_bank']        = $params['nama_bank'];
@@ -61,8 +62,8 @@ class Master extends MX_Controller {
         $dataInsert['edited_by']        = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
 		$dataInsert['deleted'] 			= 1;
 
-		$checkData = $this->Customermodel->select($dataInsert, 'm_customer');
-		if($checkData->num_rows() < 1){
+		$email_exist = $this->email_exist($params['email'], '');
+		if($email_exist == FALSE){
 			$insert = $this->Customermodel->insert($dataInsert, 'm_customer');
 			if($insert){
 				$dataSelect['deleted'] = 1;
@@ -72,7 +73,8 @@ class Master extends MX_Controller {
 				echo json_encode(array('status' => 2));
 			}
 			
-		}else{			
+		} 
+        else {			
     		echo json_encode(array( 'status'=>1 ));
 		}
     }
@@ -117,7 +119,10 @@ class Master extends MX_Controller {
 		$dataUpdate['nama'] 			= $params['nama'];
 		$dataUpdate['alamat'] 			= $params['alamat'];
 		$dataUpdate['no_telp'] 			= $params['no_telp'];
-		$dataUpdate['email'] 			= $params['email'];
+        $dataUpdate['email']            = $params['email'];
+        if(!empty($params['password'])) {
+		  $dataUpdate['password'] 		= md5($params['password']);
+        }
         $dataUpdate['ktp']              = $params['ktp'];
         $dataUpdate['npwp']             = $params['npwp'];
         $dataUpdate['nama_bank']        = $params['nama_bank'];
@@ -132,8 +137,8 @@ class Master extends MX_Controller {
         $dataUpdate['last_edited']      = date("Y-m-d H:i:s");
         $dataUpdate['edited_by']        = isset($_SESSION['id_user']) ?$_SESSION['id_user'] : 0;
         
-		$checkData = $this->Customermodel->select($dataCondition, 'm_customer');
-		if($checkData->num_rows() > 0){
+        $email_exist = $this->email_exist($params['email'], $params['id']);
+		if($email_exist == FALSE) {
 			$update = $this->Customermodel->update($dataCondition, $dataUpdate, 'm_customer');
 			if($update){
 				$dataSelect['deleted'] = 1;
@@ -142,7 +147,8 @@ class Master extends MX_Controller {
 			}else{
 				echo json_encode(array( 'status'=>'2' ));
 			}
-		}else{			
+		}
+        else {	
     		echo json_encode(array( 'status'=>'1' ));
 		}
     }
@@ -177,5 +183,32 @@ class Master extends MX_Controller {
     	$dataSelect['deleted'] = 1;
     	echo json_encode($this->Customermodel->select($dataSelect, 'm_kota', 'nama')->result());
     }
-    
+
+    function update_status() {
+        $response = array('status' => 0);
+        $params = $this->input->post();
+        if(!empty($params['id'])) {
+            $condition = array('id' => $params['id']);
+            $data = array('deleted' => $params['status'], 'edited_by' => isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0);
+            $result = $this->Customermodel->update($condition, $data, 'm_customer'); 
+            $response = array('status' => $result);
+        }
+        echo json_encode($response);
+    }
+
+    private function email_exist($email='', $current_id='') {
+        $result = FALSE;
+        if(!empty($email)) {
+            $condition = array(
+                    'email' => $email,
+                    'deleted' => 1
+                );
+            if(!empty($current_id)) {
+                $condition['id !='] = $current_id;
+            }
+            $result = $this->Customermodel->select($condition, 'm_customer')->num_rows();
+        }   
+        return $result;
+    }
+
 }
