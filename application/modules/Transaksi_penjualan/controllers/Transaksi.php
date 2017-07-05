@@ -188,12 +188,12 @@ class Transaksi extends MX_Controller {
     	$selectData = $this->Transaksipenjualanmodel->select($dataSelect, 'm_bank');
     	return json_encode($selectData->result_array());
     }
-    function getOrder(){
+    function getOrder($idCart=""){
     	$data = array();
     	foreach ($this->cart->contents() as $items){
     		$idProduks = explode("_", $items['id']);
     		if(count($idProduks) > 1){
-    			if($idProduks[1] == "PENJUALAN"){    				
+    			if($idProduks[1] == "PENJUALAN" && $idProduks[4] == $idCart){    				
 		    		$nestedData = array();
 		    		$nestedData['rowid'] = $items['rowid'];
 		    		$nestedData['id'] = $items['id'];
@@ -216,12 +216,12 @@ class Transaksi extends MX_Controller {
     	}
     	return json_encode($data);
     }
-    function getOrderArray(){
+    function getOrderArray($idCart=""){
     	$data = array();
     	foreach ($this->cart->contents() as $items){
     		$idProduks = explode("_", $items['id']);
     		if(count($idProduks) > 1){
-    			if($idProduks[1] == "PENJUALAN"){    				
+    			if($idProduks[1] == "PENJUALAN" && $idProduks[4] == $idCart){    				
 		    		$nestedData = array();
 		    		$nestedData['rowid'] = $items['rowid'];
 		    		$nestedData['id'] = $items['id'];
@@ -404,7 +404,9 @@ class Transaksi extends MX_Controller {
         echo json_encode($response);
     }
     function transaksi(){
-    	$dataSelect['deleted'] = 1;
+
+        $dataSelect['deleted'] = 1;
+        $data['list_hold'] = $this->initHold();
     	$data['list_produk'] = $this->getProduk();
         $data['list_order'] = $this->getOrder();
         $data['list_customer'] = $this->getCustomer();
@@ -421,14 +423,14 @@ class Transaksi extends MX_Controller {
         $data['discount'] = 0;
     	$this->load->view('Transaksi_penjualan/transaksi', $data);
     }
-    function getTotal(){
+    function getTotal($idCart){
     	$total = 0;
         $total_item = 0;
     	$total_potongan = 0;
     	foreach ($this->cart->contents() as $items) {    		
     		$idProduks = explode("_", $items['id']);
     		if(count($idProduks) > 1){
-    			if($idProduks[1] == "PENJUALAN"){
+    			if($idProduks[1] == "PENJUALAN" && $idProduks[4] == $idCart){
     				$total = $total + ($items['price'] * $items['qty']);
                     $total_item += $items['qty'];
     				$total_potongan += ($items['potongan'] * $items['qty']);
@@ -448,7 +450,7 @@ class Transaksi extends MX_Controller {
                 $splitCartId = explode('_' ,$itemCart['id']);
                 if($splitCartId[1] == "PENJUALAN") {
                     //Menghitung total qty produk yang memiliki id yang sama dengan id produk ini
-                    if(($splitCartId[0] == $sid[0]) && ($splitCartId[2] == $sid[2]) && ($splitCartId[3] == $sid[3]) ) {
+                    if(($splitCartId[0] == $sid[0]) && ($splitCartId[2] == $sid[2]) && ($splitCartId[3] == $sid[3]) && ($splitCartId[4] == $sid[4]) ) {
                         $totalQty = $itemCart['qty'];
                         // array_push($filteredCart, $itemCart);
                     }
@@ -502,7 +504,7 @@ class Transaksi extends MX_Controller {
         }
         echo json_encode($response);
     }
-    function updateCart($id, $qty, $state = 'tambah'){
+    function updateCart($id, $qty, $state = 'tambah', $idCart){
     	$getid = $this->in_cart($id, 'id', 'rowid');
 
         $dataSelect['deleted'] = 1;
@@ -512,6 +514,7 @@ class Transaksi extends MX_Controller {
         $itemQty = $this->in_cart($id, 'qty', 'rowid');
         // $lastQty = $this->getCartQtyById($getid);
         // $reservedQty = $this->getCartQtyByIdNotThis($getid);
+
         if($state == 'tambah') {
             $split_id = explode('_', $getid);
             $id_produk = $split_id[0];
@@ -530,7 +533,7 @@ class Transaksi extends MX_Controller {
 				        'qty'    => $itemQty + 1
 				);
 				$this->cart->update($data);
-				echo json_encode(array("status" => 2, "list" => $this->getOrderArray()));
+				echo json_encode(array("status" => 2, "list" => $this->getOrderArray($idCart)));
     		} else {
                 //stok tidak mencukupi
                 // $stokAvailable = array("stok" => ($stokProduk - $reservedQty));
@@ -544,7 +547,7 @@ class Transaksi extends MX_Controller {
 			        'qty'    => $qty
 			);
 			$this->cart->update($data);
-			echo json_encode(array("status"=>2, "list"=>$this->getOrderArray()));
+			echo json_encode(array("status"=>2, "list"=>$this->getOrderArray($idCart)));
     	}
     }
     function updateOption($id, $warna, $ukuran, $total_berat){
@@ -575,6 +578,7 @@ class Transaksi extends MX_Controller {
         $id_produk = $split_id[0];
         $id_ukuran = $split_id[2];
         $id_warna = $split_id[3];
+        $id_cart = $split_id[4];
         
         $detail_stok = $this->get_detail_stok($id_produk);
         $item_stok = $this->find_detail_stok($detail_stok, $id_warna, $id_ukuran);
@@ -590,7 +594,7 @@ class Transaksi extends MX_Controller {
 			        'qty'=> isset($qty) ? $qty : 0
 			);
 			$this->cart->update($data);			
-			echo json_encode(array("status"=>2, "list"=>$this->getOrderArray()));
+			echo json_encode(array("status"=>2, "list"=>$this->getOrderArray($id_cart)));
     	}else{
     		// stok tidak mencukupi
             $stokAvailable = array(
@@ -629,19 +633,40 @@ class Transaksi extends MX_Controller {
     	echo $lastQty;    	
     }
     function deleteCart($id){
+        $params = $this->input->get();
+        $idCart = $params['idCart'];
     	$this->cart->remove($id);
-    	echo $this->getOrder();
+    	echo $this->getOrder($idCart);
     }
     function destroyCart(){
-    	foreach ($this->cart->contents() as $items) {
-    		$idProduks = explode("_", $items['id']);
-    		if(count($idProduks) > 1){
-    			if($idProduks[1] == "PENJUALAN"){
-    				$this->cart->remove($items['rowid']);
-    			}
-    		}
-    	}
-    	echo $this->getOrder();	
+    	//removing orders from session cart_contents
+        foreach ($this->cart->contents() as $key => $items) {
+            $idProduks = explode("_", $items['id']);
+            if(count($idProduks) > 1){
+                if($idProduks[1] == "PENJUALAN"){
+                    $this->cart->remove($items['rowid']);
+                }
+            }
+        }
+        //removing cart holds
+        if(isset($_SESSION['cart_holds'])) {
+            unset($_SESSION['cart_holds']);
+        }
+        echo $this->getOrder(); 
+    }
+    function removeCart(){
+        $idCart = $this->input->post('idCart');
+        //removing orders from session cart_contents
+        foreach ($this->cart->contents() as $key => $items){
+            $idProduks = explode("_", $items['id']);
+            if(count($idProduks) > 1){
+                if($idProduks[1] == "PENJUALAN" && $idProduks[4] == $idCart){                   
+                    $this->cart->remove($key);
+                }
+            }
+        }
+    	echo $this->getOrder($idCart);	
+
     }
 
     //--------------------------------------------
@@ -714,12 +739,13 @@ class Transaksi extends MX_Controller {
 		$params	= $this->input->post();
         $idCustomer = $params['idCustomer'];
         $idUkuran = !empty($params['idUkuran']) ? $params['idUkuran'] : 0;
-		$idWarna = !empty($params['idWarna']) ? $params['idWarna'] : 0;
+        $idWarna = !empty($params['idWarna']) ? $params['idWarna'] : 0;
+		$idCart = !empty($params['idCart']) ? $params['idCart'] : 0;
         $textUkuran = $this->getUkuranById($idUkuran);
         $textWarna = $this->getWarnaById($idWarna);
         // $inCart = $this->in_cart($id."_PENJUALAN");
         
-        $cart_id = $id."_PENJUALAN"."_".$idUkuran."_".$idWarna; //idProduk_PENJUALAN_idUkuran_idWarna
+        $cart_id = $id."_PENJUALAN"."_".$idUkuran."_".$idWarna."_".$idCart; //idProduk_PENJUALAN_idUkuran_idWarna_idCart
         $inCart = $this->in_cart($cart_id);
         
 		if($inCart == 'false'){
@@ -761,7 +787,7 @@ class Transaksi extends MX_Controller {
 			        				)
 					               );
 					$this->cart->insert($datas);
-					echo json_encode(array("status"=>2, "list"=>$this->getOrderArray()));
+					echo json_encode(array("status"=>2, "list"=>$this->getOrderArray($idCart)));
 				}else{
 					// stok kosong
 					// echo json_encode(array("status"=>1, "list"=>$this->getOrderArray()));
@@ -769,13 +795,13 @@ class Transaksi extends MX_Controller {
 				}
 			}else{
 				// harga customer belum diset
-				echo json_encode(array("status"=>0, "list"=>$this->getOrderArray()));
+				echo json_encode(array("status"=>0, "list"=>$this->getOrderArray($idCart)));
 			}			
 		}
         else {
             // $qty = $this->in_cart($id."_PENJUALAN", 'qty');
-			$qty = $this->in_cart($cart_id, 'qty');
-			$this->updateCart($inCart, $qty);
+            $qty = $this->in_cart($cart_id, 'qty');
+            $this->updateCart($inCart, $qty, 'tambah', $idCart);
 		}
 	}
 
@@ -856,14 +882,14 @@ class Transaksi extends MX_Controller {
         }
         return $filtered_cart;
     }
-    function _getTotal(){
+    function _getTotal($idCart=""){
     	$total = 0;
         $total_item = 0;
     	$total_potongan = 0;
     	foreach ($this->cart->contents() as $items) {    		
     		$idProduks = explode("_", $items['id']);
     		if(count($idProduks) > 1){
-    			if($idProduks[1] == "PENJUALAN"){
+    			if($idProduks[1] == "PENJUALAN" && $idProduks[4] == $idCart){
     				$total += ($items['price'] * $items['qty']);
                     $total_item += $items['qty'];
     				$total_potongan += ($items['potongan'] * $items['qty']);
@@ -874,8 +900,10 @@ class Transaksi extends MX_Controller {
     }    
     function doSubmit(){
     	$params = $this->input->post();
+        $idCart = $params['id_cart'];
+
     	if($params != null){
-    		$getTotal = json_decode($this->_getTotal(), true);
+    		$getTotal = json_decode($this->_getTotal($idCart), true);
             $dataInsert['id_purchase_order'] = $params['idpo'];
     		$dataInsert['id_supplier'] 	= $params['supplier'];
             // $dataInsert['total_berat'] = $this->getOption('total_berat');
@@ -887,12 +915,13 @@ class Transaksi extends MX_Controller {
     		$dataInsert['edited_by'] = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
     		$dataInsert['deleted'] = 1;
     		$insertDataMaster = $this->Transaksipenjualanmodel->insert($dataInsert, 't_beli');
+
     		if($insertDataMaster){    		
 	    		$getDataID = $this->Transaksipenjualanmodel->select($dataInsert, 't_beli');
 	    		foreach ($this->cart->contents() as $items){
 	    			$idProduks = explode("_", $items['id']);
 	    			if(count($idProduks) > 1){
-	    				if($idProduks[1]=="PENJUALAN"){					
+	    				if($idProduks[1]=="PENJUALAN" && $idProduks[4] == $idCart){					
 				    		$dataInsertDetail['id_beli']		        =	$getDataID->row()->id;
 				    		$dataInsertDetail['id_produk']				=	$idProduks[0];	
 				    		$dataInsertDetail['id_ukuran']				=	$items['options']['ukuran'];
@@ -906,20 +935,23 @@ class Transaksi extends MX_Controller {
 	    			}
 	    		}
     		}
+
     	}
-    	$this->destroyCart();
+    	// $this->destroyCart();
     }
     function testtCart(){
     	echo json_encode($this->cart->contents());
     }
     function payment(){
     	$params = $this->input->post();
+        $idCart = $params['id_cart'];
+
     	if($params != null){
     		$idOrder = 0;
     		$realIDORDER = 0;
             $total_profit = 0;
     		$dateNow = date('Y-m-d H:i:s');
-    		$getTotal = json_decode($this->_getTotal(), true);
+    		$getTotal = json_decode($this->_getTotal($idCart), true);
     		$dataInsertTorder['id_customer'] 					= 	$params['id_customer'];
     		$dataInsertTorder['catatan']						=	$params['catatan'];
             $dataInsertTorder['total_berat']                    =   $this->getTotalBerat();
@@ -960,7 +992,7 @@ class Transaksi extends MX_Controller {
 		    		foreach ($this->cart->contents() as $items) {
 		    			$idProduks = explode("_", $items['id']);
 		    			if(count($idProduks) > 1){
-		    				if($idProduks[1]=="PENJUALAN"){
+		    				if($idProduks[1]=="PENJUALAN" && $idProduks[4] == $idCart){
 		    					$dataDetail['id'] = $idProduks[0];
 		    					$getHargaBeli = $this->Transaksipenjualanmodel->select($dataDetail, 'm_produk');
 		    					$idOrder = $getHargaBeli->row()->id;
@@ -1031,11 +1063,12 @@ class Transaksi extends MX_Controller {
                     $dataUpdate = array('profit' => $total_profit);
                     $updateOrderProfit = $this->Transaksipenjualanmodel->update($condition, $dataUpdate, 't_order');
 
+                    //removing orders from cart_contents
 		    		if($insertHstok){
 				    	foreach ($this->cart->contents() as $items) {
 				    		$idProduks = explode("_", $items['id']);
 				    		if(count($idProduks) > 1){
-				    			if($idProduks[1] == "PENJUALAN"){
+				    			if($idProduks[1] == "PENJUALAN" && $idProduks[4] == $idCart){
 				    				$this->cart->remove($items['rowid']);
 				    			}
 				    		}
@@ -1172,6 +1205,21 @@ class Transaksi extends MX_Controller {
     }
 
     //HOLD
+    public function initHold() {
+        if(empty($_SESSION['cart_holds']['PENJUALAN'])) {
+            $_SESSION['cart_holds']['PENJUALAN'] = array(
+                    array(
+                            'id' => 1,
+                            'nama' => date("H:i"),
+                            'id_customer' => ""
+                        )
+                );
+        }
+
+        $cart_holds = $_SESSION['cart_holds']['PENJUALAN'];
+        return json_encode($_SESSION['cart_holds']['PENJUALAN']);
+    }
+
     public function checkHold($tipe="PENJUALAN") {
         $result = FALSE;
         if(isset($_SESSION['cart_holds'][$tipe])) {
@@ -1182,36 +1230,20 @@ class Transaksi extends MX_Controller {
         }
         else {
             //Create empty session cart_holds Penjualan if not exist
-            $_SESSION['cart_holds'][$tipe] = array();
+            $this->initHold();
         }
         return $result;
     }
 
     public function selectHold($number) {
-        /*Posale::update_all(array(
-            'set' => array(
-                'status' => 0
-            ),
-            'conditions' => array(
-                'status = ? AND register_id = ?',
-                1,
-                $this->register
-            )
-        ));
-        Posale::update_all(array(
-            'set' => array(
-                'status' => 1
-            ),
-            'conditions' => array(
-                'number = ? AND register_id = ?',
-                $number,
-                $this->register
-            )
-        ));*/
+        $idCart = $this->input->post('idCart');
+        $cart_orders = json_decode($this->getOrder($idCart));
+
         $cart_holds = $_SESSION['cart_holds']['PENJUALAN'];
         echo json_encode(array(
             "status" => TRUE,
-            "hold" => $cart_holds
+            "hold" => $cart_holds,
+            "order" => $cart_orders
         ));
     }
     
@@ -1245,7 +1277,8 @@ class Transaksi extends MX_Controller {
         $number = !empty($lastHold) ? (intval($lastHold['id'])+1) : 1;
         $hold = array(
                 'id' => $number,
-                'nama' => date("H:i")
+                'nama' => date("H:i"),
+                'id_customer' => ""
             );
         array_push($_SESSION['cart_holds']['PENJUALAN'], $hold);
         $status = TRUE;
@@ -1258,37 +1291,17 @@ class Transaksi extends MX_Controller {
     }
 
     public function removeHold($number) {
-       /* $hold = Hold::find('first', array(
-            'conditions' => array(
-                'number = ? AND register_id = ?',
-                $number,
-                $registerid
-            )
-        ));
-        $hold->delete();
-        Posale::delete_all(array(
-            'conditions' => array(
-                'number = ? AND register_id = ?',
-                $number,
-                $registerid
-            )
-        ));
-        $hold = Hold::find('last', array(
-            'conditions' => array(
-                'register_id = ?',
-                $registerid
-            )
-        ));
-        Posale::update_all(array(
-            'set' => array(
-                'status' => 1
-            ),
-            'conditions' => array(
-                'number = ? AND register_id = ?',
-                $hold->number,
-                $registerid
-            )
-        ));*/
+        //removing orders from session cart_contents
+        foreach ($this->cart->contents() as $key => $items){
+            $idProduks = explode("_", $items['id']);
+            if(count($idProduks) > 1){
+                if($idProduks[1] == "PENJUALAN" && $idProduks[4] == $number){                   
+                    $this->cart->remove($key);
+                }
+            }
+        }
+
+        //removing hold from session cart_holds
         foreach ($_SESSION['cart_holds']['PENJUALAN'] as $key => $value) {
             if($value['id'] == $number) {
                 unset($_SESSION['cart_holds']['PENJUALAN'][$key]);
@@ -1300,6 +1313,24 @@ class Transaksi extends MX_Controller {
             "status" => TRUE,
             "hold" => $cart_holds
         ));
+    }
+
+    public function setHoldCustomer() {
+        $response = array('status' => 0);
+        $params = $this->input->post();
+        $idCart = $params['idCart'];
+        $idCustomer = $params['idCustomer'];
+
+        if(!empty($idCart)) {
+            foreach ($_SESSION['cart_holds']['PENJUALAN'] as $key => $hold) {
+                if(($hold['id']) == $idCart ) {
+                    $_SESSION['cart_holds']['PENJUALAN'][$key]['id_customer'] = $idCustomer;
+                    $response = array('status' => 1);
+                }
+            }
+        }
+
+        echo json_encode($response);
     }
 
 }

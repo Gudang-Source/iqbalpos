@@ -18,10 +18,10 @@
   .group-select {
     width: 100%;
   }
-  .group-select select.form-control{
+  .group-select select.form-control {
     width: 35%;
   }
-  .group-select input.form-control{
+  .group-select input.form-control {
     width: 65%;
   }
 </style>
@@ -29,12 +29,9 @@
   // unset($_SESSION['cart_holds']);
   /*echo "<pre>";
   print_r(isset($_SESSION['cart_holds']) ? $_SESSION['cart_holds'] : 'Cart Hold is Empty');
-  echo "<br>";
   print_r(isset($_SESSION['cart_contents']) ? $_SESSION['cart_contents'] : 'Cart is Empty');
-  echo "</pre>";*/
-  /*echo "<pre>";
-  print_r (isset($_SESSION['cart_contents']) ? $_SESSION['cart_contents'] : '');
-  echo "</pre>";*/
+  echo "</pre>";
+  echo "<br>";*/
 ?>
 <div class="container-fluid">
    <div class="row">
@@ -44,11 +41,13 @@
    </div>
    <div class="row">
     <div class="col-md-6 left-side">
-      <!-- <div class="row row-horizon">
+      
+      <div class="row row-horizon">
         <span id="holdList"> </span>
         <span class="Hold pl" onclick="addHold()"><i class="fa fa-plus"></i></span>
         <span class="Hold pl" onclick="removeHold()"><i class="fa fa-minus"></i></span>
-      </div> -->
+      </div>
+
       <form action="<?php echo base_url('Transaksi_penjualan/Transaksi/doSubmit'); ?>" method="post" id="pembelian">          
          <div class="col-sm-12 text-right" style="margin-top: 10px;"> 
             <div class="btn btn-default" onclick="showInvoce('last');" title="Tampilkan Invoce Terakhir"><i class="fa fa-ticket"></i></div>
@@ -392,6 +391,7 @@
   });
 
   var currentCustomerId = 0;
+  var listHold = <?php echo $list_hold; ?>;
   var listProduct = <?php echo $list_produk; ?>;
   var listOrder = <?php echo $list_order; ?>;
   var listCustomer = <?php echo $list_customer; ?>;
@@ -411,6 +411,7 @@
   load_order(listOrder);
   load_metode_pembayaran(listMetodePembayaran);
   load_bank(listBank);
+  load_hold(listHold);
 
   function load_customer(json){
     var html = "";
@@ -452,7 +453,7 @@
     var option = "";
     var select = "";
     $("#productList").html("");
-      for (var i=0;i<json.length;i++){
+      for (var i=0; i<json.length; i++){
         html = "<div class='col-xs-12'>"+
                   "<div class='panel panel-default product-details'>"+
                       "<div class='panel-body' style=''>"+
@@ -509,7 +510,7 @@
     $.ajax({
       url :"<?php echo base_url('Transaksi_penjualan/Transaksi/getUkuran')?>/"+rid,
       type : "GET",
-      data :"",
+      data : "",
       dataType : "json",
       success : function(data){
         var html = "";
@@ -760,6 +761,9 @@
     var idCustomer = $("#customerSelect").val();
     var idUkuran = $("#selectUkuran").val();
     var idWarna = $("#selectWarna").val();
+    var holdId = $(".selectedHold").attr('id').split('-');
+    var idCart = holdId[1];
+
     if(idCustomer == '' || idCustomer == null) {
       $.alert({
           title: 'Perhatian',
@@ -771,7 +775,7 @@
         url :"<?php echo base_url('Transaksi_penjualan/Transaksi/tambahCart')?>/"+id,
         type : "POST",
         // data :"idCustomer="+$("#customerSelect").val(),
-        data : {'idCustomer': idCustomer, 'idUkuran': idUkuran, 'idWarna': idWarna},
+        data : {'idCustomer': idCustomer, 'idUkuran': idUkuran, 'idWarna': idWarna,'idCart': idCart},
         dataType : "json",
         success : function(data) {
           if(data.status == 2){
@@ -841,10 +845,13 @@
     }
   }
   function delete_order(id){
+    var holdId = $(".selectedHold").attr('id').split('-');
+    var idCart = holdId[1];
+
     $.ajax({
       url :"<?php echo base_url('Transaksi_penjualan/Transaksi/deleteCart')?>/"+id,
       type : "GET",
-      data :"",
+      data : { 'idCart': idCart },
       dataType : "json",
       success : function(data){
         load_order(data);
@@ -878,7 +885,12 @@
   }
   function changeCustomer(){
     var productList = $("#productList");
+    var holdId = $(".selectedHold").attr('id').split('-');
+    var idCart = holdId[1];
     var customerId = currentCustomerId;
+    
+    setHoldCustomer( idCart, $("#customerSelect :selected").val() );
+
     if(productList.html().length > 0) {
       $.confirm({
             title: 'Konfirmasi',
@@ -903,6 +915,22 @@
       filterProduk();
     }
   }
+
+  function setHoldCustomer(idCart, idCustomer){
+    $.ajax({
+      url: "<?php echo base_url('Transaksi_penjualan/Transaksi/setHoldCustomer')?>",
+      type: "POST",
+      data: { 'idCart': idCart, 'idCustomer': idCustomer },
+      dataType: "json",
+      success: function(response) {
+        console.log(response);
+      },
+      error: function() {
+        alert("setHoldCustomer error");
+      }
+    });
+  }
+
   function add_qty(id){
     var lastValue = $("#qt-"+id).val();
     lastValue = parseInt(lastValue) + 1;
@@ -920,9 +948,11 @@
     change_total(id, 'kurang');
   }
   function change_total(id, state){
+    var idHold = $('.selectedHold').attr('id').split('-');
+    var idCart = $idHold[1];
     var qty = $("#qt-"+id).val();
     $.ajax({
-      url :"<?php echo base_url('Transaksi_penjualan/Transaksi/updateCart')?>/"+id+"/"+qty+"/"+state,
+      url :"<?php echo base_url('Transaksi_penjualan/Transaksi/updateCart')?>/"+id+"/"+qty+"/"+state+"/"+idCart,
       type : "GET",
       data :"",
       dataType : "json",
@@ -955,8 +985,10 @@
     maskInputMoney(); 
   }
   function fillInformation(){
+    var idHold = $(".selectedHold").attr('id').split('-');
+    var idCart = idHold[1];
     $.ajax({
-      url :"<?php echo base_url('Transaksi_penjualan/Transaksi/getTotal')?>",
+      url :"<?php echo base_url('Transaksi_penjualan/Transaksi/getTotal')?>" + "/" + idCart,
       type : "GET",
       data :"",
       success : function(data){        
@@ -979,7 +1011,7 @@
           content: 'Batalkan Transaksi ?',
           buttons: {
               confirm: function () {
-                  doClear();
+                  doClearAll(true);
               },
               cancel: function () {
                   // $.alert('Canceled!');
@@ -990,6 +1022,9 @@
       });    
   }
   function doClear(reload){
+    var idHold = $('.selectedHold').attr('id').split('-');
+    var idCart = idHold[1];
+
     if(reload != false) {
       reload = true;
     }
@@ -997,9 +1032,9 @@
     $('#btnDoOrder').html("<h5 class=\'text-bold\'>Clearing...</h5>");
     $("#btnDoOrder").prop("disabled", true);    
     $.ajax({
-      url :'<?php echo base_url("Transaksi_penjualan/Transaksi/destroyCart"); ?>',
-      type : $('#pembelian').attr('method'),
-      data : $('#pembelian').serialize(),
+      url :'<?php echo base_url("Transaksi_penjualan/Transaksi/removeCart"); ?>',
+      type : "POST",
+      data : { 'idCart': idCart },
       dataType : "json",
       success : function(data){
         load_order(data);
@@ -1013,11 +1048,30 @@
       }
     });    
   }
+  function doClearAll(reload){
+    if(reload != false) {
+      reload = true;
+    }
+    $('#btnDoOrder').html("<h5 class=\'text-bold\'>Clearing...</h5>");
+    $("#btnDoOrder").prop("disabled", true);    
+    $.post('<?php echo base_url("Transaksi_penjualan/Transaksi/destroyCart"); ?>', function(data) {
+        $('#btnDoOrder').html("<h5 class=\'text-bold\'>Proses Transaksi</h5>");
+        $("#btnDoOrder").prop("disabled", false);
+        // window.close();
+        if(reload == true) {
+          window.location.reload(false);
+        }
+      }
+    );    
+  }
   function doSubmit(){
+    var idHold = $(".selectedHold").attr('id').split('-');
+    var idCart = idHold[1];
     $.ajax({
       url :$('#pembelian').attr('action'),
       type : $('#pembelian').attr('method'),
-      data : $('#pembelian').serialize(),
+      data : $('#pembelian').serialize()
+              + "&idCart=" +idCart,
       dataType : "json",
       success : function(data){        
         load_order(data);
@@ -1035,6 +1089,8 @@
       unmaskInputMoney();
       
       var defaultHtml = $('#btnBayar').html();
+      var idHold = $('.selectedHold').attr('id').split('-');
+      var idCart = idHold[1];
       var paymentMethod = $("#paymentMethod").val() || '';
       var id_bank = $("#id_bank").val() || '';
       var nomor_kartu = $("#nomor_kartu").val() || '';
@@ -1058,7 +1114,8 @@
                   + "&catatan=" +catatan
                   + "&kembalian=" +kembalian
                   + "&id_bank=" +id_bank
-                  + "&nomor_kartu=" +nomor_kartu,
+                  + "&nomor_kartu=" +nomor_kartu
+                  + "&id_cart=" +idCart,
           dataType : "json",
           success : function(data){
             $("#modalpayment").modal('hide');
@@ -1222,30 +1279,54 @@
 
   //HOLD
   function load_hold(json) {
-    var html = '<span class="Hold selectedHold">1<span id="Time"> <?php echo date("H:i") ?> </span></span>';
-    $("#holdList").html(html);
+    /*var html = '<span class="Hold selectedHold">1<span id="Time"> <?php echo date("H:i") ?> </span></span>';
+    $("#holdList").html(html);*/
+    $("#holdList").html('');
 
-    var jsonLength = Object.keys(json).length;
-    for (var i=0; i<jsonLength; i++) {
-      if(json[i] != undefined) {
-        html = "<span class='Hold' id=\'hold-" + json[i].id + "\'  onclick=selectHold(\'" + json[i].id + "\')>" + json[i].id + "<span id='Time'>" + json[i].nama + "</span></span>";
+    $.each(json, function(i, value) {
+      html = "<span class='Hold' id=\'hold-" + json[i].id + "\'  onclick=selectHold(\'" + json[i].id + "\')>" + json[i].id + "<span id='Time'>" + json[i].nama + "</span></span>";
         $("#holdList").append(html);
-      }
-    }
+    });
+
+    $("#holdList > span:last-child").trigger('click');
   }
   function selectHold(id) {
     $.ajax({
         url : "<?php echo site_url('Transaksi_penjualan/Transaksi/selectHold')?>/"+id,
         type: "POST",
+        data: { 'idCart': id },
         dataType: "JSON",
         success: function(data)
         {
+           var customerId = 0;
+           var holds = data.hold;
+           var orders = data.order;
+
            $('#hold-'+id).parent().children().removeClass('selectedHold');
            $('#hold-'+id).addClass('selectedHold');
+
+           console.log(holds);
+           var hold = 0;
+           $.each(holds, function(i, value) {
+            if(holds[i].id == id) {
+              hold = holds[i];
+            }
+           });
+
+           if(hold.id_customer != '') {
+            customerId = hold.id_customer;
+           } 
+           $("#idCustomer").val(customerId); //hidden input
+           $("#customerSelect").val(customerId);
+           $("#customerSelect").trigger('change.select2'); // Notify 
+           // filterProduk();
+
+           load_order(orders);
+           fillInformation(); 
         },
         error: function (jqXHR, textStatus, errorThrown)
         {
-           alert("error");
+           alert("selectHold error");
         }
     });
   }
@@ -1260,7 +1341,7 @@
         },
         error: function (jqXHR, textStatus, errorThrown)
         {
-           alert("error");
+           alert("addHold error");
         }
     });
   }
@@ -1270,6 +1351,7 @@
         $.confirm({
             title: 'Konfirmasi',
             content: 'Yakin hapus sesi <b>' + number + "</b>?",
+            type: 'red',
             buttons: {
                 Yes: {
                   btnClass: 'btn-blue',
@@ -1278,7 +1360,6 @@
                 Cancel: function(){}
               }
         }); 
-
      }
   }
   function doRemoveHold(number) {
@@ -1292,7 +1373,7 @@
       },
       error: function (jqXHR, textStatus, errorThrown)
       {
-         alert("error");
+         alert("removeHold error");
       }
     });
   }
