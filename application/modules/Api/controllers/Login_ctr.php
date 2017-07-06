@@ -42,6 +42,11 @@ class Login_ctr extends MX_Controller {
         $key            = $this->input->post("key");
 		$email			= $this->input->post("email");
 		$password		= $this->input->post("password");
+		
+		$os             = "android";
+        $key            = "pos2017";
+		$email			= "bambang1@gmail.com";
+		$password		= "admin";
         
         $status_api_key = $this->cek_api_key($os,$key);
         

@@ -2,10 +2,10 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Penjualan_ctr extends MX_Controller {
     
-	private $modul = "Api/";
+    private $modul = "Api/";
     private $fungsi = "";    
-	
-	function __construct() {
+    
+    function __construct() {
         parent::__construct();
         $this->load->model('Penjualan_model','m');
         $this->modul .= $this->router->fetch_class();
@@ -13,7 +13,7 @@ class Penjualan_ctr extends MX_Controller {
         
     }
     
-	private function cek_api_key($os,$key){
+    private function cek_api_key($os,$key){
 
         $status = $this->m->cek_api_key($os,$key);
 
@@ -23,9 +23,9 @@ class Penjualan_ctr extends MX_Controller {
                 return true;
         }
     }
-	
-	private function cek_token($id_customer,$token){
-		
+    
+    private function cek_token($id_customer,$token){
+        
         $status = $this->m->cek_token($id_customer,$token);
 
         if($status == "0"){
@@ -34,18 +34,18 @@ class Penjualan_ctr extends MX_Controller {
                 return true;
         }
     }
-	
-	public function get_penjualan_by_customer() {
+    
+    public function get_penjualan_by_customer() {
         
         header("Content-type: application/json");
         
-        $os             = $this->input->post("os");
-        $key            = $this->input->post("key");
-		$id_customer	= $this->input->post("id_customer");
-		$token			= $this->input->post("token");
-		
+        $os             = $this->input->get("os");
+        $key            = $this->input->get("key");
+        $id_customer    = $this->input->get("id_customer");
+        $token          = $this->input->get("token");
+        
         $status_api_key = $this->cek_api_key($os,$key);
-		$status_token = $this->cek_token($id_customer,$token);
+        $status_token = $this->cek_token($id_customer,$token);
         
         if($status_api_key == false || $status_token == false){
             $data['code'] = "0";// code 0 artinya gagal, code 1 artinya sukses
@@ -55,7 +55,7 @@ class Penjualan_ctr extends MX_Controller {
             echo json_encode($data,JSON_PRETTY_PRINT);
         }else{
             
-			$data['code'] = "1";
+            $data['code'] = "1";
             $data['pesan'] = "Sukses!";
             $data['data'] = $this->m->get_penjualan_by_customer($id_customer);
             
@@ -63,18 +63,18 @@ class Penjualan_ctr extends MX_Controller {
                 
         }
     }
-	
-	public function get_all_customer() {
+    
+    public function get_all_customer() {
         
         header("Content-type: application/json");
         
-        $os             = $this->input->post("os");
-        $key            = $this->input->post("key");
-		$id_customer	= $this->input->post("id_customer");
-		$token			= $this->input->post("token");
+        $os             = $this->input->get("os");
+        $key            = $this->input->get("key");
+        $id_customer    = $this->input->get("id_customer");
+        $token          = $this->input->get("token");
         
         $status_api_key = $this->cek_api_key($os,$key);
-		$status_token = $this->cek_token($id_customer,$token);
+        $status_token = $this->cek_token($id_customer,$token);
         
         if($status_api_key == false || $status_token == false){
             $data['code'] = "0";// code 0 artinya gagal, code 1 artinya sukses
@@ -84,7 +84,7 @@ class Penjualan_ctr extends MX_Controller {
             echo json_encode($data,JSON_PRETTY_PRINT);
         }else{
             
-			$data['code'] = "1";
+            $data['code'] = "1";
             $data['pesan'] = "Sukses!";
             $data['data'] = $this->m->get_all_customer();
             
@@ -92,18 +92,18 @@ class Penjualan_ctr extends MX_Controller {
                 
         }
     }
-	
-	public function get_all_produk() {
+    
+    public function get_all_produk() {
         
         header("Content-type: application/json");
         
-        $os             = $this->input->post("os");
-        $key            = $this->input->post("key");
-		$id_customer	= $this->input->post("id_customer");
-		$token			= $this->input->post("token");
-		
+        $os             = $this->input->get("os");
+        $key            = $this->input->get("key");
+        $id_customer    = $this->input->get("id_customer");
+        $token          = $this->input->get("token");
+        
         $status_api_key = $this->cek_api_key($os,$key);
-		$status_token = $this->cek_token($id_customer,$token);
+        $status_token = $this->cek_token($id_customer,$token);
         
         if($status_api_key == false || $status_token == false){
             $data['code'] = "0";// code 0 artinya gagal, code 1 artinya sukses
@@ -113,7 +113,7 @@ class Penjualan_ctr extends MX_Controller {
             echo json_encode($data,JSON_PRETTY_PRINT);
         }else{
             
-			$data['code'] = "1";
+            $data['code'] = "1";
             $data['pesan'] = "Sukses!";
             $data['data'] = $this->m->get_all_produk();
             
@@ -121,19 +121,19 @@ class Penjualan_ctr extends MX_Controller {
                 
         }
     }
-	
-	public function get_ukuran_produk() {
+    
+    public function get_ukuran_produk() {
         
         header("Content-type: application/json");
         
-        $os             = $this->input->post("os");
-        $key            = $this->input->post("key");
-		$id_customer	= $this->input->post("id_customer");
-		$token			= $this->input->post("token");
-		$id_produk		= $this->input->post("id_produk");
+        $os             = $this->input->get("os");
+        $key            = $this->input->get("key");
+        $id_customer    = $this->input->get("id_customer");
+        $token          = $this->input->get("token");
+        $id_produk      = $this->input->get("id_produk");
         
         $status_api_key = $this->cek_api_key($os,$key);
-		$status_token = $this->cek_token($id_customer,$token);
+        $status_token = $this->cek_token($id_customer,$token);
         
         if($status_api_key == false || $status_token == false){
             $data['code'] = "0";// code 0 artinya gagal, code 1 artinya sukses
@@ -143,7 +143,7 @@ class Penjualan_ctr extends MX_Controller {
             echo json_encode($data,JSON_PRETTY_PRINT);
         }else{
             
-			$data['code'] = "1";
+            $data['code'] = "1";
             $data['pesan'] = "Sukses!";
             $data['data'] = $this->m->get_ukuran_produk($id_produk);
             
@@ -151,19 +151,19 @@ class Penjualan_ctr extends MX_Controller {
                 
         }
     }
-	
-	public function get_warna_produk() {
+    
+    public function get_warna_produk() {
         
         header("Content-type: application/json");
         
-        $os             = $this->input->post("os");
-        $key            = $this->input->post("key");
-		$id_customer	= $this->input->post("id_customer");
-		$token			= $this->input->post("token");
-		$id_produk		= $this->input->post("id_produk");
+        $os             = $this->input->get("os");
+        $key            = $this->input->get("key");
+        $id_customer    = $this->input->get("id_customer");
+        $token          = $this->input->get("token");
+        $id_produk      = $this->input->get("id_produk");
         
         $status_api_key = $this->cek_api_key($os,$key);
-		$status_token = $this->cek_token($id_customer,$token);
+        $status_token = $this->cek_token($id_customer,$token);
         
         if($status_api_key == false || $status_token == false){
             $data['code'] = "0";// code 0 artinya gagal, code 1 artinya sukses
@@ -173,7 +173,7 @@ class Penjualan_ctr extends MX_Controller {
             echo json_encode($data,JSON_PRETTY_PRINT);
         }else{
             
-			$data['code'] = "1";
+            $data['code'] = "1";
             $data['pesan'] = "Sukses!";
             $data['data'] = $this->m->get_warna_produk($id_produk);
             
@@ -185,13 +185,13 @@ class Penjualan_ctr extends MX_Controller {
     public function get_stok_produk() {
         header("Content-type: application/json");
 
-        $os             = $this->input->post('os');
-        $key            = $this->input->post('key');
-        $id_customer    = $this->input->post('id_customer');
-        $token          = $this->input->post('token');
-        $id_produk      = $this->input->post('id_produk');
-        $id_ukuran      = $this->input->post('id_ukuran');
-        $id_warna       = $this->input->post('id_warna');
+        $os             = $this->input->get('os');
+        $key            = $this->input->get('key');
+        $id_customer    = $this->input->get('id_customer');
+        $token          = $this->input->get('token');
+        $id_produk      = $this->input->get('id_produk');
+        $id_ukuran      = $this->input->get('id_ukuran');
+        $id_warna       = $this->input->get('id_warna');
 
         $status_api_key = $this->cek_api_key($os, $key);
         $status_token = $this->cek_token($id_customer, $token);
@@ -210,19 +210,19 @@ class Penjualan_ctr extends MX_Controller {
             echo json_encode($data, JSON_PRETTY_PRINT);
         }
     }
-	
-	public function get_harga_produk() {
+    
+    public function get_harga_produk() {
         
         header("Content-type: application/json");
         
-        $os             = $this->input->post("os");
-        $key            = $this->input->post("key");
-		$id_customer	= $this->input->post("id_customer");
-		$token			= $this->input->post("token");
-		$id_produk		= $this->input->post("id_produk");
+        $os             = $this->input->get("os");
+        $key            = $this->input->get("key");
+        $id_customer    = $this->input->get("id_customer");
+        $token          = $this->input->get("token");
+        $id_produk      = $this->input->get("id_produk");
         
         $status_api_key = $this->cek_api_key($os,$key);
-		$status_token = $this->cek_token($id_customer,$token);
+        $status_token = $this->cek_token($id_customer,$token);
         
         if($status_api_key == false || $status_token == false){
             $data['code'] = "0";// code 0 artinya gagal, code 1 artinya sukses
@@ -232,7 +232,7 @@ class Penjualan_ctr extends MX_Controller {
             echo json_encode($data,JSON_PRETTY_PRINT);
         }else{
             
-			$data['code'] = "1";
+            $data['code'] = "1";
             $data['pesan'] = "Sukses!";
             $data['data'] = $this->m->get_harga_produk($id_produk);
             
@@ -240,19 +240,19 @@ class Penjualan_ctr extends MX_Controller {
                 
         }
     }
-	
-	public function get_produk_by_sku_nama() {
+    
+    public function get_produk_by_sku_nama() {
         
         header("Content-type: application/json");
         
-        $os             = $this->input->post("os");
-        $key            = $this->input->post("key");
-		$id_customer	= $this->input->post("id_customer");
-		$token			= $this->input->post("token");
-		$param			= $this->input->post("param");
+        $os             = $this->input->get("os");
+        $key            = $this->input->get("key");
+        $id_customer    = $this->input->get("id_customer");
+        $token          = $this->input->get("token");
+        $param          = $this->input->get("param");
         
         $status_api_key = $this->cek_api_key($os,$key);
-		$status_token = $this->cek_token($id_customer,$token);
+        $status_token = $this->cek_token($id_customer,$token);
         
         if($status_api_key == false || $status_token == false){
             $data['code'] = "0";// code 0 artinya gagal, code 1 artinya sukses
@@ -262,7 +262,7 @@ class Penjualan_ctr extends MX_Controller {
             echo json_encode($data,JSON_PRETTY_PRINT);
         }else{
             
-			$data['code'] = "1";
+            $data['code'] = "1";
             $data['pesan'] = "Sukses!";
             $data['data'] = $this->m->get_produk_by_sku_nama($param);
             
@@ -270,18 +270,18 @@ class Penjualan_ctr extends MX_Controller {
                 
         }
     }
-	
-	public function get_metode_pembayaran() {
+    
+    public function get_metode_pembayaran() {
         
         header("Content-type: application/json");
         
-        $os             = $this->input->post("os");
-        $key            = $this->input->post("key");
-		$id_customer	= $this->input->post("id_customer");
-		$token			= $this->input->post("token");
-		
+        $os             = $this->input->get("os");
+        $key            = $this->input->get("key");
+        $id_customer    = $this->input->get("id_customer");
+        $token          = $this->input->get("token");
+        
         $status_api_key = $this->cek_api_key($os,$key);
-		$status_token = $this->cek_token($id_customer,$token);
+        $status_token = $this->cek_token($id_customer,$token);
         
         if($status_api_key == false || $status_token == false){
             $data['code'] = "0";// code 0 artinya gagal, code 1 artinya sukses
@@ -291,7 +291,7 @@ class Penjualan_ctr extends MX_Controller {
             echo json_encode($data,JSON_PRETTY_PRINT);
         }else{
             
-			$data['code'] = "1";
+            $data['code'] = "1";
             $data['pesan'] = "Sukses!";
             $data['data'] = $this->m->get_metode_pembayaran();
             
@@ -616,5 +616,5 @@ class Penjualan_ctr extends MX_Controller {
 
         $this->insert_histori_produk($id_detail, $data_detail, $arr_produk);
     }
-	
+    
 }

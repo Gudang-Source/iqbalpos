@@ -235,13 +235,14 @@ class Transaksi extends MX_Controller {
             $dataInsert['jumlah'] = $qty;
     		$dataInsert['deleted'] = 1;
 
+            //checking if detail_stok field in m_produk is empty
             $detail_stok = $this->get_detail_stok($params['idProduk']);
             if(!empty($detail_stok)) {
                 //update detail stok with new value based on warna & ukuran;
                 $item_stok = $this->find_detail_stok($detail_stok, $id_warna, $id_ukuran);
                 $lastStok = $item_stok;
                 if(($item_stok==='null') && ($state == 'kurang')) {
-                    echo json_encode(array("status"=>0, "message"=>"Stok untuk produk ".$dataStok->nama." warna ".$nama_warna." ukuran ".$nama_ukuran." tidak ditemukan"));
+                    echo json_encode(array("status"=>0, "message"=>"Stok untuk produk ".$dataStok->nama." warna ".$nama_warna." ukuran ".$nama_ukuran." tidak ditemukannnn"));
                         exit();
                 }
                 
@@ -249,21 +250,27 @@ class Transaksi extends MX_Controller {
                 $current_total_stok = $this->total_detail_stok($params['idProduk']);
             }
             else {
-                echo json_encode(array("status"=>0, "message"=>"Stok untuk produk ".$dataStok->nama." warna ".$nama_warna." ukuran ".$nama_ukuran." tidak ditemukan"));
-                    exit();
-                //insert stok & detail_stok into m_produk (tidak jadi diinsert -> diganti alert barang tidak ada)
-                /*$lastStok = 0;
-                $new_total_stok = $qty;
-                $data[] = array(
-                                'id_ukuran' => $id_ukuran,
-                                'id_warna' => $id_warna,
-                                'nama_ukuran' => $nama_ukuran,
-                                'nama_warna' => $nama_warna,
-                                'stok' => $qty
-                            );
-                $new_detail_stok = json_encode($data);*/
+                if($state == 'kurang') {
+                    //insert stok & detail_stok into m_produk (tidak jadi diinsert -> diganti alert barang tidak ada)
+                    echo json_encode(array("status"=>0, "message"=>"Stok untuk produk ".$dataStok->nama." warna ".$nama_warna." ukuran ".$nama_ukuran." tidak ditemukan"));
+                        exit();
+                }
+                else if($state == 'tambah') {
+                    $lastStok = 0;
+                    $new_total_stok = $qty;
+                    $data[] = array(
+                                    'id_ukuran' => $id_ukuran,
+                                    'id_warna' => $id_warna,
+                                    'nama_ukuran' => $nama_ukuran,
+                                    'nama_warna' => $nama_warna,
+                                    'stok' => $qty
+                                );
+                    $new_detail_stok = json_encode($data);
+                    $current_total_stok = 0;
+                }
             }
 
+            //proceed to update m_produk stok & detail stok
             if ($state == "kurang") {
                 if ($lastStok < $qty) {
                     echo json_encode(array("status"=>2, "message"=>"Stok untuk produk ".$dataStok->nama." warna ".$nama_warna." ukuran ".$nama_ukuran." terlalu sedikit untuk dikurangi"));
