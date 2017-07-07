@@ -142,6 +142,7 @@
   inits(tax, discount, total, totalItems);
   load_customer(listCustomer);
   load_order(listOrder);
+
   function load_customer(json){
     var html = "";
     $("#customerSelect").html('');
@@ -221,13 +222,13 @@
       if(color == 7) { color = 1; }
       var colorClass = 'color0' + color; color++;
       html = "<div class='col-sm-2 col-xs-4' style='display: block;'>"+
-              "<a href='javascript:void(0)' class='addPct' id=\'product-"+json[i].id+"\' onclick=\'addToCart("+json[i].id+","+json[i].id_ukuran+","+json[i].id_warna+")\'>"+
+              "<a href='javascript:void(0)' class='addPct' id=\'product-"+json[i].id+"\' onclick=\'addToCart("+json[i].id+", "+json[i].id_detail_order+","+json[i].id_ukuran+","+json[i].id_warna+")\'>"+
                 "<div class='product "+colorClass+" flat-box waves-effect waves-block'>"+
                   "<h3 id='proname'>"+json[i].nama+
                   "<br><small style='color:white;'>"+json[i].nama_ukuran+"</small>"+
                   "<br><small style='color:white;'>"+json[i].nama_warna+"</small></h3>"+
                   "<div class='mask'>"+
-                    "<h3>Rp <span class='money'>"+json[i].harga_beli+"</span></h3>"+
+                    "<h3>Rp <span class='money'>"+json[i].harga_jual+"</span></h3>"+
                     // "<p>"+json[i].deskripsi+"</p>"+
                   "</div>"+
                   // "<img src=\'<?php echo base_url('upload/produk') ?>/"+json[i].foto+"\' alt=\'"+json[i].id_kategori+"\'>"+
@@ -475,17 +476,18 @@
       });
     }
   }  
-  function addToCart(id, idUkuran=0, idWarna=0){
+  function addToCart(id, idDetailOrder, idUkuran=0, idWarna=0){
     var idCustomer = $("#customerSelect").val() || '';
     var idOrder = $("#orderSelect").val() || '';
     var qty = $("#qt-"+id).val() || 0;
+
     if((idCustomer != '') && (idOrder != '')) {
       $.ajax({
         url :"<?php echo base_url('Transaksi_retur/Transaksi/tambahCart')?>/"+id,
         type : "POST",
         data : {'id_customer': idCustomer, 'id_order': idOrder
-                , 'current_qty': qty, 'id_warna': idWarna
-                , 'id_ukuran': idUkuran
+                ,'id_detail_order': idDetailOrder, 'current_qty': qty
+                , 'id_warna': idWarna, 'id_ukuran': idUkuran
               },
         dataType : "json",
         success : function(data){

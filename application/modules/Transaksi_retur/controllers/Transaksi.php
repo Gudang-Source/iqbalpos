@@ -220,7 +220,7 @@ class Transaksi extends MX_Controller {
     	return json_encode($data);
     }
     function getAvailableProduk($idOrder){
-    	$sql = "SELECT m_produk.*, t_order_detail.harga_jual, t_order_detail.id_ukuran, t_order_detail.id_warna, t_order_detail.nama_warna, t_order_detail.nama_ukuran FROM t_order
+    	$sql = "SELECT m_produk.*, t_order_detail.id AS id_detail_order, t_order_detail.harga_jual, t_order_detail.id_ukuran, t_order_detail.id_warna, t_order_detail.nama_warna, t_order_detail.nama_ukuran FROM t_order
 				INNER JOIN t_order_detail ON t_order_detail.id_order = t_order.id
 				INNER JOIN m_produk ON m_produk.id = t_order_detail.id_produk
 				WHERE t_order.id = ".$idOrder;
@@ -261,7 +261,7 @@ class Transaksi extends MX_Controller {
         if(!empty($kategori)) {
             $where_kategori = " AND A.id_kategori = ".$kategori;
         }
-        $sql = "SELECT * FROM m_produk A"
+        $sql = "SELECT A.*, B.id AS id_detail_order FROM m_produk A"
         	." INNER JOIN t_order_detail B ON A.id = B.id_produk"
         	." INNER JOIN t_order C ON B.id_order = C.id"
         	." WHERE A.deleted = '1'"
@@ -287,7 +287,7 @@ class Transaksi extends MX_Controller {
 	        if(!empty($kategori)) {
 	            $where_kategori = " AND A.id_kategori = ".$kategori;
 	        }
-	        $sql = "SELECT A.*, B.nama_ukuran, B.nama_warna FROM m_produk A"
+	        $sql = "SELECT A.*, B.id AS id_detail_order, B.nama_ukuran, B.nama_warna FROM m_produk A"
 				." INNER JOIN t_order_detail B ON A.id = B.id_produk"
 	    		." WHERE A.deleted = '1'"
 	    		.$where_order
@@ -342,6 +342,88 @@ class Transaksi extends MX_Controller {
         $list = $this->Transaksireturmodel->select($dataSelect, 'm_produk_warna');
         return $list->row();
     }
+
+    //-----------------------------------------------------------
+    private function get_detail_stok($id_produk) {
+        //fetch detail_stok from current product
+        $result = 0;
+        if(!empty($id_produk)) {
+            $condition = array('id' => $id_produk, 'deleted' => 1);
+            $data_produk = $this->Transaksireturmodel->select($condition, 'm_produk')->row();
+
+            $result = isset($data_produk->detail_stok) ? $data_produk->detail_stok : 0;
+        }
+        return $result;
+    }
+    private function build_detail_stok($detail_stok, $id_warna=0, $id_ukuran=0, $nama_warna, $nama_ukuran, $qty, $operasi, $nama_produk) {
+        //build new detail_stok json data
+        $result = 0;
+        if(!empty($detail_stok)) {
+            $obj_data = json_decode($detail_stok);
+            $arr_data = json_decode($detail_stok, true);
+            $new_stok = $qty;
+            end($arr_data); $index = (key($arr_data) + 1);
+            $new_detail_stok = array();
+
+            foreach ($obj_data as $key => $value) {
+                if(($value->id_warna == $id_warna) && ($value->id_ukuran == $id_ukuran)) {
+                    
+                    if($operasi == 'tambah') {
+                        $new_stok = ($new_stok + $arr_data[$key]['stok']);
+                    }
+                    else if ($operasi == 'kurang') {
+                        //cek apakah stok tidak bisa dikurangi
+                        if($arr_data[$key]['stok'] < $qty) {
+                            echo json_encode(array("status"=>2, "message"=>"Stok untuk produk ".$nama_produk." warna ".$nama_warna." ukuran ".$nama_ukuran." terlalu sedikit untuk dikurangi"));
+                            exit();
+                        }
+                        else {
+                            $new_stok = ($arr_data[$key]['stok'] - $qty);
+                        }
+                    }
+                    $index = $key;
+                }
+            }
+            $arr_data[$index] = array(
+                    'id_warna' => $id_warna,
+                    'id_ukuran' => $id_ukuran,
+                    'nama_warna' => $nama_warna,
+                    'nama_ukuran' => $nama_ukuran,
+                    'stok' => $new_stok
+                );
+            $result = json_encode($arr_data);
+        }
+        return $result;
+    }
+    private function find_detail_stok($detail_stok, $id_warna=0, $id_ukuran=0) {
+        //find stok of current product with certain warna & ukuran
+        $result = 'null';
+        if(!empty($detail_stok)) {
+            $obj_data = json_decode($detail_stok);
+            foreach ($obj_data as $item) {
+                if(($item->id_warna == $id_warna) && ($item->id_ukuran == $id_ukuran)) {
+                    $result = $item->stok;
+                }
+            }
+        }
+        return $result;
+    }
+    private function total_detail_stok($id_produk) {
+        //find total stok of current product
+        $result = 0;
+        if(!empty($id_produk)) {
+            $detail_stok = $this->get_detail_stok($id_produk) ;
+            $obj_data = json_decode($detail_stok);
+            $total_stok = 0;
+            foreach ($obj_data as $item) {
+                $total_stok = (int)$total_stok + (int)$item->stok;
+            }
+            $result = $total_stok;
+        }
+        return $result;
+    }
+    //-----------------------------------------------------------
+
     function transaksi(){
     	$dataSelect['deleted'] = 1;
     	$data['list_produk'] = $this->getProduk();
@@ -499,10 +581,10 @@ class Transaksi extends MX_Controller {
 
 		// $inCart = $this->in_cart($id."_RETUR");
 		$inCart = $this->in_cart($cart_id);
-		// echo $inCart;
 		$params	= $this->input->post();
 		$idCustomer = $params['id_customer'];
-		$idOrder = $params['id_order'];
+        $idOrder = $params['id_order'];
+		$idDetailOrder = $params['id_detail_order'];
 		$currentQty = $params['current_qty'] + 1;
 
 		//fetching data produk yang dibeli
@@ -523,14 +605,14 @@ class Transaksi extends MX_Controller {
     			$dataSelect['deleted'] = 1;
 				$dataSelect['id'] = $id;
 				$selectData = $this->Transaksireturmodel->select($dataSelect, 'm_produk');
-				$hargaCustomer = $this->getHargaCustomer($selectData->row()->id, $idCustomer);
-				// echo $hargaCustomer;
-				if($hargaCustomer != 0) {
+				$hargaProduk = $this->gethargaProduk($idDetailOrder);
+				
+                if($hargaProduk != 0) {
 					$datas = array(
 		                // 'id'      => $selectData->row()->id."_RETUR",
 		                'id' => $cart_id,
 		                'qty' => 1,
-		                'price' => $this->getHargaCustomer($selectData->row()->id, $idCustomer),
+		                'price' => $hargaProduk,
 		                'name' => $selectData->row()->nama,
 		                'harga_jual_normal' => $data_db->harga_jual_normal,
 		                'potongan' => $data_db->potongan,
@@ -562,12 +644,14 @@ class Transaksi extends MX_Controller {
 			}
 		}
 	}
-	function getHargaCustomer($idProduk = null, $idCustomer = null){
-		$getData = $this->Transaksireturmodel->rawQuery("SELECT m_produk_det_harga.harga as harga FROM m_produk
-				INNER JOIN m_produk_det_harga ON m_produk_det_harga.id_produk = m_produk.id
-				INNER JOIN m_customer ON m_produk_det_harga.id_customer_level = m_customer.id_customer_level
-				WHERE m_produk.id = ".$idProduk." AND m_customer.id = ".$idCustomer);
-		return $getData->num_rows()>0?$getData->row()->harga:0;
+	function getHargaProduk($idDetailOrder = null){
+        $harga = 0;
+		$getData = $this->Transaksireturmodel->rawQuery("SELECT harga_jual FROM t_order_detail WHERE id = ".$idDetailOrder)->row();
+        
+        if(!empty($getData)) {
+            $harga = $getData->harga_jual;
+        }
+        return $harga;
 	}
 	function in_cart($product_id = null, $type = 'rowid', $filter = 'id') {
 	    if($this->cart->total_items() > 0){
@@ -727,6 +811,7 @@ class Transaksi extends MX_Controller {
     		$dataInsertTorder['deleted']						=	1;
     		$dataInsertTorder['id_metode_pembayaran']			=	$params['paymentMethod'];
     		$insertTorder = $this->Transaksireturmodel->insert($dataInsertTorder, 't_order');
+
     		if($insertTorder){
     			// insert ke h_transaksi
     			$dataHtransaksi['jenis_transaksi'] 	= 4;
@@ -736,6 +821,7 @@ class Transaksi extends MX_Controller {
     			$dataHtransaksi['add_by']			= isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
     			$dataHtransaksi['deleted']			= 1;
     			$insertHtransaksi = $this->Transaksireturmodel->insert($dataHtransaksi, 'h_transaksi');
+
     			if($insertHtransaksi){
     				// insert ke t_order_detail
 		    		$getDataID = $this->Transaksireturmodel->select($dataInsertTorder, 't_order');
@@ -760,6 +846,7 @@ class Transaksi extends MX_Controller {
 					    		$dataInsertDetail['profit']					=	$items['price'] - $getHargaBeli->row()->harga_beli;
 					    		$dataInsertDetail['profit']					=	$items['price'] - $getHargaBeli->row()->harga_beli;
 					    		$insertDetail = $this->Transaksireturmodel->insert($dataInsertDetail, 't_order_detail');
+
 								if($insertDetail){
 									//update stok
 									$getIdDetail = $this->Transaksireturmodel->select($dataInsertDetail, 't_order_detail');
@@ -769,6 +856,7 @@ class Transaksi extends MX_Controller {
 									$dataUpdateStok['edited_by']	 			= isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
 									$dataUpdateStok['tanggal_kurang_stok']	 	= $dateNow;
 									$updateStokProduk = $this->Transaksireturmodel->update($dataConditionStok, $dataUpdateStok, 'm_produk');
+
 									if($updateStokProduk){
 										// insert ke h_stok_produk
 										$dataHstok['id_produk'] 		= $idProduks[0];
@@ -788,6 +876,7 @@ class Transaksi extends MX_Controller {
 		    				}
 		    			}
 		    		}
+
 		    		if($insertHstok){
 				    	foreach ($this->cart->contents() as $items) {
 				    		$idProduks = explode("_", $items['id']);
